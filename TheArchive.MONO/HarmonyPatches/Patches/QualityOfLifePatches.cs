@@ -103,11 +103,11 @@ namespace TheArchive.HarmonyPatches.Patches
                             ___m_holoSourceGFX.SetActive(value: false);
                             __instance.Sound.Post(EVENTS.BUTTONGENERICBLIPTHREE);
                             ___m_stateTimer = 1f;
-                            ___m_state = HackSequenceState.Done;
-
                             if (___m_currentHackable != null)
                             {
-                                LG_LevelInteractionManager.WantToSetHackableStatus(___m_currentHackable, eHackableStatus.Success, __instance.Owner);
+                                // Rundown 2 added HackingMiss to the enum pushing Success one back so this should give the correct value and not make you unable to hack anything in R1 ...
+                                eHackableStatus status = ArchiveMod.CurrentRundown == RundownID.RundownOne ? eHackableStatus.HackingMiss : eHackableStatus.Success;
+                                LG_LevelInteractionManager.WantToSetHackableStatus(___m_currentHackable, status, __instance.Owner);
                             }
                             ___m_state = HackSequenceState.Done;
                             return false;
@@ -140,7 +140,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // Add alarm classes to security door interaction text
-        [ArchivePatch(typeof(LG_SecurityDoor_Locks), "OnDoorState", RundownFlags.RundownTwo, nameof(ArchiveSettings.EnableQualityOfLifeImprovements))]
+        [ArchivePatch(typeof(LG_SecurityDoor_Locks), "OnDoorState", RundownFlags.RundownOne | RundownFlags.RundownTwo, nameof(ArchiveSettings.EnableQualityOfLifeImprovements))]
         internal static class LG_SecurityDoor_Locks_OnDoorStatePatch
         {
             // iChainedPuzzleCore[]
@@ -206,6 +206,7 @@ namespace TheArchive.HarmonyPatches.Patches
             }
         }
 
+        // prioritize resources in ping raycasts
         [ArchivePatch(typeof(PlayerAgent), "LateUpdate", nameof(ArchiveSettings.EnableQualityOfLifeImprovements))]
         internal static class PlayerAgent_LateUpdatePatch
         {
