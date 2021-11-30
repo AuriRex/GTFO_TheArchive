@@ -30,7 +30,7 @@ namespace TheArchive.Managers
             {
                 if(_customBoosterImplantPlayerData == null)
                 {
-                    // Load from disk probably
+                    // Load from disk
                     try
                     {
                         _customBoosterImplantPlayerData = LoadFromBoosterFile();
@@ -105,15 +105,12 @@ namespace TheArchive.Managers
                 SaveBoostersToDisk();
             }
 
-            BoostersToBeConsumed = _noBoosterIds;
-
             // clear used boosters list or something
+            BoostersToBeConsumed = _noBoosterIds;
         }
 
         public void EndSession(EndSessionRequest.PerBoosterCategoryInt boosterCurrency, bool success, string sessionBlob, uint maxBackendBoosterTemplateId, int buildRev)
         {
-            boosterCurrency.Basic += CustomBoosterImplantPlayerData.CurrencyNewBoosterCost;
-
             CustomBoosterImplantPlayerData.AddCurrency(boosterCurrency);
 
             // Test if currency exceeds 1000, remove that amount and generate & add a new randomly created booster

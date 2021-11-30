@@ -9,6 +9,7 @@ namespace TheArchive.Managers
 {
     public class CustomProgressionManager
     {
+#warning TODO: Artifact Heat for R5
         private static CustomProgressionManager _instance = null;
         public static CustomProgressionManager Instance
         {

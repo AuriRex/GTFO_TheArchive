@@ -6,8 +6,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
 {
     public class PlayFabPatches
     {
-        // We can use RundownFlags.All here as all IL2CPP versions are R4 or up only
-        [ArchivePatch(typeof(PlayFabManager), "TryGetRundownTimerData", Utils.RundownFlags.All)]
+        [ArchivePatch(typeof(PlayFabManager), "TryGetRundownTimerData")]
         internal static class PlayFabManager_TryGetRundownTimerDataPatch
         {
             public static bool Prefix(ref bool __result, out RundownTimerData data)

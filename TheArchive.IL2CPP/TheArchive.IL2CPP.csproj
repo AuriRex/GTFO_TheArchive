@@ -256,6 +256,10 @@
       <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Utils-ASM">
       <HintPath>..\_R_LATEST\MelonLoader\Managed\Utils-ASM.dll</HintPath>
       <Private>False</Private>
@@ -264,7 +268,7 @@
   <ItemGroup>
     <Compile Include="ArchiveModule.cs" />
     <Compile Include="ColorConverter.cs" />
-    <Compile Include="HarmonyPatches\AutoPatches\CELLSettingsPatches.cs" />
+    <Compile Include="HarmonyPatches\AutoPatches\GameSettingsPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CM_ItemPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CM_PageMatchmakingPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\DropServerClientAPIViaPlayFabPatches.cs" />
@@ -273,7 +277,9 @@
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\RundownManagerPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\UnityLoggerPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\HudTogglePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\QualityOfLifePatches.cs" />
     <Compile Include="Managers\CustomBoosterDropManager.cs" />
     <Compile Include="Managers\CustomBoosterManager.cs" />
     <Compile Include="Managers\CustomProgressionManager.cs" />

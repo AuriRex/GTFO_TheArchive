@@ -15,6 +15,14 @@ namespace TheArchive.Models
     public class CustomRundownProgression
     {
 
+		[JsonIgnore]
+		public static JsonSerializerSettings Settings = new JsonSerializerSettings()
+		{
+			Formatting = Formatting.Indented,
+			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+			MissingMemberHandling = MissingMemberHandling.Ignore
+		};
+
 		[Obsolete("Just don't")]
 		public static CustomRundownProgression FromBaseGameProgression(RundownProgression baseGameRundownProgression)
         {
@@ -30,7 +38,7 @@ namespace TheArchive.Models
 
 		public static CustomRundownProgression FromJSON(string json)
         {
-			return JsonConvert.DeserializeObject<CustomRundownProgression>(json);
+			return JsonConvert.DeserializeObject<CustomRundownProgression>(json, Settings);
         }
 
 		private static RundownProgressionResult rundownProgressionResult = new RundownProgressionResult();
@@ -44,7 +52,7 @@ namespace TheArchive.Models
 		public RundownProgression ToBaseGameProgression()
 		{
 
-			string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+			string json = JsonConvert.SerializeObject(this, Settings);
 
 			return JSONToRundownProgression(json);
 		}
@@ -85,6 +93,8 @@ namespace TheArchive.Models
 			public int AllLayerCompletionCount;
 
 			public LayerSet Layers;
+
+			public float ArtifactHeat = 1f;
 
 			public static Expedition FromBaseGame(RundownProgression.Expedition baseGameExpedition)
             {

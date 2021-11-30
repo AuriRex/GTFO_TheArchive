@@ -70,7 +70,26 @@ namespace TheArchive
 
         public void OnLateUpdate()
         {
+            if (Input.GetKeyDown(KeyCode.F1) && ArchiveMod.Settings.EnableHudToggle)
+            {
+                // Toggle hud
+                ArchiveMod.HudIsVisible = !ArchiveMod.HudIsVisible;
+                GuiManager.PlayerLayer.SetVisible(ArchiveMod.HudIsVisible);
+                GuiManager.WatermarkLayer.SetVisible(ArchiveMod.HudIsVisible);
+                GuiManager.CrosshairLayer.SetVisible(ArchiveMod.HudIsVisible);
+            }
 
+#if DEBUG
+            if (Input.GetKeyDown(KeyCode.F10))
+            {
+                FocusStateManager.ToggleFreeflight();
+            }
+
+            if (Input.GetKeyDown(KeyCode.F9))
+            {
+                FocusStateManager.ToggleDebugMenu();
+            }
+#endif
         }
 
         [HarmonyPatch(typeof(GameDataInit), "Initialize")]

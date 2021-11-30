@@ -75,18 +75,6 @@ namespace TheArchive.HarmonyPatches.AutoPatches
             {
                 var result = __result.Result;
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> received {nameof(GetBoosterImplantPlayerDataResult)}: Data:{result.Data}");
-                var str = BoosterJustPrintThatShit.GetJSON(result.Data);
-                ArchiveLogger.Msg(ConsoleColor.Yellow, str);
-
-
-
-                /*ArchiveLogger.Msg(ConsoleColor.Red, "############################");
-
-                str = BoosterJustPrintThatShit.GetJSON(new CustomBoosterImplantPlayerData(result.Data).ToBaseGame());
-
-                //str = BoosterJustPrintThatShit.GetJSON(BoosterJustPrintThatShit.Test());
-                ArchiveLogger.Msg(ConsoleColor.DarkYellow, str);*/
-
             }
         }
 
@@ -163,6 +151,16 @@ namespace TheArchive.HarmonyPatches.AutoPatches
             public static bool Prefix(EndSessionRequest request, ref IL2Tasks.Task<EndSessionResult> __result)
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(EndSessionRequest)}: EntityToken:{request.EntityToken}, SessionBlob:{request.SessionBlob}, BoosterCurrency:{request.BoosterCurrency}, MaxBackendBoosterTemplateId:{request.MaxBackendBoosterTemplateId}, Success:{request.Success}");
+
+                if (EnableCustomProgressionPatch)
+                {
+                    if (request.Success)
+                    {
+                        CustomProgressionManager.Instance.CompleteCurrentActiveExpedition();
+
+                        CustomProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
+                    }
+                }
 
                 //request.BoosterCurrency
                 // Add ^ those values to the Currency of the respective category
