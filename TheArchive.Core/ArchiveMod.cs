@@ -20,6 +20,8 @@ namespace TheArchive
 
         public static ArchiveSettings Settings { get; private set; } = new ArchiveSettings();
 
+        public static bool HudIsVisible { get; set; } = true;
+
         internal static ArchiveMod Instance;
 
         private IArchiveModule _module;

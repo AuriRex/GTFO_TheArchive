@@ -16,15 +16,10 @@ namespace TheArchive.Core
         private Type[] _patchTypes;
         public bool IsPatched { get; private set; } = false;
 
-        private uint? rundownId = null;
-        internal void SetRundownFromId(uint rundownId)
-        {
-            this.rundownId = rundownId;
-        }
 
         public ArchivePatcher(HarmonyLib.Harmony harmonyInstance, string name)
         {
-            _harmonyInstance = ArchiveMod.Instance.HarmonyInstance;
+            _harmonyInstance = harmonyInstance;
             _name = name;
         }
 
@@ -64,31 +59,49 @@ namespace TheArchive.Core
                 {
                     archivePatchInfo = type.GetCustomAttribute<ArchivePatch>();
 
-                    if (!string.IsNullOrEmpty(archivePatchInfo.BindToSetting))
+                    BindPatchToSetting bindPatchToSettingsInfo = type.GetCustomAttribute<BindPatchToSetting>();
+
+                    if(bindPatchToSettingsInfo == null)
                     {
                         try
                         {
-                            if (!settingForString.TryGetValue(archivePatchInfo.BindToSetting, out PropertyInfo pi))
+                            var containerTypeName = type.FullName.Split('.').Last().Split('+')?.First();
+                            var containerType = type.Assembly.GetType($"{type.Namespace}.{containerTypeName}");
+                            bindPatchToSettingsInfo = containerType?.GetCustomAttribute<BindPatchToSetting>();
+                        }
+                        catch (Exception ex)
+                        {
+                            ArchiveLogger.Error($"{ex}: {ex.Message}");
+                            ArchiveLogger.Error(ex.StackTrace);
+                        }
+                    }
+
+
+                    if (!string.IsNullOrEmpty(bindPatchToSettingsInfo?.BindToSetting))
+                    {
+                        try
+                        {
+                            if (!settingForString.TryGetValue(bindPatchToSettingsInfo.BindToSetting, out PropertyInfo pi))
                             {
-                                pi = typeof(Core.ArchiveSettings).GetProperty(archivePatchInfo.BindToSetting, AccessTools.all);
+                                pi = typeof(Core.ArchiveSettings).GetProperty(bindPatchToSettingsInfo.BindToSetting, AccessTools.all);
                                 if (pi == null || pi.PropertyType != typeof(bool))
                                 {
                                     throw new ArgumentException();
                                 }
-                                settingForString.Add(archivePatchInfo.BindToSetting, pi);
+                                settingForString.Add(bindPatchToSettingsInfo.BindToSetting, pi);
                             }
 
                             var shouldEnable = (bool) pi.GetValue(ArchiveMod.Settings);
 
                             if (!shouldEnable)
                             {
-                                ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{archivePatchInfo.BindToSetting}==false] Skipped patch: \"{type.FullName}\". ({archivePatchInfo.RundownsToPatch})");
+                                ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{bindPatchToSettingsInfo.BindToSetting}==false] Skipped patch: \"{type.FullName}\". ({archivePatchInfo.RundownsToPatch})");
                                 continue;
                             }
                         }
                         catch (ArgumentException)
                         {
-                            ArchiveLogger.Error($"Patch \"{type.FullName}\" has an invalid Settings string \"{archivePatchInfo.BindToSetting}\" set!");
+                            ArchiveLogger.Error($"Patch \"{type.FullName}\" has an invalid Settings string \"{bindPatchToSettingsInfo.BindToSetting}\" set!");
                         }
                     }
 
@@ -137,18 +150,50 @@ namespace TheArchive.Core
                         continue;
                     }
 
-                    ArchiveLogger.Notice($"{(archivePatchInfo.GeneralPurposePatch ? "[GP] " : string.Empty)}Patching \"{archivePatchInfo.Type.FullName}.{original.Name}()\"");
+                    var logPrefix = GetPatchPrefix(archivePatchInfo, bindPatchToSettingsInfo);
+
+                    var logMessage = $"{logPrefix}Patching \"{archivePatchInfo.Type.FullName}.{original.Name}()\" ({type.Name})";
+
+                    if(bindPatchToSettingsInfo?.CustomLogColor != null)
+                    {
+                        ArchiveLogger.Msg(bindPatchToSettingsInfo.CustomLogColor.Value, logMessage);
+                    }
+                    else
+                    {
+                        ArchiveLogger.Notice(logMessage);
+                    }
 
                     _harmonyInstance.Patch(original, prefix, postfix);
                 }
                 catch(Exception ex)
                 {
-                    ArchiveLogger.Error($"[ERROR] Patch in \"{archivePatchInfo.Type.FullName}\" FAILED! {ex.Message}");
-                    ArchiveLogger.Error($"[ERROR] {ex.StackTrace}");
+                    ArchiveLogger.Error($"Patch in \"{archivePatchInfo.Type.FullName}\" FAILED! {ex}: {ex.Message}");
+                    ArchiveLogger.Error($"{ex.StackTrace}");
                 }
             }
 
             IsPatched = true;
+        }
+
+        private string GetPatchPrefix(ArchivePatch archivePatchInfo, BindPatchToSetting bindPatchToSettingsInfo)
+        {
+            string result = string.Empty;
+            if (!string.IsNullOrEmpty(bindPatchToSettingsInfo?.BindToSetting))
+            {
+                if(!string.IsNullOrEmpty(bindPatchToSettingsInfo.CustomLogPrefix))
+                {
+                    result += $"[{bindPatchToSettingsInfo.CustomLogPrefix}] ";
+                }
+                else
+                {
+                    result += $"[{bindPatchToSettingsInfo.BindToSetting}] ";
+                }
+            }
+            if(archivePatchInfo.GeneralPurposePatch)
+            {
+                result += $"[GP] ";
+            }
+            return result;
         }
 
         public void Unpatch()
@@ -169,12 +214,40 @@ namespace TheArchive.Core
 
         public const BindingFlags AnyBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
+        /// <summary>
+        /// Add this to either the patch class or a container class to apply the patch only if a specific setting is set
+        /// </summary>
+        public class BindPatchToSetting : Attribute
+        {
+            public string BindToSetting { get; private set; } = string.Empty;
+            public string CustomLogPrefix { get; private set; } = null;
+            public ConsoleColor? CustomLogColor { get; private set; } = null;
+
+            public BindPatchToSetting(string bindToSetting, string customLogPrefix = null)
+            {
+                BindToSetting = bindToSetting;
+                CustomLogPrefix = customLogPrefix;
+            }
+
+            public BindPatchToSetting(string bindToSetting, string customLogPrefix, ConsoleColor customLogColor)
+            {
+                BindToSetting = bindToSetting;
+                CustomLogPrefix = customLogPrefix;
+                CustomLogColor = customLogColor;
+            }
+
+            public BindPatchToSetting(string bindToSetting, ConsoleColor customLogColor, string customLogPrefix = null)
+            {
+                BindToSetting = bindToSetting;
+                CustomLogPrefix = customLogPrefix;
+                CustomLogColor = customLogColor;
+            }
+        }
+
         public class ArchivePatch : Attribute
         {
             public Type Type { get; private set; }
             public string MethodName { get; private set; }
-
-            public string BindToSetting { get; private set; } = string.Empty;
 
             public RundownFlags RundownsToPatch { get; private set; }
 
@@ -189,10 +262,6 @@ namespace TheArchive.Core
                 RundownsToPatch = rundowns;
                 ParameterTypes = parameterTypes;
             }
-            public ArchivePatch(Type type, string methodName, RundownFlags rundowns, string bindToSetting, Type[] parameterTypes = null) : this(type, methodName, rundowns, parameterTypes)
-            {
-                BindToSetting = bindToSetting;
-            }
 
             public ArchivePatch(Type type, string methodName, RundownFlags from, RundownFlags to, Type[] parameterTypes = null)
             {
@@ -202,22 +271,12 @@ namespace TheArchive.Core
                 ParameterTypes = parameterTypes;
             }
 
-            public ArchivePatch(Type type, string methodName, RundownFlags from, RundownFlags to, string bindToSetting, Type[] parameterTypes = null) : this(type, methodName, from, to, parameterTypes)
-            {
-                BindToSetting = bindToSetting;
-            }
-
             public ArchivePatch(Type type, string methodName, Type[] parameterTypes = null)
             {
                 Type = type;
                 MethodName = methodName;
                 ParameterTypes = parameterTypes;
                 GeneralPurposePatch = true;
-            }
-
-            public ArchivePatch(Type type, string methodName, string bindToSetting, Type[] parameterTypes = null) : this(type, methodName, parameterTypes)
-            {
-                BindToSetting = bindToSetting;
             }
 
         }
