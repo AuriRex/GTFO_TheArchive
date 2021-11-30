@@ -18,7 +18,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
                 {
                     try
                     {
-                        ArchiveLogger.Notice($"Local Settings files doesn't exist, copying from official location.");
+                        ArchiveLogger.Notice($"Local Settings files doesn't exist, copying from ({__result}) to ({LocalFiles.SettingsPath}).");
                         File.Copy(__result, LocalFiles.SettingsPath);
                     }
                     catch (Exception ex)
@@ -42,7 +42,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
                 {
                     try
                     {
-                        ArchiveLogger.Notice($"Local Favorites files doesn't exist, copying from official location.");
+                        ArchiveLogger.Notice($"Local Favorites files doesn't exist, copying from ({__result}) to ({LocalFiles.FavoritesPath}).");
                         File.Copy(__result, LocalFiles.FavoritesPath);
                     }
                     catch(Exception ex)

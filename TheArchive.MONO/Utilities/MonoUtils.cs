@@ -30,15 +30,15 @@ namespace TheArchive.Utilities
             yield break;
         }
 
-        public static void CallEvent<T>(string eventFieldName)
+        public static void CallEvent<TOn>(string eventFieldName)
         {
-            var eventInfo = typeof(T).GetType().GetEvent(eventFieldName, HarmonyLib.AccessTools.all);
-            var eventDelegate = (MulticastDelegate) typeof(T).GetField(eventFieldName, HarmonyLib.AccessTools.all).GetValue(null);
+            var eventInfo = typeof(TOn).GetType().GetEvent(eventFieldName, HarmonyLib.AccessTools.all);
+            var eventDelegate = (MulticastDelegate) typeof(TOn).GetField(eventFieldName, HarmonyLib.AccessTools.all).GetValue(null);
             if (eventDelegate != null)
             {
                 foreach (var handler in eventDelegate.GetInvocationList())
                 {
-                    ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"event {typeof(T)}.{eventFieldName}() calling: {handler.Method.DeclaringType.Name}.{handler.Method.Name}()");
+                    ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"event {typeof(TOn)}.{eventFieldName}() calling: {handler.Method.DeclaringType.Name}.{handler.Method.Name}()");
                     handler.Method.Invoke(handler.Target, null);
                 }
             }

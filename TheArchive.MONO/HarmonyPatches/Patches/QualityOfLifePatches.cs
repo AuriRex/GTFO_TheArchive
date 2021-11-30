@@ -13,10 +13,11 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.HarmonyPatches.Patches
 {
+    [BindPatchToSetting(nameof(ArchiveSettings.EnableQualityOfLifeImprovements), "QOL")]
     public class QualityOfLifePatches
     {
         // Fix ladder movement so that W is always upwards and S always downwards no matter where you're looking
-        [ArchivePatch(typeof(LG_Ladder), "GetMoveVec", RundownFlags.RundownOne, nameof(ArchiveSettings.EnableQualityOfLifeImprovements))]
+        [ArchivePatch(typeof(LG_Ladder), "GetMoveVec", RundownFlags.RundownOne)]
         internal static class LG_Ladder_GetMoveVecPatch
         {
             public static bool Prefix(ref Vector3 __result, Vector3 camDir, float axisVertical)
@@ -28,7 +29,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // Use the player ping (Middle Mouse Ping) for terminal ping command pings
-        [ArchivePatch(typeof(LG_GenericTerminalItem), "PlayPing", RundownFlags.RundownOne, nameof(ArchiveSettings.EnableQualityOfLifeImprovements))]
+        [ArchivePatch(typeof(LG_GenericTerminalItem), "PlayPing", RundownFlags.RundownOne)]
         internal static class LG_GenericTerminalItem_PlayPingPatch
         {
             private static MethodInfo PlayerAgent_TriggerMarkerPing = typeof(PlayerAgent).GetMethod("TriggerMarkerPing", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static);
@@ -60,7 +61,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // Change the "WARDEN OBJECTIVE" text in the top left of the screen to the current selected mission, ex: "R1A1:The Admin"
-        [ArchivePatch(typeof(PlayerGuiLayer), "UpdateObjectives", RundownFlags.RundownOne | RundownFlags.RundownThree, nameof(ArchiveSettings.EnableQualityOfLifeImprovements))] 
+        [ArchivePatch(typeof(PlayerGuiLayer), "UpdateObjectives", RundownFlags.RundownOne | RundownFlags.RundownThree)] 
         internal static class PlayerGuiLayer_UpdateObjectivesPatch
         {
             public static void Postfix(ref PlayerGuiLayer __instance, ref PUI_GameObjectives ___m_wardenObjective)
@@ -85,7 +86,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // Change hacking minigame to be more in line with newest version of the game -> minigame finishes and hack disappears instantly
-        [ArchivePatch(typeof(HackingTool), "UpdateHackSequence", RundownFlags.RundownOne, RundownFlags.RundownThree, nameof(ArchiveSettings.EnableQualityOfLifeImprovements))]
+        [ArchivePatch(typeof(HackingTool), "UpdateHackSequence", RundownFlags.RundownOne, RundownFlags.RundownThree)]
         internal static class HackingTool_UpdateHackSequencePatch
         {
             private static MethodInfo HackingTool_ClearScreen = typeof(HackingTool).GetMethod("ClearScreen", AnyBindingFlags);
@@ -140,7 +141,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // Add alarm classes to security door interaction text
-        [ArchivePatch(typeof(LG_SecurityDoor_Locks), "OnDoorState", RundownFlags.RundownOne | RundownFlags.RundownTwo, nameof(ArchiveSettings.EnableQualityOfLifeImprovements))]
+        [ArchivePatch(typeof(LG_SecurityDoor_Locks), "OnDoorState", RundownFlags.RundownOne | RundownFlags.RundownTwo)]
         internal static class LG_SecurityDoor_Locks_OnDoorStatePatch
         {
             // iChainedPuzzleCore[]
@@ -170,19 +171,8 @@ namespace TheArchive.HarmonyPatches.Patches
             }
         }
 
-        // update the mods hud state whenever the hud gets toggled by the game
-        [ArchivePatch(typeof(PlayerGuiLayer), "SetVisible", RundownFlags.All, nameof(ArchiveSettings.EnableQualityOfLifeImprovements))]
-        internal static class PlayerGuiLayer_SetVisiblePatch
-        {
-            public static void Postfix(bool visible)
-            {
-                ArchiveModule.instance.HudIsVisible = visible;
-            }
-        }
-
-
         // R2 and up like hack fail effect (might be a bit stricter than the officially implemented one because it's essentially the same as hitting your hammer on the box)
-        [ArchivePatch(typeof(HackingMinigame_TimingGrid), "OnMiss", RundownFlags.RundownOne, nameof(ArchiveSettings.EnableQualityOfLifeImprovements))]
+        [ArchivePatch(typeof(HackingMinigame_TimingGrid), "OnMiss", RundownFlags.RundownOne)]
         internal static class HackingMinigame_TimingGrid_OnMissPatch
         {
             public static void Postfix(ref HackingTool ___m_tool)
@@ -193,7 +183,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // prioritize resources in ping raycasts
-        [ArchivePatch(typeof(CrosshairGuiLayer), "ShowPingIndicator", nameof(ArchiveSettings.EnableQualityOfLifeImprovements))]
+        [ArchivePatch(typeof(CrosshairGuiLayer), "ShowPingIndicator")]
         internal static class CrosshairGuiLayer_ShowPingIndicatorPatch
         {
             internal static bool ShouldRun { get; set; } = false;
@@ -207,7 +197,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // prioritize resources in ping raycasts
-        [ArchivePatch(typeof(PlayerAgent), "LateUpdate", nameof(ArchiveSettings.EnableQualityOfLifeImprovements))]
+        [ArchivePatch(typeof(PlayerAgent), "LateUpdate")]
         internal static class PlayerAgent_LateUpdatePatch
         {
             

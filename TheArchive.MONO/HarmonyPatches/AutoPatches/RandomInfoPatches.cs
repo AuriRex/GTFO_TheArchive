@@ -33,7 +33,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
 
                 foreach (KeyValuePair<string, GlobalManager> keyValuePair in ___m_ManagersNotLoadedInSlim)
                 {
-                    ArchiveLogger.Msg(ConsoleColor.Yellow, $"notinslim: {keyValuePair.Key} - {keyValuePair.Value}");
+                    ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"notinslim: {keyValuePair.Key} - {keyValuePair.Value}");
                 }
             }
         }

@@ -3,7 +3,7 @@ using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Core.ArchivePatcher;
 
-namespace TheArchive.HarmonyPatches.AutoPatches
+namespace TheArchive.HarmonyPatches.Patches
 {
     internal class UnityLoggerPatches
     {
