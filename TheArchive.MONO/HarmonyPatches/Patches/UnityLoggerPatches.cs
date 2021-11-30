@@ -1,11 +1,13 @@
 ﻿using System;
+using TheArchive.Core.Core;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive.HarmonyPatches.Patches
 {
-    internal class UnityLoggerPatches
+    [BindPatchToSetting(nameof(ArchiveSettings.RedirectUnityDebugLogs), "UnityDebug")]
+    public class UnityLoggerPatches
     {
         //Log
         [ArchivePatch(typeof(Debug), nameof(Debug.Log), new Type[] { typeof(object) })]

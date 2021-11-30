@@ -11,6 +11,7 @@ namespace TheArchive.Core.Core
 
         public bool EnableQualityOfLifeImprovements { get; set; } = true;
         public bool EnableHudToggle { get; set; } = true;
+        public bool RedirectUnityDebugLogs { get; set; } = true;
 
     }
 }
