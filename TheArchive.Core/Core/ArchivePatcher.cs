@@ -54,6 +54,8 @@ namespace TheArchive.Core
 
             RundownID currentRundown = ArchiveMod.CurrentRundown;
 
+            Dictionary<string, PropertyInfo> settingForString = new Dictionary<string, PropertyInfo>();
+
             foreach (Type type in _patchTypes)
             {
                 ArchivePatch archivePatchInfo = null;
@@ -61,6 +63,34 @@ namespace TheArchive.Core
                 try
                 {
                     archivePatchInfo = type.GetCustomAttribute<ArchivePatch>();
+
+                    if (!string.IsNullOrEmpty(archivePatchInfo.BindToSetting))
+                    {
+                        try
+                        {
+                            if (!settingForString.TryGetValue(archivePatchInfo.BindToSetting, out PropertyInfo pi))
+                            {
+                                pi = typeof(Core.ArchiveSettings).GetProperty(archivePatchInfo.BindToSetting, AccessTools.all);
+                                if (pi == null || pi.PropertyType != typeof(bool))
+                                {
+                                    throw new ArgumentException();
+                                }
+                                settingForString.Add(archivePatchInfo.BindToSetting, pi);
+                            }
+
+                            var shouldEnable = (bool) pi.GetValue(ArchiveMod.Settings);
+
+                            if (!shouldEnable)
+                            {
+                                ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{archivePatchInfo.BindToSetting}==false] Skipped patch: \"{type.FullName}\". ({archivePatchInfo.RundownsToPatch})");
+                                continue;
+                            }
+                        }
+                        catch (ArgumentException)
+                        {
+                            ArchiveLogger.Error($"Patch \"{type.FullName}\" has an invalid Settings string \"{archivePatchInfo.BindToSetting}\" set!");
+                        }
+                    }
 
                     if (!archivePatchInfo.GeneralPurposePatch && !FlagsContain(archivePatchInfo.RundownsToPatch, currentRundown))
                     {
@@ -144,26 +174,37 @@ namespace TheArchive.Core
             public Type Type { get; private set; }
             public string MethodName { get; private set; }
 
+            public string BindToSetting { get; private set; } = string.Empty;
+
             public RundownFlags RundownsToPatch { get; private set; }
 
             public bool GeneralPurposePatch { get; private set; } = false;
 
             public Type[] ParameterTypes { get; internal set; }
 
-            public ArchivePatch(Type type, string methodName, RundownFlags rundowns, /*RundownID rundownID, bool andUp = true, bool andDown = false,*/ Type[] parameterTypes = null)
+            public ArchivePatch(Type type, string methodName, RundownFlags rundowns, Type[] parameterTypes = null)
             {
                 Type = type;
                 MethodName = methodName;
                 RundownsToPatch = rundowns;
                 ParameterTypes = parameterTypes;
             }
+            public ArchivePatch(Type type, string methodName, RundownFlags rundowns, string bindToSetting, Type[] parameterTypes = null) : this(type, methodName, rundowns, parameterTypes)
+            {
+                BindToSetting = bindToSetting;
+            }
 
-            public ArchivePatch(Type type, string methodName, RundownFlags from, RundownFlags to,/*RundownID rundownID, bool andUp = true, bool andDown = false,*/ Type[] parameterTypes = null)
+            public ArchivePatch(Type type, string methodName, RundownFlags from, RundownFlags to, Type[] parameterTypes = null)
             {
                 Type = type;
                 MethodName = methodName;
                 RundownsToPatch = from.To(to);
                 ParameterTypes = parameterTypes;
+            }
+
+            public ArchivePatch(Type type, string methodName, RundownFlags from, RundownFlags to, string bindToSetting, Type[] parameterTypes = null) : this(type, methodName, from, to, parameterTypes)
+            {
+                BindToSetting = bindToSetting;
             }
 
             public ArchivePatch(Type type, string methodName, Type[] parameterTypes = null)
@@ -172,6 +213,11 @@ namespace TheArchive.Core
                 MethodName = methodName;
                 ParameterTypes = parameterTypes;
                 GeneralPurposePatch = true;
+            }
+
+            public ArchivePatch(Type type, string methodName, string bindToSetting, Type[] parameterTypes = null) : this(type, methodName, parameterTypes)
+            {
+                BindToSetting = bindToSetting;
             }
 
         }

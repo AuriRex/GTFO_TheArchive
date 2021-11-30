@@ -321,6 +321,7 @@ GOTO END
 copy /y bin\debug\TheArchive.IL2CPP.dll ..\TheArchive.Core\Resources\TheArchive.IL2CPP.dll
 :END
 cd $(ProjectDir)..\TheArchive.CORE\
+dotnet clean
 dotnet build -c $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

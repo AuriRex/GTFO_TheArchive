@@ -67,7 +67,7 @@ namespace TheArchive
 
         public void OnLateUpdate()
         {
-            if(Input.GetKeyDown(KeyCode.F1) && ArchiveMod.EnableQualityOfLifeImprovements)
+            if(Input.GetKeyDown(KeyCode.F1) && ArchiveMod.Settings.EnableQualityOfLifeImprovements)
             {
                 // Toggle hud
                 HudIsVisible = !HudIsVisible;

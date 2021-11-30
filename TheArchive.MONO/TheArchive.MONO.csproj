@@ -111,6 +111,9 @@
       <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.InputModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
     <Reference Include="Utils-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Utils-ASM.dll</HintPath>
@@ -148,6 +151,7 @@ GOTO END
 copy /y bin\debug\TheArchive.MONO.dll ..\TheArchive.Core\Resources\TheArchive.MONO.dll
 :END
 cd $(ProjectDir)..\TheArchive.CORE\
+dotnet clean
 dotnet build -c $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

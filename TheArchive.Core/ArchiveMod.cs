@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using TheArchive;
 using TheArchive.Core;
+using TheArchive.Core.Core;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -16,7 +17,8 @@ namespace TheArchive
 
     public class ArchiveMod : MelonMod
     {
-        public static bool EnableQualityOfLifeImprovements { get; set; } = true;
+
+        public static ArchiveSettings Settings { get; private set; } = new ArchiveSettings();
 
         internal static ArchiveMod Instance;
 

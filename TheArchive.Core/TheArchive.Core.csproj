@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArchiveMod.cs" />
+    <Compile Include="Core\ArchiveSettings.cs" />
     <Compile Include="Core\IArchiveModule.cs" />
     <Compile Include="Core\ArchivePatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
