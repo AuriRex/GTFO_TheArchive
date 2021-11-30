@@ -56,9 +56,6 @@
     <Compile Include="Utilities\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\TheArchive.IL2CPP.dll" />
   </ItemGroup>
   <ItemGroup>

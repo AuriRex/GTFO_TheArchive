@@ -39,7 +39,7 @@ namespace TheArchive
 
             Patcher = new ArchivePatcher(HarmonyInstance, $"Patcher_{gameTypeString}");
 
-            var module = LoadModule();
+            var module = LoadModule(MelonUtils.IsGameIl2Cpp());
 
             var moduleMainType = module.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
 
@@ -75,66 +75,31 @@ namespace TheArchive
             base.OnLateUpdate();
         }
 
-        private Assembly LoadModule()
+        private Assembly LoadModule(bool isIl2Cpp)
         {
             try
             {
-                if(MelonUtils.IsGameIl2Cpp())
+                byte[] bytes;
+                if(isIl2Cpp)
                 {
                     ArchiveLogger.Notice("Loading IL2CPP module ...");
-                    return Assembly.Load(Utils.LoadFromResource("TheArchive.Core.Resources.TheArchive.IL2CPP.dll"));
+                    bytes = Utils.LoadFromResource("TheArchive.Core.Resources.TheArchive.IL2CPP.dll");
+                    if (bytes.Length < 100) throw new BadImageFormatException("IL2CPP Module is too small, this version might not contain the module build but a dummy dll!");
+                    return Assembly.Load(bytes);
                 }
 
                 ArchiveLogger.Notice("Loading MONO module ...");
-                return Assembly.Load(Utils.LoadFromResource("TheArchive.Core.Resources.TheArchive.MONO.dll"));
+                bytes = Utils.LoadFromResource("TheArchive.Core.Resources.TheArchive.MONO.dll");
+                if (bytes.Length < 100) throw new BadImageFormatException("MONO Module is too small, this version might not contain the module build but a dummy dll!");
+                return Assembly.Load(bytes);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ArchiveLogger.Warning("Could not load module!");
+                ArchiveLogger.Error($"Could not load {(isIl2Cpp ? "IL2CPP" : "MONO")} module! {ex}: {ex.Message}");
+                ArchiveLogger.Error($"{ex.StackTrace}");
                 return null;
             }
         }
-/*
-        [HarmonyPatch(typeof(SteamManager), "Awake")]
-        internal static class SteamManager_AwakePatch
-        {
-            public static void Postfix()
-            {
-                MelonLogger.Msg(ConsoleColor.DarkMagenta, $"Steam Manager has awoken.");
-            }
 
-        }
-
-        [HarmonyPatch(typeof(StartMainGame), "Awake")]
-        internal static class StartMainGame_AwakePatch
-        {
-            public static void Postfix()
-            {
-                var rundownId = Global.RundownIdToLoad;
-                //Global.RundownIdToLoad = 17;
-
-#if !RD001
-                if(rundownId != 17)
-                    AllowFullRundown();
-#endif
-
-                OnAfterStartMainGameAwake?.Invoke(rundownId);
-            }
-
-            [MethodImpl(MethodImplOptions.NoInlining)]
-            private static void AllowFullRundown()
-            {
-                Global.AllowFullRundown = true;
-            }
-        }
-
-        [HarmonyPatch(typeof(GlobalSetup), "Awake")]
-        internal static class GlobalSetup_AwakePatch
-        {
-            public static void Prefix(GlobalSetup __instance)
-            {
-                //__instance.m_allowFullRundown = true;
-            }
-        }*/
     }
 }
