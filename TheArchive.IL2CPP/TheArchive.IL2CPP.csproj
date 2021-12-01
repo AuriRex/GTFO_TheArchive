@@ -37,6 +37,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CellSound-ASM">
+      <HintPath>..\_R_LATEST\MelonLoader\Managed\CellSound-ASM.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Costura, Version=5.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.5.7.0\lib\netstandard1.0\Costura.dll</HintPath>
       <Private>False</Private>
@@ -262,6 +266,10 @@
     </Reference>
     <Reference Include="Utils-ASM">
       <HintPath>..\_R_LATEST\MelonLoader\Managed\Utils-ASM.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Wwise-ASM">
+      <HintPath>..\_R_LATEST\MelonLoader\Managed\Wwise-ASM.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
