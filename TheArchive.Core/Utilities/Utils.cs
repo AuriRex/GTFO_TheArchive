@@ -60,14 +60,18 @@ namespace TheArchive.Utilities
             switch (currentRundownID)
             {
                 case RundownID.RundownOne:
-                    return "<color=red>Rundown #001</color>\n\nThe Archive active.";
+                    return "<color=red>Rundown #001</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\n";
                 case RundownID.RundownTwo:
-                    return "<color=red>Rundown #002 Infection</color>\n\nThe Archive active.";
+                    return "<color=red>Rundown #002 Infection</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\n";
                 case RundownID.RundownThree:
-                    return "<color=red>Rundown #003 The Vessel</color>\n\nThe Archive active.";
+                    return "<color=red>Rundown #003 The Vessel</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\n";
+                case RundownID.RundownFour:
+                    return "<color=red>Rundown #004 Contact</color><color=orange>://Extended</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\n";
+                case RundownID.RundownFive:
+                    return "<color=red>Rundown #005 Rebirth</color><color=orange>://Extended</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\n";
                 default:
                 case RundownID.RundownUnknown:
-                    return "<color=red>Rundown #??? Yo Waddup?!</color>\n\nThe Archive active.\nMight not work however I hope it works anyways lol.";
+                    return "<color=red>Rundown #??? Yo Waddup?!</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\nIt's most likely not going to do what it's supposed to ... yet.";
             }
         }
 
