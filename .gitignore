@@ -17,8 +17,7 @@ _R_LATEST/MelonLoader/Managed/*
 
 _R_RD005/*
 _R_RD005/MelonLoader/*
-_R_RD005/GTFO_Data/*
-_R_RD005/GTFO_Data/Managed/*
+_R_RD005/MelonLoader/Managed/*
 
 _R_RD003/*
 _R_RD003/MelonLoader/*
@@ -33,8 +32,7 @@ TheArchive.IL2CPP/Resources/*
 
 !_R_RD005/
 !_R_RD005/MelonLoader/
-!_R_RD005/GTFO_Data/
-!_R_RD005/GTFO_Data/Managed/
+!_R_RD005/MelonLoader/Managed/
 
 !_R_RD003/
 !_R_RD003/MelonLoader/
