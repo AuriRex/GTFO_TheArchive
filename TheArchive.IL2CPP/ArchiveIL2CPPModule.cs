@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TheArchive;
 using TheArchive.Core;
+using TheArchive.Core.Core;
 using TheArchive.HarmonyPatches;
 using TheArchive.Managers;
 using TheArchive.Utilities;
@@ -19,45 +20,54 @@ using UnityEngine.CrashReportHandler;
 namespace TheArchive
 {
 
-    public class ArchiveModule : IArchiveModule
+    public class ArchiveIL2CPPModule : IArchiveModule
     {
 
         public static event Action<uint> OnAfterGameDataInit;
 
-        internal static ArchiveModule instance;
+        internal static ArchiveIL2CPPModule instance;
 
         public static uint CurrentRundownID { get; internal set; } = 0;
 
-        private ArchivePatcher _patcher;
-        private ArchiveMod _core;
+        public bool ApplyHarmonyPatches => true;
 
-        public void Init(ArchivePatcher patcher, ArchiveMod core)
+        public ArchivePatcher Patcher { get; set; }
+        public ArchiveMod Core { get; set; }
+
+        [SubModule(Utils.RundownFlags.RundownFour, Utils.RundownFlags.RundownFive)]
+        public static string R5SubModule => "TheArchive.Resources.TheArchive.IL2CPP.R5.dll";
+        [SubModule(Utils.RundownFlags.RundownSix, Utils.RundownFlags.Latest)]
+        public static string R6SubModule => "TheArchive.Resources.TheArchive.IL2CPP.R6.dll";
+
+        public void Init()
         {
             instance = this;
-            _patcher = patcher;
-            _core = core;
 
-            CrashReportHandler.SetUserMetadata("Modded", "true");
-            CrashReportHandler.enableCaptureExceptions = false;
+            if(!ArchiveMod.Settings.DisableGameAnalytics)
+            {
+                CrashReportHandler.SetUserMetadata("Modded", "true");
+                CrashReportHandler.enableCaptureExceptions = false;
+            }
 
             CosturaUtility.Initialize();
 
             CustomProgressionManager.Logger = (string msg) => {
-                MelonLogger.Msg(ConsoleColor.Magenta, msg);
+                ArchiveLogger.Msg(ConsoleColor.Magenta, msg);
             };
 
             OnAfterGameDataInit += (rundownId) => {
                 var rundown = Utils.IntToRundownEnum((int) rundownId);
                 if(rundown != Utils.RundownID.RundownFour)
                 {
-                    RundownFiveBoosterSetup();
+                    BoosterSetup();
                 }
-                _core.SetCurrentRundownAndPatch(rundown);
+                Core.SetCurrentRundownAndPatch(rundown);
+                DataBlockManager.DumpDataBlocksToDisk();
             };
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void RundownFiveBoosterSetup()
+        private static void BoosterSetup()
         {
             CustomBoosterDropManager.Instance.Setup();
         }
@@ -66,7 +76,6 @@ namespace TheArchive
         {
 
         }
-
 
         public void OnLateUpdate()
         {
@@ -90,6 +99,11 @@ namespace TheArchive
                 FocusStateManager.ToggleDebugMenu();
             }
 #endif
+        }
+
+        public void OnExit()
+        {
+
         }
 
         [HarmonyPatch(typeof(GameDataInit), "Initialize")]

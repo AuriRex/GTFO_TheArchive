@@ -4,36 +4,54 @@ namespace TheArchive.Utilities
 {
     public class ArchiveLogger
     {
+        private static MelonLoader.MelonLogger.Instance _logger = null;
+        private static MelonLoader.MelonLogger.Instance Logger
+        {
+            get
+            {
+                if(_logger == null)
+                {
+                    _logger = ArchiveMod.Instance.LoggerInstance;
+                }
+                return _logger;
+            }
+        }
+
+
         public static void Success(string msg)
         {
-            MelonLoader.MelonLogger.Msg(ConsoleColor.Green, msg);
+            Logger.Msg(ConsoleColor.Green, msg);
         }
 
         public static void Notice(string msg)
         {
-            MelonLoader.MelonLogger.Msg(ConsoleColor.Cyan, msg);
+            Logger.Msg(ConsoleColor.Cyan, msg);
         }
 
         public static void Msg(ConsoleColor col, string msg)
         {
-            MelonLoader.MelonLogger.Msg(col, msg);
+            Logger.Msg(col, msg);
         }
 
         public static void Info(string msg)
         {
-            MelonLoader.MelonLogger.Msg(msg);
+            Logger.Msg(msg);
         }
 
         public static void Warning(string msg)
         {
-            MelonLoader.MelonLogger.Msg(ConsoleColor.DarkYellow, msg);
+            Logger.Msg(ConsoleColor.DarkYellow, msg);
         }
 
         public static void Error(string msg)
         {
-            MelonLoader.MelonLogger.Error(msg);
+            Logger.Error(msg);
         }
 
         public static void Msg(string v) => Info(v);
+        public static void Exception(Exception ex)
+        {
+            ArchiveLogger.Error($"{ex}: {ex.Message}\n{ex.StackTrace}");
+        }
     }
 }

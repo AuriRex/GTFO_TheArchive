@@ -124,9 +124,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArchiveModule.cs" />
+    <Compile Include="ArchiveMONOModule.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CELLSettingsPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\UnityLoggerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\HudTogglePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />

@@ -1,5 +1,8 @@
 ﻿using MelonLoader;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using TheArchive;
@@ -24,37 +27,151 @@ namespace TheArchive
 
         internal static ArchiveMod Instance;
 
-        private IArchiveModule _module;
+        private IArchiveModule _mainModule;
 
-        private static ArchivePatcher Patcher;
+        //private static ArchivePatcher Patcher;
 
-        public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnknown;
+        public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnitialized;
 
+        private List<Type> moduleTypes = new List<Type>();
+
+        private List<IArchiveModule> modules = new List<IArchiveModule>();
+
+        public bool RegisterModule(Type moduleType)
+        {
+            if (moduleType == null) throw new ArgumentException("Module can't be null!");
+            if (moduleTypes.Contains(moduleType)) throw new ArgumentException($"Module \"{moduleType.Name}\" is already registered!");
+
+            var module = CreateAndInitModule(moduleType);
+
+            if (CurrentRundown != RundownID.RundownUnitialized)
+            {
+                module.Patcher.PatchRundownSpecificMethods(module.GetType().Assembly);
+                return true;
+            }
+
+            return false;
+        }
+
+
+        private void LoadSubModules()
+        {
+            ArchiveLogger.Info("Loading all SubModules ...");
+            foreach (var moduleType in new List<Type>(moduleTypes))
+            {
+                LoadSubModulesFrom(moduleType);
+            }
+        }
+
+        private void LoadSubModulesFrom(Type moduleType)
+        {
+            foreach (var prop in moduleType.GetProperties())
+            {
+                if (prop.PropertyType != typeof(string) || !prop.GetMethod.IsStatic) continue;
+
+                var subModuleAttribute = prop.GetCustomAttribute<SubModuleAttribute>();
+
+                if (subModuleAttribute == null) continue;
+
+                if (FlagsContain(subModuleAttribute.Rundowns, CurrentRundown))
+                {
+                    string subModuleResourcePath = (string) prop.GetValue(null);
+
+                    byte[] subModule = null;
+                    try
+                    {
+                        subModule = Utilities.Utils.GetResource(moduleType.Assembly, subModuleResourcePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        ArchiveLogger.Error($"Module \"{moduleType.FullName}\" ({moduleType.Assembly.GetName().Name}) has invalid SubModule at path \"{subModuleResourcePath}\": {ex}: {ex.Message}\n{ex.StackTrace}");
+                        continue;
+                    }
+
+                    if (subModule == null || subModule.Length < 100)
+                    {
+                        ArchiveLogger.Error($"Module \"{moduleType.FullName}\" ({moduleType.Assembly.GetName().Name}) has invalid SubModule at path \"{subModuleResourcePath}\"!");
+                        continue;
+                    }
+
+                    try
+                    {
+                        var subModuleAssembly = Assembly.Load(subModule);
+
+                        var subModuleType = subModuleAssembly.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
+
+                        RegisterModule(subModuleType);
+                    }
+                    catch(Exception ex)
+                    {
+                        ArchiveLogger.Error($"Loading of sub-module at resource path \"{subModuleResourcePath}\" from module \"{moduleType.FullName}\" failed! {ex}: {ex.Message}\n{ex.StackTrace}");
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        private IArchiveModule CreateAndInitModule(Type moduleType)
+        {
+            if (moduleType == null) throw new ArgumentException($"Parameter {nameof(moduleType)} can not be null!");
+
+            moduleTypes.Add(moduleType);
+            ArchiveLogger.Info($"Initializing module \"{moduleType.FullName}\" ...");
+            var module = (IArchiveModule) Activator.CreateInstance(moduleType);
+
+            module.Patcher = new ArchivePatcher(HarmonyInstance, $"{moduleType.Assembly.GetName().Name}_{moduleType.FullName}_ArchivePatcher");
+            module.Core = this;
+
+            module.Init();
+
+            if(module.ApplyHarmonyPatches)
+            {
+                ArchiveLogger.Warning($"Applying regular Harmony patches on module \"{moduleType.FullName}\" ...");
+                HarmonyInstance.PatchAll(moduleType.Assembly);
+            }
+
+            modules.Add(module);
+            return module;
+        }
 
         public override void OnApplicationStart()
         {
             Instance = this;
 
-            var gameTypeString = MelonUtils.IsGameIl2Cpp() ? "IL2CPP" : "Mono";
-
-            Patcher = new ArchivePatcher(HarmonyInstance, $"Patcher_{gameTypeString}");
+            LoadConfig();
 
             var module = LoadModule(MelonUtils.IsGameIl2Cpp());
 
             var moduleMainType = module.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
 
-            _module = (IArchiveModule) Activator.CreateInstance(moduleMainType);
+            _mainModule = CreateAndInitModule(moduleMainType);
+        }
 
-            _module.Init(Patcher, Instance);
-
-            ArchiveLogger.Warning("Applying regular Harmony patches ...");
-            HarmonyInstance.PatchAll(moduleMainType.Assembly);
-
+        private void LoadConfig()
+        {
+            try
+            {
+                ArchiveLogger.Info("Loading config file ...");
+                var path = Path.Combine(MelonUtils.UserDataDirectory, "TheArchive_Settings.json");
+                if (File.Exists(path))
+                {
+                    Settings = JsonConvert.DeserializeObject<ArchiveSettings>(File.ReadAllText(path));
+                }
+                File.WriteAllText(path, JsonConvert.SerializeObject(Settings));
+            }
+            catch(Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
+            }
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            _module?.OnSceneWasLoaded(buildIndex, sceneName);
+            foreach(var module in modules)
+            {
+                module?.OnSceneWasLoaded(buildIndex, sceneName);
+            }
             base.OnSceneWasLoaded(buildIndex, sceneName);
         }
 
@@ -62,16 +179,54 @@ namespace TheArchive
         {
             CurrentRundown = rundownID;
 
-            if(rundownID != RundownID.RundownUnknown)
+            if(rundownID != RundownID.RundownUnitialized)
             {
-                Patcher.PatchRundownSpecificMethods(_module.GetType().Assembly);
+                foreach(var module in modules)
+                {
+                    module.Patcher.PatchRundownSpecificMethods(module.GetType().Assembly);
+                }
+                LoadSubModules();
             }
+        }
+
+        internal void UnpatchAll()
+        {
+            foreach(var module in modules)
+            {
+                UnpatchModule(module);
+            }
+        }
+
+        public void UnpatchModule(Type moduleType)
+        {
+            if (!moduleTypes.Contains(moduleType)) throw new ArgumentException($"Can't unpatch non patched module \"{moduleType.FullName}\".");
+
+            foreach(var module in modules)
+            {
+                if(module.GetType() == moduleType)
+                {
+                    UnpatchModule(module);
+                    return;
+                }
+            }
+
+            throw new ArgumentException($"Can't unpatch module \"{moduleType.FullName}\", module not found.");
+        }
+
+        public void UnpatchModule(IArchiveModule module)
+        {
+            module.Patcher.Unpatch();
+            module.OnExit();
+            modules.Remove(module);
+            moduleTypes.Remove(module.GetType());
         }
 
         public override void OnLateUpdate()
         {
-            _module?.OnLateUpdate();
-
+            foreach (var module in modules)
+            {
+                module?.OnLateUpdate();
+            }
             base.OnLateUpdate();
         }
 
@@ -101,5 +256,14 @@ namespace TheArchive
             }
         }
 
+        public List<Assembly> GetModulesAssemblys()
+        {
+            List<Assembly> assemblyList = new List<Assembly>();
+            foreach(var module in modules)
+            {
+                assemblyList.Add(module.GetType().Assembly);
+            }
+            return assemblyList;
+        }
     }
 }

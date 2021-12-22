@@ -9,7 +9,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
     public class CM_ItemPatches
     {
 
-        public static string[] BannedCellMenuItems = new string[]
+        /*public static string[] BannedCellMenuItems = new string[]
         {
             "Button Matchmake All"
             //"CM_TimedExpeditionButton(Clone)" // Matchmake button in popup
@@ -40,7 +40,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
                 __instance.m_matchButton.m_btnText.text = "Clear Expedition";
                 __instance.m_matchButton?.SetPosition(new UnityEngine.Vector2(-200000,0));
             }
-        }
+        }*/
 
     }
 

@@ -17,19 +17,17 @@ namespace TheArchive.HarmonyPatches.AutoPatches
         {
             public static bool Prefix(ref string __result, ref string path1, ref string path2)
             {
-                if(path2 == "GTFO_Settings.txt")
+                switch(path2)
                 {
-                    __result = LocalFiles.SettingsPath;
-                    return false;
+                    case "GTFO_Settings.txt":
+                        __result = LocalFiles.SettingsPath;
+                        return false;
+                    case "GTFO_Favorites.txt":
+                        __result = LocalFiles.FavoritesPath;
+                        return false;
+                    default:
+                        return true;
                 }
-
-                if (path2 == "GTFO_Favorites.txt")
-                {
-                    __result = LocalFiles.FavoritesPath;
-                    return false;
-                }
-
-                return true;
             }
         }
 

@@ -6,14 +6,31 @@ namespace TheArchive.Utilities
 {
     public class LocalFiles
     {
-        /*
-         * Global.RundownIdToLoad
-         * 17 = RD#001
-         * 19 = RD#002
-         * 22 = RD#003
-         * 25 = RD#004
-         * 26 = RD#005
-         */
+        private static int _buildNumber = -1;
+        public static int BuildNumber
+        {
+            get
+            {
+                if(_buildNumber == -1)
+                {
+                    try
+                    {
+                        var buildNumFilePath = Path.Combine(MelonUtils.GameDirectory, "revision.txt");
+                        var buildStringRaw = File.ReadAllLines(buildNumFilePath)[0];
+                        buildStringRaw = buildStringRaw.Replace(" ", ""); // remove the trailing space
+                        _buildNumber = int.Parse(buildStringRaw);
+                    }
+                    catch(Exception ex)
+                    {
+                        _buildNumber = 0;
+                        throw new Exception($"Couldn't load the current build / revision number from revisions.txt! - {ex}", ex);
+                    }
+                    
+                }
+                return _buildNumber;
+            }
+        }
+
 
         private static string _dataBlockDumpPath = null;
         public static string DataBlockDumpPath
@@ -22,7 +39,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_dataBlockDumpPath))
                 {
-                    _dataBlockDumpPath = Path.Combine(MelonLoader.MelonUtils.UserDataDirectory, $"DataBlocks_Rundown_{ArchiveMod.CurrentRundown}/");
+                    _dataBlockDumpPath = Path.Combine(MelonLoader.MelonUtils.UserDataDirectory, $"DataBlocks_Rundown_{ArchiveMod.CurrentRundown}_Build_{BuildNumber}/");
                     if (!Directory.Exists(_dataBlockDumpPath))
                         Directory.CreateDirectory(_dataBlockDumpPath);
                 }
@@ -101,17 +118,17 @@ namespace TheArchive.Utilities
             string path = Path.Combine(FilesDirectoryPath, filename);
             if (string.IsNullOrEmpty(jsonOrSomething))
             {
-                MelonLogger.Msg(ConsoleColor.DarkRed, $"Saving \"{filename}\" to disk failed because the data is null or empty! Path: {path}");
+                ArchiveLogger.Msg(ConsoleColor.DarkRed, $"Saving \"{filename}\" to disk failed because the data is null or empty! Path: {path}");
                 return;
             }
-            MelonLogger.Msg(ConsoleColor.Blue, $"Saving \"{filename}\" to disk at: {path}");
+            ArchiveLogger.Msg(ConsoleColor.Blue, $"Saving \"{filename}\" to disk at: {path}");
             File.WriteAllText(path, jsonOrSomething);
         }
 
         public static string LoadFromFilesDir(string filename, bool isJson = true)
         {
             string path = Path.Combine(FilesDirectoryPath, filename);
-            MelonLogger.Msg(ConsoleColor.Green, $"Loading \"{filename}\" from disk at: {path}");
+            ArchiveLogger.Msg(ConsoleColor.Green, $"Loading \"{filename}\" from disk at: {path}");
             if (!File.Exists(path))
                 return isJson ? "{}" : string.Empty;
             return File.ReadAllText(path);

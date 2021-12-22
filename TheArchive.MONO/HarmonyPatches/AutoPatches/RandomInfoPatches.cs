@@ -1,8 +1,14 @@
-﻿using Globals;
+﻿using Expedition;
+using GameData;
+using Globals;
 using HarmonyLib;
+using LevelGeneration;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using TheArchive.Utilities;
+using UnityEngine;
+using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive.HarmonyPatches.AutoPatches
 {
@@ -37,6 +43,5 @@ namespace TheArchive.HarmonyPatches.AutoPatches
                 }
             }
         }
-
     }
 }

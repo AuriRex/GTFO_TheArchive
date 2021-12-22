@@ -1,20 +1,18 @@
 ﻿using DropServer;
-using HarmonyLib;
 using Il2CppSystem.Threading;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using TenCC.Utils;
+using TheArchive.Core.Core;
 using TheArchive.Models;
 using TheArchive.Utilities;
+using static TheArchive.Core.ArchivePatcher;
 using IL2Tasks = Il2CppSystem.Threading.Tasks;
 
-namespace TheArchive.HarmonyPatches.AutoPatches
+namespace TheArchive.HarmonyPatches.Patches
 {
+    [BindPatchToSetting(nameof(ArchiveSettings.EnableLocalProgressionPatches), "LocalProgression")]
     public class DropServerPatches
     {
 
@@ -80,7 +78,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
 
 
         //m_titleDataSettings
-        [HarmonyPatch(typeof(DropServerManager), nameof(DropServerManager.Setup))]
+        [ArchivePatch(typeof(DropServerManager), nameof(DropServerManager.Setup))]
         public static class DropServerManager_SetupPatch
         {
             public static void Postfix(ref DropServerManager __instance)
@@ -99,7 +97,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
 
         //public unsafe Task<RundownProgression> GetRundownProgressionAsync(string rundownName, CancellationToken cancellationToken, [Optional] Il2CppSystem.Action<Task<RundownProgression>> callback)
         // TODO: UNCOMMENT THIS PATCH!!!!
-        [HarmonyPatch(typeof(DropServerManager), nameof(DropServerManager.GetRundownProgressionAsync))]
+        [ArchivePatch(typeof(DropServerManager), nameof(DropServerManager.GetRundownProgressionAsync))]
         public static class DropServerManager_GetRundownProgressionAsyncPatch
         {
             public static bool Prefix(ref IL2Tasks.Task<RundownProgression> __result, string rundownName, CancellationToken cancellationToken, [Optional] Il2CppSystem.Action<Il2CppSystem.Threading.Tasks.Task<RundownProgression>> callback)

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System;
 using UnhollowerRuntimeLib;
 
-namespace TheArchive.Models
+namespace TheArchive.IL2CPP.R5.Models
 {
     public class CustomBoosterImplant
     {

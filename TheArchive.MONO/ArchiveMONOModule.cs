@@ -10,9 +10,16 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive
 {
-    public class ArchiveModule : IArchiveModule
+    public class ArchiveMONOModule : IArchiveModule
     {
         public static SharedCoroutineStarter CoroutineHelper { get; private set; } = null;
+
+        public bool ApplyHarmonyPatches => true;
+
+        public ArchivePatcher Patcher { get; set; }
+        public ArchiveMod Core { get; set; }
+
+        public string[] SubModules => null;
 
         public static event Action<uint> OnAfterStartMainGameAwake;
 
@@ -27,23 +34,17 @@ namespace TheArchive
             }
         }
 
-        internal static ArchiveModule instance;
+        internal static ArchiveMONOModule instance;
 
-        private ArchivePatcher _patcher;
-        private ArchiveMod _core;
-
-        public void Init(ArchivePatcher patcher, ArchiveMod core)
+        public void Init()
         {
-            _core = core;
-            _patcher = patcher;
-
             instance = this;
 
             CrashReportHandler.SetUserMetadata("Modded", "true");
             CrashReportHandler.enableCaptureExceptions = false;
 
             OnAfterStartMainGameAwake += (rundownId) => {
-                _core.SetCurrentRundownAndPatch(IntToRundownEnum((int) rundownId));
+                Core.SetCurrentRundownAndPatch(IntToRundownEnum((int) rundownId));
             };
         }
 
@@ -63,7 +64,6 @@ namespace TheArchive
 #if DEBUG
         private bool state = false;
 #endif
-        //public bool HudIsVisible { get; set; } = true;
 
         public void OnLateUpdate()
         {
@@ -109,6 +109,10 @@ namespace TheArchive
 
         }
 
+        public void OnExit()
+        {
+
+        }
 
         [HarmonyPatch(typeof(StartMainGame), "Awake")]
         internal static class StartMainGame_AwakePatch
@@ -117,7 +121,7 @@ namespace TheArchive
             {
                 // This only works on R3 and below
                 var rundownId = Global.RundownIdToLoad;
-                //Global.RundownIdToLoad = 17;
+                Global.RundownIdToLoad = 17;
 
                 /*if(rundownId != 17)
                     AllowFullRundown();*/

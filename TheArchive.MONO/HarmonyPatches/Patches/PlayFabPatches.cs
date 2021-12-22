@@ -177,13 +177,13 @@ namespace TheArchive.HarmonyPatches.Patches
                     ___m_loggedIn = true;
 
                     ArchiveLogger.Info("Starting point one second timer.");
-                    ArchiveModule.CoroutineHelper.StartCoroutine(MonoUtils.DoAfter(.1f, () => {
+                    ArchiveMONOModule.CoroutineHelper.StartCoroutine(MonoUtils.DoAfter(.1f, () => {
                         ArchiveLogger.Info("Calling event OnAllPlayerEntityFilesLoaded() ...");
                         MonoUtils.CallEvent<PlayFabManager>("OnAllPlayerEntityFilesLoaded");
                     }));
 
                     ArchiveLogger.Msg("Starting point two second timer.");
-                    ArchiveModule.CoroutineHelper.StartCoroutine(MonoUtils.DoAfter(.2f, () => {
+                    ArchiveMONOModule.CoroutineHelper.StartCoroutine(MonoUtils.DoAfter(.2f, () => {
                         ArchiveLogger.Info("Calling event OnLoginSucess() ...");
                         MonoUtils.CallEvent<PlayFabManager>("OnLoginSuccess");
                     }));

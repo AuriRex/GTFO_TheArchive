@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheArchive.Core", "TheArchi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheArchive.IL2CPP", "TheArchive.IL2CPP\TheArchive.IL2CPP.csproj", "{65BB64DC-68AB-4543-B176-7BF2FA8488BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheArchive.IL2CPP.R5", "TheArchive.IL2CPP.R5\TheArchive.IL2CPP.R5.csproj", "{65D08CBC-E1BA-4358-88B8-5EDC529005A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheArchive.IL2CPP.R6", "TheArchive.IL2CPP.R6\TheArchive.IL2CPP.R6.csproj", "{A13776AA-7033-4424-9500-90CA9E6F7BA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{65BB64DC-68AB-4543-B176-7BF2FA8488BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65BB64DC-68AB-4543-B176-7BF2FA8488BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65BB64DC-68AB-4543-B176-7BF2FA8488BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65D08CBC-E1BA-4358-88B8-5EDC529005A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65D08CBC-E1BA-4358-88B8-5EDC529005A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65D08CBC-E1BA-4358-88B8-5EDC529005A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65D08CBC-E1BA-4358-88B8-5EDC529005A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A13776AA-7033-4424-9500-90CA9E6F7BA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A13776AA-7033-4424-9500-90CA9E6F7BA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A13776AA-7033-4424-9500-90CA9E6F7BA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A13776AA-7033-4424-9500-90CA9E6F7BA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

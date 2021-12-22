@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheArchive.HarmonyPatches.AutoPatches;
+using TheArchive.HarmonyPatches.Patches;
 
 namespace TheArchive.Managers
 {

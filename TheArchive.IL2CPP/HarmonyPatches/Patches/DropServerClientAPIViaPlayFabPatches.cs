@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using TheArchive.Core.Core;
 using TheArchive.Managers;
 using TheArchive.Models;
 using TheArchive.Utilities;
@@ -15,11 +16,14 @@ using static TheArchive.Utilities.Il2CppUtils;
 using static TheArchive.Utilities.Utils;
 using IL2Tasks = Il2CppSystem.Threading.Tasks;
 
-namespace TheArchive.HarmonyPatches.AutoPatches
+namespace TheArchive.HarmonyPatches.Patches
 {
+    [BindPatchToSetting(nameof(ArchiveSettings.EnableLocalProgressionPatches), "LocalProgression")]
     public class DropServerClientAPIViaPlayFabPatches
     {
+        [Obsolete]
         public static bool EnableCustomProgressionPatch { get; set; } = true;
+        [Obsolete]
         public static bool EnableCustomBoosterProgressionPatch { get; set; } = true;
 
         // Rundown 4
@@ -45,8 +49,27 @@ namespace TheArchive.HarmonyPatches.AutoPatches
         // -public unsafe Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request)
         // +public unsafe Task<EndSessionResult> EndSessionAsync(EndSessionRequest request)
 
+        // Rundown 6
+        // -public Task<AddResult> AddAsync(AddRequest request)
+        // -public Task<IsTesterResult> IsTesterAsync(IsTesterRequest request)
+        // -public Task<RundownProgressionResult> RundownProgressionAsync(RundownProgressionRequest request)
+        // -public Task<ClearRundownProgressionResult> ClearRundownProgressionAsync(ClearRundownProgressionRequest request)
+        // -public Task<GetBoosterImplantPlayerDataResult> GetBoosterImplantPlayerDataAsync(GetBoosterImplantPlayerDataRequest request)
+        // -public Task<UpdateBoosterImplantPlayerDataResult> UpdateBoosterImplantPlayerDataAsync(UpdateBoosterImplantPlayerDataRequest request)
+        // -public Task<DebugBoosterImplantResult> DebugBoosterImplantAsync(DebugBoosterImplantRequest request)
+        // -public Task<NewSessionResult> NewSessionAsync(NewSessionRequest request)
+        // -public Task<LayerProgressionResult> LayerProgressionAsync(LayerProgressionRequest request)
+        // -public Task<ConsumeBoostersResult> ConsumeBoostersAsync(ConsumeBoostersRequest request)
+        // -public Task<EndSessionResult> EndSessionAsync(EndSessionRequest request)
+        // REMOVED ExpeditionSuccessResult
+        // +public Task<GetInventoryPlayerDataResult> GetInventoryPlayerDataAsync(GetInventoryPlayerDataRequest request)
+        // +public Task<UpdateVanityItemPlayerDataResult> UpdateVanityItemPlayerDataAsync(UpdateVanityItemPlayerDataRequest request)
+        // +public Task<DebugVanityItemResult> DebugVanityItemAsync(DebugVanityItemRequest request)
+
+        // ----------------------------------------
+
         // public unsafe Task<GetBoosterImplantPlayerDataResult> GetBoosterImplantPlayerDataAsync(GetBoosterImplantPlayerDataRequest request)
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetBoosterImplantPlayerDataAsync), RundownFlags.RundownFive)]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetBoosterImplantPlayerDataAsync), RundownFlags.RundownFive, RundownFlags.Latest)]
         public static class DropServerClientAPI_GetBoosterImplantPlayerDataAsyncPatch
         {
             public static bool Prefix(GetBoosterImplantPlayerDataRequest request, ref IL2Tasks.Task<GetBoosterImplantPlayerDataResult> __result)
@@ -60,8 +83,9 @@ namespace TheArchive.HarmonyPatches.AutoPatches
                     var result = new GetBoosterImplantPlayerDataResult();
 
                     // NativeFieldInfoPtr_Data
-                    Utilities.Il2CppUtils.SetFieldUnsafe(result, bipd, nameof(GetBoosterImplantPlayerDataResult.Data));
-                    //result.Data = bipd;
+#warning TODO
+                    //Utilities.Il2CppUtils.SetFieldUnsafe(result, bipd, nameof(GetBoosterImplantPlayerDataResult.Data));
+                    // old-- result.Data = bipd;
 
                     __result = IL2Tasks.Task.FromResult(result);
                     return false;
@@ -79,22 +103,21 @@ namespace TheArchive.HarmonyPatches.AutoPatches
         }
 
         // public unsafe Task<UpdateBoosterImplantPlayerDataResult> UpdateBoosterImplantPlayerDataAsync(UpdateBoosterImplantPlayerDataRequest request)
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.UpdateBoosterImplantPlayerDataAsync), RundownFlags.RundownFive)]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.UpdateBoosterImplantPlayerDataAsync), RundownFlags.RundownFive, RundownFlags.Latest)]
         public static class DropServerClientAPI_UpdateBoosterImplantPlayerDataAsyncPatch
         {
             // called everytime a new booster is selected for the first time to update the value / missed boosters are aknowledged / a booster has been dropped
             public static bool Prefix(UpdateBoosterImplantPlayerDataRequest request, ref IL2Tasks.Task<UpdateBoosterImplantPlayerDataResult> __result)
             {
-                var str = BoosterJustPrintThatShit.Transaction(request.Transaction);
+                var str = "";// BoosterJustPrintThatShit.Transaction(request.Transaction);
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(UpdateBoosterImplantPlayerDataRequest)}: Transaction:<{str}>");
 
                 if(EnableCustomBoosterProgressionPatch)
                 {
                     var result = new UpdateBoosterImplantPlayerDataResult();
 
-                    var value = CustomBoosterManager.Instance.UpdateBoosterImplantPlayerData(request.Transaction);
-                    Utilities.Il2CppUtils.SetFieldUnsafe(result, value, nameof(UpdateBoosterImplantPlayerDataResult.Data));
-                    // result.Data = 
+                    /*var value = CustomBoosterManager.Instance.UpdateBoosterImplantPlayerData(request.Transaction);
+                    Utilities.Il2CppUtils.SetFieldUnsafe(result, value, nameof(UpdateBoosterImplantPlayerDataResult.Data));*/
 
                     __result = IL2Tasks.Task.FromResult(result);
                     return false;
@@ -108,13 +131,13 @@ namespace TheArchive.HarmonyPatches.AutoPatches
             {
                 var result = __result.Result;
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> received {nameof(UpdateBoosterImplantPlayerDataResult)}: Data:{result.Data}");
-                var str = BoosterJustPrintThatShit.GetJSON(result.Data);
-                ArchiveLogger.Msg(ConsoleColor.DarkYellow, str);
+                /*var str = BoosterJustPrintThatShit.GetJSON(result.Data);
+                ArchiveLogger.Msg(ConsoleColor.DarkYellow, str);*/
             }
         }
 
         // public unsafe Task<ConsumeBoostersResult> ConsumeBoostersAsync(ConsumeBoostersRequest request)
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.ConsumeBoostersAsync), RundownFlags.RundownFive)]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.ConsumeBoostersAsync), RundownFlags.RundownFive, RundownFlags.Latest)]
         public static class DropServerClientAPI_ConsumeBoostersAsyncPatch
         {
             public static bool Prefix(ConsumeBoostersRequest request, ref IL2Tasks.Task<ConsumeBoostersResult> __result)
@@ -145,7 +168,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
         }
 
         // public unsafe Task<EndSessionResult> EndSessionAsync(EndSessionRequest request)
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.EndSessionAsync), RundownFlags.RundownFive)]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.EndSessionAsync), RundownFlags.RundownFive, RundownFlags.Latest)]
         public static class DropServerClientAPI_EndSessionAsyncPatch
         {
             public static bool Prefix(EndSessionRequest request, ref IL2Tasks.Task<EndSessionResult> __result)
@@ -198,7 +221,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
             }
         }*/
 
-        [HarmonyPatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.NewSessionAsync))]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.NewSessionAsync))]
         public static class DropServerClientAPI_NewSessionAsyncPatch
         {
             public static bool Prefix(NewSessionRequest request, ref IL2Tasks.Task<NewSessionResult> __result)
@@ -239,7 +262,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
             }
         }
 
-        [HarmonyPatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.LayerProgressionAsync))]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.LayerProgressionAsync))]
         public static class DropServerClientAPI_LayerProgressionAsyncPatch
         {
             public static bool Prefix(LayerProgressionRequest request, ref IL2Tasks.Task<LayerProgressionResult> __result)
@@ -268,35 +291,12 @@ namespace TheArchive.HarmonyPatches.AutoPatches
             }
         }
 
+        // Does not appear to be called in R5 anymore, removed in R6
         //public unsafe Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request, [Optional] RequestContext context)
-        [HarmonyPatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.ExpeditionSuccessAsync))]
-        public static class DropServerClientAPI_ExpeditionSuccessAsyncPatch
-        {
-            public static bool Prefix(ExpeditionSuccessRequest request, ref IL2Tasks.Task<ExpeditionSuccessResult> __result)
-            {
-                if(request != null)
-                ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(ExpeditionSuccessRequest)}: Request:{request}");
-
-                if (EnableCustomProgressionPatch)
-                {
-                    CustomProgressionManager.Instance.CompleteCurrentActiveExpedition();
-
-                    CustomProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
-
-
-                    var result = new ExpeditionSuccessResult();
-
-                    __result = IL2Tasks.Task.FromResult(result);
-
-                    return false;
-                }
-
-                return true; 
-            }
-        }
+        // Moved to TheArchive.IL2CPP.R5
 
         //public unsafe Task<RundownProgressionResult> RundownProgressionAsync(RundownProgressionRequest request, [Optional] RequestContext context)
-        [HarmonyPatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.RundownProgressionAsync))]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.RundownProgressionAsync))]
         public static class DropServerClientAPI_RundownProgressionAsyncPatch
         {
             public static bool Prefix(RundownProgressionRequest request, ref IL2Tasks.Task<RundownProgressionResult> __result)
@@ -318,7 +318,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
         }
 
         //public unsafe Task<ClearRundownProgressionResult> ClearRundownProgressionAsync(ClearRundownProgressionRequest request, [Optional] RequestContext context)
-        [HarmonyPatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.ClearRundownProgressionAsync))]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.ClearRundownProgressionAsync))]
         public static class DropServerClientAPI_ClearRundownProgressionAsyncPatch
         {
             public static bool Prefix(ClearRundownProgressionRequest request, ref IL2Tasks.Task<ClearRundownProgressionResult> __result)
@@ -339,7 +339,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
         }
 
         //public unsafe Task<IsTesterResult> IsTesterAsync(IsTesterRequest request, [Optional] RequestContext context)
-        [HarmonyPatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.IsTesterAsync))]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.IsTesterAsync))]
         public static class DropServerClientAPI_IsTesterAsyncPatch
         {
             public static bool Prefix(IsTesterRequest request, ref IL2Tasks.Task<IsTesterResult> __result)
@@ -363,7 +363,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
         }
 
         //public unsafe Task<AddResult> AddAsync(AddRequest request, [Optional] RequestContext context)
-        [HarmonyPatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.AddAsync))]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.AddAsync))]
         public static class DropServerClientAPI_AddAsyncPatch
         {
             public static bool Prefix(AddRequest request, ref IL2Tasks.Task<AddResult> __result)

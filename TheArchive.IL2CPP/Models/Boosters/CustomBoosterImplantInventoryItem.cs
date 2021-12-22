@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheArchive.Models
+namespace TheArchive.Models.Boosters
 {
     public class CustomBoosterImplantInventoryItem
     {
@@ -17,7 +17,8 @@ namespace TheArchive.Models
         {
             Touched = implantItem?.Touched ?? false;
             Prepared = implantItem?.Prepared ?? false;
-            Implant = new CustomBoosterImplant(implantItem?.Implant);
+#warning TODO
+            Implant = null;/* TODO */ // new CustomBoosterImplant(implantItem?.Implant);
             InstanceId = implantItem?.InstanceId ?? 0;
         }
 

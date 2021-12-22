@@ -7,12 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using UnhollowerRuntimeLib;
 
-namespace TheArchive.Models
+namespace TheArchive.Models.Boosters
 {
     public class BoosterJustPrintThatShit
     {
-
-        public static string GetJSON(DropServer.BoosterImplantPlayerData data)
+#warning TODO
+        /*public static string GetJSON(DropServer.BoosterImplantPlayerData data)
         {
 
             var cd = new CustomBoosterImplantPlayerData(data);
@@ -25,9 +25,9 @@ namespace TheArchive.Models
         public static DropServer.BoosterImplantPlayerData Test(CustomBoosterImplantPlayerData data)
         {
             return data.ToBaseGame();
-        }
+        }*/
 
-        public static string Transaction(BoosterImplantTransaction transaction)
+        public static string Transaction(CustomBoosterTransaction transaction)
         {
             if (transaction == null) return "[!! Transaction was empty !!]";
 

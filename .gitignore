@@ -15,15 +15,26 @@ _R_LATEST/*
 _R_LATEST/MelonLoader/*
 _R_LATEST/MelonLoader/Managed/*
 
+_R_RD005/*
+_R_RD005/MelonLoader/*
+_R_RD005/GTFO_Data/*
+_R_RD005/GTFO_Data/Managed/*
+
 _R_RD003/*
 _R_RD003/MelonLoader/*
 _R_RD003/GTFO_Data/*
 _R_RD003/GTFO_Data/Managed/*
 
 TheArchive.Core/Resources/*
+TheArchive.IL2CPP/Resources/*
 
 !_R_LATEST/MelonLoader/
 !_R_LATEST/MelonLoader/Managed/
+
+!_R_RD005/
+!_R_RD005/MelonLoader/
+!_R_RD005/GTFO_Data/
+!_R_RD005/GTFO_Data/Managed/
 
 !_R_RD003/
 !_R_RD003/MelonLoader/

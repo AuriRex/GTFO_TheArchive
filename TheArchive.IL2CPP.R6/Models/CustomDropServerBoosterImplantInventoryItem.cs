@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnhollowerRuntimeLib;
 
-namespace TheArchive.Models
+namespace TheArchive.IL2CPP.R6.Models
 {
     public class CustomDropServerBoosterImplantInventoryItem : CustomBoosterImplant
     {
@@ -21,12 +21,12 @@ namespace TheArchive.Models
 
         }
 
-        public CustomDropServerBoosterImplantInventoryItem(DropServer.BoosterImplantInventoryItem boosterImplantInventoryItem) : base(boosterImplantInventoryItem)
+        public CustomDropServerBoosterImplantInventoryItem(DropServer.BoosterImplants.BoosterImplantInventoryItem boosterImplantInventoryItem) : base(boosterImplantInventoryItem)
         {
             SetFromBaseGame(boosterImplantInventoryItem);
         }
 
-        public DropServer.BoosterImplantInventoryItem ToBaseGame()
+        public DropServer.BoosterImplants.BoosterImplantInventoryItem ToBaseGame()
         {
             var biii = base.ToBaseGameInventoryItem();
 
@@ -35,7 +35,7 @@ namespace TheArchive.Models
             return biii;
         }
 
-        public void SetFromBaseGame(DropServer.BoosterImplantInventoryItem implantItem)
+        public void SetFromBaseGame(DropServer.BoosterImplants.BoosterImplantInventoryItem implantItem)
         {
             Flags = implantItem.Flags;
             IsTouched = implantItem.IsTouched;

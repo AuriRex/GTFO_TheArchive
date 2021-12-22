@@ -8,7 +8,7 @@ using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
 using static DropServer.BoosterImplantPlayerData;
 
-namespace TheArchive.Models
+namespace TheArchive.IL2CPP.R5.Models
 {
     public class CustomBoosterImplantPlayerData
     {

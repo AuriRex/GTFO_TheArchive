@@ -37,6 +37,9 @@
       <HintPath>..\_R_LATEST\MelonLoader\MelonLoader.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\_R_LATEST\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,6 +51,7 @@
     <Compile Include="Core\ArchiveSettings.cs" />
     <Compile Include="Core\IArchiveModule.cs" />
     <Compile Include="Core\ArchivePatcher.cs" />
+    <Compile Include="Core\SubModuleAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ArchiveLogger.cs" />
     <Compile Include="Utilities\GTFOLogger.cs" />

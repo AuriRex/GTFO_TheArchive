@@ -9,10 +9,13 @@ namespace TheArchive.Core
 {
     public interface IArchiveModule
     {
+        bool ApplyHarmonyPatches { get; }
+        ArchivePatcher Patcher { get; set; }
+        ArchiveMod Core { get; set; }
 
-        void Init(ArchivePatcher patcher, ArchiveMod core);
+        void Init();
         void OnSceneWasLoaded(int buildIndex, string sceneName);
         void OnLateUpdate();
-
+        void OnExit();
     }
 }

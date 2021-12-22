@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using TheArchive.Models;
+using TheArchive.Models.Boosters;
 using TheArchive.Utilities;
 
 namespace TheArchive.Managers
@@ -69,8 +70,9 @@ namespace TheArchive.Managers
             SaveToBoosterFile(CustomBoosterImplantPlayerData);
         }
 
+#warning TODO
         // called everytime a new booster is selected for the first time to update the value / missed boosters are aknowledged / a booster has been dropped
-        public BoosterImplantPlayerData UpdateBoosterImplantPlayerData(BoosterImplantTransaction transaction)
+        public object UpdateBoosterImplantPlayerData(CustomBoosterTransaction transaction) // returns basegame BoosterImplantPlayerData
         {
             if (transaction.DropIds != null)
                 CustomBoosterImplantPlayerData.DropBoostersWithIds(transaction.DropIds.ToArray());
@@ -85,13 +87,14 @@ namespace TheArchive.Managers
                 CustomBoosterImplantPlayerData.AcknowledgeMissedBoostersWithIds(transaction.AcknowledgeMissed);
 
             SaveBoostersToDisk();
-            return CustomBoosterImplantPlayerData.ToBaseGame();
+            return null; //CustomBoosterImplantPlayerData.ToBaseGame();
         }
 
-        public BoosterImplantPlayerData GetBoosterImplantPlayerData(uint maxBackendTemplateId)
+#warning TODO
+        public object GetBoosterImplantPlayerData(uint maxBackendTemplateId) // returns basegame BoosterImplantPlayerData
         {
             SaveBoostersToDisk();
-            return CustomBoosterImplantPlayerData.ToBaseGame();
+            return null; // CustomBoosterImplantPlayerData.ToBaseGame();
         }
 
         public void ConsumeBoosters(string sessionBlob)

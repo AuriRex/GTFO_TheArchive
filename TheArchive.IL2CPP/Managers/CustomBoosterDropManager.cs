@@ -1,15 +1,11 @@
 ﻿using GameData;
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using TheArchive.Models;
+using TheArchive.Models.Boosters;
 using TheArchive.Utilities;
-using UnityEngine;
 
 namespace TheArchive.Managers
 {
@@ -49,42 +45,6 @@ namespace TheArchive.Managers
             Conditions = BoosterImplantConditionDataBlock.GetAllBlocks().ToArray();
 
             ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(CustomBoosterDropManager)}.{nameof(Setup)}() complete, retrieved {MutedTemplates.Length} Muted, {BoldTemplates.Length} Bold and {AgrressiveTemplates.Length} Agrressive Templates as well as {Effects.Length} Effects and {Conditions.Length} Conditions.");
-        }
-
-        public void DumpDataBlocksToDisk()
-        {
-            ArchiveLogger.Msg(ConsoleColor.Green, $"{nameof(CustomBoosterDropManager)} setting up ...");
-            try
-            {
-                var AllTypesOfGameDataBlockBase = from x in Assembly.GetAssembly(typeof(EnemyDataBlock)).GetTypes()
-                                                  let y = x.BaseType
-                                                  where !x.IsAbstract && !x.IsInterface &&
-                                                  y != null && y.IsGenericType &&
-                                                  y.GetGenericTypeDefinition() == typeof(GameDataBlockBase<>)
-                                                  select x;
-
-                foreach (var type in AllTypesOfGameDataBlockBase)
-                {
-                    ArchiveLogger.Msg(ConsoleColor.DarkGreen, $"> {type.FullName}");
-
-                    var genericType = typeof(GameDataBlockBase<>).MakeGenericType(type);
-
-                    string fileContents = (string) genericType.GetMethod("GetFileContents").Invoke(null, new object[0]);
-                    
-
-                    var path = Path.Combine(LocalFiles.DataBlockDumpPath, type.Name + ".json");
-
-                    ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"  > Writing to file: {path}");
-
-                    File.WriteAllText(path, fileContents);
-                }
-            }
-            catch(Exception ex)
-            {
-                ArchiveLogger.Error(ex.Message);
-                ArchiveLogger.Error(ex.StackTrace);
-            }
-            
         }
 
         public void Test()

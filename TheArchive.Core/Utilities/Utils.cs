@@ -108,8 +108,21 @@ namespace TheArchive.Utilities
             return 0;
         }
 
+        /*
+         * Global.RundownIdToLoad
+         * 17 = RD#001
+         * 19 = RD#002
+         * 22 = RD#003
+         * 25 = RD#004
+         * 26 = RD#005
+         * 29 = RD#006
+         */
+
         public enum RundownID : int
         {
+            [Value(-1)]
+            RundownUnitialized = 0,
+            [Value(0)]
             RundownUnknown = 1,
             [Value(1)]
             RundownOne = 17,
@@ -120,7 +133,9 @@ namespace TheArchive.Utilities
             [Value(4)]
             RundownFour = 25,
             [Value(5)]
-            RundownFive = 26
+            RundownFive = 26,
+            [Value(6)]
+            RundownSix = 29,
         }
 
         [Flags]
@@ -132,7 +147,9 @@ namespace TheArchive.Utilities
             RundownThree = 1 << 2,
             RundownFour = 1 << 3,
             RundownFive = 1 << 4,
-            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive,
+            RundownSix = 1 << 5,
+            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive | RundownSix,
+            Latest = RundownSix,
         }
 
         public static bool FlagsContain(RundownFlags flags, RundownID id)
