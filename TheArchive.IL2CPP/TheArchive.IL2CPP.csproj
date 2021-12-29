@@ -281,9 +281,9 @@
     <Compile Include="HarmonyPatches\AutoPatches\CM_PageMatchmakingPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerClientAPIViaPlayFabPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerPatches.cs" />
-    <Compile Include="HarmonyPatches\AutoPatches\PlayfabMatchmakingManagerPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\PlayfabMatchmakingManagerPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
-    <Compile Include="HarmonyPatches\AutoPatches\RundownManagerPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\UnityLoggerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\HudTogglePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\QualityOfLifePatches.cs" />
@@ -299,7 +299,7 @@
     <Compile Include="Models\Boosters\CustomDropServerBoosterImplantInventoryItem.cs" />
     <Compile Include="Models\CustomBoosterTransaction.cs" />
     <Compile Include="Models\CustomRundownProgression.cs" />
-    <Compile Include="HarmonyPatches\AutoPatches\AnalyticsPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\AnalyticsPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Il2CppUtils.cs" />

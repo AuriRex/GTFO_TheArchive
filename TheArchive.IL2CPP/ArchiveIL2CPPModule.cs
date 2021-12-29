@@ -2,6 +2,7 @@
 using Globals;
 using HarmonyLib;
 using MelonLoader;
+using Player;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -77,6 +78,8 @@ namespace TheArchive
 
         }
 
+        private bool enableVoiceBinds = false;
+
         public void OnLateUpdate()
         {
             if (Input.GetKeyDown(KeyCode.F1) && ArchiveMod.Settings.EnableHudToggle)
@@ -89,6 +92,79 @@ namespace TheArchive
             }
 
 #if DEBUG
+            if(Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                var localPlayer = PlayerManager.GetLocalPlayerAgent();
+                
+                PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_LEFT);
+            }
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                var localPlayer = PlayerManager.GetLocalPlayerAgent();
+
+                PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_RIGHT);
+            }
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                var localPlayer = PlayerManager.GetLocalPlayerAgent();
+
+                PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_YES);
+            }
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                var localPlayer = PlayerManager.GetLocalPlayerAgent();
+
+                PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_NO);
+            }
+            if(enableVoiceBinds)
+            {
+                if (Input.GetKeyDown(KeyCode.L))
+                {
+                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
+
+                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_NICE);
+                }
+                if (Input.GetKeyDown(KeyCode.K))
+                {
+                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
+
+                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_SORRY);
+                }
+                if (Input.GetKeyDown(KeyCode.J))
+                {
+                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
+
+                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_WELLDONE);
+                }
+
+                if (Input.GetKeyDown(KeyCode.P))
+                {
+                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
+
+                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_THANKYOU);
+                }
+                if (Input.GetKeyDown(KeyCode.U))
+                {
+                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
+
+                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.SCOUT_DETECT_SCREAM_CHARGE);
+                }
+                if (Input.GetKeyDown(KeyCode.Z))
+                {
+                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
+
+                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.SCOUT_DETECT_SCREAM);
+                }
+
+                if (Input.GetKeyDown(KeyCode.H))
+                {
+                    HarmonyPatches.Patches.OtherPatches.UnityEngine_RandomPatchOne.SetSeed = 1;
+                    PlayerVoiceManager.WantToSay(2, AK.EVENTS.PLAY_FALLDAMAGEGRUNT02_5A);
+                }
+            }
+            
+
+
             if (Input.GetKeyDown(KeyCode.F10))
             {
                 FocusStateManager.ToggleFreeflight();
@@ -97,6 +173,11 @@ namespace TheArchive
             if (Input.GetKeyDown(KeyCode.F9))
             {
                 FocusStateManager.ToggleDebugMenu();
+            }
+            if (Input.GetKeyDown(KeyCode.F8))
+            {
+                enableVoiceBinds = !enableVoiceBinds;
+                ArchiveLogger.Notice($"Voice binds enabled: {enableVoiceBinds}");
             }
 #endif
         }

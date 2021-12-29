@@ -65,6 +65,7 @@ namespace TheArchive.Core
                     {
                         try
                         {
+#warning TODO: Apparently doesn't work on types from submodules? :x
                             var containerTypeName = type.FullName.Split('.').Last().Split('+')?.First();
                             var containerType = type.Assembly.GetType($"{type.Namespace}.{containerTypeName}");
                             bindPatchToSettingsInfo = containerType?.GetCustomAttribute<BindPatchToSetting>();
