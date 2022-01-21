@@ -45,7 +45,7 @@ namespace TheArchive.Utilities
             {
                 foreach (var handler in eventDelegate.GetInvocationList())
                 {
-                    MelonLogger.Msg(ConsoleColor.DarkMagenta, $"event {typeof(T)}.{eventPropertyName} calling: {handler.Method.DeclaringType.Name}.{handler.Method.Name}()");
+                    ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"event {typeof(T)}.{eventPropertyName} calling: {handler.Method.DeclaringType.Name}.{handler.Method.Name}()");
                     handler.Method.Invoke(handler.Target, null);
                 }
             }

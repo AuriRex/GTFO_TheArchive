@@ -17,6 +17,13 @@ namespace TheArchive.Utilities
             }
         }
 
+        public static bool LogDebug { get; set; }
+#if DEBUG
+            = true;
+#else
+            = false;
+#endif
+
 
         public static void Success(string msg)
         {
@@ -31,6 +38,12 @@ namespace TheArchive.Utilities
         public static void Msg(ConsoleColor col, string msg)
         {
             Logger.Msg(col, msg);
+        }
+
+        public static void Debug(string msg)
+        {
+            if (!LogDebug) return;
+            Logger.Msg(ConsoleColor.Gray, msg);
         }
 
         public static void Info(string msg)

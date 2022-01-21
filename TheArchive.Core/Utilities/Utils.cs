@@ -102,12 +102,6 @@ namespace TheArchive.Utilities
             }
         }
 
-        public static int RundownIDToNumber(RundownID rundown)
-        {
-            switch(rundown) { }
-            return 0;
-        }
-
         /*
          * Global.RundownIdToLoad
          * 17 = RD#001
