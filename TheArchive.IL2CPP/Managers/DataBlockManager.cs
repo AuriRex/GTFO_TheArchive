@@ -1,5 +1,6 @@
 ﻿using GameData;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -47,16 +48,47 @@ namespace TheArchive.Managers
                 {
                     ArchiveLogger.Msg(ConsoleColor.DarkGreen, $"> {type.FullName}");
 
+                    var path = Path.Combine(LocalFiles.DataBlockDumpPath, type.Name + ".json");
+
                     var genericType = typeof(GameDataBlockBase<>).MakeGenericType(type);
 
                     string fileContents = (string) genericType.GetMethod("GetFileContents").Invoke(null, new object[0]);
 
+                    if (ArchiveMod.Settings.AlwaysOverrideDataBlocks || !File.Exists(path))
+                    {
+                        ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"  > Writing to file: {path}");
 
-                    var path = Path.Combine(LocalFiles.DataBlockDumpPath, type.Name + ".json");
+                        File.WriteAllText(path, fileContents);
+                    }
 
-                    ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"  > Writing to file: {path}");
+                    if (type != typeof(PlayerOfflineGearDataBlock) || !ArchiveMod.Settings.EnableDisabledGear)
+                    {
+                        continue;
+                    }
 
-                    File.WriteAllText(path, fileContents);
+                    ArchiveLogger.Msg(ConsoleColor.Green, $"Enabling disabled gear");
+
+                    var wrapperType = typeof(GameDataBlockWrapper<>).MakeGenericType(type);
+                    var wrapper = genericType.GetProperty("Wrapper").GetValue(null);
+
+                    // List<DataBlockType>
+                    var blocks = (Il2CppSystem.Collections.Generic.List<PlayerOfflineGearDataBlock>) wrapperType.GetProperty("Blocks").GetValue(wrapper);
+
+                    foreach (var block in blocks)
+                    {
+                        if (block.name == "Mine_Deployer_Glue")
+                        {
+                            block.GearJSON = "{\"Ver\": 1,\"Name\": \"MineDeployer Glue\",\"Packet\": {\"Comps\": {\"Length\": 9,\"a\": {\"c\": 2,\"v\": 13},\"b\": {\"c\": 3,\"v\": 37},\"c\": {\"c\": 4,\"v\": 14},\"d\": {\"c\": 27,\"v\": 12},\"e\": {\"c\": 30,\"v\": 2},\"f\": {\"c\": 33,\"v\": 2},\"g\": {\"c\": 36,\"v\": 1},\"h\": {\"c\": 37,\"v\": 1},\"i\": {\"c\": 40,\"v\": 1},\"j\": {\"c\": 42,\"v\": 2}},\"MatTrans\": {\"tDecalA\": {\"scale\": 0.1},\"tDecalB\": {\"scale\": 0.1},\"tPattern\": {\"scale\": 0.1}},\"publicName\": {\"data\": \"C-Foam Mine Deployer\"}}}";
+                        }
+
+                        if(block.name == "Map_Device")
+                        {
+                            // Sadly the mapping device doesn't work :c
+                            block.GearJSON = "{\"Ver\": 1,\"Name\": \"Mapper\",\"Packet\": {\"Comps\": {\"Length\": 9,\"a\": {\"c\": 2,\"v\": 10},\"b\": {\"c\": 3,\"v\": 74},\"c\": {\"c\": 4,\"v\": 16},\"d\": {\"c\": 27,\"v\": 16},\"e\": {\"c\": 30,\"v\": 6},\"f\": {\"c\": 32,\"v\": 3},\"g\": {\"c\": 33,\"v\": 5},\"h\": {\"c\": 36,\"v\": 1},\"i\":  {\"c\": 42,\"v\": 3}},\"MatTrans\": {\"tDecalA\": {\"scale\": 0.1},\"tDecalB\": {\"scale\": 0.1},\"tPattern\": {\"scale\": 0.1}},\"publicName\": {\"data\": \"Mapper\"}}}";
+                        }
+                        block.internalEnabled = true;
+
+                    }
                 }
             }
             catch (Exception ex)

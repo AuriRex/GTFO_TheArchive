@@ -5,16 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using TheArchive.Core;
 
-namespace TheArchive.IL2CPP.R6
+namespace TheArchive.IL2CPP.R5
 {
-    public class R6BoosterModule : IArchiveModule
+    public class R5SubModule : IArchiveModule
     {
         public bool ApplyHarmonyPatches => false;
 
         public ArchivePatcher Patcher { get; set; }
         public ArchiveMod Core { get; set; }
-
-        public string[] SubModules => null;
 
         public void Init()
         {

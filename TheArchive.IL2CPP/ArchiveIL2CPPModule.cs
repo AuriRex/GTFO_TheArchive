@@ -52,6 +52,8 @@ namespace TheArchive
 
             CosturaUtility.Initialize();
 
+            ClassInjector.RegisterTypeInIl2Cpp<TestSoundComp>();
+
             CustomProgressionManager.Logger = (string msg) => {
                 ArchiveLogger.Msg(ConsoleColor.Magenta, msg);
             };
@@ -78,7 +80,22 @@ namespace TheArchive
 
         }
 
-        private bool enableVoiceBinds = false;
+        #region soundtestthing
+        private bool doOnce = true;
+        private GameObject test;
+        private TestSoundComp testSoundComp;
+
+        public class TestSoundComp : MonoBehaviour
+        {
+            public TestSoundComp(IntPtr ptr) : base(ptr) { }
+
+            public CellSoundPlayer soundPlayer;
+            public void Start()
+            {
+                soundPlayer = new CellSoundPlayer();
+            }
+        }
+        #endregion
 
         public void OnLateUpdate()
         {
@@ -91,80 +108,29 @@ namespace TheArchive
                 GuiManager.CrosshairLayer.SetVisible(ArchiveMod.HudIsVisible);
             }
 
-#if DEBUG
-            if(Input.GetKeyDown(KeyCode.LeftArrow))
+            if(doOnce)
             {
-                var localPlayer = PlayerManager.GetLocalPlayerAgent();
-                
-                PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_LEFT);
+                ArchiveLogger.Warning("Creating SoundTest GameObject!");
+                test = new GameObject("TestSoundThing!");
+                GameObject.DontDestroyOnLoad(test);
+                test.hideFlags = HideFlags.DontUnloadUnusedAsset | HideFlags.HideAndDontSave;
+                testSoundComp = test.AddComponent<TestSoundComp>();
+
+                doOnce = false;
             }
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                var localPlayer = PlayerManager.GetLocalPlayerAgent();
 
-                PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_RIGHT);
-            }
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                var localPlayer = PlayerManager.GetLocalPlayerAgent();
-
-                PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_YES);
-            }
-            if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                var localPlayer = PlayerManager.GetLocalPlayerAgent();
-
-                PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_NO);
-            }
-            if(enableVoiceBinds)
-            {
-                if (Input.GetKeyDown(KeyCode.L))
-                {
-                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
-
-                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_NICE);
-                }
-                if (Input.GetKeyDown(KeyCode.K))
-                {
-                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
-
-                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_SORRY);
-                }
-                if (Input.GetKeyDown(KeyCode.J))
-                {
-                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
-
-                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_WELLDONE);
-                }
-
-                if (Input.GetKeyDown(KeyCode.P))
-                {
-                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
-
-                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.PLAY_CL_THANKYOU);
-                }
-                if (Input.GetKeyDown(KeyCode.U))
-                {
-                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
-
-                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.SCOUT_DETECT_SCREAM_CHARGE);
-                }
-                if (Input.GetKeyDown(KeyCode.Z))
-                {
-                    var localPlayer = PlayerManager.GetLocalPlayerAgent();
-
-                    PlayerVoiceManager.WantToSay(localPlayer.CharacterID, AK.EVENTS.SCOUT_DETECT_SCREAM);
-                }
-
-                if (Input.GetKeyDown(KeyCode.H))
-                {
-                    HarmonyPatches.Patches.OtherPatches.UnityEngine_RandomPatchOne.SetSeed = 1;
-                    PlayerVoiceManager.WantToSay(2, AK.EVENTS.PLAY_FALLDAMAGEGRUNT02_5A);
-                }
-            }
             
 
+            MuteSpeakManager.Update();
 
+            if (Input.GetKeyDown(KeyCode.F8))
+            {
+                MuteSpeakManager.EnableOtherVoiceBinds = !MuteSpeakManager.EnableOtherVoiceBinds;
+                ArchiveLogger.Notice($"Voice binds enabled: {MuteSpeakManager.EnableOtherVoiceBinds}");
+            }
+
+#if DEBUG
+#warning move this to seperate toolbelt mod
             if (Input.GetKeyDown(KeyCode.F10))
             {
                 FocusStateManager.ToggleFreeflight();
@@ -174,10 +140,15 @@ namespace TheArchive
             {
                 FocusStateManager.ToggleDebugMenu();
             }
-            if (Input.GetKeyDown(KeyCode.F8))
+
+            if (Input.GetKeyDown(KeyCode.F6))
             {
-                enableVoiceBinds = !enableVoiceBinds;
-                ArchiveLogger.Notice($"Voice binds enabled: {enableVoiceBinds}");
+                testSoundComp.soundPlayer.Post(AK.EVENTS.AMBIENCEALLSTOP);
+            }
+
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                testSoundComp.soundPlayer.Post(AK.EVENTS.AMBIENCE_STOP_ALL);
             }
 #endif
         }

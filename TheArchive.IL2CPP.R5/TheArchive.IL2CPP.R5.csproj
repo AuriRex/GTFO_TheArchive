@@ -69,7 +69,7 @@
   <ItemGroup>
     <Compile Include="ArchivePatches\DropServerClientAPIViaPlayFabPatches.cs" />
     <Compile Include="ArchivePatches\QualityOfLifePatches.cs" />
-    <Compile Include="R5BoosterModule.cs" />
+    <Compile Include="R5SubModule.cs" />
     <Compile Include="Models\BoosterJustPrintThatShit.cs" />
     <Compile Include="Models\CustomBoosterImplant.cs" />
     <Compile Include="Models\CustomBoosterImplantInventoryItem.cs" />

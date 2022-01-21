@@ -10,9 +10,9 @@ using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive.IL2CPP.R6.ArchivePatches
 {
+    [BindPatchToSetting(nameof(ArchiveSettings.UnlockAllVanityItems), "VanityUnlock")]
     public class VanityItemPatches
     {
-        [BindPatchToSetting(nameof(ArchiveSettings.UnlockAllVanityItems), "VanityUnlock")]
         [ArchivePatch(typeof(VanityItemInventory), nameof(VanityItemInventory.UpdateItems))]
         internal static class VanityItemInventory_UpdateItemsPatch
         {

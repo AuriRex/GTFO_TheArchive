@@ -158,7 +158,7 @@ namespace TheArchive
                 {
                     Settings = JsonConvert.DeserializeObject<ArchiveSettings>(File.ReadAllText(path));
                 }
-                File.WriteAllText(path, JsonConvert.SerializeObject(Settings));
+                File.WriteAllText(path, JsonConvert.SerializeObject(Settings, Formatting.Indented));
             }
             catch(Exception ex)
             {

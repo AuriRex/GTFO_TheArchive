@@ -1,11 +1,9 @@
 ﻿using AK;
 using LevelGeneration;
-using Player;
 using System;
 using System.Reflection;
 using TheArchive.Core.Core;
 using TheArchive.Utilities;
-using UnityEngine;
 using static HackingTool;
 using static TheArchive.Core.ArchivePatcher;
 using static TheArchive.Utilities.Utils;
@@ -70,6 +68,24 @@ namespace TheArchive.HarmonyPatches.Patches
                     ArchiveLogger.Exception(ex);
                 }
                 return true;
+            }
+        }
+
+        // Remove the character restriction in chat, this also results in the user being able to use TMP tags but whatever
+        [ArchivePatch(typeof(PlayerChatManager), nameof(PlayerChatManager.Setup))]
+        internal static class PlayerChatManager_SetupPatch
+        {
+            public static void Postfix(ref PlayerChatManager __instance)
+            {
+                try
+                {
+                    typeof(PlayerChatManager).GetProperty(nameof(PlayerChatManager.m_forbiddenChars)).SetValue(__instance, new UnhollowerBaseLib.Il2CppStructArray<int>(0));
+                }
+                catch(Exception ex)
+                {
+                    ArchiveLogger.Exception(ex);
+                }
+                
             }
         }
 

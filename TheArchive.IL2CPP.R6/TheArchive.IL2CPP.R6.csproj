@@ -63,14 +63,19 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArchivePatches\PlayerAgentPatches.cs" />
     <Compile Include="ArchivePatches\QualityOfLifePatches.cs" />
     <Compile Include="ArchivePatches\VanityItemPatches.cs" />
-    <Compile Include="R6BoosterModule.cs" />
+    <Compile Include="R6SubModule.cs" />
     <Compile Include="Models\BoosterJustPrintThatShit.cs" />
     <Compile Include="Models\CustomBoosterImplant.cs" />
     <Compile Include="Models\CustomBoosterImplantInventoryItem.cs" />
