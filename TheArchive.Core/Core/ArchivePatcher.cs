@@ -108,8 +108,21 @@ namespace TheArchive.Core
 
                     if (!archivePatchInfo.GeneralPurposePatch && !FlagsContain(archivePatchInfo.RundownsToPatch, currentRundown))
                     {
-                        ArchiveLogger.Warning($"Not patching method \"{archivePatchInfo.MethodName}\" in type \"{archivePatchInfo.Type.FullName}\" from patch class: \"{type.FullName}\". ({archivePatchInfo.RundownsToPatch})");
+                        ArchiveLogger.Warning($"Not patching method \"{archivePatchInfo.MethodName}\" in type \"{(archivePatchInfo.HasType ? archivePatchInfo.Type?.FullName : "(not yet set for type load reasons)")}\" from patch class: \"{type.FullName}\". ({archivePatchInfo.RundownsToPatch})");
                         continue;
+                    }
+
+                    if(!archivePatchInfo.HasType)
+                    {
+                        if (TryGetMethodByName(type, "Type", out var typeMethod) && typeMethod.ReturnType == typeof(Type))
+                        {
+                            archivePatchInfo.Type = (Type) typeMethod.Invoke(null, new object[0]);
+                            ArchiveLogger.Debug($"Discovered target Type for Patch \"{type.FullName}\" to be \"{archivePatchInfo.Type.FullName}\"");
+                        }
+                        else
+                        {
+                            throw new ArgumentException($"{type.FullName} has no static method Type() returning Type or none set in its Attribute!");
+                        }
                     }
 
                     MethodInfo original;
@@ -247,7 +260,16 @@ namespace TheArchive.Core
 
         public class ArchivePatch : Attribute
         {
-            public Type Type { get; private set; }
+            public bool HasType
+            {
+                get
+                {
+                    return Type != null;
+                }
+            }
+
+            public Type Type { get; internal set; }
+
             public string MethodName { get; private set; }
 
             public RundownFlags RundownsToPatch { get; private set; }
