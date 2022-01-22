@@ -52,8 +52,6 @@ namespace TheArchive
 
             CosturaUtility.Initialize();
 
-            ClassInjector.RegisterTypeInIl2Cpp<TestSoundComp>();
-
             CustomProgressionManager.Logger = (string msg) => {
                 ArchiveLogger.Msg(ConsoleColor.Magenta, msg);
             };
@@ -80,23 +78,6 @@ namespace TheArchive
 
         }
 
-        #region soundtestthing
-        private bool doOnce = true;
-        private GameObject test;
-        private TestSoundComp testSoundComp;
-
-        public class TestSoundComp : MonoBehaviour
-        {
-            public TestSoundComp(IntPtr ptr) : base(ptr) { }
-
-            public CellSoundPlayer soundPlayer;
-            public void Start()
-            {
-                soundPlayer = new CellSoundPlayer();
-            }
-        }
-        #endregion
-
         public void OnLateUpdate()
         {
             if (Input.GetKeyDown(KeyCode.F1) && ArchiveMod.Settings.EnableHudToggle)
@@ -106,27 +87,6 @@ namespace TheArchive
                 GuiManager.PlayerLayer.SetVisible(ArchiveMod.HudIsVisible);
                 GuiManager.WatermarkLayer.SetVisible(ArchiveMod.HudIsVisible);
                 GuiManager.CrosshairLayer.SetVisible(ArchiveMod.HudIsVisible);
-            }
-
-            if(doOnce)
-            {
-                ArchiveLogger.Warning("Creating SoundTest GameObject!");
-                test = new GameObject("TestSoundThing!");
-                GameObject.DontDestroyOnLoad(test);
-                test.hideFlags = HideFlags.DontUnloadUnusedAsset | HideFlags.HideAndDontSave;
-                testSoundComp = test.AddComponent<TestSoundComp>();
-
-                doOnce = false;
-            }
-
-            
-
-            MuteSpeakManager.Update();
-
-            if (Input.GetKeyDown(KeyCode.F8))
-            {
-                MuteSpeakManager.EnableOtherVoiceBinds = !MuteSpeakManager.EnableOtherVoiceBinds;
-                ArchiveLogger.Notice($"Voice binds enabled: {MuteSpeakManager.EnableOtherVoiceBinds}");
             }
 
 #if DEBUG
@@ -140,16 +100,6 @@ namespace TheArchive
             {
                 FocusStateManager.ToggleDebugMenu();
             }
-
-            if (Input.GetKeyDown(KeyCode.F6))
-            {
-                testSoundComp.soundPlayer.Post(AK.EVENTS.AMBIENCEALLSTOP);
-            }
-
-            if (Input.GetKeyDown(KeyCode.F5))
-            {
-                testSoundComp.soundPlayer.Post(AK.EVENTS.AMBIENCE_STOP_ALL);
-            }
 #endif
         }
 
@@ -158,17 +108,24 @@ namespace TheArchive
 
         }
 
-        [HarmonyPatch(typeof(GameDataInit), "Initialize")]
+        [HarmonyPatch(typeof(GameDataInit), nameof(GameDataInit.Initialize))]
         internal static class GameDataInit_InitializePatch
         {
             public static void Postfix()
             {
-                GameSetupDataBlock block = GameDataBlockBase<GameSetupDataBlock>.GetBlock(1u);
-                var rundownId = block.RundownIdToLoad;
+                try
+                {
+                    GameSetupDataBlock block = GameDataBlockBase<GameSetupDataBlock>.GetBlock(1u);
+                    var rundownId = block.RundownIdToLoad;
 
-                CurrentRundownID = rundownId;
+                    CurrentRundownID = rundownId;
 
-                OnAfterGameDataInit?.Invoke(rundownId);
+                    OnAfterGameDataInit?.Invoke(rundownId);
+                }
+                catch(Exception ex)
+                {
+                    ArchiveLogger.Exception(ex);
+                }
             }
         }
 

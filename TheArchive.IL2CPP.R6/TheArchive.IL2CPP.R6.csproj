@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CellSound-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_R_LATEST\MelonLoader\Managed\CellSound-ASM.dll</HintPath>
+    </Reference>
     <Reference Include="DropServerSDK-ASM">
       <HintPath>..\_R_LATEST\MelonLoader\Managed\DropServerSDK-ASM.dll</HintPath>
     </Reference>
@@ -69,6 +73,10 @@
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Wwise-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_R_LATEST\MelonLoader\Managed\Wwise-ASM.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

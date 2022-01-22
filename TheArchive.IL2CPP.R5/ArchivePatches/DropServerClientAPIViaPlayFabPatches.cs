@@ -41,5 +41,33 @@ namespace TheArchive.IL2CPP.R5.ArchivePatches
                 return false;
             }
         }
+
+        // public unsafe Task<GetBoosterImplantPlayerDataResult> GetBoosterImplantPlayerDataAsync(GetBoosterImplantPlayerDataRequest request)
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetBoosterImplantPlayerDataAsync), RundownFlags.RundownFive, RundownFlags.Latest)]
+        public static class DropServerClientAPI_GetBoosterImplantPlayerDataAsyncPatch
+        {
+            public static bool Prefix(GetBoosterImplantPlayerDataRequest request, ref IL2Tasks.Task<GetBoosterImplantPlayerDataResult> __result)
+            {
+                ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(GetBoosterImplantPlayerDataRequest)}: EntityToken:{request.EntityToken}, MaxBackendTemplateId:{request.MaxBackendTemplateId}");
+
+                var bipd = CustomBoosterManager.Instance.GetBoosterImplantPlayerData(request.MaxBackendTemplateId);
+
+                var result = new GetBoosterImplantPlayerDataResult();
+
+                // NativeFieldInfoPtr_Data
+#warning TODO
+                //Utilities.Il2CppUtils.SetFieldUnsafe(result, bipd, nameof(GetBoosterImplantPlayerDataResult.Data));
+                // old-- result.Data = bipd;
+
+                __result = IL2Tasks.Task.FromResult(result);
+                return false;
+            }
+
+            public static void Postfix(ref IL2Tasks.Task<GetBoosterImplantPlayerDataResult> __result)
+            {
+                var result = __result.Result;
+                ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> received {nameof(GetBoosterImplantPlayerDataResult)}: Data:{result.Data}");
+            }
+        }
     }
 }

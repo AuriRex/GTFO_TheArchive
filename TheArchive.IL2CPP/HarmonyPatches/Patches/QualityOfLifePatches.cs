@@ -100,7 +100,7 @@ namespace TheArchive.HarmonyPatches.Patches
         [ArchivePatch(typeof(CM_InventorySlotItem), nameof(CM_InventorySlotItem.LoadData))]
         internal static class CM_InventorySlotItem_LoadDataPatch
         {
-            public static void Postfix(ref CM_InventorySlotItem __instance, ref GearIDRange idRange, ref bool clickable, ref bool detailedInfo)
+            public static void Postfix(ref CM_InventorySlotItem __instance, ref GearIDRange idRange)
             {
                 try
                 {
@@ -121,7 +121,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // a second patch to cache the last interacted weapons archetype data
-        [ArchivePatch(typeof(CM_PlayerLobbyBar), nameof(CM_PlayerLobbyBar.OnWeaponSlotItemSelected))]
+        [ArchivePatch(typeof(CM_PlayerLobbyBar), nameof(CM_PlayerLobbyBar.OnWeaponSlotItemSelected), RundownFlags.RundownFive, RundownFlags.Latest)]
         internal static class CM_PlayerLobbyBar_OnWeaponSlotItemSelectedPatch
         {
             public static ArchetypeDataBlock LastArchetypeDataBlock { get; private set; }
@@ -160,9 +160,14 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // Add weapon stats onto the info page
-        [ArchivePatch(typeof(CM_ScrollWindowInfoBox), nameof(CM_ScrollWindowInfoBox.SetInfoBox))]
+        [ArchivePatch(null, nameof(CM_ScrollWindowInfoBox.SetInfoBox), RundownFlags.RundownFive, RundownFlags.Latest)]
         internal static class CM_ScrollWindowInfoBox_SetInfoBoxPatch
         {
+            public static Type Type()
+            {
+                return typeof(CM_ScrollWindowInfoBox);
+            }
+
             public static void Prefix(ref CM_ScrollWindowInfoBox __instance, ref string mainTitle, ref string subTitle, ref string description, ref string acceptText, ref string rejectText, ref Sprite icon)
             {
                 try

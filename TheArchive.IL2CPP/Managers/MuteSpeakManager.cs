@@ -9,7 +9,7 @@ namespace TheArchive.Managers
     /// </summary>
     public class MuteSpeakManager
     {
-        public static bool EnableOtherVoiceBinds { get; internal set; } = false;
+        public static bool EnableOtherVoiceBinds { get; set; } = false;
 
         public static void IfKeySay(KeyCode key, uint soundId)
         {
