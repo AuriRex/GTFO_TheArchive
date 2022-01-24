@@ -1,4 +1,4 @@
-﻿using TheArchive.Core.Core;
+﻿using TheArchive.Core;
 using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive.HarmonyPatches.Patches

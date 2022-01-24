@@ -1,8 +1,7 @@
 ﻿using GameEvent;
-using HarmonyLib;
 using SNetwork;
 using System;
-using TheArchive.Core.Core;
+using TheArchive.Core;
 using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive.HarmonyPatches.Patches

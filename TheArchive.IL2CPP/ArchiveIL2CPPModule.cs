@@ -1,20 +1,11 @@
 ﻿using GameData;
 using Globals;
 using HarmonyLib;
-using MelonLoader;
-using Player;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using TheArchive;
 using TheArchive.Core;
-using TheArchive.Core.Core;
-using TheArchive.HarmonyPatches;
 using TheArchive.Managers;
 using TheArchive.Utilities;
-using UnhollowerBaseLib.Attributes;
-using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.CrashReportHandler;
 

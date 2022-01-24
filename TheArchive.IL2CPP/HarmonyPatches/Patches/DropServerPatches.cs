@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Runtime.InteropServices;
 using TenCC.Utils;
-using TheArchive.Core.Core;
+using TheArchive.Core;
 using TheArchive.Models;
 using TheArchive.Utilities;
 using static TheArchive.Core.ArchivePatcher;

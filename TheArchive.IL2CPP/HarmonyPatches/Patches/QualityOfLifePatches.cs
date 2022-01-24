@@ -6,7 +6,7 @@ using LevelGeneration;
 using System;
 using System.Reflection;
 using System.Text;
-using TheArchive.Core.Core;
+using TheArchive.Core;
 using TheArchive.Managers;
 using TheArchive.Utilities;
 using UnityEngine;

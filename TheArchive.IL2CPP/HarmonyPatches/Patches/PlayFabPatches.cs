@@ -1,16 +1,11 @@
-﻿using Globals;
-using HarmonyLib;
-using MelonLoader;
+﻿using MelonLoader;
 using PlayFab.ClientModels;
 using SNetwork;
-using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using TheArchive.Core.Core;
+using TheArchive.Core;
 using TheArchive.Utilities;
-using UnityEngine;
 using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive.HarmonyPatches.Patches

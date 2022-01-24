@@ -1,16 +1,10 @@
 ﻿using DropServer;
-using HarmonyLib;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using TheArchive.Core.Core;
+using TheArchive.Core;
 using TheArchive.Managers;
-using TheArchive.Models;
 using TheArchive.Utilities;
-using UnhollowerRuntimeLib;
 using static TheArchive.Core.ArchivePatcher;
 using static TheArchive.Utilities.Il2CppUtils;
 using static TheArchive.Utilities.Utils;

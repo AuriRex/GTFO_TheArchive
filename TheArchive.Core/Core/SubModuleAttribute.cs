@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.Core.Core
+namespace TheArchive.Core
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class SubModuleAttribute : Attribute
