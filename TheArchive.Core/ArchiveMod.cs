@@ -244,13 +244,13 @@ namespace TheArchive
                 if(isIl2Cpp)
                 {
                     ArchiveLogger.Notice("Loading IL2CPP module ...");
-                    bytes = Utils.LoadFromResource("TheArchive.Core.Resources.TheArchive.IL2CPP.dll");
+                    bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.IL2CPP.dll");
                     if (bytes.Length < 100) throw new BadImageFormatException("IL2CPP Module is too small, this version might not contain the module build but a dummy dll!");
                     return Assembly.Load(bytes);
                 }
 
                 ArchiveLogger.Notice("Loading MONO module ...");
-                bytes = Utils.LoadFromResource("TheArchive.Core.Resources.TheArchive.MONO.dll");
+                bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.MONO.dll");
                 if (bytes.Length < 100) throw new BadImageFormatException("MONO Module is too small, this version might not contain the module build but a dummy dll!");
                 return Assembly.Load(bytes);
             }
