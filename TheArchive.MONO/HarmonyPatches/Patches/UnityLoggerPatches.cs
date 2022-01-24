@@ -1,5 +1,5 @@
 ﻿using System;
-using TheArchive.Core.Core;
+using TheArchive.Core;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Core.ArchivePatcher;

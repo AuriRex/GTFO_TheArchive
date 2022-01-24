@@ -4,7 +4,7 @@ using LevelGeneration;
 using Player;
 using System;
 using System.Reflection;
-using TheArchive.Core.Core;
+using TheArchive.Core;
 using TheArchive.Utilities;
 using UnityEngine;
 using static HackingTool;
