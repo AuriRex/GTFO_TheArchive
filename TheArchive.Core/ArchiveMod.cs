@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using TheArchive;
 using TheArchive.Core;
-using TheArchive.Core.Core;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -123,12 +122,19 @@ namespace TheArchive
             module.Patcher = new ArchivePatcher(HarmonyInstance, $"{moduleType.Assembly.GetName().Name}_{moduleType.FullName}_ArchivePatcher");
             module.Core = this;
 
-            module.Init();
-
-            if(module.ApplyHarmonyPatches)
+            try
             {
-                ArchiveLogger.Warning($"Applying regular Harmony patches on module \"{moduleType.FullName}\" ...");
-                HarmonyInstance.PatchAll(moduleType.Assembly);
+                module.Init();
+
+                if (module.ApplyHarmonyPatches)
+                {
+                    ArchiveLogger.Warning($"Applying regular Harmony patches on module \"{moduleType.FullName}\" ...");
+                    HarmonyInstance.PatchAll(moduleType.Assembly);
+                }
+            }
+            catch(Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
             }
 
             modules.Add(module);
