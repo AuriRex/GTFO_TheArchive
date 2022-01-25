@@ -7,15 +7,13 @@ namespace TheArchive.HarmonyPatches.AutoPatches
 {
     internal class UnityLoggerPatches
     {
-
         //Log
         [HarmonyPatch(typeof(Debug), nameof(Debug.Log), new Type[] { typeof(Il2CppSystem.Object) })]
         internal static class Debug_LogPatch
         {
             public static void Prefix(Il2CppSystem.Object message)
             {
-                string msg = Il2CppSystem.String.Concat(message);
-                GTFOLogger.Log(msg);
+                GTFOLogger.Log(message.ToString());
             }
         }
         //LogWarning
@@ -24,8 +22,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
         {
             public static void Prefix(Il2CppSystem.Object message)
             {
-                string msg = Il2CppSystem.String.Concat(message);
-                GTFOLogger.Warn(msg);
+                GTFOLogger.Warn(message.ToString());
             }
         }
         //LogError
@@ -34,10 +31,8 @@ namespace TheArchive.HarmonyPatches.AutoPatches
         {
             public static void Prefix(Il2CppSystem.Object message)
             {
-                string msg = Il2CppSystem.String.Concat(message);
-                GTFOLogger.Error(msg);
+                GTFOLogger.Error(message.ToString());
             }
         }
-
     }
 }
