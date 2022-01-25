@@ -48,13 +48,26 @@ namespace TheArchive
             };
 
             OnAfterGameDataInit += (rundownId) => {
-                var rundown = Utils.IntToRundownEnum((int) rundownId);
-                if(rundown != Utils.RundownID.RundownFour)
+                try
                 {
-                    BoosterSetup();
+                    var rundown = Utils.IntToRundownEnum((int) rundownId);
+                    if (rundown != Utils.RundownID.RundownFour)
+                    {
+                        BoosterSetup();
+                    }
+
+                    Core.SetCurrentRundownAndPatch(rundown);
+                    DataBlockManager.DumpDataBlocksToDisk();
+
+                    if (ArchiveMod.Settings.SkipMissionUnlockRequirements)
+                    {
+                        Global.AllowFullRundown = true;
+                    }
                 }
-                Core.SetCurrentRundownAndPatch(rundown);
-                DataBlockManager.DumpDataBlocksToDisk();
+                catch(Exception ex)
+                {
+                    ArchiveLogger.Exception(ex);
+                }
             };
         }
 
