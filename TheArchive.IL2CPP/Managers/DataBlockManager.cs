@@ -87,6 +87,8 @@ namespace TheArchive.Managers
                         }
                         if (block.name == "Mine_Deployer_Glue")
                         {
+                            // C-Foam Mine Deployer actually works although the mines have the wrong model and a red laser,
+                            // the particle effects do also feel a little unpolished (it is an unfinished and unused tool after all lol)
                             block.GearJSON = "{\"Ver\": 1,\"Name\": \"MineDeployer Glue\",\"Packet\": {\"Comps\": {\"Length\": 9,\"a\": {\"c\": 2,\"v\": 13},\"b\": {\"c\": 3,\"v\": 37},\"c\": {\"c\": 4,\"v\": 14},\"d\": {\"c\": 27,\"v\": 12},\"e\": {\"c\": 30,\"v\": 2},\"f\": {\"c\": 33,\"v\": 2},\"g\": {\"c\": 36,\"v\": 1},\"h\": {\"c\": 37,\"v\": 1},\"i\": {\"c\": 40,\"v\": 1},\"j\": {\"c\": 42,\"v\": 2}},\"MatTrans\": {\"tDecalA\": {\"scale\": 0.1},\"tDecalB\": {\"scale\": 0.1},\"tPattern\": {\"scale\": 0.1}},\"publicName\": {\"data\": \"C-Foam Mine Deployer\"}}}";
                         }
 
@@ -104,8 +106,7 @@ namespace TheArchive.Managers
             }
             catch (Exception ex)
             {
-                ArchiveLogger.Error(ex.Message);
-                ArchiveLogger.Error(ex.StackTrace);
+                ArchiveLogger.Exception(ex);
             }
 
         }

@@ -132,7 +132,7 @@
     <Compile Include="HarmonyPatches\Patches\HudTogglePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\QualityOfLifePatches.cs" />
-    <Compile Include="HarmonyPatches\AutoPatches\AnalyticsPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\AnalyticsPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\MonoUtils.cs" />
   </ItemGroup>

@@ -5,6 +5,7 @@
 
         public bool EnableLocalProgressionPatches { get; set; } = true;
         public bool EnableQualityOfLifeImprovements { get; set; } = true;
+        public bool SkipMissionUnlockRequirements { get; set; } = false;
         public bool EnableHudToggle { get; set; } = true;
         public bool DumpDataBlocks { get; set; } = true;
         public bool AlwaysOverrideDataBlocks { get; set; } = false;

@@ -19,9 +19,7 @@ namespace TheArchive
         public ArchivePatcher Patcher { get; set; }
         public ArchiveMod Core { get; set; }
 
-        public string[] SubModules => null;
-
-        public static event Action<uint> OnAfterStartMainGameAwake;
+        public static event Action<RundownID> OnAfterStartMainGameAwake;
 
         public class SharedCoroutineStarter : MonoBehaviour
         {
@@ -44,7 +42,7 @@ namespace TheArchive
             CrashReportHandler.enableCaptureExceptions = false;
 
             OnAfterStartMainGameAwake += (rundownId) => {
-                Core.SetCurrentRundownAndPatch(IntToRundownEnum((int) rundownId));
+                Core.SetCurrentRundownAndPatch(rundownId);
             };
         }
 
@@ -120,13 +118,15 @@ namespace TheArchive
             public static void Postfix()
             {
                 // This only works on R3 and below
-                var rundownId = Global.RundownIdToLoad;
-                Global.RundownIdToLoad = 17;
+                var currentRundown = IntToRundownEnum((int) Global.RundownIdToLoad);
+                //Global.RundownIdToLoad = 17;
 
-                /*if(rundownId != 17)
-                    AllowFullRundown();*/
+                if (ArchiveMod.Settings.SkipMissionUnlockRequirements && currentRundown != RundownID.RundownOne)
+                {
+                    AllowFullRundown();
+                }
 
-                OnAfterStartMainGameAwake?.Invoke(rundownId);
+                OnAfterStartMainGameAwake?.Invoke(currentRundown);
             }
 
             [MethodImpl(MethodImplOptions.NoInlining)]

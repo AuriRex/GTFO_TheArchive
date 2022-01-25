@@ -1,13 +1,11 @@
-﻿using Expedition;
+﻿#if DEBUG
+using Expedition;
 using GameData;
 using HarmonyLib;
 using LevelGeneration;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Core.ArchivePatcher;
@@ -353,3 +351,4 @@ namespace TheArchive.HarmonyPatches.Patches
 
     }
 }
+#endif
