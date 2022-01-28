@@ -53,10 +53,9 @@ namespace TheArchive.Utilities
             return data;
         }
 
-        public static string GetStartupTextForRundown(int rundownID)
+        public static string GetStartupTextForRundown(int rundownID) => GetStartupTextForRundown(IntToRundownEnum(rundownID));
+        public static string GetStartupTextForRundown(RundownID currentRundownID)
         {
-            RundownID currentRundownID = IntToRundownEnum(rundownID);
-
             switch (currentRundownID)
             {
                 case RundownID.RundownOne:

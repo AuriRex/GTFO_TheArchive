@@ -179,32 +179,22 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(eStartupScreenKey key, out StartupScreenData data, ref bool __result)
             {
-                if (DisableAllPlayFabInteraction)
+                if (StartupScreenData == null)
                 {
-                    //ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled TryGetStartupScreenData");
-                    // other stuff maybe ?
-                    
-                    if(StartupScreenData == null)
-                    {
-                        StartupScreenData = new StartupScreenData();
-                        StartupScreenData.AllowedToStartGame = true;
+                    StartupScreenData = new StartupScreenData();
+                    StartupScreenData.AllowedToStartGame = true;
 
-                        StartupScreenData.IntroText = Utils.GetStartupTextForRundown((int) ArchiveIL2CPPModule.CurrentRundownID);
-                        StartupScreenData.ShowDiscordButton = true;
-                        StartupScreenData.ShowBugReportButton = false;
-                        StartupScreenData.ShowRoadmapButton = true;
-                        //sud.ShowOvertoneButton = false;
-                        StartupScreenData.ShowIntroText = true;
-                    }
-
-                    __result = true;
-                    data = StartupScreenData;
-                    return false;
+                    StartupScreenData.IntroText = Utils.GetStartupTextForRundown((int) ArchiveIL2CPPModule.CurrentRundownID);
+                    StartupScreenData.ShowDiscordButton = true;
+                    StartupScreenData.ShowBugReportButton = false;
+                    StartupScreenData.ShowRoadmapButton = true;
+                    //sud.ShowOvertoneButton = false;
+                    StartupScreenData.ShowIntroText = true;
                 }
 
-                __result = false;
-                data = null;
-                return true;
+                __result = true;
+                data = StartupScreenData;
+                return false;
             }
         }
 

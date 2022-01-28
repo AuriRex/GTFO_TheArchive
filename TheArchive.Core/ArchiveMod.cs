@@ -13,14 +13,14 @@ using static TheArchive.Utilities.Utils;
 [assembly: MelonInfo(typeof(ArchiveMod), "TheArchive", "0.1", "AuriRex")]
 [assembly: MelonGame("10 Chambers Collective", "GTFO")]
 [assembly: MelonColor(ConsoleColor.DarkMagenta)]
-[assembly: MelonOptionalDependencies("System.Runtime.CompilerServices.Unsafe")]
+[assembly: MelonOptionalDependencies("System.Runtime.CompilerServices.Unsafe", "UnhollowerBaseLib")]
 namespace TheArchive
 {
-
     public class ArchiveMod : MelonMod
     {
-
         public static ArchiveSettings Settings { get; private set; } = new ArchiveSettings();
+
+        public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnitialized;
 
         public static bool HudIsVisible { get; set; } = true;
 
@@ -28,18 +28,66 @@ namespace TheArchive
 
         private IArchiveModule _mainModule;
 
-        //private static ArchivePatcher Patcher;
-
-        public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnitialized;
-
         private List<Type> moduleTypes = new List<Type>();
 
         private List<IArchiveModule> modules = new List<IArchiveModule>();
+
+        public override void OnApplicationStart()
+        {
+            Instance = this;
+
+            LoadConfig();
+
+            var archiveModule = LoadMainArchiveModule(MelonUtils.IsGameIl2Cpp());
+
+            var moduleMainType = archiveModule.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
+
+            _mainModule = CreateAndInitModule(moduleMainType);
+        }
+
+        public override void OnApplicationQuit()
+        {
+            UnpatchAll();
+
+            base.OnApplicationQuit();
+        }
+
+        private void LoadConfig()
+        {
+            try
+            {
+                ArchiveLogger.Info("Loading config file ...");
+                var path = Path.Combine(MelonUtils.UserDataDirectory, "TheArchive_Settings.json");
+                if (File.Exists(path))
+                {
+                    Settings = JsonConvert.DeserializeObject<ArchiveSettings>(File.ReadAllText(path));
+                }
+                File.WriteAllText(path, JsonConvert.SerializeObject(Settings, Formatting.Indented));
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
+            }
+        }
+
+        public static void RegisterArchiveModule(Assembly asm)
+        {
+            foreach(var type in asm.GetTypes().Where(t => typeof(IArchiveModule).IsAssignableFrom(t)))
+            {
+                RegisterArchiveModule(type);
+            }
+        }
+
+        public static void RegisterArchiveModule(Type moduleType)
+        {
+            Instance.RegisterModule(moduleType);
+        }
 
         public bool RegisterModule(Type moduleType)
         {
             if (moduleType == null) throw new ArgumentException("Module can't be null!");
             if (moduleTypes.Contains(moduleType)) throw new ArgumentException($"Module \"{moduleType.Name}\" is already registered!");
+            if (!typeof(IArchiveModule).IsAssignableFrom(moduleType)) throw new ArgumentException($"Type \"{moduleType.Name}\" does not implement {nameof(IArchiveModule)}!");
 
             var module = CreateAndInitModule(moduleType);
 
@@ -79,7 +127,7 @@ namespace TheArchive
                     byte[] subModule = null;
                     try
                     {
-                        subModule = Utilities.Utils.GetResource(moduleType.Assembly, subModuleResourcePath);
+                        subModule = GetResource(moduleType.Assembly, subModuleResourcePath);
                     }
                     catch (Exception ex)
                     {
@@ -134,6 +182,7 @@ namespace TheArchive
             }
             catch(Exception ex)
             {
+                ArchiveLogger.Error($"Error while trying to init \"{moduleType.FullName}\"!");
                 ArchiveLogger.Exception(ex);
             }
 
@@ -141,53 +190,13 @@ namespace TheArchive
             return module;
         }
 
-        public override void OnApplicationStart()
-        {
-            Instance = this;
-
-            LoadConfig();
-
-            var module = LoadModule(MelonUtils.IsGameIl2Cpp());
-
-            var moduleMainType = module.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
-
-            _mainModule = CreateAndInitModule(moduleMainType);
-        }
-
-        private void LoadConfig()
-        {
-            try
-            {
-                ArchiveLogger.Info("Loading config file ...");
-                var path = Path.Combine(MelonUtils.UserDataDirectory, "TheArchive_Settings.json");
-                if (File.Exists(path))
-                {
-                    Settings = JsonConvert.DeserializeObject<ArchiveSettings>(File.ReadAllText(path));
-                }
-                File.WriteAllText(path, JsonConvert.SerializeObject(Settings, Formatting.Indented));
-            }
-            catch(Exception ex)
-            {
-                ArchiveLogger.Exception(ex);
-            }
-        }
-
-        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
-        {
-            foreach(var module in modules)
-            {
-                module?.OnSceneWasLoaded(buildIndex, sceneName);
-            }
-            base.OnSceneWasLoaded(buildIndex, sceneName);
-        }
-
         public void SetCurrentRundownAndPatch(RundownID rundownID)
         {
             CurrentRundown = rundownID;
 
-            if(rundownID != RundownID.RundownUnitialized)
+            if (rundownID != RundownID.RundownUnitialized)
             {
-                foreach(var module in modules)
+                foreach (var module in modules)
                 {
                     module.Patcher.PatchRundownSpecificMethods(module.GetType().Assembly);
                 }
@@ -197,7 +206,7 @@ namespace TheArchive
 
         internal void UnpatchAll()
         {
-            foreach(var module in modules)
+            foreach (var module in modules)
             {
                 UnpatchModule(module);
             }
@@ -207,9 +216,9 @@ namespace TheArchive
         {
             if (!moduleTypes.Contains(moduleType)) throw new ArgumentException($"Can't unpatch non patched module \"{moduleType.FullName}\".");
 
-            foreach(var module in modules)
+            foreach (var module in modules)
             {
-                if(module.GetType() == moduleType)
+                if (module.GetType() == moduleType)
                 {
                     UnpatchModule(module);
                     return;
@@ -221,22 +230,55 @@ namespace TheArchive
 
         public void UnpatchModule(IArchiveModule module)
         {
-            module.Patcher.Unpatch();
-            module.OnExit();
+            try
+            {
+                module.Patcher.Unpatch();
+                module.OnExit();
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Error($"Error while trying to unpatch and/or run {nameof(IArchiveModule.OnExit)} in module \"{module?.GetType()?.FullName ?? "Unknown"}\"!");
+                ArchiveLogger.Exception(ex);
+            }
             modules.Remove(module);
             moduleTypes.Remove(module.GetType());
+        }
+
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+        {
+            foreach(var module in modules)
+            {
+                try
+                {
+                    module?.OnSceneWasLoaded(buildIndex, sceneName);
+                }
+                catch(Exception ex)
+                {
+                    ArchiveLogger.Error($"Error while trying to run {nameof(OnSceneWasLoaded)} in module \"{module?.GetType()?.FullName ?? "Unknown"}\"!");
+                    ArchiveLogger.Exception(ex);
+                }
+            }
+            base.OnSceneWasLoaded(buildIndex, sceneName);
         }
 
         public override void OnLateUpdate()
         {
             foreach (var module in modules)
             {
-                module?.OnLateUpdate();
+                try
+                {
+                    module?.OnLateUpdate();
+                }
+                catch (Exception ex)
+                {
+                    ArchiveLogger.Error($"Error while trying to run {nameof(IArchiveModule.OnLateUpdate)} in module \"{module?.GetType()?.FullName ?? "Unknown"}\"!");
+                    ArchiveLogger.Exception(ex);
+                }
             }
             base.OnLateUpdate();
         }
 
-        private Assembly LoadModule(bool isIl2Cpp)
+        private Assembly LoadMainArchiveModule(bool isIl2Cpp)
         {
             try
             {
@@ -260,16 +302,6 @@ namespace TheArchive
                 ArchiveLogger.Error($"{ex.StackTrace}");
                 return null;
             }
-        }
-
-        public List<Assembly> GetModulesAssemblys()
-        {
-            List<Assembly> assemblyList = new List<Assembly>();
-            foreach(var module in modules)
-            {
-                assemblyList.Add(module.GetType().Assembly);
-            }
-            return assemblyList;
         }
     }
 }

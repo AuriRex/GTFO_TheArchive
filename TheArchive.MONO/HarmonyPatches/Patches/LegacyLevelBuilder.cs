@@ -1,4 +1,4 @@
-﻿#if DEBUG
+﻿/*#if DEBUG
 using Expedition;
 using GameData;
 using HarmonyLib;
@@ -351,4 +351,4 @@ namespace TheArchive.HarmonyPatches.Patches
 
     }
 }
-#endif
+#endif*/
