@@ -66,18 +66,17 @@ namespace TheArchive.HarmonyPatches.Patches
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetBoosterImplantPlayerDataAsync), RundownFlags.RundownSix, RundownFlags.Latest)]
         public static class DropServerClientAPI_GetBoosterImplantPlayerDataAsyncPatch
         {
-#warning R5 version has been moved into submodule.
+            // R5 version has been moved into submodule.
             public static bool Prefix(GetBoosterImplantPlayerDataRequest request, ref IL2Tasks.Task<GetBoosterImplantPlayerDataResult> __result)
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(GetBoosterImplantPlayerDataRequest)}: EntityToken:{request.EntityToken}, MaxBackendTemplateId:{request.MaxBackendTemplateId}");
 
-                var bipd = CustomBoosterManager.Instance.GetBoosterImplantPlayerData(request.MaxBackendTemplateId);
+                var bipd = (DropServer.BoosterImplants.BoosterImplantPlayerData) CustomBoosterManager.Instance.GetBoosterImplantPlayerData(request.MaxBackendTemplateId);
 
                 var result = new GetBoosterImplantPlayerDataResult();
 
                 // NativeFieldInfoPtr_Data
-#warning TODO
-                //Utilities.Il2CppUtils.SetFieldUnsafe(result, bipd, nameof(GetBoosterImplantPlayerDataResult.Data));
+                Utilities.Il2CppUtils.SetFieldUnsafe(result, bipd, nameof(GetBoosterImplantPlayerDataResult.Data));
                 // old-- result.Data = bipd;
 
                 __result = IL2Tasks.Task.FromResult(result);
@@ -92,36 +91,29 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // public unsafe Task<UpdateBoosterImplantPlayerDataResult> UpdateBoosterImplantPlayerDataAsync(UpdateBoosterImplantPlayerDataRequest request)
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.UpdateBoosterImplantPlayerDataAsync), RundownFlags.RundownFive, RundownFlags.Latest)]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.UpdateBoosterImplantPlayerDataAsync), RundownFlags.RundownSix, RundownFlags.Latest)]
         public static class DropServerClientAPI_UpdateBoosterImplantPlayerDataAsyncPatch
         {
+            // R5 version has been moved into submodule.
             // called everytime a new booster is selected for the first time to update the value / missed boosters are aknowledged / a booster has been dropped
             public static bool Prefix(UpdateBoosterImplantPlayerDataRequest request, ref IL2Tasks.Task<UpdateBoosterImplantPlayerDataResult> __result)
             {
                 var str = "";// BoosterJustPrintThatShit.Transaction(request.Transaction);
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(UpdateBoosterImplantPlayerDataRequest)}: Transaction:<{str}>");
 
-                if(EnableCustomBoosterProgressionPatch)
-                {
-                    var result = new UpdateBoosterImplantPlayerDataResult();
+                var result = new UpdateBoosterImplantPlayerDataResult();
 
-                    /*var value = CustomBoosterManager.Instance.UpdateBoosterImplantPlayerData(request.Transaction);
-                    Utilities.Il2CppUtils.SetFieldUnsafe(result, value, nameof(UpdateBoosterImplantPlayerDataResult.Data));*/
+                var value = (DropServer.BoosterImplants.BoosterImplantPlayerData) CustomBoosterManager.Instance.UpdateBoosterImplantPlayerData(request.Transaction);
+                Utilities.Il2CppUtils.SetFieldUnsafe(result, value, nameof(UpdateBoosterImplantPlayerDataResult.Data));
 
-                    __result = IL2Tasks.Task.FromResult(result);
-                    return false;
-                }
-
-                __result = NullTask<UpdateBoosterImplantPlayerDataResult>();
-                return true;
+                __result = IL2Tasks.Task.FromResult(result);
+                return false;
             }
 
             public static void Postfix(ref IL2Tasks.Task<UpdateBoosterImplantPlayerDataResult> __result)
             {
                 var result = __result.Result;
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> received {nameof(UpdateBoosterImplantPlayerDataResult)}: Data:{result.Data}");
-                /*var str = BoosterJustPrintThatShit.GetJSON(result.Data);
-                ArchiveLogger.Msg(ConsoleColor.DarkYellow, str);*/
             }
         }
 
@@ -133,20 +125,14 @@ namespace TheArchive.HarmonyPatches.Patches
             {
                 ArchiveLogger.Msg(ConsoleColor.Red, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(ConsumeBoostersRequest)}: EntityToken:{request.EntityToken}, SessionBlob:{request.SessionBlob}");
 
-                if(EnableCustomBoosterProgressionPatch)
-                {
-                    var result = new ConsumeBoostersResult();
+                var result = new ConsumeBoostersResult();
 
-                    CustomBoosterManager.Instance.ConsumeBoosters(request.SessionBlob);
+                CustomBoosterManager.Instance.ConsumeBoosters(request.SessionBlob);
 
-                    result.SessionBlob = request.SessionBlob;
+                result.SessionBlob = request.SessionBlob;
 
-                    __result = IL2Tasks.Task.FromResult(result);
-                    return false;
-                }
-
-                __result = NullTask<ConsumeBoostersResult>();
-                return true;
+                __result = IL2Tasks.Task.FromResult(result);
+                return false;
             }
 
             public static void Postfix(ref IL2Tasks.Task<ConsumeBoostersResult> __result)
@@ -157,37 +143,28 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // public unsafe Task<EndSessionResult> EndSessionAsync(EndSessionRequest request)
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.EndSessionAsync), RundownFlags.RundownFive, RundownFlags.Latest)]
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.EndSessionAsync), RundownFlags.RundownSix, RundownFlags.Latest)]
         public static class DropServerClientAPI_EndSessionAsyncPatch
         {
             public static bool Prefix(EndSessionRequest request, ref IL2Tasks.Task<EndSessionResult> __result)
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(EndSessionRequest)}: EntityToken:{request.EntityToken}, SessionBlob:{request.SessionBlob}, BoosterCurrency:{request.BoosterCurrency}, MaxBackendBoosterTemplateId:{request.MaxBackendBoosterTemplateId}, Success:{request.Success}");
 
-                if (EnableCustomProgressionPatch)
+                if (request.Success)
                 {
-                    if (request.Success)
-                    {
-                        CustomProgressionManager.Instance.CompleteCurrentActiveExpedition();
+                    CustomProgressionManager.Instance.CompleteCurrentActiveExpedition();
 
-                        CustomProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
-                    }
+                    CustomProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
                 }
 
                 //request.BoosterCurrency
                 // Add ^ those values to the Currency of the respective category
-                if (EnableCustomBoosterProgressionPatch)
-                {
-                    var result = new EndSessionResult();
+                var result = new EndSessionResult();
 
-                    CustomBoosterManager.Instance.EndSession(request.BoosterCurrency, request.Success, request.SessionBlob, request.MaxBackendBoosterTemplateId, request.BuildRev);
+                CustomBoosterManager.Instance.EndSession(request.BoosterCurrency, request.Success, request.SessionBlob, request.MaxBackendBoosterTemplateId, request.BuildRev);
 
-                    __result = IL2Tasks.Task.FromResult(result);
-                    return false;
-                }
-
-                __result = NullTask<EndSessionResult>();
-                return true;
+                __result = IL2Tasks.Task.FromResult(result);
+                return false;
             }
 
             public static void Postfix(ref IL2Tasks.Task<EndSessionResult> __result)

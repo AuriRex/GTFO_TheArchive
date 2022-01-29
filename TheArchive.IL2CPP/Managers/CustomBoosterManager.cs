@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
-using TheArchive.Models;
 using TheArchive.Models.Boosters;
 using TheArchive.Utilities;
 
@@ -70,7 +69,12 @@ namespace TheArchive.Managers
             SaveToBoosterFile(CustomBoosterImplantPlayerData);
         }
 
-#warning TODO
+        public object UpdateBoosterImplantPlayerData(object transaction)
+        {
+            var customTrans = CustomBoosterTransaction.FromBaseGame(transaction);
+            return UpdateBoosterImplantPlayerData(customTrans);
+        }
+
         // called everytime a new booster is selected for the first time to update the value / missed boosters are aknowledged / a booster has been dropped
         public object UpdateBoosterImplantPlayerData(CustomBoosterTransaction transaction) // returns basegame BoosterImplantPlayerData
         {
@@ -87,14 +91,13 @@ namespace TheArchive.Managers
                 CustomBoosterImplantPlayerData.AcknowledgeMissedBoostersWithIds(transaction.AcknowledgeMissed);
 
             SaveBoostersToDisk();
-            return null; //CustomBoosterImplantPlayerData.ToBaseGame();
+            return CustomBoosterImplantPlayerData.ToBaseGame();
         }
 
-#warning TODO
         public object GetBoosterImplantPlayerData(uint maxBackendTemplateId) // returns basegame BoosterImplantPlayerData
         {
             SaveBoostersToDisk();
-            return null; // CustomBoosterImplantPlayerData.ToBaseGame();
+            return CustomBoosterImplantPlayerData.ToBaseGame();
         }
 
         public void ConsumeBoosters(string sessionBlob)

@@ -1,11 +1,9 @@
 ﻿using DropServer;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using TheArchive.Utilities;
-using UnhollowerBaseLib;
-using UnhollowerRuntimeLib;
+using TheArchive.Interfaces;
+using TheArchive.Managers;
 
 namespace TheArchive.Models.Boosters
 {
@@ -14,66 +12,24 @@ namespace TheArchive.Models.Boosters
         public static int CurrencyNewBoosterCost { get; set; } = 1000;
         public static float CurrencyGainMultiplier { get; set; } = 1f;
 
-        internal CustomBoosterImplantPlayerData()
+        public CustomBoosterImplantPlayerData()
         {
 
         }
 
-#warning TODO
-        /*public CustomBoosterImplantPlayerData(BoosterImplantPlayerData data)
+        public object ToBaseGame() => ToBaseGame(this);
+
+        public static object ToBaseGame(CustomBoosterImplantPlayerData customData)
         {
-            if (data == null) return;
-            SetFromBaseGame(data);
+            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterImplantPlayerData>>().ToBaseGame(customData);
         }
 
-        public void SetFromBaseGame(BoosterImplantPlayerData data)
+        public static CustomBoosterImplantPlayerData FromBaseGame(object BoosterImplantPlayerData)
         {
-            Basic = new CustomCategory(data.Basic);
-            Basic.CategoryType = BoosterImplantCategory.Muted;
-            Advanced = new CustomCategory(data.Advanced);
-            Advanced.CategoryType = BoosterImplantCategory.Bold;
-            Specialized = new CustomCategory(data.Specialized);
-            Specialized.CategoryType = BoosterImplantCategory.Aggressive;
-            New = new uint[data.New.Count];
-            for(int i = 0; i < data.New.Count; i++)
-            {
-                New[i] = data.New[i];
-            }
+            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterImplantPlayerData>>().FromBaseGame(BoosterImplantPlayerData);
         }
 
-        public BoosterImplantPlayerData ToBaseGame()
-        {
-            var bipd = new BoosterImplantPlayerData(ClassInjector.DerivedConstructorPointer<BoosterImplantPlayerData>());
-
-            var basic = Basic.ToBaseGame();
-            var advanced = Advanced.ToBaseGame();
-            var specialized = Specialized.ToBaseGame();
-
-            Il2CppUtils.SetFieldUnsafe(bipd, basic, nameof(BoosterImplantPlayerData.Basic));
-            Il2CppUtils.SetFieldUnsafe(bipd, advanced, nameof(BoosterImplantPlayerData.Advanced));
-            Il2CppUtils.SetFieldUnsafe(bipd, specialized, nameof(BoosterImplantPlayerData.Specialized));
-
-            *//*IntPtr fieldOffsetBasic = Utils.GetFieldPointer<BoosterImplantPlayerData>("NativeFieldInfoPtr_Basic");
-            IntPtr fieldOffsetAdvanced = Utils.GetFieldPointer<BoosterImplantPlayerData>("NativeFieldInfoPtr_Advanced");
-            IntPtr fieldOffsetSpecialized = Utils.GetFieldPointer<BoosterImplantPlayerData>("NativeFieldInfoPtr_Specialized");
-            unsafe
-            {
-                System.Runtime.CompilerServices.Unsafe.CopyBlock((void*) ((long) IL2CPP.Il2CppObjectBaseToPtrNotNull(bipd) + (long) (int) IL2CPP.il2cpp_field_get_offset(fieldOffsetBasic)), (void*) IL2CPP.il2cpp_object_unbox(IL2CPP.Il2CppObjectBaseToPtr(basic)), (uint) IL2CPP.il2cpp_class_value_size(Il2CppClassPointerStore<Category>.NativeClassPtr, ref *(uint*) null));
-                System.Runtime.CompilerServices.Unsafe.CopyBlock((void*) ((long) IL2CPP.Il2CppObjectBaseToPtrNotNull(bipd) + (long) (int) IL2CPP.il2cpp_field_get_offset(fieldOffsetAdvanced)), (void*) IL2CPP.il2cpp_object_unbox(IL2CPP.Il2CppObjectBaseToPtr(advanced)), (uint) IL2CPP.il2cpp_class_value_size(Il2CppClassPointerStore<Category>.NativeClassPtr, ref *(uint*) null));
-                System.Runtime.CompilerServices.Unsafe.CopyBlock((void*) ((long) IL2CPP.Il2CppObjectBaseToPtrNotNull(bipd) + (long) (int) IL2CPP.il2cpp_field_get_offset(fieldOffsetSpecialized)), (void*) IL2CPP.il2cpp_object_unbox(IL2CPP.Il2CppObjectBaseToPtr(specialized)), (uint) IL2CPP.il2cpp_class_value_size(Il2CppClassPointerStore<Category>.NativeClassPtr, ref *(uint*) null));
-            }*//*
-
-            // Throws invalid IL exception for some reason:
-            // System.InvalidProgramException: Invalid IL code in DropServer.BoosterImplantPlayerData:set_Basic (DropServer.BoosterImplantPlayerData/Category): IL_0029: call      0x0a000053
-            //bipd.Basic = Basic.ToBaseGame();
-            //bipd.Advanced = Advanced.ToBaseGame();
-            //bipd.Specialized = Specialized.ToBaseGame();
-            bipd.New = New;
-
-            return bipd;
-        }*/
-
-        public void AcknowledgeMissedBoostersWithIds(CustomBoosterTransaction.Missed acknowledgeMissed)
+        public void AcknowledgeMissedBoostersWithIds(CustomBoosterTransaction.CustomMissed acknowledgeMissed)
         {
             Basic.MissedAck = acknowledgeMissed.Basic;
             Advanced.MissedAck = acknowledgeMissed.Advanced;
@@ -211,29 +167,15 @@ namespace TheArchive.Models.Boosters
 
         public class CustomCategory
         {
-            internal CustomCategory()
+            public CustomCategory()
             {
 
             }
 
-            internal CustomCategory(BoosterImplantCategory cat)
+            public CustomCategory(BoosterImplantCategory cat)
             {
                 CategoryType = cat;
             }
-
-            /*public CustomCategory(Category cat)
-            {
-                if (cat == null) return;
-
-                Inventory = new CustomDropServerBoosterImplantInventoryItem[cat.Inventory.Count];
-                for (int i = 0; i < cat.Inventory.Count; i++)
-                {
-                    Inventory[i] = new CustomDropServerBoosterImplantInventoryItem(cat.Inventory[i]);
-                }
-                Currency = cat.Currency;
-                Missed = cat.Missed;
-                MissedAck = cat.MissedAck;
-            }*/
 
             public uint[] GetUsedIds()
             {
@@ -272,7 +214,7 @@ namespace TheArchive.Models.Boosters
             public int MissedAck { get; set; } = 0;
             
             // Helper
-            public BoosterImplantCategory CategoryType { get; internal set; } = BoosterImplantCategory.Muted;
+            public BoosterImplantCategory CategoryType { get; set; } = BoosterImplantCategory.Muted;
             
             [JsonIgnore]
             public bool InventoryIsFull
@@ -282,23 +224,6 @@ namespace TheArchive.Models.Boosters
                     return Inventory.Length >= 10;
                 }
             }
-
-            /*public Category ToBaseGame()
-            {
-                var cat = new Category(ClassInjector.DerivedConstructorPointer<Category>());
-
-                //cat.Inventory = new DropServer.BoosterImplantInventoryItem[Inventory.Length];
-                cat.Inventory = new UnhollowerBaseLib.Il2CppReferenceArray<DropServer.BoosterImplantInventoryItem>(Inventory.Length);
-                for(int i = 0; i < Inventory.Length; i++)
-                {
-                    cat.Inventory[i] = Inventory[i].ToBaseGame();
-                }
-                cat.Currency = Currency;
-                cat.Missed = Missed;
-                cat.MissedAck = MissedAck;
-
-                return cat;
-            }*/
 
             internal void ConsumeOrDropBoostersWithIds(uint[] boostersToBeConsumed)
             {
@@ -346,6 +271,18 @@ namespace TheArchive.Models.Boosters
                         item.IsTouched = true;
                     }
                 }
+            }
+
+            public object ToBaseGame() => ToBaseGame(this);
+
+            public static CustomCategory FromBaseGame(object baseGame)
+            {
+                return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomCategory>>().FromBaseGame(baseGame);
+            }
+
+            public static object ToBaseGame(CustomCategory customCat)
+            {
+                return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomCategory>>().ToBaseGame(customCat);
             }
         }
     }

@@ -83,6 +83,12 @@
     <Compile Include="ArchivePatches\PlayerAgentPatches.cs" />
     <Compile Include="ArchivePatches\QualityOfLifePatches.cs" />
     <Compile Include="ArchivePatches\VanityItemPatches.cs" />
+    <Compile Include="Factories\CustomBoosterImplantFactory.cs" />
+    <Compile Include="Factories\CustomBoosterImplantPlayerDataFactory.cs" />
+    <Compile Include="Factories\CustomBoosterTransaction.CustomMissedFactory.cs" />
+    <Compile Include="Factories\CustomBoosterTransactionFactory.cs" />
+    <Compile Include="Factories\CustomBoosterImplantPlayerData.CustomCategoryFactory.cs" />
+    <Compile Include="Factories\CustomDropServerBoosterImplantInventoryItemFactory.cs" />
     <Compile Include="R6SubModule.cs" />
     <Compile Include="Models\BoosterJustPrintThatShit.cs" />
     <Compile Include="Models\CustomBoosterImplant.cs" />

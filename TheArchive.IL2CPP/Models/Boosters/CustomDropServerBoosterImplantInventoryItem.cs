@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnhollowerRuntimeLib;
+using TheArchive.Interfaces;
+using TheArchive.Managers;
 
 namespace TheArchive.Models.Boosters
 {
@@ -21,21 +17,17 @@ namespace TheArchive.Models.Boosters
 
         }
 
-#warning TODO
-        /*public DropServer.BoosterImplantInventoryItem ToBaseGame()
+        public object ToBaseGame() => ToBaseGame(this);
+
+        public static object ToBaseGame(CustomDropServerBoosterImplantInventoryItem custom)
         {
-            var biii = base.ToBaseGameInventoryItem();
-
-            biii.Flags = Flags;
-
-            return biii;
+            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomDropServerBoosterImplantInventoryItem>>().ToBaseGame(custom);
         }
 
-        public void SetFromBaseGame(DropServer.BoosterImplantInventoryItem implantItem)
+        public static CustomDropServerBoosterImplantInventoryItem FromBaseGame(object baseGame)
         {
-            Flags = implantItem.Flags;
-            IsTouched = implantItem.IsTouched;
-        }*/
+            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomDropServerBoosterImplantInventoryItem>>().FromBaseGame(baseGame);
+        }
 
         public uint Flags { get; set; } = 0;
         

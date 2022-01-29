@@ -1,9 +1,7 @@
 ﻿using GameData;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using TheArchive.Models.Boosters;
 using TheArchive.Utilities;
 
@@ -23,6 +21,7 @@ namespace TheArchive.Managers
             }
         }
 
+#warning TODO: replace with custom Data Block Types or else we're gonna throw exceptions in R5 because Localization is missing
         public BoosterImplantTemplateDataBlock[] MutedTemplates { get; private set; }
         public BoosterImplantTemplateDataBlock[] BoldTemplates { get; private set; }
         public BoosterImplantTemplateDataBlock[] AgrressiveTemplates { get; private set; }
