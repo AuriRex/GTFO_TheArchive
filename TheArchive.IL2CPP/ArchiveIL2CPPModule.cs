@@ -51,12 +51,13 @@ namespace TheArchive
                 try
                 {
                     var rundown = Utils.IntToRundownEnum((int) rundownId);
+                    Core.SetCurrentRundownAndPatch(rundown);
+
                     if (rundown != Utils.RundownID.RundownFour)
                     {
                         BoosterSetup();
                     }
 
-                    Core.SetCurrentRundownAndPatch(rundown);
                     DataBlockManager.DumpDataBlocksToDisk();
 
                     if (ArchiveMod.Settings.SkipMissionUnlockRequirements)
@@ -74,7 +75,15 @@ namespace TheArchive
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void BoosterSetup()
         {
-            CustomBoosterDropManager.Instance.Setup();
+            try
+            {
+                CustomBoosterDropManager.Instance.Setup();
+            }
+            catch(Exception ex)
+            {
+                ArchiveLogger.Error($"Error while trying to Setup {nameof(CustomBoosterDropManager)}!");
+                ArchiveLogger.Exception(ex);
+            }
         }
 
         public void OnSceneWasLoaded(int buildIndex, string sceneName)

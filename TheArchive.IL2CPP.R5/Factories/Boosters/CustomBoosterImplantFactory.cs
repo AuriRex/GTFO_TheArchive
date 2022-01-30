@@ -8,19 +8,19 @@ namespace TheArchive.IL2CPP.R5.Factories
 {
     public class CustomBoosterImplantFactory : IBaseGameConverter<CustomBoosterImplant>
     {
-        public CustomBoosterImplant FromBaseGame(object baseGame)
+        public CustomBoosterImplant FromBaseGame(object baseGame, CustomBoosterImplant existingCBI = null)
         {
             var implant = (BoosterImplantBase) baseGame;
 
             CustomBoosterImplant.Effect[] effects = new CustomBoosterImplant.Effect[implant.Effects.Length];
 
-            var customImplant = new CustomBoosterImplant(
-                implant.TemplateId,
-                implant.Id,
-                implant.UsesRemaining,
-                effects,
-                implant.Conditions
-                );
+            var customImplant = existingCBI ?? new CustomBoosterImplant();
+
+            customImplant.TemplateId = implant.TemplateId;
+            customImplant.InstanceId = implant.Id;
+            customImplant.Uses = implant.UsesRemaining;
+            customImplant.Effects = effects;
+            customImplant.Conditions = implant.Conditions;
 
             return customImplant;
         }

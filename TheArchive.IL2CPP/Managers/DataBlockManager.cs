@@ -34,6 +34,20 @@ namespace TheArchive.Managers
             _dataBlockTypes = AllTypesOfGameDataBlockBase.ToList();
         }
 
+        public static object GetWrapper(Type type, out Type wrapperType)
+        {
+            var genericType = typeof(GameDataBlockBase<>).MakeGenericType(type);
+            wrapperType = typeof(GameDataBlockWrapper<>).MakeGenericType(type);
+            var wrapper = genericType.GetProperty("Wrapper").GetValue(null);
+
+            return wrapper;
+        }
+
+        public static object GetAllBlocksFromWrapper(Type wrapperType, object wrapper)
+        {
+            return wrapperType.GetProperty("Blocks").GetValue(wrapper);
+        }
+
         public static List<string> DefaultOfflineGear { get; private set; } = new List<string>();
 
         public static void DumpDataBlocksToDisk()
@@ -72,11 +86,10 @@ namespace TheArchive.Managers
 
                     ArchiveLogger.Msg(ConsoleColor.Green, $"Creating Gear cache ...");
 
-                    var wrapperType = typeof(GameDataBlockWrapper<>).MakeGenericType(type);
-                    var wrapper = genericType.GetProperty("Wrapper").GetValue(null);
+                    var wrapper = GetWrapper(type, out var wrapperType);
 
                     // List<DataBlockType>
-                    var blocks = (Il2CppSystem.Collections.Generic.List<PlayerOfflineGearDataBlock>) wrapperType.GetProperty("Blocks").GetValue(wrapper);
+                    var blocks = (Il2CppSystem.Collections.Generic.List<PlayerOfflineGearDataBlock>) GetAllBlocksFromWrapper(wrapperType, wrapper);
 
                     foreach (var block in blocks)
                     {

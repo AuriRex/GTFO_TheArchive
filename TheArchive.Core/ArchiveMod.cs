@@ -47,7 +47,8 @@ namespace TheArchive
 
         public override void OnApplicationQuit()
         {
-            UnpatchAll();
+            // Doesn't work properly anyways ...
+            // UnpatchAll();
 
             base.OnApplicationQuit();
         }

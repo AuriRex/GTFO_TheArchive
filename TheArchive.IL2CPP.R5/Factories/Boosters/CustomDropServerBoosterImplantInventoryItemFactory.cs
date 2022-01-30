@@ -8,29 +8,13 @@ namespace TheArchive.IL2CPP.R5.Factories
 {
     public class CustomDropServerBoosterImplantInventoryItemFactory : IBaseGameConverter<CustomDropServerBoosterImplantInventoryItem>
     {
-        public CustomDropServerBoosterImplantInventoryItem FromBaseGame(object baseGame)
+        public CustomDropServerBoosterImplantInventoryItem FromBaseGame(object baseGame, CustomDropServerBoosterImplantInventoryItem existingCBII = null)
         {
             var boosterImplantInventoryItem = (DropServer.BoosterImplantInventoryItem) baseGame;
 
-            CustomBoosterImplant.Effect[] effects = new CustomBoosterImplant.Effect[boosterImplantInventoryItem.Effects.Length];
+            var customInventoryItem = existingCBII ?? new CustomDropServerBoosterImplantInventoryItem();
 
-            for (int i = 0; i < boosterImplantInventoryItem.Effects.Length; i++)
-            {
-                var bgEfx = boosterImplantInventoryItem.Effects[i];
-                effects[i] = new CustomBoosterImplant.Effect
-                {
-                    Id = bgEfx.Id,
-                    Value = bgEfx.Param
-                };
-            }
-
-            var customInventoryItem = new CustomDropServerBoosterImplantInventoryItem(
-                boosterImplantInventoryItem.TemplateId,
-                boosterImplantInventoryItem.Id,
-                boosterImplantInventoryItem.UsesRemaining,
-                effects,
-                boosterImplantInventoryItem.Conditions
-                );
+            customInventoryItem = (CustomDropServerBoosterImplantInventoryItem) ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterImplant>>().FromBaseGame(baseGame, customInventoryItem);
 
             customInventoryItem.Flags = boosterImplantInventoryItem.Flags;
 

@@ -10,11 +10,11 @@ namespace TheArchive.IL2CPP.R6.Factories
 {
     public class CustomCategoryFactory : IBaseGameConverter<CustomCategory>
     {
-        public CustomCategory FromBaseGame(object baseGame)
+        public CustomCategory FromBaseGame(object baseGame, CustomCategory existingCC = null)
         {
             var cat = (BoosterImplantPlayerData.Category) baseGame;
 
-            var customCat = new CustomCategory();
+            var customCat = existingCC ?? new CustomCategory();
 
             customCat.Currency = cat.Currency;
             customCat.Missed = cat.Missed;

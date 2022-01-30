@@ -8,11 +8,11 @@ namespace TheArchive.IL2CPP.R5.Factories
 {
     public class CustomBoosterTransactionFactory : IBaseGameConverter<CustomBoosterTransaction>
     {
-        public CustomBoosterTransaction FromBaseGame(object baseGame)
+        public CustomBoosterTransaction FromBaseGame(object baseGame, CustomBoosterTransaction existingCBT = null)
         {
             var boosterTrans = (BoosterImplantTransaction) baseGame;
 
-            var customTrans = new CustomBoosterTransaction();
+            var customTrans = existingCBT ?? new CustomBoosterTransaction();
 
             customTrans.AcknowledgeIds = boosterTrans.AcknowledgeIds;
             customTrans.DropIds = boosterTrans.DropIds;

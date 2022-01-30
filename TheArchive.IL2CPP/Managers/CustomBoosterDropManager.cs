@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Models.Boosters;
+using TheArchive.Models.DataBlocks;
 using TheArchive.Utilities;
 
 namespace TheArchive.Managers
@@ -22,28 +23,29 @@ namespace TheArchive.Managers
         }
 
 #warning TODO: replace with custom Data Block Types or else we're gonna throw exceptions in R5 because Localization is missing
-        public BoosterImplantTemplateDataBlock[] MutedTemplates { get; private set; }
-        public BoosterImplantTemplateDataBlock[] BoldTemplates { get; private set; }
-        public BoosterImplantTemplateDataBlock[] AgrressiveTemplates { get; private set; }
+        public CustomBoosterImplantTemplateDataBlock[] MutedTemplates { get; private set; }
+        public CustomBoosterImplantTemplateDataBlock[] BoldTemplates { get; private set; }
+        public CustomBoosterImplantTemplateDataBlock[] AgrressiveTemplates { get; private set; }
 
-        public BoosterImplantEffectDataBlock[] Effects { get; private set; }
-        public BoosterImplantConditionDataBlock[] Conditions { get; private set; }
+        public CustomBoosterImplantEffectDataBlock[] Effects { get; private set; }
+        public CustomBoosterImplantConditionDataBlock[] Conditions { get; private set; }
 
         /// <summary>
         /// Call after GameDataInit has done it's thing
         /// </summary>
         public void Setup()
         {
-            var templates = BoosterImplantTemplateDataBlock.GetAllBlocks().ToArray();
+            //var templates = BoosterImplantTemplateDataBlock.GetAllBlocks().ToArray();
+            var templates = ImplementationInstanceManager.GetAllCustomDataBlocksFor<CustomBoosterImplantTemplateDataBlock>("BoosterImplantTemplateDataBlock").ToArray();
 
             MutedTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Muted).ToArray();
             BoldTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Bold).ToArray();
             AgrressiveTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Aggressive).ToArray();
 
-            Effects = BoosterImplantEffectDataBlock.GetAllBlocks().ToArray();
-            Conditions = BoosterImplantConditionDataBlock.GetAllBlocks().ToArray();
+            Effects = ImplementationInstanceManager.GetAllCustomDataBlocksFor<CustomBoosterImplantEffectDataBlock>("BoosterImplantEffectDataBlock").ToArray();
+            Conditions = ImplementationInstanceManager.GetAllCustomDataBlocksFor<CustomBoosterImplantConditionDataBlock>("BoosterImplantConditionDataBlock").ToArray();
 
-            ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(CustomBoosterDropManager)}.{nameof(Setup)}() complete, retrieved {MutedTemplates.Length} Muted, {BoldTemplates.Length} Bold and {AgrressiveTemplates.Length} Agrressive Templates as well as {Effects.Length} Effects and {Conditions.Length} Conditions.");
+            ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(CustomBoosterDropManager)}.{nameof(Setup)}() complete, retrieved {MutedTemplates.Length} Muted, {BoldTemplates.Length} Bold and {AgrressiveTemplates.Length} Agrressive Templates as well as {Effects?.Length} Effects and {Conditions?.Length} Conditions.");
         }
 
         public void Test()
@@ -55,7 +57,7 @@ namespace TheArchive.Managers
 
         public CustomDropServerBoosterImplantInventoryItem GenerateBooster(BoosterImplantCategory category, uint[] usedIds)
         {
-            BoosterImplantTemplateDataBlock template;
+            CustomBoosterImplantTemplateDataBlock template;
             float weight;
 
             int maxUses;
@@ -136,20 +138,20 @@ namespace TheArchive.Managers
 
             var instanceId = GenerateInstanceId(usedIds);
 
-            var value = new CustomDropServerBoosterImplantInventoryItem(template.persistentID, instanceId, maxUses, effects.ToArray(), conditionIds.ToArray());
+            var value = new CustomDropServerBoosterImplantInventoryItem(template.PersistentID, instanceId, maxUses, effects.ToArray(), conditionIds.ToArray());
 
 #pragma warning disable CS0618 // Type or member is obsolete
             value.Template = template;
 #pragma warning restore CS0618 // Type or member is obsolete
 
-            BoosterImplantEffectDataBlock effectDB = null;
-            BoosterImplantConditionDataBlock conditionDB = null;
+            CustomBoosterImplantEffectDataBlock effectDB = null;
+            CustomBoosterImplantConditionDataBlock conditionDB = null;
             try
             {
                 if(effects.Count > 0)
-                    effectDB = Effects.First(ef => ef.persistentID == effects[0].Id);
+                    effectDB = Effects.First(ef => ef.PersistentID == effects[0].Id);
                 if(conditionIds.Count > 0)
-                    conditionDB = Conditions.First(cd => cd.persistentID == conditionIds[0]);
+                    conditionDB = Conditions.First(cd => cd.PersistentID == conditionIds[0]);
             }
             catch(Exception)
             {

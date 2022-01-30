@@ -8,11 +8,11 @@ namespace TheArchive.IL2CPP.R5.Factories
 {
     public class CustomMissedFactory : IBaseGameConverter<CustomMissed>
     {
-        public CustomMissed FromBaseGame(object baseGame)
+        public CustomMissed FromBaseGame(object baseGame, CustomMissed existingCM = null)
         {
             var baseGameMissed = (BoosterImplantTransaction.Missed) baseGame;
 
-            var customMissed = new CustomMissed();
+            var customMissed = existingCM ?? new CustomMissed();
 
             customMissed.Basic = baseGameMissed.Basic;
             customMissed.Advanced = baseGameMissed.Advanced;

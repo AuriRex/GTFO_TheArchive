@@ -1,6 +1,7 @@
 ﻿using GameData;
 using Newtonsoft.Json;
 using System;
+using TheArchive.Models.DataBlocks;
 
 namespace TheArchive.Models.Boosters
 {
@@ -38,7 +39,7 @@ namespace TheArchive.Models.Boosters
         public Effect[] Effects { get; set; }
         [JsonIgnore]
         [Obsolete("Expect this to be null for everything that has not been created with an BoosterImplant object as prefab")]
-        public BoosterImplantTemplateDataBlock Template { get; set; }
+        public CustomBoosterImplantTemplateDataBlock Template { get; set; }
         public uint InstanceId { get; set; }
         public uint[] Conditions { get; set; }
 

@@ -1,6 +1,10 @@
-﻿using System;
+﻿using GameData;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
 namespace TheArchive.Managers
@@ -31,7 +35,27 @@ namespace TheArchive.Managers
                 }
             }
 
-            throw new ArgumentException($"Could not find implementation for type \"{nameof(T)}\"!");
+            throw new ArgumentException($"Could not find implementation for type \"{typeof(T).FullName}\"!");
+        }
+
+        public static T[] GetAllCustomDataBlocksFor<T>(string datablockTypeName) where T : class, new()
+        {
+            var getter = GetOrFindImplementation<IBaseGameConverter<T>>();
+
+            var blockType = DataBlockManager.DataBlockTypes.First(t => t.Name == datablockTypeName);
+
+            //GetAllBlocks();
+            var allBlocks = typeof(GameDataBlockBase<>).MakeGenericType(new Type[] { blockType }).GetMethod("GetAllBlocks").Invoke(null, new object[0]);
+
+            IEnumerable allBlocksEnumerable = (IEnumerable) allBlocks;
+
+            List<T> allCustomBlocks = new List<T>();
+            foreach(var objBlock in allBlocksEnumerable)
+            {
+                allCustomBlocks.Add(getter.FromBaseGame(objBlock));
+            }
+
+            return allCustomBlocks.ToArray();
         }
 
     }

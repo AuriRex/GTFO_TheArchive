@@ -83,18 +83,17 @@
     <Compile Include="ArchivePatches\PlayerAgentPatches.cs" />
     <Compile Include="ArchivePatches\QualityOfLifePatches.cs" />
     <Compile Include="ArchivePatches\VanityItemPatches.cs" />
-    <Compile Include="Factories\CustomBoosterImplantFactory.cs" />
-    <Compile Include="Factories\CustomBoosterImplantPlayerDataFactory.cs" />
-    <Compile Include="Factories\CustomBoosterTransaction.CustomMissedFactory.cs" />
-    <Compile Include="Factories\CustomBoosterTransactionFactory.cs" />
-    <Compile Include="Factories\CustomBoosterImplantPlayerData.CustomCategoryFactory.cs" />
-    <Compile Include="Factories\CustomDropServerBoosterImplantInventoryItemFactory.cs" />
+    <Compile Include="Factories\Boosters\CustomBoosterImplantFactory.cs" />
+    <Compile Include="Factories\Boosters\CustomBoosterImplantPlayerData.CustomCategoryFactory.cs" />
+    <Compile Include="Factories\Boosters\CustomBoosterImplantPlayerDataFactory.cs" />
+    <Compile Include="Factories\Boosters\CustomBoosterTransaction.CustomMissedFactory.cs" />
+    <Compile Include="Factories\Boosters\CustomBoosterTransactionFactory.cs" />
+    <Compile Include="Factories\Boosters\CustomDropServerBoosterImplantInventoryItemFactory.cs" />
+    <Compile Include="Factories\DataBlocks\CustomBoosterImplantConditionDataBlockFactory.cs" />
+    <Compile Include="Factories\DataBlocks\CustomBoosterImplantEffectDataBlockFactory.cs" />
+    <Compile Include="Factories\DataBlocks\CustomBoosterImplantTemplateDataBlockFactory.cs" />
+    <Compile Include="Factories\DataBlocks\CustomGameDataBlockBaseFactory.cs" />
     <Compile Include="R6SubModule.cs" />
-    <Compile Include="Models\BoosterJustPrintThatShit.cs" />
-    <Compile Include="Models\CustomBoosterImplant.cs" />
-    <Compile Include="Models\CustomBoosterImplantInventoryItem.cs" />
-    <Compile Include="Models\CustomBoosterImplantPlayerData.cs" />
-    <Compile Include="Models\CustomDropServerBoosterImplantInventoryItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +105,9 @@
       <Project>{65bb64dc-68ab-4543-b176-7bf2fa8488bf}</Project>
       <Name>TheArchive.IL2CPP</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -9,11 +9,11 @@ namespace TheArchive.IL2CPP.R6.Factories
 {
     public class CustomBoosterImplantPlayerDataFactory : IBaseGameConverter<CustomBoosterImplantPlayerData>
     {
-        public CustomBoosterImplantPlayerData FromBaseGame(object baseGame)
+        public CustomBoosterImplantPlayerData FromBaseGame(object baseGame, CustomBoosterImplantPlayerData existingCBIP = null)
         {
             var data = (BoosterImplantPlayerData) baseGame;
 
-            var customData = new CustomBoosterImplantPlayerData();
+            var customData = existingCBIP ?? new CustomBoosterImplantPlayerData();
 
             customData.Basic = CustomBoosterImplantPlayerData.CustomCategory.FromBaseGame(data.Basic);
             customData.Basic.CategoryType = BoosterImplantCategory.Muted;

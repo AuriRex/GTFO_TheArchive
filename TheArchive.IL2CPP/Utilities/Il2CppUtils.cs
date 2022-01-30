@@ -1,6 +1,7 @@
 ﻿using MelonLoader;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using UnhollowerBaseLib;
 using UnityEngine;
@@ -8,8 +9,20 @@ using IL2Tasks = Il2CppSystem.Threading.Tasks;
 
 namespace TheArchive.Utilities
 {
-    public class Il2CppUtils
+    public static class Il2CppUtils
     {
+        public static List<T> ToSystemList<T>(this Il2CppSystem.Collections.Generic.List<T> il2List)
+        {
+            var list = new List<T>();
+
+            foreach(var item in il2List)
+            {
+                list.Add(item);
+            }
+
+            return list;
+        }
+
         public static IntPtr GetFieldPointer<T>(string fieldName)
         {
             return (IntPtr) typeof(T).GetField($"NativeFieldInfoPtr_{fieldName}", HarmonyLib.AccessTools.all).GetValue(null);
