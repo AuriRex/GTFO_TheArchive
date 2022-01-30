@@ -22,7 +22,6 @@ namespace TheArchive.Managers
             }
         }
 
-#warning TODO: replace with custom Data Block Types or else we're gonna throw exceptions in R5 because Localization is missing
         public CustomBoosterImplantTemplateDataBlock[] MutedTemplates { get; private set; }
         public CustomBoosterImplantTemplateDataBlock[] BoldTemplates { get; private set; }
         public CustomBoosterImplantTemplateDataBlock[] AgrressiveTemplates { get; private set; }
@@ -184,7 +183,7 @@ namespace TheArchive.Managers
         {
             var newBooster = GenerateBooster(category, data.GetUsedIds());
 
-            if(!data.AddBooster(newBooster))
+            if(!data.TryAddBooster(newBooster))
             {
                 ArchiveLogger.Msg($"Did not add Booster as the inventory for category {category} is full! (This message should not appear!)");
             }

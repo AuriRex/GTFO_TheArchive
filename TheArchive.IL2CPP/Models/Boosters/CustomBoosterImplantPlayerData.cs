@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Interfaces;
 using TheArchive.Managers;
+using TheArchive.Utilities;
 
 namespace TheArchive.Models.Boosters
 {
@@ -12,23 +13,29 @@ namespace TheArchive.Models.Boosters
         public static int CurrencyNewBoosterCost { get; set; } = 1000;
         public static float CurrencyGainMultiplier { get; set; } = 1f;
 
-        public CustomBoosterImplantPlayerData()
-        {
+        /// <summary>
+        /// Muted Boosters
+        /// </summary>
+        public CustomCategory Basic { get; set; } = new CustomCategory(BoosterImplantCategory.Muted);
+        /// <summary>
+        /// Bold Boosters
+        /// </summary>
+        public CustomCategory Advanced { get; set; } = new CustomCategory(BoosterImplantCategory.Bold);
+        /// <summary>
+        /// Agressive Boosters
+        /// </summary>
+        public CustomCategory Specialized { get; set; } = new CustomCategory(BoosterImplantCategory.Aggressive);
+        /// <summary>
+        /// Array of Boosters InstanceIds that are new (in game popup in lobby screen)
+        /// </summary>
+        public uint[] New { get; set; } = new uint[0];
 
-        }
+        public CustomBoosterImplantPlayerData() { }
 
-        public object ToBaseGame() => ToBaseGame(this);
-
-        public static object ToBaseGame(CustomBoosterImplantPlayerData customData)
-        {
-            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterImplantPlayerData>>().ToBaseGame(customData);
-        }
-
-        public static CustomBoosterImplantPlayerData FromBaseGame(object BoosterImplantPlayerData)
-        {
-            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterImplantPlayerData>>().FromBaseGame(BoosterImplantPlayerData);
-        }
-
+        /// <summary>
+        /// Acknowledge the amount of boosters missed
+        /// </summary>
+        /// <param name="acknowledgeMissed"></param>
         public void AcknowledgeMissedBoostersWithIds(CustomBoosterTransaction.CustomMissed acknowledgeMissed)
         {
             Basic.MissedAck = acknowledgeMissed.Basic;
@@ -36,6 +43,10 @@ namespace TheArchive.Models.Boosters
             Specialized.MissedAck = acknowledgeMissed.Specialized;
         }
 
+        /// <summary>
+        /// Get all categories where a new booster should be generated for.
+        /// </summary>
+        /// <returns></returns>
         public CustomCategory[] GetCategoriesWhereCurrencyCostHasBeenReached()
         {
             var cats = new List<CustomCategory>();
@@ -47,6 +58,10 @@ namespace TheArchive.Models.Boosters
             return cats.ToArray();
         }
 
+        /// <summary>
+        /// Acknowledge newly aquired boosters. (Done by closing the popup in game)
+        /// </summary>
+        /// <param name="boostersToAcknowledge"></param>
         public void AcknowledgeBoostersWithIds(uint[] boostersToAcknowledge)
         {
             var newNew = new List<uint>();
@@ -61,6 +76,10 @@ namespace TheArchive.Models.Boosters
             New = newNew.ToArray();
         }
 
+        /// <summary>
+        /// Remove the (!) and "New" indicators in game by "touching" or interacting with the booster.
+        /// </summary>
+        /// <param name="boostersThatWereTouched"></param>
         public void SetBoostersTouchedWithIds(uint[] boostersThatWereTouched)
         {
             Basic.SetBoostersTouchedWithIds(boostersThatWereTouched);
@@ -68,6 +87,10 @@ namespace TheArchive.Models.Boosters
             Specialized.SetBoostersTouchedWithIds(boostersThatWereTouched);
         }
 
+        /// <summary>
+        /// Use up 1 charge nad remove if they're used up
+        /// </summary>
+        /// <param name="boostersToBeConsumed"></param>
         public void ConsumeBoostersWithIds(uint[] boostersToBeConsumed)
         {
             Basic.ConsumeOrDropBoostersWithIds(boostersToBeConsumed);
@@ -75,6 +98,10 @@ namespace TheArchive.Models.Boosters
             Specialized.ConsumeOrDropBoostersWithIds(boostersToBeConsumed);
         }
 
+        /// <summary>
+        /// Drop as in remove those boosters from the inventory
+        /// </summary>
+        /// <param name="boostersToBeDropped"></param>
         public void DropBoostersWithIds(uint[] boostersToBeDropped)
         {
             Basic.DropBoostersWithIds(boostersToBeDropped);
@@ -89,9 +116,14 @@ namespace TheArchive.Models.Boosters
             Specialized.Currency += (int) (boosterCurrency.Specialized * CurrencyGainMultiplier);
         }
 
-        public bool AddBooster(CustomDropServerBoosterImplantInventoryItem newBooster)
+        /// <summary>
+        /// Add Booster into the Category and set it as new.
+        /// </summary>
+        /// <param name="newBooster"></param>
+        /// <returns>true if the Booster has been added</returns>
+        public bool TryAddBooster(CustomDropServerBoosterImplantInventoryItem newBooster)
         {
-            if(!GetCategory(newBooster.Category).AddBooster(newBooster))
+            if(!GetCategory(newBooster.Category).TryAddBooster(newBooster))
                 return false;
 
             var newNew = new uint[New.Length + 1];
@@ -124,7 +156,7 @@ namespace TheArchive.Models.Boosters
             return usedIds.ToArray();
         }
 
-        private CustomCategory[] GetAllCategories()
+        public CustomCategory[] GetAllCategories()
         {
             return new CustomCategory[]
             {
@@ -133,23 +165,6 @@ namespace TheArchive.Models.Boosters
                 Specialized
             };
         }
-
-        /// <summary>
-        /// Muted Boosters
-        /// </summary>
-        public CustomCategory Basic { get; set; } = new CustomCategory(BoosterImplantCategory.Muted);
-        /// <summary>
-        /// Bold Boosters
-        /// </summary>
-        public CustomCategory Advanced { get; set; } = new CustomCategory(BoosterImplantCategory.Bold);
-        /// <summary>
-        /// Agressive Boosters
-        /// </summary>
-        public CustomCategory Specialized { get; set; } = new CustomCategory(BoosterImplantCategory.Aggressive);
-        /// <summary>
-        /// Array of Boosters InstanceIds that are new (in game popup in lobby screen)
-        /// </summary>
-        public uint[] New { get; set; } = new uint[0];
 
         public CustomCategory GetCategory(BoosterImplantCategory category)
         {
@@ -165,35 +180,84 @@ namespace TheArchive.Models.Boosters
             return null;
         }
 
+        public object ToBaseGame() => ToBaseGame(this);
+
+        public static object ToBaseGame(CustomBoosterImplantPlayerData customData)
+        {
+            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterImplantPlayerData>>().ToBaseGame(customData);
+        }
+
+        public static CustomBoosterImplantPlayerData FromBaseGame(object BoosterImplantPlayerData)
+        {
+            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterImplantPlayerData>>().FromBaseGame(BoosterImplantPlayerData);
+        }
+
         public class CustomCategory
         {
-            public CustomCategory()
-            {
+            [JsonIgnore]
+            public const int MAX_BOOSTERS_R5 = 10;
+            [JsonIgnore]
+            public const int MAX_BOOSTERS_R6 = 20;
 
-            }
+            // Helper
+            public BoosterImplantCategory CategoryType { get; set; } = BoosterImplantCategory.Muted;
+
+            /// <summary> 1000 -> 100% -> new booster </summary>
+            public int Currency { get; set; } = 0;
+            /// <summary> Number of missed boosters </summary>
+            public int Missed { get; set; } = 0;
+            /// <summary> Number of missed boosters that have been acknowledged by the player (displays missed boosters popup ingame if unequal with <see cref="Missed"/>) </summary>
+            public int MissedAck { get; set; } = 0;
+
+            public CustomDropServerBoosterImplantInventoryItem[] Inventory { get; set; } = new CustomDropServerBoosterImplantInventoryItem[0];
+
+            public CustomCategory() { }
 
             public CustomCategory(BoosterImplantCategory cat)
             {
                 CategoryType = cat;
             }
 
+            [JsonIgnore]
+            public static int MaxBoostersInCategoryInventory
+            {
+                get
+                {
+                    return GetMaxBoostersInCategory();
+                }
+            }
+
+            [JsonIgnore]
+            public bool InventoryIsFull
+            {
+                get
+                {
+                    return Inventory.Length >= MaxBoostersInCategoryInventory;
+                }
+            }
+
             public uint[] GetUsedIds()
             {
                 uint[] usedIds = new uint[Inventory.Length];
-                for(int i = 0; i < Inventory.Length; i++)
+                for (int i = 0; i < Inventory.Length; i++)
                 {
                     usedIds[i] = Inventory[i].InstanceId;
                 }
                 return usedIds;
             }
 
-            public bool AddBooster(CustomDropServerBoosterImplantInventoryItem newBooster)
+            /// <summary>
+            /// Add a Booster into this categories inventory.
+            /// </summary>
+            /// <param name="newBooster"></param>
+            /// <returns>true if the booster has been added</returns>
+            public bool TryAddBooster(CustomDropServerBoosterImplantInventoryItem newBooster)
             {
                 if (InventoryIsFull) return false;
 
                 var newInventory = new CustomDropServerBoosterImplantInventoryItem[Inventory.Length + 1];
 
-                for(int i = 0; i < Inventory.Length; i++)
+                for (int i = 0; i < Inventory.Length; i++)
                 {
                     newInventory[i] = Inventory[i];
                 }
@@ -205,26 +269,6 @@ namespace TheArchive.Models.Boosters
                 return true;
             }
 
-            public CustomDropServerBoosterImplantInventoryItem[] Inventory { get; set; } = new CustomDropServerBoosterImplantInventoryItem[0];
-            /// <summary> 1000 -> 100% -> new booster </summary>
-            public int Currency { get; set; } = 0;
-            /// <summary> Number of missed boosters </summary>
-            public int Missed { get; set; } = 0;
-            /// <summary> Number of missed boosters that have been acknowledged by the player (displays missed boosters popup ingame if unequal with <see cref="Missed"/>) </summary>
-            public int MissedAck { get; set; } = 0;
-            
-            // Helper
-            public BoosterImplantCategory CategoryType { get; set; } = BoosterImplantCategory.Muted;
-            
-            [JsonIgnore]
-            public bool InventoryIsFull
-            {
-                get
-                {
-                    return Inventory.Length >= 10;
-                }
-            }
-
             internal void ConsumeOrDropBoostersWithIds(uint[] boostersToBeConsumed)
             {
                 var newInventory = new List<CustomDropServerBoosterImplantInventoryItem>();
@@ -234,9 +278,9 @@ namespace TheArchive.Models.Boosters
                     if (boostersToBeConsumed.Any(toConsumeId => item.InstanceId == toConsumeId))
                     {
                         if (item.Uses > 1)
-                            item.Uses -= 1;
+                            item.Uses -= 1; // consumes one charge
                         else
-                            continue;
+                            continue; // removes the Booster on last charge
                     }
 
                     newInventory.Add(item);
@@ -283,6 +327,20 @@ namespace TheArchive.Models.Boosters
             public static object ToBaseGame(CustomCategory customCat)
             {
                 return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomCategory>>().ToBaseGame(customCat);
+            }
+
+            public static int GetMaxBoostersInCategory()
+            {
+                var current = ArchiveMod.CurrentRundown;
+
+                if (current <= Utils.RundownID.RundownFive)
+                    return MAX_BOOSTERS_R5;
+
+                if (current >= Utils.RundownID.RundownSix)
+                    return MAX_BOOSTERS_R6;
+
+                ArchiveLogger.Warning($"Unknown booster inventory size for {current}, defaulting to {MAX_BOOSTERS_R6}!");
+                return MAX_BOOSTERS_R6;
             }
         }
     }
