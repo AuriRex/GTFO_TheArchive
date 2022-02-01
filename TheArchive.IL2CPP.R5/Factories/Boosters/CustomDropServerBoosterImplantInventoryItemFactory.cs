@@ -14,7 +14,7 @@ namespace TheArchive.IL2CPP.R5.Factories
 
             var customInventoryItem = existingCBII ?? new CustomDropServerBoosterImplantInventoryItem();
 
-            customInventoryItem = (CustomDropServerBoosterImplantInventoryItem) ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterImplant>>().FromBaseGame(baseGame, customInventoryItem);
+            customInventoryItem = (CustomDropServerBoosterImplantInventoryItem) ImplementationInstanceManager.FromBaseGameConverter<CustomBoosterImplant>(baseGame, customInventoryItem);
 
             customInventoryItem.Flags = boosterImplantInventoryItem.Flags;
 
@@ -29,7 +29,7 @@ namespace TheArchive.IL2CPP.R5.Factories
         {
             var baseGameItem = new DropServer.BoosterImplantInventoryItem(ClassInjector.DerivedConstructorPointer<DropServer.BoosterImplantInventoryItem>());
 
-            baseGameItem = (DropServer.BoosterImplantInventoryItem) ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterImplant>>().ToBaseGame(customItem, baseGameItem);
+            baseGameItem = (DropServer.BoosterImplantInventoryItem) ImplementationInstanceManager.ToBaseGameConverter<CustomBoosterImplant>(customItem, baseGameItem);
 
             baseGameItem.Flags = customItem.Flags;
 

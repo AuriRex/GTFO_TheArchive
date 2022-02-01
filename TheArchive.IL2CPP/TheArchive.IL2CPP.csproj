@@ -289,7 +289,6 @@
     <Compile Include="HarmonyPatches\Patches\QualityOfLifePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\StatePatches.cs" />
     <Compile Include="Interfaces\IBaseGameConverter.cs" />
-    <Compile Include="Interfaces\IDataBlockConverter.cs" />
     <Compile Include="Managers\CustomBoosterDropManager.cs" />
     <Compile Include="Managers\CustomBoosterManager.cs" />
     <Compile Include="Managers\CustomProgressionManager.cs" />

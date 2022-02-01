@@ -21,12 +21,12 @@ namespace TheArchive.Models.Boosters
 
         public static object ToBaseGame(CustomDropServerBoosterImplantInventoryItem custom)
         {
-            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomDropServerBoosterImplantInventoryItem>>().ToBaseGame(custom);
+            return ImplementationInstanceManager.ToBaseGameConverter(custom);
         }
 
         public static CustomDropServerBoosterImplantInventoryItem FromBaseGame(object baseGame)
         {
-            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomDropServerBoosterImplantInventoryItem>>().FromBaseGame(baseGame);
+            return ImplementationInstanceManager.FromBaseGameConverter<CustomDropServerBoosterImplantInventoryItem>(baseGame);
         }
 
         public uint Flags { get; set; } = 0;

@@ -16,7 +16,7 @@ namespace TheArchive.IL2CPP.R5.Factories.DataBlocks
 
             var customBlock = existingCT ?? new CustomBoosterImplantTemplateDataBlock();
 
-            customBlock = (CustomBoosterImplantTemplateDataBlock) ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomGameDataBlockBase>>().FromBaseGame(baseGame, customBlock);
+            customBlock = (CustomBoosterImplantTemplateDataBlock) ImplementationInstanceManager.FromBaseGameConverter<CustomGameDataBlockBase>(baseGame, customBlock);
 
             customBlock.Conditions = baseBlock.Conditions.ToSystemList();
             customBlock.Deprecated = baseBlock.Deprecated;
@@ -39,9 +39,6 @@ namespace TheArchive.IL2CPP.R5.Factories.DataBlocks
         }
         public Type GetBaseGameType() => typeof(BoosterImplantTemplateDataBlock);
         public Type GetCustomType() => typeof(CustomBoosterImplantTemplateDataBlock);
-        public object ToBaseGame(CustomBoosterImplantTemplateDataBlock customType, object existingBaseGame = null)
-        {
-            throw new NotImplementedException();
-        }
+        public object ToBaseGame(CustomBoosterImplantTemplateDataBlock customType, object existingBaseGame = null) => throw new NotImplementedException();
     }
 }

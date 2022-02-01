@@ -14,7 +14,7 @@ namespace TheArchive.IL2CPP.R5.Factories.DataBlocks
 
             var customBlock = existingCT ?? new CustomBoosterImplantConditionDataBlock();
 
-            customBlock = (CustomBoosterImplantConditionDataBlock) ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomGameDataBlockBase>>().FromBaseGame(baseGame, customBlock);
+            customBlock = (CustomBoosterImplantConditionDataBlock) ImplementationInstanceManager.FromBaseGameConverter<CustomGameDataBlockBase>(baseGame, customBlock);
 
             customBlock.Condition = baseBlock.Condition;
             customBlock.Description = baseBlock.Description;

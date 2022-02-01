@@ -184,12 +184,12 @@ namespace TheArchive.Models.Boosters
 
         public static object ToBaseGame(CustomBoosterImplantPlayerData customData)
         {
-            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterImplantPlayerData>>().ToBaseGame(customData);
+            return ImplementationInstanceManager.ToBaseGameConverter(customData);
         }
 
         public static CustomBoosterImplantPlayerData FromBaseGame(object BoosterImplantPlayerData)
         {
-            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterImplantPlayerData>>().FromBaseGame(BoosterImplantPlayerData);
+            return ImplementationInstanceManager.FromBaseGameConverter<CustomBoosterImplantPlayerData>(BoosterImplantPlayerData);
         }
 
         public class CustomCategory
@@ -319,14 +319,14 @@ namespace TheArchive.Models.Boosters
 
             public object ToBaseGame() => ToBaseGame(this);
 
-            public static CustomCategory FromBaseGame(object baseGame)
-            {
-                return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomCategory>>().FromBaseGame(baseGame);
-            }
-
             public static object ToBaseGame(CustomCategory customCat)
             {
-                return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomCategory>>().ToBaseGame(customCat);
+                return ImplementationInstanceManager.ToBaseGameConverter(customCat);
+            }
+
+            public static CustomCategory FromBaseGame(object baseGame)
+            {
+                return ImplementationInstanceManager.FromBaseGameConverter<CustomCategory>(baseGame);
             }
 
             public static int GetMaxBoostersInCategory()

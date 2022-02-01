@@ -15,12 +15,12 @@ namespace TheArchive.Models.Boosters
 
         public static object ToBaseGame(CustomBoosterTransaction customTrans)
         {
-            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterTransaction>>().ToBaseGame(customTrans);
+            return ImplementationInstanceManager.ToBaseGameConverter(customTrans);
         }
 
         public static CustomBoosterTransaction FromBaseGame(object baseGameTrans)
         {
-            return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomBoosterTransaction>>().FromBaseGame(baseGameTrans);
+            return ImplementationInstanceManager.FromBaseGameConverter<CustomBoosterTransaction>(baseGameTrans);
         }
 
         public class CustomMissed
@@ -33,12 +33,12 @@ namespace TheArchive.Models.Boosters
 
             public static object ToBaseGame(CustomMissed customMissed)
             {
-                return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomMissed>>().ToBaseGame(customMissed);
+                return ImplementationInstanceManager.ToBaseGameConverter(customMissed);
             }
 
             public static CustomMissed FromBaseGame(object baseGameMissed)
             {
-                return ImplementationInstanceManager.GetOrFindImplementation<IBaseGameConverter<CustomMissed>>().FromBaseGame(baseGameMissed);
+                return ImplementationInstanceManager.FromBaseGameConverter<CustomMissed>(baseGameMissed);
             }
         }
 
