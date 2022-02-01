@@ -50,7 +50,7 @@ namespace TheArchive.Managers
         }
 
         /// <summary>
-        /// Gets all internaly enabled data blocks of type with name <paramref name="datablockTypeName"/> and converts them to a custom implemention <typeparamref name="T"/> (<typeparamref name="T"/> has to implement <see cref="IBaseGameConverter{CT}"/>!)
+        /// Gets all internaly enabled data blocks of type with name <paramref name="datablockTypeName"/> and converts them to a custom implemention <typeparamref name="T"/> using a factory that implements <see cref="IBaseGameConverter{CT}"/> (where <typeparamref name="CT"/> is <typeparamref name="T"/>).
         /// </summary>
         /// <typeparam name="T">The custom data block equivalent.</typeparam>
         /// <param name="datablockTypeName">The base game data block type name.</param>
@@ -77,9 +77,9 @@ namespace TheArchive.Managers
 
         /// <summary>
         /// Convert a base game class instance into it's custom equivalent.<br/>
-        /// Must have a type implementing <seealso cref="IBaseGameConverter{CT}"/> loaded in the current domain to work!
+        /// Must have a type implementing <seealso cref="IBaseGameConverter{CT}"/> (where <typeparamref name="CT"/> is <typeparamref name="T"/>) loaded in the current domain to work!
         /// </summary>
-        /// <typeparam name="T">Custom type.</typeparam>
+        /// <typeparam name="T">Custom type representing the base game one.</typeparam>
         /// <param name="baseGame">The base game instance to copy.</param>
         /// <param name="existingCustom">Optional existing custom instance to set the values on.</param>
         /// <returns>Custom type <typeparamref name="T"/></returns>
@@ -90,9 +90,9 @@ namespace TheArchive.Managers
 
         /// <summary>
         /// Convert a custom class instance into it's base game equivalent.<br/>
-        /// Must have a type implementing <seealso cref="IBaseGameConverter{CT}"/> loaded in the current domain to work!
+        /// Must have a type implementing <seealso cref="IBaseGameConverter{CT}"/> (where <typeparamref name="CT"/> is <typeparamref name="T"/>) loaded in the current domain to work!
         /// </summary>
-        /// <typeparam name="T">Custom type.</typeparam>
+        /// <typeparam name="T">Custom type representing the base game one.</typeparam>
         /// <param name="custom">The custom instance to copy.</param>
         /// <param name="existingBaseGame">Optional existing base game instance to set the values on.</param>
         /// <returns>The base game equivalent of <typeparamref name="T"/></returns>
