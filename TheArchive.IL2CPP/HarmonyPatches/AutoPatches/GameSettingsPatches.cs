@@ -25,6 +25,9 @@ namespace TheArchive.HarmonyPatches.AutoPatches
                     case "GTFO_Favorites.txt":
                         __result = LocalFiles.FavoritesPath;
                         return false;
+                    case "GTFO_BotFavorites.txt":
+                        __result = LocalFiles.BotFavoritesPath;
+                        return false;
                     default:
                         return true;
                 }

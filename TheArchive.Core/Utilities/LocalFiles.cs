@@ -101,6 +101,17 @@ namespace TheArchive.Utilities
             }
         }
 
+        private static string _botFavoritesPath = null;
+        public static string BotFavoritesPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_botFavoritesPath))
+                    _botFavoritesPath = Path.Combine(SaveDirectoryPath, $"GTFO_BotFavorites.json");
+                return _botFavoritesPath;
+            }
+        }
+
         private static string _boostersPath = null;
         public static string BoostersPath
         {
