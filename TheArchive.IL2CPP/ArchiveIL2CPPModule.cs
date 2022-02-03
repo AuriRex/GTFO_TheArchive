@@ -50,7 +50,7 @@ namespace TheArchive
         {
             try
             {
-                DataBlockManager.DumpDataBlocksToDisk();
+                DataBlockManager.Setup();
 
                 if (ArchiveMod.Settings.SkipMissionUnlockRequirements)
                 {

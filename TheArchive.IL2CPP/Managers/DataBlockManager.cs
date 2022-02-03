@@ -23,7 +23,7 @@ namespace TheArchive.Managers
             }
         }
 
-        public static void GetAllDataBlockTypes()
+        private static void GetAllDataBlockTypes()
         {
             var AllTypesOfGameDataBlockBase = from x in Assembly.GetAssembly(typeof(EnemyDataBlock)).GetTypes()
                                               let y = x.BaseType
@@ -50,11 +50,9 @@ namespace TheArchive.Managers
 
         public static List<string> DefaultOfflineGear { get; private set; } = new List<string>();
 
-        public static void DumpDataBlocksToDisk()
+        public static void Setup()
         {
-            if (!ArchiveMod.Settings.DumpDataBlocks) return;
-
-            ArchiveLogger.Msg(ConsoleColor.Green, $"{nameof(DataBlockManager)}: Dumping DataBlocks to disk ...");
+            ArchiveLogger.Msg(ConsoleColor.Green, $"{nameof(DataBlockManager)} is setting up ...");
             try
             {
                 foreach (var type in DataBlockTypes)
@@ -67,7 +65,8 @@ namespace TheArchive.Managers
 
                     string fileContents = (string) genericType.GetMethod("GetFileContents").Invoke(null, new object[0]);
 
-                    if (ArchiveMod.Settings.AlwaysOverrideDataBlocks || !File.Exists(path))
+
+                    if (ArchiveMod.Settings.DumpDataBlocks && (ArchiveMod.Settings.AlwaysOverrideDataBlocks || !File.Exists(path)))
                     {
                         ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"  > Writing to file: {path}");
 
