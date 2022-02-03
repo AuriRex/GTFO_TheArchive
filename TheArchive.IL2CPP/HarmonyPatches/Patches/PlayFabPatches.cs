@@ -184,7 +184,7 @@ namespace TheArchive.HarmonyPatches.Patches
                     StartupScreenData = new StartupScreenData();
                     StartupScreenData.AllowedToStartGame = true;
 
-                    StartupScreenData.IntroText = Utils.GetStartupTextForRundown((int) ArchiveIL2CPPModule.CurrentRundownID);
+                    StartupScreenData.IntroText = Utils.GetStartupTextForRundown((int) ArchiveMod.CurrentRundownInt);
                     StartupScreenData.ShowDiscordButton = true;
                     StartupScreenData.ShowBugReportButton = false;
                     StartupScreenData.ShowRoadmapButton = true;

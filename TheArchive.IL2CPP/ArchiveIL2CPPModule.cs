@@ -14,12 +14,7 @@ namespace TheArchive
 
     public class ArchiveIL2CPPModule : IArchiveModule
     {
-
-        public static event Action<uint> OnAfterGameDataInit;
-
         internal static ArchiveIL2CPPModule instance;
-
-        public static uint CurrentRundownID { get; internal set; } = 0;
 
         public bool ApplyHarmonyPatches => true;
 
@@ -47,33 +42,37 @@ namespace TheArchive
                 ArchiveLogger.Msg(ConsoleColor.Magenta, msg);
             };
 
-            OnAfterGameDataInit += (rundownId) => {
-                try
+            Core.GameDataInitialized += OnGameDataInitialized;
+            Core.DataBlocksReady += OnDataBlocksReady;
+        }
+
+        private void OnGameDataInitialized(Utils.RundownID rundownId)
+        {
+            try
+            {
+                DataBlockManager.DumpDataBlocksToDisk();
+
+                if (ArchiveMod.Settings.SkipMissionUnlockRequirements)
                 {
-                    var rundown = Utils.IntToRundownEnum((int) rundownId);
-                    Core.SetCurrentRundownAndPatch(rundown);
-
-                    if (rundown != Utils.RundownID.RundownFour)
-                    {
-                        BoosterSetup();
-                    }
-
-                    DataBlockManager.DumpDataBlocksToDisk();
-
-                    if (ArchiveMod.Settings.SkipMissionUnlockRequirements)
-                    {
-                        Global.AllowFullRundown = true;
-                    }
+                    Global.AllowFullRundown = true;
                 }
-                catch(Exception ex)
-                {
-                    ArchiveLogger.Exception(ex);
-                }
-            };
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
+            }
+        }
+
+        private void OnDataBlocksReady()
+        {
+            if (ArchiveMod.CurrentRundown != Utils.RundownID.RundownFour)
+            {
+                BoosterSetup();
+            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void BoosterSetup()
+        internal static void BoosterSetup()
         {
             try
             {
@@ -121,34 +120,5 @@ namespace TheArchive
 
         }
 
-        [HarmonyPatch(typeof(GameDataInit), nameof(GameDataInit.Initialize))]
-        internal static class GameDataInit_InitializePatch
-        {
-            public static void Postfix()
-            {
-                try
-                {
-                    GameSetupDataBlock block = GameDataBlockBase<GameSetupDataBlock>.GetBlock(1u);
-                    var rundownId = block.RundownIdToLoad;
-
-                    CurrentRundownID = rundownId;
-
-                    OnAfterGameDataInit?.Invoke(rundownId);
-                }
-                catch(Exception ex)
-                {
-                    ArchiveLogger.Exception(ex);
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(GlobalSetup), "Awake")]
-        internal static class GlobalSetup_AwakePatch
-        {
-            public static void Postfix(GlobalSetup __instance)
-            {
-                //__instance.m_allowFullRundown = true;
-            }
-        }
     }
 }

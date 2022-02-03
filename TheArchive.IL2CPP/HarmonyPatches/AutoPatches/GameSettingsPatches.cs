@@ -1,10 +1,5 @@
-﻿using Gear;
-using HarmonyLib;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using HarmonyLib;
 using System;
-using System.IO;
-using System.Linq;
 using TheArchive.Utilities;
 
 namespace TheArchive.HarmonyPatches.AutoPatches
@@ -13,7 +8,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
     {
 
         [HarmonyPatch(typeof(Il2CppSystem.IO.Path), nameof(Il2CppSystem.IO.Path.Combine), new Type[] { typeof(string), typeof(string) })]
-        public static class TestPatch
+        public static class Il2CppSystem_IO_Path_Combine_Patch
         {
             public static bool Prefix(ref string __result, ref string path1, ref string path2)
             {

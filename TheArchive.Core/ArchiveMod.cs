@@ -20,7 +20,30 @@ namespace TheArchive
     {
         public static ArchiveSettings Settings { get; private set; } = new ArchiveSettings();
 
-        public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnitialized;
+        private static uint _currentRundownInt = 0;
+        public static uint CurrentRundownInt
+        {
+            get
+            {
+                return _currentRundownInt;
+            }
+            private set
+            {
+                _currentRundownInt = value;
+                _currentRundown = Utils.IntToRundownEnum((int) value);
+            }
+        }
+        private static RundownID _currentRundown = RundownID.RundownUnitialized;
+        public static RundownID CurrentRundown
+        {
+            get
+            {
+                return _currentRundown;
+            }
+        }
+
+        public event Action<RundownID> GameDataInitialized;
+        public event Action DataBlocksReady;
 
         public static bool HudIsVisible { get; set; } = true;
 
@@ -160,6 +183,25 @@ namespace TheArchive
             }
         }
 
+        [Obsolete("Do not call!")]
+        public void InvokeGameDataInitialized(uint rundownId)
+        {
+            ArchiveLogger.Info($"GameData has been initialized, invoking event.");
+            CurrentRundownInt = rundownId;
+
+            var rundown = Utils.IntToRundownEnum((int) rundownId);
+            ApplyPatches(rundown);
+
+            GameDataInitialized?.Invoke(CurrentRundown);
+        }
+
+        [Obsolete("Do not call!")]
+        public void InvokeDataBlocksReady()
+        {
+            ArchiveLogger.Info($"DataBlocks should be ready to be interacted with, invoking event.");
+            DataBlocksReady?.Invoke();
+        }
+
         private IArchiveModule CreateAndInitModule(Type moduleType)
         {
             if (moduleType == null) throw new ArgumentException($"Parameter {nameof(moduleType)} can not be null!");
@@ -191,10 +233,8 @@ namespace TheArchive
             return module;
         }
 
-        public void SetCurrentRundownAndPatch(RundownID rundownID)
+        private void ApplyPatches(RundownID rundownID)
         {
-            CurrentRundown = rundownID;
-
             if (rundownID != RundownID.RundownUnitialized)
             {
                 foreach (var module in modules)

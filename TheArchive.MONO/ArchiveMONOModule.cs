@@ -12,14 +12,14 @@ namespace TheArchive
 {
     public class ArchiveMONOModule : IArchiveModule
     {
+        internal static ArchiveMONOModule instance;
+
         public static SharedCoroutineStarter CoroutineHelper { get; private set; } = null;
 
         public bool ApplyHarmonyPatches => true;
 
         public ArchivePatcher Patcher { get; set; }
         public ArchiveMod Core { get; set; }
-
-        public static event Action<RundownID> OnAfterStartMainGameAwake;
 
         public class SharedCoroutineStarter : MonoBehaviour
         {
@@ -32,8 +32,6 @@ namespace TheArchive
             }
         }
 
-        internal static ArchiveMONOModule instance;
-
         public void Init()
         {
             instance = this;
@@ -41,9 +39,28 @@ namespace TheArchive
             CrashReportHandler.SetUserMetadata("Modded", "true");
             CrashReportHandler.enableCaptureExceptions = false;
 
-            OnAfterStartMainGameAwake += (rundownId) => {
-                Core.SetCurrentRundownAndPatch(rundownId);
-            };
+            Core.GameDataInitialized += OnGameDataInitialized;
+            Core.DataBlocksReady += OnDataBlocksReady;
+        }
+
+        private void OnDataBlocksReady()
+        {
+#warning TODO: MONO DataBlock dumper
+        }
+
+        private void OnGameDataInitialized(RundownID rundownId)
+        {
+            if (ArchiveMod.Settings.SkipMissionUnlockRequirements && rundownId != RundownID.RundownOne)
+            {
+                AllowFullRundown();
+            }
+        }
+
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void AllowFullRundown()
+        {
+            Global.AllowFullRundown = true;
         }
 
         public void OnSceneWasLoaded(int buildIndex, string sceneName)
@@ -112,28 +129,5 @@ namespace TheArchive
 
         }
 
-        [HarmonyPatch(typeof(StartMainGame), "Awake")]
-        internal static class StartMainGame_AwakePatch
-        {
-            public static void Postfix()
-            {
-                // This only works on R3 and below
-                var currentRundown = IntToRundownEnum((int) Global.RundownIdToLoad);
-                //Global.RundownIdToLoad = 17;
-
-                if (ArchiveMod.Settings.SkipMissionUnlockRequirements && currentRundown != RundownID.RundownOne)
-                {
-                    AllowFullRundown();
-                }
-
-                OnAfterStartMainGameAwake?.Invoke(currentRundown);
-            }
-
-            [MethodImpl(MethodImplOptions.NoInlining)]
-            private static void AllowFullRundown()
-            {
-                Global.AllowFullRundown = true;
-            }
-        }
     }
 }

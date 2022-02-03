@@ -124,6 +124,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArchiveMONOBootstrap.cs" />
     <Compile Include="ArchiveMONOModule.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CELLSettingsPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />

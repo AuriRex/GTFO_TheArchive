@@ -86,7 +86,8 @@ namespace TheArchive.HarmonyPatches.Patches
             }
         }
 
-        // Use the player ping (Middle Mouse Ping) for terminal ping command pings
+        // Use the player ping (Middle Mouse Ping) for terminal ping command pings in R1
+#warning TODO: Fix bug where it doesn't check for the terminal user to avoid multiple visual ping indicators if more than one player has the patch enabled.
         [ArchivePatch(typeof(LG_GenericTerminalItem), "PlayPing", RundownFlags.RundownOne)]
         internal static class LG_GenericTerminalItem_PlayPingPatch
         {
@@ -112,8 +113,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 }
                 catch (Exception ex)
                 {
-                    MelonLoader.MelonLogger.Msg(ConsoleColor.Red, $"An error occured: {ex.Message}");
-                    MelonLoader.MelonLogger.Msg(ConsoleColor.Red, $"{ex.StackTrace}");
+                    ArchiveLogger.Exception(ex);
                 }
             }
         }
@@ -146,8 +146,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 }
                 catch (Exception ex)
                 {
-                    MelonLoader.MelonLogger.Msg(ConsoleColor.Red, $"An error occured: {ex.Message}");
-                    MelonLoader.MelonLogger.Msg(ConsoleColor.Red, $"{ex.StackTrace}");
+                    ArchiveLogger.Exception(ex);
                 }
             }
         }
@@ -200,8 +199,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 }
                 catch (Exception ex)
                 {
-                    MelonLoader.MelonLogger.Msg(ConsoleColor.Red, $"An error occured: {ex.Message}");
-                    MelonLoader.MelonLogger.Msg(ConsoleColor.Red, $"{ex.StackTrace}");
+                    ArchiveLogger.Exception(ex);
                 }
                 return true;
             }
@@ -232,8 +230,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 }
                 catch(Exception ex)
                 {
-                    MelonLoader.MelonLogger.Msg(ConsoleColor.Red, $"An error occured: {ex.Message}");
-                    MelonLoader.MelonLogger.Msg(ConsoleColor.Red, $"{ex.StackTrace}");
+                    ArchiveLogger.Exception(ex);
                 }
             }
         }
@@ -340,8 +337,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 }
                 catch(Exception ex)
                 {
-                    ArchiveLogger.Error(ex.Message);
-                    ArchiveLogger.Error(ex.StackTrace);
+                    ArchiveLogger.Exception(ex);
                 }
             }
         }

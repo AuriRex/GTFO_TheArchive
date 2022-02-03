@@ -1,8 +1,5 @@
-﻿using Globals;
-using HarmonyLib;
-using MelonLoader;
+﻿using HarmonyLib;
 using System;
-using System.Collections.Generic;
 using TheArchive.Utilities;
 
 namespace TheArchive.HarmonyPatches.AutoPatches
@@ -22,7 +19,6 @@ namespace TheArchive.HarmonyPatches.AutoPatches
         {
             public static void Prefix() => ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"SNet_GlobalManager - Setup running");
         }
-
 
     }
 }

@@ -10,6 +10,7 @@ namespace TheArchive.Managers
 {
     public class CustomBoosterDropManager
     {
+        private static bool _hasBeenSetup = false;
 
         private static CustomBoosterDropManager _instance = null;
         public static CustomBoosterDropManager Instance
@@ -34,6 +35,13 @@ namespace TheArchive.Managers
         /// </summary>
         public void Setup()
         {
+            if(_hasBeenSetup)
+            {
+                ArchiveLogger.Info($"{nameof(CustomBoosterDropManager)} already setup, skipping ...");
+                return;
+            }
+            ArchiveLogger.Info($"Setting up {nameof(CustomBoosterDropManager)} ...");
+
             //var templates = BoosterImplantTemplateDataBlock.GetAllBlocks().ToArray();
             var templates = ImplementationInstanceManager.GetAllCustomDataBlocksFor<CustomBoosterImplantTemplateDataBlock>("BoosterImplantTemplateDataBlock").ToArray();
 
@@ -45,6 +53,7 @@ namespace TheArchive.Managers
             Conditions = ImplementationInstanceManager.GetAllCustomDataBlocksFor<CustomBoosterImplantConditionDataBlock>("BoosterImplantConditionDataBlock").ToArray();
 
             ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(CustomBoosterDropManager)}.{nameof(Setup)}() complete, retrieved {MutedTemplates.Length} Muted, {BoldTemplates.Length} Bold and {AgrressiveTemplates.Length} Agrressive Templates as well as {Effects?.Length} Effects and {Conditions?.Length} Conditions.");
+            _hasBeenSetup = true;
         }
 
         public void Test()
