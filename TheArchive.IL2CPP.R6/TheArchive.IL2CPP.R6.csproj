@@ -80,7 +80,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArchivePatches\PlayerAgentPatches.cs" />
     <Compile Include="ArchivePatches\QualityOfLifePatches.cs" />
     <Compile Include="ArchivePatches\VanityItemPatches.cs" />
     <Compile Include="Factories\Boosters\CustomBoosterImplantFactory.cs" />

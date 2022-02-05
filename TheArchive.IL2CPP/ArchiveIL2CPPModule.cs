@@ -100,19 +100,6 @@ namespace TheArchive
                 GuiManager.WatermarkLayer.SetVisible(ArchiveMod.HudIsVisible);
                 GuiManager.CrosshairLayer.SetVisible(ArchiveMod.HudIsVisible);
             }
-
-#if DEBUG
-#warning move this to seperate toolbelt mod
-            if (Input.GetKeyDown(KeyCode.F10))
-            {
-                FocusStateManager.ToggleFreeflight();
-            }
-
-            if (Input.GetKeyDown(KeyCode.F9))
-            {
-                FocusStateManager.ToggleDebugMenu();
-            }
-#endif
         }
 
         public void OnExit()

@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System.Linq;
+using System.Reflection;
 using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive.HarmonyPatches.Patches
@@ -8,9 +9,16 @@ namespace TheArchive.HarmonyPatches.Patches
     {
         public static bool LocalPlayerIsInTerminal { get; private set; } = false;
 
+        private static PropertyInfo[] _statePatchesProperties = null;
+
         private static void ResetStates()
         {
-            foreach(var prop in typeof(StatePatches).GetProperties(AccessTools.all).Where(p => p.PropertyType == typeof(bool) && p.SetMethod.IsStatic))
+            if(_statePatchesProperties == null)
+            {
+                _statePatchesProperties = typeof(StatePatches).GetProperties(AccessTools.all).Where(p => p.PropertyType == typeof(bool) && p.SetMethod.IsStatic).ToArray();
+            }
+
+            foreach(var prop in _statePatchesProperties)
             {
                 prop.SetValue(null, false);
             }
