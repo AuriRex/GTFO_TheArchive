@@ -1,6 +1,4 @@
 ﻿using Globals;
-using HarmonyLib;
-using System;
 using System.Runtime.CompilerServices;
 using TheArchive.Core;
 using TheArchive.Utilities;
@@ -76,10 +74,6 @@ namespace TheArchive
             }
         }
 
-#if DEBUG
-        private bool state = false;
-#endif
-
         public void OnLateUpdate()
         {
             if(Input.GetKeyDown(KeyCode.F1) && ArchiveMod.Settings.EnableHudToggle)
@@ -90,38 +84,6 @@ namespace TheArchive
                 GuiManager.WatermarkLayer.SetVisible(ArchiveMod.HudIsVisible);
                 GuiManager.CrosshairLayer.SetVisible(ArchiveMod.HudIsVisible);
             }
-
-#if DEBUG
-            if(Input.GetKeyDown(KeyCode.F10))
-            {
-                FocusStateManager.ToggleFreeflight();
-            }
-
-            if(Input.GetKeyDown(KeyCode.F9))
-            {
-                FocusStateManager.ToggleDebugMenu();
-            }
-
-
-            if (Input.GetKeyDown(KeyCode.F8))
-            {
-                ArchiveLogger.Msg($"boop {state}");
-
-                state = !state;
-            }
-
-            if (state)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Confined;
-                Cursor.visible = false;
-            }
-#endif
-
         }
 
         public void OnExit()
