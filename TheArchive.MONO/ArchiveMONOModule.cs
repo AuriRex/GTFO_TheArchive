@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using TheArchive.Core;
 using TheArchive.Utilities;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.CrashReportHandler;
 using static TheArchive.Utilities.Utils;
 
@@ -48,6 +49,8 @@ namespace TheArchive
 
         private void OnGameDataInitialized(RundownID rundownId)
         {
+            Analytics.enabled = false;
+
             if (ArchiveMod.Settings.SkipMissionUnlockRequirements && rundownId != RundownID.RundownOne)
             {
                 AllowFullRundown();

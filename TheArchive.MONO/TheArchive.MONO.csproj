@@ -114,6 +114,9 @@
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UnityAnalyticsModule">
+      <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+    </Reference>
     <Reference Include="Utils-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Utils-ASM.dll</HintPath>

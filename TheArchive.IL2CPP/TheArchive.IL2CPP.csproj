@@ -264,6 +264,9 @@
       <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.UnityAnalyticsModule">
+      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+    </Reference>
     <Reference Include="Utils-ASM">
       <HintPath>..\_R_LATEST\MelonLoader\Managed\Utils-ASM.dll</HintPath>
       <Private>False</Private>

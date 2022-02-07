@@ -7,6 +7,7 @@ using TheArchive.Core;
 using TheArchive.Managers;
 using TheArchive.Utilities;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.CrashReportHandler;
 
 namespace TheArchive
@@ -50,6 +51,8 @@ namespace TheArchive
         {
             try
             {
+                Analytics.enabled = false;
+
                 DataBlockManager.Setup();
 
                 if (ArchiveMod.Settings.SkipMissionUnlockRequirements)
