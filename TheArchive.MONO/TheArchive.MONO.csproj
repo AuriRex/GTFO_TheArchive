@@ -51,6 +51,7 @@
   <ItemGroup>
     <Reference Include="CellSound-ASM">
       <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\CellSound-ASM.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="GlobalFramework-ASM, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\GlobalFramework-ASM.dll</HintPath>
@@ -90,6 +91,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -113,9 +115,15 @@
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityAnalyticsModule">
       <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Utils-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -124,6 +132,7 @@
     </Reference>
     <Reference Include="Wwise-ASM">
       <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Wwise-ASM.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +140,7 @@
     <Compile Include="ArchiveMONOModule.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CELLSettingsPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\CM_TimedButtonPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\UnityLoggerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\HudTogglePatches.cs" />
@@ -144,6 +154,7 @@
     <ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
       <Project>{7bb66dc5-d29d-4cdd-bb82-d228abe35bda}</Project>
       <Name>TheArchive.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
