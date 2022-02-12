@@ -49,7 +49,8 @@ namespace TheArchive
 
         private void OnGameDataInitialized(RundownID rundownId)
         {
-            Analytics.enabled = false;
+            if (ArchiveMod.Settings.DisableGameAnalytics)
+                Analytics.enabled = false;
 
             if (ArchiveMod.Settings.SkipMissionUnlockRequirements && rundownId != RundownID.RundownOne)
             {

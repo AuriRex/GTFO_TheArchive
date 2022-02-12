@@ -51,7 +51,8 @@ namespace TheArchive
         {
             try
             {
-                Analytics.enabled = false;
+                if(ArchiveMod.Settings.DisableGameAnalytics)
+                    Analytics.enabled = false;
 
                 DataBlockManager.Setup();
 
