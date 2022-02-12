@@ -55,7 +55,15 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_savePath))
                 {
-                    _savePath = Path.Combine(MelonLoader.MelonUtils.UserDataDirectory, $"{ArchiveMod.CurrentRundown}_Data/");
+                    if(!string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation))
+                    {
+                        _savePath = Path.Combine(ArchiveMod.Settings.CustomFileSaveLocation, $"{ArchiveMod.CurrentRundown}_Data/");
+                    }
+                    else
+                    {
+                        _savePath = Path.Combine(MelonLoader.MelonUtils.UserDataDirectory, $"{ArchiveMod.CurrentRundown}_Data/");
+                    }
+                   
                     if (!Directory.Exists(_savePath))
                         Directory.CreateDirectory(_savePath);
                 }
