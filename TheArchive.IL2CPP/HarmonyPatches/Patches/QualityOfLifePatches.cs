@@ -97,7 +97,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
         #region WeaponsStuffs
         // Color by default disabled weapons red & cache last interacted weapons archetype data
-        [ArchivePatch(typeof(CM_InventorySlotItem), nameof(CM_InventorySlotItem.LoadData))]
+        [ArchivePatch(typeof(CM_InventorySlotItem), nameof(CM_InventorySlotItem.LoadData), RundownFlags.RundownFive, RundownFlags.Latest)]
         internal static class CM_InventorySlotItem_LoadDataPatch
         {
             public static void Postfix(ref CM_InventorySlotItem __instance, ref GearIDRange idRange)
