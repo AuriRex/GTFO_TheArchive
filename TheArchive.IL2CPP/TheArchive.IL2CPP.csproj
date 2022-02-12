@@ -264,8 +264,13 @@
       <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.UnityAnalyticsModule">
       <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Utils-ASM">
       <HintPath>..\_R_LATEST\MelonLoader\Managed\Utils-ASM.dll</HintPath>
@@ -282,6 +287,7 @@
     <Compile Include="HarmonyPatches\AutoPatches\GameSettingsPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CM_ItemPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CM_PageMatchmakingPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\CM_TimedButtonPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerClientAPIViaPlayFabPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayfabMatchmakingManagerPatches.cs" />
