@@ -69,5 +69,76 @@ namespace TheArchive.Utilities
             return IL2Tasks.Task.FromResult<T>(null);
         }
 
+        public static T PickRandom<T>(this T[] array)
+        {
+            return (T) array.GetValue(UnityEngine.Random.RandomRangeInt(0, array.Length - 1));
+        }
+
+        /// <summary>
+        /// Run <paramref name="func"/> on every first child of <paramref name="trans"/>
+        /// </summary>
+        /// <param name="trans"></param>
+        /// <param name="func"></param>
+        public static void ForEachFirstChildDo(this Transform trans, Action<Transform> func) => trans.ForEachChildDo(func, recursive: false);
+
+        /// <summary>
+        /// Run <paramref name="func"/> on every child of <paramref name="trans"/>
+        /// </summary>
+        /// <param name="trans"></param>
+        /// <param name="func"></param>
+        /// <param name="recursive">If the children of every child should be included</param>
+        public static void ForEachChildDo(this Transform trans, Action<Transform> func, bool recursive = true)
+        {
+            for(int i = 0; i < trans.childCount; i++)
+            {
+                var child = trans.GetChild(i);
+                func?.Invoke(child);
+                if (recursive)
+                {
+                    ForEachChildDo(child, func, recursive);
+                }
+            }
+        }
+
+        public static Transform GetChildWithExactName(this Transform trans, string name)
+        {
+            for (int i = 0; i < trans.childCount; i++)
+            {
+                var child = trans.GetChild(i);
+                if (child.name == name) return child;
+            }
+            return null;
+        }
+
+        public static T GetComponentOnSelfOrParents<T>(this Transform trans) where T : Component
+        {
+            if (trans == null) return null;
+
+            T component = trans.GetComponent<T>();
+
+            if(component != null)
+            {
+                return component;
+            }
+
+            return trans?.GetComponentOnParents<T>();
+        }
+
+        public static T GetComponentOnParents<T>(this Transform trans) where T : Component
+        {
+            if (trans == null) return null;
+
+            var parent = trans.parent;
+
+            T component = parent.GetComponent<T>();
+
+            if (component != null)
+            {
+                return component;
+            }
+
+            return parent.parent?.GetComponentOnParents<T>();
+        }
+
     }
 }

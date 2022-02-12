@@ -14,6 +14,7 @@
         public bool DisableGameAnalytics { get; set; } = true;
         public bool UnlockAllVanityItems { get; set; } = false;
         public bool EnableDisabledGear { get; set; } = false;
+        public bool EnableLoadoutRandomizer { get; set; } = true;
 
     }
 }
