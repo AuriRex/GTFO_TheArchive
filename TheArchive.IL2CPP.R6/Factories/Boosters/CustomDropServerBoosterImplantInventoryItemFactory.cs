@@ -1,6 +1,6 @@
 ﻿using System;
+using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
-using TheArchive.Managers;
 using TheArchive.Models.Boosters;
 using UnhollowerRuntimeLib;
 
@@ -14,7 +14,7 @@ namespace TheArchive.IL2CPP.R6.Factories
 
             var customInventoryItem = existingCBII ?? new CustomDropServerBoosterImplantInventoryItem();
 
-            customInventoryItem = (CustomDropServerBoosterImplantInventoryItem) ImplementationInstanceManager.FromBaseGameConverter<CustomBoosterImplant>(baseGame, customInventoryItem);
+            customInventoryItem = (CustomDropServerBoosterImplantInventoryItem) ImplementationManager.FromBaseGameConverter<CustomBoosterImplant>(baseGame, customInventoryItem);
 
             customInventoryItem.Flags = boosterImplantInventoryItem.Flags;
 
@@ -29,7 +29,7 @@ namespace TheArchive.IL2CPP.R6.Factories
         {
             var baseGameItem = new DropServer.BoosterImplants.BoosterImplantInventoryItem(ClassInjector.DerivedConstructorPointer<DropServer.BoosterImplants.BoosterImplantInventoryItem>());
 
-            baseGameItem = (DropServer.BoosterImplants.BoosterImplantInventoryItem) ImplementationInstanceManager.ToBaseGameConverter<CustomBoosterImplant>(customItem, baseGameItem);
+            baseGameItem = (DropServer.BoosterImplants.BoosterImplantInventoryItem) ImplementationManager.ToBaseGameConverter<CustomBoosterImplant>(customItem, baseGameItem);
 
             baseGameItem.Flags = customItem.Flags;
 

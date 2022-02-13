@@ -94,7 +94,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 
             }
         }
-
+        /*
         #region WeaponsStuffs
         // Color by default disabled weapons red & cache last interacted weapons archetype data
         [ArchivePatch(typeof(CM_InventorySlotItem), nameof(CM_InventorySlotItem.LoadData), RundownFlags.RundownFive, RundownFlags.Latest)]
@@ -264,6 +264,6 @@ namespace TheArchive.HarmonyPatches.Patches
             }
         }
         #endregion
-
+        */
     }
 }

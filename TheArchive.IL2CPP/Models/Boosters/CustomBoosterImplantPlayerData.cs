@@ -2,8 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using TheArchive.Interfaces;
-using TheArchive.Managers;
+using TheArchive.Core.Managers;
 using TheArchive.Utilities;
 
 namespace TheArchive.Models.Boosters
@@ -184,12 +183,12 @@ namespace TheArchive.Models.Boosters
 
         public static object ToBaseGame(CustomBoosterImplantPlayerData customData)
         {
-            return ImplementationInstanceManager.ToBaseGameConverter(customData);
+            return ImplementationManager.ToBaseGameConverter(customData);
         }
 
         public static CustomBoosterImplantPlayerData FromBaseGame(object BoosterImplantPlayerData)
         {
-            return ImplementationInstanceManager.FromBaseGameConverter<CustomBoosterImplantPlayerData>(BoosterImplantPlayerData);
+            return ImplementationManager.FromBaseGameConverter<CustomBoosterImplantPlayerData>(BoosterImplantPlayerData);
         }
 
         public class CustomCategory
@@ -321,12 +320,12 @@ namespace TheArchive.Models.Boosters
 
             public static object ToBaseGame(CustomCategory customCat)
             {
-                return ImplementationInstanceManager.ToBaseGameConverter(customCat);
+                return ImplementationManager.ToBaseGameConverter(customCat);
             }
 
             public static CustomCategory FromBaseGame(object baseGame)
             {
-                return ImplementationInstanceManager.FromBaseGameConverter<CustomCategory>(baseGame);
+                return ImplementationManager.FromBaseGameConverter<CustomCategory>(baseGame);
             }
 
             public static int GetMaxBoostersInCategory()

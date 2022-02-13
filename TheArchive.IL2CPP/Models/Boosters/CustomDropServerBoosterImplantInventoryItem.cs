@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
-using TheArchive.Interfaces;
-using TheArchive.Managers;
+using TheArchive.Core.Managers;
 
 namespace TheArchive.Models.Boosters
 {
@@ -21,12 +20,12 @@ namespace TheArchive.Models.Boosters
 
         public static object ToBaseGame(CustomDropServerBoosterImplantInventoryItem custom)
         {
-            return ImplementationInstanceManager.ToBaseGameConverter(custom);
+            return ImplementationManager.ToBaseGameConverter(custom);
         }
 
         public static CustomDropServerBoosterImplantInventoryItem FromBaseGame(object baseGame)
         {
-            return ImplementationInstanceManager.FromBaseGameConverter<CustomDropServerBoosterImplantInventoryItem>(baseGame);
+            return ImplementationManager.FromBaseGameConverter<CustomDropServerBoosterImplantInventoryItem>(baseGame);
         }
 
         public uint Flags { get; set; } = 0;
