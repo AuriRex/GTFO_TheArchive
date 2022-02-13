@@ -11,7 +11,7 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.HarmonyPatches.Patches
 {
-    [BindPatchToSetting("EnableLoadoutRandomizer", "LoadoutRandomizer")]
+    [BindPatchToSetting(nameof(ArchiveMod.Settings.EnableLoadoutRandomizer), "LoadoutRandomizer")]
     public class CM_TimedButtonPatches
     {
         [ArchivePatch(typeof(CM_TimedButton), nameof(CM_TimedButton.SetupCMItem))]
