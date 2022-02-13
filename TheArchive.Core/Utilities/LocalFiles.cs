@@ -1,4 +1,5 @@
 ﻿using MelonLoader;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 
@@ -69,6 +70,21 @@ namespace TheArchive.Utilities
                 }
 
                 return _savePath;
+            }
+        }
+
+        private static string _otherConfigsPath = null;
+        public static string OtherConfigsDirectoryPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_otherConfigsPath))
+                {
+                    _otherConfigsPath = Path.Combine(SaveDirectoryPath, "OtherConfigs/");
+                    if (!Directory.Exists(_otherConfigsPath))
+                        Directory.CreateDirectory(_otherConfigsPath);
+                }
+                return _otherConfigsPath;
             }
         }
 
@@ -169,6 +185,30 @@ namespace TheArchive.Utilities
         public static void SaveRundownFourAndUpLocalRundownProgression(string json)
         {
             SaveToFilesDir(kRundownProgressionFileName, json);
+        }
+
+        public static T LoadConfig<T>(bool saveIfNonExistent = true) where T : new()
+        {
+            var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
+
+            if(!File.Exists(path))
+            {
+                var newT = new T();
+                if(saveIfNonExistent)
+                {
+                    SaveConfig(newT);
+                }
+                return newT;
+            }
+
+            return JsonConvert.DeserializeObject<T>(path);
+        }
+
+        public static void SaveConfig<T>(T config)
+        {
+            var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
+
+            File.WriteAllText(path, JsonConvert.SerializeObject(config, Formatting.Indented));
         }
     }
 }
