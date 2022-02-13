@@ -34,18 +34,15 @@ namespace TheArchive
 
             CosturaUtility.Initialize();
 
-            if (!ArchiveMod.Settings.DisableGameAnalytics)
-            {
-                CrashReportHandler.SetUserMetadata("Modded", "true");
-                CrashReportHandler.enableCaptureExceptions = false;
-            }
+            CrashReportHandler.SetUserMetadata("Modded", "true");
+            CrashReportHandler.enableCaptureExceptions = false;
 
+            if (ArchiveMod.Settings.DisableGameAnalytics)
+                Analytics.enabled = false;
 
             typeof(EnemyDataBlock).RegisterSelf();
             typeof(GameDataBlockBase<>).RegisterSelf();
             typeof(GameDataBlockWrapper<>).RegisterSelf();
-
-
 
             CustomProgressionManager.Logger = (string msg) => {
                 ArchiveLogger.Msg(ConsoleColor.Magenta, msg);
@@ -59,9 +56,6 @@ namespace TheArchive
         {
             try
             {
-                if(ArchiveMod.Settings.DisableGameAnalytics)
-                    Analytics.enabled = false;
-
                 DataBlockManager.Setup();
 
                 if (ArchiveMod.Settings.SkipMissionUnlockRequirements)
