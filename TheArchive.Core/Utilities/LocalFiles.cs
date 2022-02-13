@@ -40,7 +40,9 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_dataBlockDumpPath))
                 {
-                    _dataBlockDumpPath = Path.Combine(MelonLoader.MelonUtils.UserDataDirectory, $"DataBlocks_Rundown_{ArchiveMod.CurrentRundown}_Build_{BuildNumber}/");
+                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? MelonUtils.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
+
+                    _dataBlockDumpPath = Path.Combine(path, $"DataBlocks/{ArchiveMod.CurrentRundown}_Build_{BuildNumber}/");
                     if (!Directory.Exists(_dataBlockDumpPath))
                         Directory.CreateDirectory(_dataBlockDumpPath);
                 }
@@ -54,17 +56,14 @@ namespace TheArchive.Utilities
         {
             get
             {
+                if (ArchiveMod.CurrentRundown == Utils.RundownID.RundownUnitialized)
+                    throw new InvalidOperationException("Only get this after GameData has been initialized!");
+
                 if (string.IsNullOrEmpty(_savePath))
                 {
-                    if(!string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation))
-                    {
-                        _savePath = Path.Combine(ArchiveMod.Settings.CustomFileSaveLocation, $"{ArchiveMod.CurrentRundown}_Data/");
-                    }
-                    else
-                    {
-                        _savePath = Path.Combine(MelonLoader.MelonUtils.UserDataDirectory, $"{ArchiveMod.CurrentRundown}_Data/");
-                    }
-                   
+                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? MelonUtils.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
+                    _savePath = Path.Combine(path, $"{ArchiveMod.CurrentRundown}_Data/");
+
                     if (!Directory.Exists(_savePath))
                         Directory.CreateDirectory(_savePath);
                 }
@@ -80,7 +79,9 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_otherConfigsPath))
                 {
-                    _otherConfigsPath = Path.Combine(SaveDirectoryPath, "OtherConfigs/");
+                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? MelonUtils.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
+                    _otherConfigsPath = Path.Combine(path, "OtherConfigs/");
+
                     if (!Directory.Exists(_otherConfigsPath))
                         Directory.CreateDirectory(_otherConfigsPath);
                 }
@@ -201,7 +202,7 @@ namespace TheArchive.Utilities
                 return newT;
             }
 
-            return JsonConvert.DeserializeObject<T>(path);
+            return JsonConvert.DeserializeObject<T>(File.ReadAllText(path));
         }
 
         public static void SaveConfig<T>(T config)

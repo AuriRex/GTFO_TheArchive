@@ -36,14 +36,14 @@ namespace TheArchive.Core.Managers
 
         private static Dictionary<Type, List<Action<object>>> _transformationDictionary = new Dictionary<Type, List<Action<object>>>();
 
-        public static void RegisterTransformationFor<T>(Action<IEnumerable<T>> func) where T : class
+        public static void RegisterTransformationFor<T>(Action<object> func) where T : class
         {
             if (!_transformationDictionary.TryGetValue(typeof(T), out var list))
             {
                 list = new List<Action<object>>();
             }
 
-            list.Add((Action<object>) func);
+            list.Add(func);
 
             _transformationDictionary.Add(typeof(T), list);
         }
@@ -95,10 +95,19 @@ namespace TheArchive.Core.Managers
                     {
                         foreach (var func in kvp.Value)
                         {
-                            var wrapper = GetWrapper(kvp.Key, out var wrapperType);
-                            var allBlocks = GetAllBlocksFromWrapper(wrapperType, wrapper);
-                            func?.Invoke((IEnumerable) allBlocks);
+                            try
+                            {
+                                var wrapper = GetWrapper(kvp.Key, out var wrapperType);
+                                var allBlocks = GetAllBlocksFromWrapper(wrapperType, wrapper);
+                                
+                                func?.Invoke(allBlocks);
+                            }
+                            catch(Exception ex)
+                            {
+                                ArchiveLogger.Exception(ex);
+                            }
                         }
+
                     }
                 }
             }
