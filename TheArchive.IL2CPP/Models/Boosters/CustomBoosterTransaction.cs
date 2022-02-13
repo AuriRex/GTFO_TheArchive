@@ -1,5 +1,4 @@
-﻿using TheArchive.Interfaces;
-using TheArchive.Managers;
+﻿using TheArchive.Core.Managers;
 
 namespace TheArchive.Models.Boosters
 {
@@ -15,12 +14,12 @@ namespace TheArchive.Models.Boosters
 
         public static object ToBaseGame(CustomBoosterTransaction customTrans)
         {
-            return ImplementationInstanceManager.ToBaseGameConverter(customTrans);
+            return ImplementationManager.ToBaseGameConverter(customTrans);
         }
 
         public static CustomBoosterTransaction FromBaseGame(object baseGameTrans)
         {
-            return ImplementationInstanceManager.FromBaseGameConverter<CustomBoosterTransaction>(baseGameTrans);
+            return ImplementationManager.FromBaseGameConverter<CustomBoosterTransaction>(baseGameTrans);
         }
 
         public class CustomMissed
@@ -33,12 +32,12 @@ namespace TheArchive.Models.Boosters
 
             public static object ToBaseGame(CustomMissed customMissed)
             {
-                return ImplementationInstanceManager.ToBaseGameConverter(customMissed);
+                return ImplementationManager.ToBaseGameConverter(customMissed);
             }
 
             public static CustomMissed FromBaseGame(object baseGameMissed)
             {
-                return ImplementationInstanceManager.FromBaseGameConverter<CustomMissed>(baseGameMissed);
+                return ImplementationManager.FromBaseGameConverter<CustomMissed>(baseGameMissed);
             }
         }
 

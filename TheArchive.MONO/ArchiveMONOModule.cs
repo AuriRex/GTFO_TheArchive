@@ -1,4 +1,5 @@
-﻿using Globals;
+﻿using GameData;
+using Globals;
 using System.Runtime.CompilerServices;
 using TheArchive.Core;
 using TheArchive.Utilities;
@@ -37,6 +38,10 @@ namespace TheArchive
 
             CrashReportHandler.SetUserMetadata("Modded", "true");
             CrashReportHandler.enableCaptureExceptions = false;
+
+            typeof(EnemyDataBlock).RegisterSelf();
+            typeof(GameDataBlockBase<>).RegisterSelf();
+            typeof(GameDataBlockWrapper<>).RegisterSelf();
 
             Core.GameDataInitialized += OnGameDataInitialized;
             Core.DataBlocksReady += OnDataBlocksReady;

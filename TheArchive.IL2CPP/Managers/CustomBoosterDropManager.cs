@@ -1,7 +1,7 @@
-﻿using GameData;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TheArchive.Core.Managers;
 using TheArchive.Models.Boosters;
 using TheArchive.Models.DataBlocks;
 using TheArchive.Utilities;
@@ -43,14 +43,14 @@ namespace TheArchive.Managers
             ArchiveLogger.Info($"Setting up {nameof(CustomBoosterDropManager)} ...");
 
             //var templates = BoosterImplantTemplateDataBlock.GetAllBlocks().ToArray();
-            var templates = ImplementationInstanceManager.GetAllCustomDataBlocksFor<CustomBoosterImplantTemplateDataBlock>("BoosterImplantTemplateDataBlock").ToArray();
+            var templates = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantTemplateDataBlock>("BoosterImplantTemplateDataBlock").ToArray();
 
             MutedTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Muted).ToArray();
             BoldTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Bold).ToArray();
             AgrressiveTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Aggressive).ToArray();
 
-            Effects = ImplementationInstanceManager.GetAllCustomDataBlocksFor<CustomBoosterImplantEffectDataBlock>("BoosterImplantEffectDataBlock").ToArray();
-            Conditions = ImplementationInstanceManager.GetAllCustomDataBlocksFor<CustomBoosterImplantConditionDataBlock>("BoosterImplantConditionDataBlock").ToArray();
+            Effects = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantEffectDataBlock>("BoosterImplantEffectDataBlock").ToArray();
+            Conditions = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantConditionDataBlock>("BoosterImplantConditionDataBlock").ToArray();
 
             ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(CustomBoosterDropManager)}.{nameof(Setup)}() complete, retrieved {MutedTemplates.Length} Muted, {BoldTemplates.Length} Bold and {AgrressiveTemplates.Length} Agrressive Templates as well as {Effects?.Length} Effects and {Conditions?.Length} Conditions.");
             _hasBeenSetup = true;

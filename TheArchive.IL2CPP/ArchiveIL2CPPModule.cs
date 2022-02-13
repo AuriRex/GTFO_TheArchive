@@ -4,6 +4,7 @@ using HarmonyLib;
 using System;
 using System.Runtime.CompilerServices;
 using TheArchive.Core;
+using TheArchive.Core.Managers;
 using TheArchive.Managers;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -31,13 +32,20 @@ namespace TheArchive
         {
             instance = this;
 
-            if(!ArchiveMod.Settings.DisableGameAnalytics)
+            CosturaUtility.Initialize();
+
+            if (!ArchiveMod.Settings.DisableGameAnalytics)
             {
                 CrashReportHandler.SetUserMetadata("Modded", "true");
                 CrashReportHandler.enableCaptureExceptions = false;
             }
 
-            CosturaUtility.Initialize();
+
+            typeof(EnemyDataBlock).RegisterSelf();
+            typeof(GameDataBlockBase<>).RegisterSelf();
+            typeof(GameDataBlockWrapper<>).RegisterSelf();
+
+
 
             CustomProgressionManager.Logger = (string msg) => {
                 ArchiveLogger.Msg(ConsoleColor.Magenta, msg);

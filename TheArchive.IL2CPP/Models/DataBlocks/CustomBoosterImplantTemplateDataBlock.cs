@@ -1,6 +1,6 @@
 ﻿using GameData;
 using System.Collections.Generic;
-using TheArchive.Managers;
+using TheArchive.Core.Managers;
 using UnityEngine;
 
 namespace TheArchive.Models.DataBlocks
@@ -24,12 +24,12 @@ namespace TheArchive.Models.DataBlocks
 
         public static object ToBaseGame(CustomBoosterImplantTemplateDataBlock custom)
         {
-            return ImplementationInstanceManager.ToBaseGameConverter(custom);
+            return ImplementationManager.ToBaseGameConverter(custom);
         }
 
         public static CustomBoosterImplantTemplateDataBlock FromBaseGame(object baseGame)
         {
-            return ImplementationInstanceManager.FromBaseGameConverter<CustomBoosterImplantTemplateDataBlock>(baseGame);
+            return ImplementationManager.FromBaseGameConverter<CustomBoosterImplantTemplateDataBlock>(baseGame);
         }
 
     }
