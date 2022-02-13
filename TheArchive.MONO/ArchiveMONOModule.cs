@@ -1,6 +1,9 @@
-﻿using Globals;
+﻿using GameData;
+using Globals;
+using System;
 using System.Runtime.CompilerServices;
 using TheArchive.Core;
+using TheArchive.Core.Managers;
 using TheArchive.Utilities;
 using UnityEngine;
 using UnityEngine.Analytics;
@@ -38,20 +41,31 @@ namespace TheArchive
             CrashReportHandler.SetUserMetadata("Modded", "true");
             CrashReportHandler.enableCaptureExceptions = false;
 
+            if (ArchiveMod.Settings.DisableGameAnalytics)
+                Analytics.enabled = false;
+
+            typeof(EnemyDataBlock).RegisterSelf();
+            typeof(GameDataBlockBase<>).RegisterSelf();
+            typeof(GameDataBlockWrapper<>).RegisterSelf();
+
             Core.GameDataInitialized += OnGameDataInitialized;
             Core.DataBlocksReady += OnDataBlocksReady;
         }
 
         private void OnDataBlocksReady()
         {
-#warning TODO: MONO DataBlock dumper
+            try
+            {
+                DataBlockManager.Setup();
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
+            }
         }
 
         private void OnGameDataInitialized(RundownID rundownId)
         {
-            if (ArchiveMod.Settings.DisableGameAnalytics)
-                Analytics.enabled = false;
-
             if (ArchiveMod.Settings.SkipMissionUnlockRequirements && rundownId != RundownID.RundownOne)
             {
                 AllowFullRundown();

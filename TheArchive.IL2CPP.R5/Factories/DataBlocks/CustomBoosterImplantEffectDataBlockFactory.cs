@@ -1,7 +1,7 @@
 ﻿using GameData;
 using System;
+using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
-using TheArchive.Managers;
 using TheArchive.Models.DataBlocks;
 
 namespace TheArchive.IL2CPP.R5.Factories.DataBlocks
@@ -14,7 +14,7 @@ namespace TheArchive.IL2CPP.R5.Factories.DataBlocks
 
             var customBlock = existingCT ?? new CustomBoosterImplantEffectDataBlock();
 
-            customBlock = (CustomBoosterImplantEffectDataBlock) ImplementationInstanceManager.FromBaseGameConverter<CustomGameDataBlockBase>(baseGame, customBlock);
+            customBlock = (CustomBoosterImplantEffectDataBlock) ImplementationManager.FromBaseGameConverter<CustomGameDataBlockBase>(baseGame, customBlock);
 
             customBlock.BoosterEffectCategory = baseBlock.BoosterEffectCategory;
             customBlock.Description = baseBlock.Description;
