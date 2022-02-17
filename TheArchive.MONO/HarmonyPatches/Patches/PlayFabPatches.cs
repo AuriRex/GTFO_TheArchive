@@ -12,8 +12,6 @@ namespace TheArchive.HarmonyPatches.Patches
 {
     public class PlayFabPatches
     {
-        [Obsolete]
-        public static bool DisableAllPlayFabInteraction { get; set; } = true;
 
         private static Dictionary<string, string> _playerEntityData = new Dictionary<string, string>();
 
@@ -86,17 +84,12 @@ namespace TheArchive.HarmonyPatches.Patches
             // This is where the game usually uploads your Progression to the PlayFab servers.
             public static bool Prefix(string fileName)
             {
-                if (DisableAllPlayFabInteraction)
-                {
-                    if (PlayFabManager.TryGetPlayerEntityFileValue(fileName, out string value))
-                        LocalFiles.SaveToFilesDir(fileName, value);
+                if (PlayFabManager.TryGetPlayerEntityFileValue(fileName, out string value))
+                    LocalFiles.SaveToFilesDir(fileName, value);
 
-                    MonoUtils.CallEvent<PlayFabManager>("OnFileUploadSuccess");
+                MonoUtils.CallEvent<PlayFabManager>("OnFileUploadSuccess", null, fileName);
 
-                    return false;
-                }
-
-                return true;
+                return false;
             }
         }
 
@@ -134,25 +127,18 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(eStartupScreenKey key, out StartupScreenData data, ref bool __result)
             {
-                if (DisableAllPlayFabInteraction)
-                {
-                    __result = true;
-                    var sud = new StartupScreenData();
-                    sud.AllowedToStartGame = true;
+                __result = true;
+                var sud = new StartupScreenData();
+                sud.AllowedToStartGame = true;
 
-                    sud.IntroText = Utils.GetStartupTextForRundown((int) Global.RundownIdToLoad);
-                    sud.ShowDiscordButton = true;
-                    sud.ShowBugReportButton = false;
-                    sud.ShowRoadmapButton = true;
-                    //sud.ShowOvertoneButton = false;
-                    sud.ShowIntroText = true;
-                    data = sud;
-                    return false;
-                }
-
-                __result = false;
-                data = null;
-                return true;
+                sud.IntroText = Utils.GetStartupTextForRundown((int) Global.RundownIdToLoad);
+                sud.ShowDiscordButton = true;
+                sud.ShowBugReportButton = false;
+                sud.ShowRoadmapButton = true;
+                //sud.ShowOvertoneButton = false;
+                sud.ShowIntroText = true;
+                data = sud;
+                return false;
             }
         }
 
@@ -161,36 +147,31 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(PlayFabManager __instance, ref bool ___m_globalTitleDataLoaded, ref bool ___m_playerDataLoaded, ref bool ___m_loggedIn, ref string ___m_entityId, ref string ___m_entityType)
             {
-                if (DisableAllPlayFabInteraction)
-                {
-                    ArchiveLogger.Msg(ConsoleColor.Yellow, "Faking a PlayFab login ...");
+                ArchiveLogger.Msg(ConsoleColor.Yellow, "Faking a PlayFab login ...");
 
-                    ___m_globalTitleDataLoaded = true;
-                    ___m_playerDataLoaded = true;
-                    ___m_entityId = "steam_user_" + new System.Random().Next(int.MinValue, int.MaxValue);
-                    ___m_entityType = "Player";
+                ___m_globalTitleDataLoaded = true;
+                ___m_playerDataLoaded = true;
+                ___m_entityId = "steam_user_" + new System.Random().Next(int.MinValue, int.MaxValue);
+                ___m_entityType = "Player";
 
-                    PlayFabManager.PlayFabId = "pId_whateveradghf638zd79238zr893zr829rzagtet" + new System.Random().Next(int.MinValue, int.MaxValue);
-                    PlayFabManager.PlayerEntityFilesLoaded = true;
-                    PlayFabManager.LoggedInDateTime = new DateTime();
-                    PlayFabManager.LoggedInSeconds = Clock.Time;
-                    ___m_loggedIn = true;
+                PlayFabManager.PlayFabId = "pId_whateveradghf638zd79238zr893zr829rzagtet" + new System.Random().Next(int.MinValue, int.MaxValue);
+                PlayFabManager.PlayerEntityFilesLoaded = true;
+                PlayFabManager.LoggedInDateTime = new DateTime();
+                PlayFabManager.LoggedInSeconds = Clock.Time;
+                ___m_loggedIn = true;
 
-                    ArchiveLogger.Info("Starting point one second timer.");
-                    ArchiveMONOModule.CoroutineHelper.StartCoroutine(MonoUtils.DoAfter(.1f, () => {
-                        ArchiveLogger.Info("Calling event OnAllPlayerEntityFilesLoaded() ...");
-                        MonoUtils.CallEvent<PlayFabManager>("OnAllPlayerEntityFilesLoaded");
-                    }));
+                ArchiveLogger.Info("Starting point one second timer.");
+                ArchiveMONOModule.CoroutineHelper.StartCoroutine(MonoUtils.DoAfter(.1f, () => {
+                    ArchiveLogger.Info("Calling event OnAllPlayerEntityFilesLoaded() ...");
+                    MonoUtils.CallEvent<PlayFabManager>("OnAllPlayerEntityFilesLoaded");
+                }));
 
-                    ArchiveLogger.Msg("Starting point two second timer.");
-                    ArchiveMONOModule.CoroutineHelper.StartCoroutine(MonoUtils.DoAfter(.2f, () => {
-                        ArchiveLogger.Info("Calling event OnLoginSucess() ...");
-                        MonoUtils.CallEvent<PlayFabManager>("OnLoginSuccess");
-                    }));
-                    return false;
-                }
-
-                return true;
+                ArchiveLogger.Msg("Starting point two second timer.");
+                ArchiveMONOModule.CoroutineHelper.StartCoroutine(MonoUtils.DoAfter(.2f, () => {
+                    ArchiveLogger.Info("Calling event OnLoginSucess() ...");
+                    MonoUtils.CallEvent<PlayFabManager>("OnLoginSuccess");
+                }));
+                return false;
             }
         }
 
@@ -201,7 +182,6 @@ namespace TheArchive.HarmonyPatches.Patches
             {
                 ArchiveLogger.Msg("PlayFabManager has awoken!");
                 PlayFabManager.OnAllPlayerEntityFilesLoaded += __instance_OnAllPlayerEntityFilesLoaded;
-
             }
 
             private static void __instance_OnAllPlayerEntityFilesLoaded()
@@ -227,16 +207,11 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(Action OnSuccess)
             {
-                if (DisableAllPlayFabInteraction)
-                {
-                    ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled AddToOrUpdateLocalPlayerTitleData");
-                    // other stuff maybe ?
-                    OnSuccess?.Invoke();
+                ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled AddToOrUpdateLocalPlayerTitleData");
 
-                    return false;
-                }
+                OnSuccess?.Invoke();
 
-                return true;
+                return false;
             }
         }
 
@@ -245,16 +220,11 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(Action onSucess)
             {
-                if (DisableAllPlayFabInteraction)
-                {
-                    ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled CloudGiveAlwaysInInventory");
-                    // other stuff maybe ?
-                    onSucess?.Invoke();
+                ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled CloudGiveAlwaysInInventory");
 
-                    return false;
-                }
+                onSucess?.Invoke();
 
-                return true;
+                return false;
             }
         }
 
@@ -263,14 +233,9 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix()
             {
-                if (DisableAllPlayFabInteraction)
-                {
-                    ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled CloudGiveItemToLocalPlayer");
-                    // other stuff maybe ?
-                    return false;
-                }
-
-                return true;
+                ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled CloudGiveItemToLocalPlayer");
+                // other stuff maybe ?
+                return false;
             }
         }
 
@@ -284,22 +249,15 @@ namespace TheArchive.HarmonyPatches.Patches
             }
         }
 
-        // Will never be called because it's private and it's caller is patched
-        /*[HarmonyPatch(typeof(PlayFabManager), "RefreshGlobalTitleData")]*/
-
+        // Is never going to be called because it's private and it's caller is patched
         [ArchivePatch(typeof(PlayFabManager), "RefreshItemCatalog")]
         internal class PlayFabManager_RefreshItemCatalogPatch
         {
             public static bool Prefix()
             {
-                if (DisableAllPlayFabInteraction)
-                {
-                    ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled RefreshItemCatalog");
-                    // other stuff maybe ?
-                    return false;
-                }
+                ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled RefreshItemCatalog");
 
-                return true;
+                return false;
             }
         }
 
@@ -308,14 +266,9 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(PlayFabManager __instance, PlayFabManager.delUpdatePlayerInventoryDone OnSuccess)
             {
-                if (DisableAllPlayFabInteraction)
-                {
-                    ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled RefreshLocalPlayerInventory");
-                    OnSuccess?.Invoke(new List<ItemInstance>());
-                    return false;
-                }
-
-                return true;
+                ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled RefreshLocalPlayerInventory");
+                OnSuccess?.Invoke(new List<ItemInstance>());
+                return false;
             }
         }
 
@@ -325,14 +278,9 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(Action OnSuccess = null)
             {
-                if (DisableAllPlayFabInteraction)
-                {
-                    OnSuccess?.Invoke();
+                OnSuccess?.Invoke();
 
-                    return false;
-                }
-
-                return true;
+                return false;
             }
 
             public static void Postfix(PlayFabManager __instance, Dictionary<string, string> ___m_localPlayerData)
@@ -352,16 +300,9 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(Action OnSuccess)
             {
-                if (DisableAllPlayFabInteraction)
-                {
-                    //ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled RefreshStartupScreenTitelData");
+                OnSuccess?.Invoke();
 
-                    OnSuccess?.Invoke();
-
-                    return false;
-                }
-
-                return true;
+                return false;
             }
         }
 
@@ -370,14 +311,9 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix()
             {
-                if (DisableAllPlayFabInteraction)
-                {
-                    ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled RefreshStoreItems");
-                    // other stuff maybe ?
-                    return false;
-                }
+                ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled RefreshStoreItems");
 
-                return true;
+                return false;
             }
         }
 
