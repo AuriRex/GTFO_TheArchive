@@ -92,6 +92,24 @@ namespace TheArchive.Core.Managers
         }
 
         /// <summary>
+        /// Checks if a namespace.typename contains <paramref name="typeName"/> and returns it.
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <returns></returns>
+        public static Type FindTypeInCurrentAppDomain(string typeName)
+        {
+            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (Type type in asm.GetTypes())
+                {
+                    if (type.FullName.Contains(typeName))
+                        return type;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Gets all internaly enabled data blocks of type with name <paramref name="datablockTypeName"/> and converts them to a custom implemention <typeparamref name="T"/> using a factory that implements <see cref="IBaseGameConverter{CT}"/> (where <typeparamref name="CT"/> is <typeparamref name="T"/>).
         /// </summary>
         /// <typeparam name="T">The custom data block equivalent.</typeparam>

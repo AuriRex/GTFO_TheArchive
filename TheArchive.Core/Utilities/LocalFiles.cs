@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using TheArchive.Core;
+using TheArchive.Core.Managers;
 
 namespace TheArchive.Utilities
 {
@@ -16,15 +18,34 @@ namespace TheArchive.Utilities
                 {
                     try
                     {
-                        var buildNumFilePath = Path.Combine(MelonUtils.GameDirectory, "revision.txt");
-                        var buildStringRaw = File.ReadAllLines(buildNumFilePath)[0];
-                        buildStringRaw = buildStringRaw.Replace(" ", ""); // remove the trailing space
-                        _buildNumber = int.Parse(buildStringRaw);
+                        //CellBuildData.GetRevision()
+                        _buildNumber = (int) ((
+                            ImplementationManager.FindTypeInCurrentAppDomain("CellBuildData")
+                            ?.GetMethod("GetRevision", ArchivePatcher.AnyBindingFlags)
+                            ?.Invoke(null, null)
+                            ) ?? -1);
+
+                        if (_buildNumber <= 0)
+                        {
+                            var buildNumFilePath = Path.Combine(MelonUtils.GameDirectory, "revision.txt");
+
+                            if (!File.Exists(buildNumFilePath))
+                            {
+                                throw new Exception($"File doesn't exist: \"{buildNumFilePath}\"");
+                            }
+
+                            var buildStringRaw = File.ReadAllLines(buildNumFilePath)[0];
+                            buildStringRaw = buildStringRaw.Replace(" ", ""); // remove the trailing space
+                            _buildNumber = int.Parse(buildStringRaw);
+                        }
+
+                        if (_buildNumber <= 0)
+                            throw new Exception("Build / Revision number couldn't be found ...");
                     }
                     catch(Exception ex)
                     {
                         _buildNumber = 0;
-                        throw new Exception($"Couldn't load the current build / revision number from revisions.txt! - {ex}", ex);
+                        ArchiveLogger.Error($"Couldn't load the current build / revision number from revisions.txt! - {ex}: {ex.Message}\n{ex.StackTrace}");
                     }
                     
                 }
