@@ -54,6 +54,7 @@ namespace TheArchive
         private List<Type> moduleTypes = new List<Type>();
 
         private List<IArchiveModule> modules = new List<IArchiveModule>();
+        private const string kArchiveSettingsFile = "TheArchive_Settings.json";
 
         public override void OnApplicationStart()
         {
@@ -78,10 +79,25 @@ namespace TheArchive
 
         private void LoadConfig()
         {
+            var path = Path.Combine(MelonUtils.UserDataDirectory, kArchiveSettingsFile);
+
+            LoadConfig(path);
+
+
+            if (Settings.UseCommonArchiveSettingsFile && !string.IsNullOrWhiteSpace(Settings.CustomFileSaveLocation))
+            {
+                path = Path.Combine(Settings.CustomFileSaveLocation, kArchiveSettingsFile);
+                ArchiveLogger.Notice($"Loading common config from \"{path}\" instead!");
+                LoadConfig(path);
+            }
+        }
+
+        private void LoadConfig(string path)
+        {
             try
             {
                 ArchiveLogger.Info("Loading config file ...");
-                var path = Path.Combine(MelonUtils.UserDataDirectory, "TheArchive_Settings.json");
+                
                 if (File.Exists(path))
                 {
                     Settings = JsonConvert.DeserializeObject<ArchiveSettings>(File.ReadAllText(path));

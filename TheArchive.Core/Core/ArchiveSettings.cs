@@ -3,6 +3,7 @@
     public class ArchiveSettings
     {
         public string CustomFileSaveLocation { get; set; } = string.Empty;
+        public bool UseCommonArchiveSettingsFile { get; set; } = false;
         public bool EnableLocalProgressionPatches { get; set; } = true;
         public bool EnableQualityOfLifeImprovements { get; set; } = true;
         public bool SkipMissionUnlockRequirements { get; set; } = false;
