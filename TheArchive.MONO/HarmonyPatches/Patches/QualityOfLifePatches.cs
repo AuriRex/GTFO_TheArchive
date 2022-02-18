@@ -87,7 +87,6 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // Use the player ping (Middle Mouse Ping) for terminal ping command pings in R1
-#warning TODO: Fix bug where it doesn't check for the terminal user to avoid multiple visual ping indicators if more than one player has the patch enabled.
         [ArchivePatch(typeof(LG_GenericTerminalItem), "PlayPing", RundownFlags.RundownOne)]
         internal static class LG_GenericTerminalItem_PlayPingPatch
         {
@@ -96,6 +95,11 @@ namespace TheArchive.HarmonyPatches.Patches
 
             public static void Prefix(ref LG_GenericTerminalItem __instance)
             {
+                if(!SNetwork.SNet.IsMaster)
+                {
+                    return;
+                }
+
                 var localPlayerAgent = GuiManager.PlayerLayer.m_player; //(PlayerAgent) MusicManager_m_localPlayer.GetValue(MusicManager.Current);
 
                 if (CustomTerminalPingQoLInstance == null)
@@ -107,7 +111,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 MelonLoader.MelonLogger.Msg(ConsoleColor.Red, "Ping patch executing!");
                 try
                 {
-                    var bounds = Utilities.MonoUtils.GetMaxBounds(__instance.gameObject);
+                    var bounds = MonoUtils.GetMaxBounds(__instance.gameObject);
 
                     PlayerAgent_TriggerMarkerPing.Invoke(localPlayerAgent, new object[] { (iPlayerPingTarget) CustomTerminalPingQoLInstance, bounds.center });
                 }
