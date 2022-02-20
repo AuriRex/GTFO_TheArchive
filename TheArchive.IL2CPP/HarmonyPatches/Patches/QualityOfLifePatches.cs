@@ -13,6 +13,7 @@ using TheArchive.Utilities;
 using UnityEngine;
 using static HackingTool;
 using static TheArchive.Core.ArchivePatcher;
+using static TheArchive.Utilities.PresenceFormatter;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.HarmonyPatches.Patches
@@ -96,6 +97,9 @@ namespace TheArchive.HarmonyPatches.Patches
             }
         }
 
+        [PresenceFormatProvider("LobbyID")]
+        public static string LobbyID => SNet.Lobby.Identifier.ID.ToString();
+
         public static void CopyLobbyIdToClipboard(int _)
         {
             if (SNet.IsExternalMatchMakingActive)
@@ -108,7 +112,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 return;
             }
 
-            var formatedLobbyId = LobbyIdFormatter.FormatLobbyId(ArchiveMod.Settings.LobbyIdFormatString, SNet.Lobby.Identifier.ID.ToString());
+            var formatedLobbyId = PresenceFormatter.FormatPresenceString(ArchiveMod.Settings.LobbyIdFormatString);
             GUIUtility.systemCopyBuffer = formatedLobbyId;
             ArchiveLogger.Notice($"Copied lobby id to clipboard: {formatedLobbyId}");
         }

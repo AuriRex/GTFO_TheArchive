@@ -205,6 +205,15 @@ namespace TheArchive
             ArchiveLogger.Info($"GameData has been initialized, invoking event.");
             CurrentRundownInt = rundownId;
 
+            try
+            {
+                PresenceFormatter.Setup();
+            }
+            catch(Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
+            }
+
             var rundown = Utils.IntToRundownEnum((int) rundownId);
             ApplyPatches(rundown);
 

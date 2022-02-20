@@ -1,6 +1,7 @@
 ﻿using GameData;
 using Globals;
 using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using TheArchive.Core;
 using TheArchive.Core.Managers;
@@ -47,6 +48,8 @@ namespace TheArchive
             typeof(EnemyDataBlock).RegisterSelf();
             typeof(GameDataBlockBase<>).RegisterSelf();
             typeof(GameDataBlockWrapper<>).RegisterSelf();
+
+            Assembly.GetExecutingAssembly().RegisterAllPresenceFormatProviders();
 
             Core.GameDataInitialized += OnGameDataInitialized;
             Core.DataBlocksReady += OnDataBlocksReady;
