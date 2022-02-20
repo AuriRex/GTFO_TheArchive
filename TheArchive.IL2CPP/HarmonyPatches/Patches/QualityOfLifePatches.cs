@@ -3,6 +3,7 @@ using CellMenu;
 using GameData;
 using Gear;
 using LevelGeneration;
+using SNetwork;
 using System;
 using System.Reflection;
 using System.Text;
@@ -92,6 +93,37 @@ namespace TheArchive.HarmonyPatches.Patches
                     ArchiveLogger.Exception(ex);
                 }
                 
+            }
+        }
+
+        public static void CopyLobbyIdToClipboard(int _)
+        {
+            if (SNet.IsExternalMatchMakingActive)
+            {
+                return;
+            }
+            
+            if (!SNet.IsInLobby)
+            {
+                return;
+            }
+
+            var formatedLobbyId = LobbyIdFormatter.FormatLobbyId(ArchiveMod.Settings.LobbyIdFormatString, SNet.Lobby.Identifier.ID.ToString());
+            GUIUtility.systemCopyBuffer = formatedLobbyId;
+            ArchiveLogger.Notice($"Copied lobby id to clipboard: {formatedLobbyId}");
+        }
+
+        // R4-R6
+        [ArchivePatch(typeof(CM_PageSettings), nameof(CM_PageSettings.Setup))]
+        internal static class CM_PageSettings_SetupPatch
+        {
+            public static void Postfix(CM_PageSettings __instance)
+            {
+                //__instance.m_copyLobbyIdButton
+                ArchiveLogger.Info("Hooking Settings Copy Lobby ID Button ...");
+                CM_Item copyLobbyIdButton = (CM_Item) __instance.GetType().GetProperty(nameof(__instance.m_copyLobbyIdButton))?.GetValue(__instance, null);
+
+                copyLobbyIdButton.OnBtnPressCallback = (Action<int>) CopyLobbyIdToClipboard;
             }
         }
     }

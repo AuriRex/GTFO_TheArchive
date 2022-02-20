@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using static TheArchive.Core.ArchivePatcher;
+using static TheArchive.Utilities.RundownFlagsExtensions;
 
 namespace TheArchive.HarmonyPatches.Patches
 {
@@ -10,6 +11,18 @@ namespace TheArchive.HarmonyPatches.Patches
         public static bool LocalPlayerIsInTerminal { get; private set; } = false;
 
         private static PropertyInfo[] _statePatchesProperties = null;
+
+        public static bool InExpedition { get; private set; } = false;
+        public static string ExpeditionTier { get; private set; } = string.Empty; // A, B, C, D, E
+        public static string ExpeditionNumber { get; private set; } = string.Empty; // 1, 2, 3, 4
+
+        public static int RundownNumber
+        {
+            get
+            {
+                return (int) ArchiveMod.CurrentRundownInt;
+            }
+        }
 
         private static void ResetStates()
         {
