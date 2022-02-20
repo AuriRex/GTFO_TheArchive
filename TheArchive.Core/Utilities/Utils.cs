@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace TheArchive.Utilities
 {
-    public partial class Utils
+    public static class Utils
     {
         // https://stackoverflow.com/a/11749642
         public static string ToRoman(int number)
@@ -32,6 +32,18 @@ namespace TheArchive.Utilities
         public static bool IsPowerOfTwo(ulong x)
         {
             return (x != 0) && ((x & (x - 1)) == 0);
+        }
+
+        // https://stackoverflow.com/a/6276029
+        public static string ReplaceCaseInsensitive(this string input, string search, string replacement)
+        {
+            string result = Regex.Replace(
+                input,
+                Regex.Escape(search),
+                replacement.Replace("$", "$$"),
+                RegexOptions.IgnoreCase
+            );
+            return result;
         }
 
         /// <summary>
