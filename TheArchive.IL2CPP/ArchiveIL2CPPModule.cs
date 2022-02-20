@@ -2,6 +2,7 @@
 using Globals;
 using HarmonyLib;
 using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using TheArchive.Core;
 using TheArchive.Core.Managers;
@@ -43,6 +44,8 @@ namespace TheArchive
             typeof(EnemyDataBlock).RegisterSelf();
             typeof(GameDataBlockBase<>).RegisterSelf();
             typeof(GameDataBlockWrapper<>).RegisterSelf();
+
+            Assembly.GetExecutingAssembly().RegisterAllPresenceFormatProviders();
 
             CustomProgressionManager.Logger = (string msg) => {
                 ArchiveLogger.Msg(ConsoleColor.Magenta, msg);

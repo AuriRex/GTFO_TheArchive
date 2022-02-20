@@ -7,6 +7,29 @@ namespace TheArchive.Utilities
 {
     public static class Utils
     {
+        public static string GetRundownTitle(RundownID rundown)
+        {
+            switch(rundown)
+            {
+                case RundownID.RundownOne:
+                    return "Rundown Protocol #001";
+                case RundownID.RundownTwo:
+                    return "Infection";
+                case RundownID.RundownThree:
+                    return "The Vessel";
+                case RundownID.RundownFour:
+                    return "Contact";
+                case RundownID.RundownFive:
+                    return "Rebirth";
+                case RundownID.RundownSix:
+                    return "Destination";
+            }
+            return "Unknown";
+        }
+
+        public const string EXTENDED_WITHOUT_TMP_TAGS = "://EXTENDED";
+        public const string EXTENDED = "<color=orange><size=80%>" + EXTENDED_WITHOUT_TMP_TAGS + "</size></color>";
+
         // https://stackoverflow.com/a/11749642
         public static string ToRoman(int number)
         {

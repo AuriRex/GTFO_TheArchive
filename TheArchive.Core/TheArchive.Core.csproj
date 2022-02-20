@@ -63,13 +63,14 @@
     <Compile Include="Core\ArchivePatcher.cs" />
     <Compile Include="Core\Managers\DataBlockManager.cs" />
     <Compile Include="Core\Managers\ImplementationManager.cs" />
+    <Compile Include="Core\Managers\PresenceManager.cs" />
     <Compile Include="Core\SubModuleAttribute.cs" />
     <Compile Include="Interfaces\IBaseGameConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ArchiveLogger.cs" />
     <Compile Include="Utilities\GTFOLogger.cs" />
     <Compile Include="Utilities\ImplementationManagerExtensions.cs" />
-    <Compile Include="Utilities\LobbyIdFormatter.cs" />
+    <Compile Include="Utilities\PresenceFormatter.cs" />
     <Compile Include="Utilities\LocalFiles.cs" />
     <Compile Include="Utilities\RundownFlagsExtensions.cs" />
     <Compile Include="Utilities\Utils.cs" />
