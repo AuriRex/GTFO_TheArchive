@@ -64,6 +64,7 @@
     <Compile Include="Core\Managers\DataBlockManager.cs" />
     <Compile Include="Core\Managers\ImplementationManager.cs" />
     <Compile Include="Core\Managers\PresenceManager.cs" />
+    <Compile Include="Core\Models\PresenceGameState.cs" />
     <Compile Include="Core\SubModuleAttribute.cs" />
     <Compile Include="Interfaces\IBaseGameConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

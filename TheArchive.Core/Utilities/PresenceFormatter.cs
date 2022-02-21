@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TheArchive.Core.Managers;
 
 namespace TheArchive.Utilities
 {
@@ -10,47 +11,44 @@ namespace TheArchive.Utilities
         private static Dictionary<string, PresenceFormatProvider> _formatters = new Dictionary<string, PresenceFormatProvider>();
 
 
-        private static List<Assembly> _listOfAssemblies = new List<Assembly>();
+        private static List<Type> _typesToCheckForProviders = new List<Type>();
 
         internal static void Setup()
         {
             ArchiveLogger.Debug($"[{nameof(PresenceFormatter)}] Setting up ...");
-            Assembly.GetExecutingAssembly().RegisterAllPresenceFormatProviders(false);
+            typeof(PresenceManager).RegisterAllPresenceFormatProviders(false);
 
-            foreach(var asm in _listOfAssemblies)
+            foreach(var type in _typesToCheckForProviders)
             {
-                foreach(var type in asm.GetTypes())
+                foreach(var prop in type.GetProperties())
                 {
-                    foreach(var prop in type.GetProperties())
+                    var lidfp = prop.GetCustomAttribute<PresenceFormatProvider>();
+                    if (lidfp != null)
                     {
-                        var lidfp = prop.GetCustomAttribute<PresenceFormatProvider>();
-                        if (lidfp != null)
-                        {
-                            lidfp.PropertyInfo = prop;
-                            RegisterFormatter(lidfp);
-                        }
+                        lidfp.PropertyInfo = prop;
+                        RegisterFormatter(lidfp);
                     }
                 }
             }
 
-            foreach(var former in _formatters.Where(kvp => kvp.Value is FallbackPresenceFormatProvider))
+            foreach(var former in _formatters.Where(kvp => kvp.Value is FallbackPresenceFormatProvider && !((FallbackPresenceFormatProvider)kvp.Value).NoNotImplementedWarning))
             {
                 ArchiveLogger.Warning($"[{nameof(PresenceFormatter)}] Identifier \"{former.Key}\" has not been implemented! Using Fallback default values!");
             }
 
         }
 
-        public static void RegisterAllPresenceFormatProviders(this Assembly asm, bool throwOnDuplicate = true)
+        public static void RegisterAllPresenceFormatProviders(this Type type, bool throwOnDuplicate = true)
         {
-            if (asm == null) throw new ArgumentException("Assembly must not be null!");
-            if (_listOfAssemblies.Contains(asm))
+            if (type == null) throw new ArgumentException("Type must not be null!");
+            if (_typesToCheckForProviders.Contains(type))
             {
                 if (throwOnDuplicate)
-                    throw new ArgumentException($"Duplicate Assembly registered: \"{asm?.FullName}\"");
+                    throw new ArgumentException($"Duplicate Type registered: \"{type?.FullName}\"");
                 else return;
             }
 
-            _listOfAssemblies.Add(asm);
+            _typesToCheckForProviders.Add(type);
         }
 
         public static void RegisterFormatter(PresenceFormatProvider pfp)
@@ -81,6 +79,15 @@ namespace TheArchive.Utilities
             ArchiveLogger.Debug($"[{nameof(PresenceFormatter)}]{(fallbackOverridden ? " (Fallback Overridden)" : ((pfp is FallbackPresenceFormatProvider) ? " (Fallback)" : string.Empty))} Registered: \"{pfp.Identifier}\" => {pfp.PropertyInfo.DeclaringType.FullName}.{pfp.PropertyInfo.Name} (ASM:{pfp.PropertyInfo.DeclaringType.Assembly.GetName().Name})");
         }
 
+        internal static object Get(string identifier)
+        {
+            _formatters.TryGetValue(identifier, out var former);
+
+            if (former == null) return null;
+
+            return former.PropertyInfo?.GetValue(null);
+        }
+
         public static string FormatPresenceString(string formatString)
         {
             string formatted = formatString;
@@ -98,9 +105,9 @@ namespace TheArchive.Utilities
         [AttributeUsage(AttributeTargets.Property)]
         public class PresenceFormatProvider : Attribute
         {
-            public string Identifier { get; set; }
+            public string Identifier { get; private set; }
 
-            internal PropertyInfo PropertyInfo { get; set; }
+            public PropertyInfo PropertyInfo { get; internal set; }
 
             public PresenceFormatProvider(string identifier)
             {
@@ -111,7 +118,12 @@ namespace TheArchive.Utilities
         [AttributeUsage(AttributeTargets.Property)]
         internal class FallbackPresenceFormatProvider : PresenceFormatProvider
         {
-            public FallbackPresenceFormatProvider(string identifier) : base(identifier) { }
+            public bool NoNotImplementedWarning { get; private set; } = false;
+
+            public FallbackPresenceFormatProvider(string identifier, bool noNotImplementedWarning = false) : base(identifier)
+            {
+                NoNotImplementedWarning = noNotImplementedWarning;
+            }
         }
 
     }

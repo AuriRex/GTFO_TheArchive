@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reflection;
 using static TheArchive.Core.ArchivePatcher;
-using static TheArchive.Utilities.PresenceFormatter;
 
 namespace TheArchive.HarmonyPatches.Patches
 {
@@ -11,9 +10,6 @@ namespace TheArchive.HarmonyPatches.Patches
         public static bool LocalPlayerIsInTerminal { get; private set; } = false;
 
         private static PropertyInfo[] _statePatchesProperties = null;
-
-        [PresenceFormatProvider("ExpeditionNumber")]
-        public static string BabaBooboo { get; set; } = ":)";
 
         private static void ResetStates()
         {
