@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TheArchive.Utilities;
 using static TheArchive.Utilities.PresenceFormatter;
 
 namespace TheArchive.Core.Managers
 {
     public class PresenceManager
     {
-
-        public static bool InExpedition { get; set; } = false;
 
         [FallbackPresenceFormatProvider("LobbyID")]
         public static string LobbyID => "0123456789";
@@ -27,12 +21,15 @@ namespace TheArchive.Core.Managers
         [FallbackPresenceFormatProvider("OpenSlots")]
         public static int OpenSlots { get; set; } = 0;
 
+        [FallbackPresenceFormatProvider("MaxPlayerSlots", true)]
+        public static int MaxPlayerSlots { get; set; } = 4;
+
         [PresenceFormatProvider("Expedition")]
         public static string Expedition
         {
             get
             {
-                return $"{ExpeditionTier}{ExpeditionNumber}";
+                return $"{Get("ExpeditionTier")}{Get("ExpeditionNumber")}";
             }
         }
 
@@ -50,7 +47,7 @@ namespace TheArchive.Core.Managers
         {
             get
             {
-                return (int) ArchiveMod.CurrentRundownInt;
+                return ArchiveMod.CurrentRundown.GetIntValue();
             }
         }
 

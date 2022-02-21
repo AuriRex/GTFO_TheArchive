@@ -49,7 +49,7 @@ namespace TheArchive
             typeof(GameDataBlockBase<>).RegisterSelf();
             typeof(GameDataBlockWrapper<>).RegisterSelf();
 
-            Assembly.GetExecutingAssembly().RegisterAllPresenceFormatProviders();
+            //typeof(TypeHere).RegisterAllPresenceFormatProviders();
 
             Core.GameDataInitialized += OnGameDataInitialized;
             Core.DataBlocksReady += OnDataBlocksReady;

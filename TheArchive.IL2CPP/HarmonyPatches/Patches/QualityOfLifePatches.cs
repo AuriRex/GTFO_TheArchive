@@ -1,19 +1,11 @@
 ﻿using AK;
-using CellMenu;
-using GameData;
-using Gear;
 using LevelGeneration;
-using SNetwork;
 using System;
 using System.Reflection;
-using System.Text;
 using TheArchive.Core;
-using TheArchive.Managers;
 using TheArchive.Utilities;
-using UnityEngine;
 using static HackingTool;
 using static TheArchive.Core.ArchivePatcher;
-using static TheArchive.Utilities.PresenceFormatter;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.HarmonyPatches.Patches
@@ -97,38 +89,5 @@ namespace TheArchive.HarmonyPatches.Patches
             }
         }
 
-        [PresenceFormatProvider("LobbyID")]
-        public static string LobbyID => SNet.Lobby.Identifier.ID.ToString();
-
-        public static void CopyLobbyIdToClipboard(int _)
-        {
-            if (SNet.IsExternalMatchMakingActive)
-            {
-                return;
-            }
-            
-            if (!SNet.IsInLobby)
-            {
-                return;
-            }
-
-            var formatedLobbyId = PresenceFormatter.FormatPresenceString(ArchiveMod.Settings.LobbyIdFormatString);
-            GUIUtility.systemCopyBuffer = formatedLobbyId;
-            ArchiveLogger.Notice($"Copied lobby id to clipboard: {formatedLobbyId}");
-        }
-
-        // R4-R6
-        [ArchivePatch(typeof(CM_PageSettings), nameof(CM_PageSettings.Setup))]
-        internal static class CM_PageSettings_SetupPatch
-        {
-            public static void Postfix(CM_PageSettings __instance)
-            {
-                //__instance.m_copyLobbyIdButton
-                ArchiveLogger.Info("Hooking Settings Copy Lobby ID Button ...");
-                CM_Item copyLobbyIdButton = (CM_Item) __instance.GetType().GetProperty(nameof(__instance.m_copyLobbyIdButton))?.GetValue(__instance, null);
-
-                copyLobbyIdButton.OnBtnPressCallback = (Action<int>) CopyLobbyIdToClipboard;
-            }
-        }
     }
 }
