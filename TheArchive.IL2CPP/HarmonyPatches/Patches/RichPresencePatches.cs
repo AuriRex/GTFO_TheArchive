@@ -15,7 +15,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
 
         [PresenceFormatProvider("LobbyID")]
-        public static string LobbyID => SNet.Lobby.Identifier.ID.ToString();
+        public static string LobbyID => SNet.Lobby?.Identifier?.ID.ToString() ?? "0123456789";
 
         [PresenceFormatProvider("OpenSlots")]
         public static int OpenSlots
@@ -31,12 +31,12 @@ namespace TheArchive.HarmonyPatches.Patches
             if (FlagsContain(RundownFlags.RundownSix.To(RundownFlags.Latest), ArchiveMod.CurrentRundown))
                 return GetPlayerCountR6Plus();
 
-            return SNet.Lobby.Players?.Count ?? 0;
+            return SNet.Lobby?.Players?.Count ?? 0;
         }
 
         private static int GetPlayerCountR6Plus()
         {
-            return SNet.Lobby.Players.ToSystemList()?.Where(ply => !ply.IsBot)?.Count() ?? 0;
+            return SNet.Lobby?.Players.ToSystemList()?.Where(ply => !ply.IsBot)?.Count() ?? 0;
         }
 
         [PresenceFormatProvider("ExpeditionTier")]
@@ -47,6 +47,26 @@ namespace TheArchive.HarmonyPatches.Patches
 
         [PresenceFormatProvider("ExpeditionName")]
         public static string ExpeditionName => RundownManager.ActiveExpedition?.Descriptive?.PublicName ?? "???";
+
+        // Disables or changes Steam rich presence
+        [ArchivePatch(typeof(SNet_Core_STEAM), "SetFriendsData", new Type[] { typeof(FriendsDataType), typeof(string) })]
+        internal static class SNet_Core_STEAM_SetFriendsDataPatch
+        {
+            public static void Prefix(FriendsDataType type, ref string data)
+            {
+                if (ArchiveMod.Settings.DisableSteamRichPresence)
+                {
+                    data = string.Empty;
+                    return;
+                }
+
+                if (type == FriendsDataType.ExpeditionName)
+                {
+                    data = $"{FormatPresenceString("%Rundown%%Expedition%")} \"{data}\"";
+                }
+                //ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"{nameof(SNet_Core_STEAM)}.{nameof(SNet_Core_STEAM.SetFriendsData)} called: \"{type}\": {data}");
+            }
+        }
 
         // RundownManager.SetActiveExpedition(pActiveExpedition expPackage, ExpeditionInTierData expTierData) calls:
         // RundownManager.GetUniqueExpeditionKey(string rundownKey, eRundownTier tier, int expIndex)

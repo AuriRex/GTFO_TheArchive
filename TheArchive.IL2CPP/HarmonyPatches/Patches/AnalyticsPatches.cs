@@ -2,6 +2,7 @@
 using SNetwork;
 using System;
 using TheArchive.Core;
+using TheArchive.Utilities;
 using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive.HarmonyPatches.Patches
@@ -15,14 +16,6 @@ namespace TheArchive.HarmonyPatches.Patches
         internal static class AnalyticsManager_OnGameEventPatch
         {
             public static bool Prefix() => false;
-        }
-
-        // Disables Steam rich presence
-        [BindPatchToSetting(nameof(ArchiveSettings.DisableSteamRichPresence), "SteamRichPresence")]
-        [ArchivePatch(typeof(SNet_Core_STEAM), "SetFriendsData", new Type[] { typeof(FriendsDataType), typeof(string) })]
-        internal static class SNet_Core_STEAM_SetFriendsDataPatch
-        {
-            public static void Prefix(ref string data) => data = "";
         }
 
     }
