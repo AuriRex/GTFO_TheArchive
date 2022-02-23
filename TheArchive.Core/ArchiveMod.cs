@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using TheArchive;
 using TheArchive.Core;
+using TheArchive.Core.Managers;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -325,6 +326,11 @@ namespace TheArchive
                 }
             }
             base.OnSceneWasLoaded(buildIndex, sceneName);
+        }
+
+        public override void OnUpdate()
+        {
+            DiscordManager.Update();
         }
 
         public override void OnLateUpdate()

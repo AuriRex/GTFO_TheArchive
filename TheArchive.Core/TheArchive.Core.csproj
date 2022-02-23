@@ -59,9 +59,17 @@
     <Compile Include="ArchiveMod.cs" />
     <Compile Include="Core\ArchiveNativePatcher.cs" />
     <Compile Include="Core\ArchiveSettings.cs" />
+    <Compile Include="Core\DiscordApi\ActivityManager.cs" />
+    <Compile Include="Core\DiscordApi\Constants.cs" />
+    <Compile Include="Core\DiscordApi\Core.cs" />
+    <Compile Include="Core\DiscordApi\ImageManager.cs" />
+    <Compile Include="Core\DiscordApi\LobbyManager.cs" />
+    <Compile Include="Core\DiscordApi\StorageManager.cs" />
+    <Compile Include="Core\DiscordApi\StoreManager.cs" />
     <Compile Include="Core\IArchiveModule.cs" />
     <Compile Include="Core\ArchivePatcher.cs" />
     <Compile Include="Core\Managers\DataBlockManager.cs" />
+    <Compile Include="Core\Managers\DiscordManager.cs" />
     <Compile Include="Core\Managers\ImplementationManager.cs" />
     <Compile Include="Core\Managers\PresenceManager.cs" />
     <Compile Include="Core\Models\PresenceGameState.cs" />
@@ -81,6 +89,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\TheArchive.MONO.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\discord_game_sdk.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
