@@ -145,6 +145,7 @@
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\CM_TimedButtonPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
+    <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\RichPresencePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\UnityLoggerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\HudTogglePatches.cs" />
