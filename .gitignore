@@ -25,6 +25,7 @@ _R_RD003/GTFO_Data/*
 _R_RD003/GTFO_Data/Managed/*
 
 TheArchive.Core/Resources/*
+!TheArchive.Core/Resources/discord_game_sdk.dll
 TheArchive.IL2CPP/Resources/*
 
 !_R_LATEST/MelonLoader/
