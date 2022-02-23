@@ -15,14 +15,5 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix() => false;
         }
-
-        // Disables Steam rich presence
-        [BindPatchToSetting(nameof(ArchiveSettings.DisableSteamRichPresence), "SteamRichPresence")]
-        [ArchivePatch(typeof(SNet_Core_STEAM), "SetFriendsData", new Type[] { typeof(FriendsDataType), typeof(string) })]
-        internal static class SNet_Core_STEAM_SetFriendsDataPatch
-        {
-            public static void Prefix(ref string data) => data = "";
-        }
-
     }
 }
