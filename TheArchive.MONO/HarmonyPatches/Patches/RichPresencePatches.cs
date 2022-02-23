@@ -1,7 +1,6 @@
 ﻿using CellMenu;
 using SNetwork;
 using System;
-using System.Linq;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Core.ArchivePatcher;
@@ -22,25 +21,28 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             get
             {
-                return Core.Managers.PresenceManager.MaxPlayerSlots - GetPlayerCount();
+                return Core.Managers.PresenceManager.MaxPlayerSlots - SNet.Lobby?.Players?.Count ?? 0;
             }
         }
 
-        private static int GetPlayerCount()
-        {
-            if (FlagsContain(RundownFlags.RundownSix.To(RundownFlags.Latest), ArchiveMod.CurrentRundown))
-                return GetPlayerCountR6Plus();
-
-            return SNet.Lobby?.Players?.Count ?? 0;
-        }
-
-        private static int GetPlayerCountR6Plus()
-        {
-            return SNet.Lobby?.Players.ToSystemList()?.Where(ply => !ply.IsBot)?.Count() ?? 0;
-        }
-
         [PresenceFormatProvider("ExpeditionTier")]
-        public static string ExpeditionTier => RundownManager.ActiveExpedition?.Descriptive?.Prefix ?? "?";
+        public static string ExpeditionTier
+        {
+            get
+            {
+                string prefix = RundownManager.ActiveExpedition?.Descriptive?.Prefix;
+
+                switch (ArchiveMod.CurrentRundown)
+                {
+                    // On R2 and R3 the expedition prefix includes the rundown as well (R2A1, R3A3) so it gets removed here
+                    case RundownID.RundownTwo:
+                    case RundownID.RundownThree:
+                        return prefix?.Substring(2) ?? "?";
+                    default:
+                        return prefix ?? "?";
+                }
+            }
+        }
 
         [PresenceFormatProvider("ExpeditionNumber")]
         public static int ExpeditionNumber { get; set; } = 0;
@@ -81,10 +83,10 @@ namespace TheArchive.HarmonyPatches.Patches
 
         public static void CopyLobbyIdToClipboard(int _)
         {
-            if (SNet.IsExternalMatchMakingActive)
+            /*if (SNet.IsExternalMatchMakingActive)
             {
                 return;
-            }
+            }*/
 
             if (!SNet.IsInLobby)
             {
@@ -101,27 +103,29 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static void Postfix(CM_PageSettings __instance)
             {
-                CM_Item copyLobbyIDButton = (CM_Item) __instance.GetType().GetProperty(nameof(__instance.m_copyLobbyIdButton))?.GetValue(__instance, null);
+                CM_Item copyLobbyIDButton = __instance.m_movingContentHolder.GetChildWithExactName("CM_RedButtonFramed(Clone)")?.GetComponent<CM_Item>();
 
                 if(copyLobbyIDButton != null)
                 {
                     ArchiveLogger.Info("Hooking CM_PageSettings Copy Lobby ID Button ...");
-                    copyLobbyIDButton.OnBtnPressCallback = (Action<int>) CopyLobbyIdToClipboard;
+                    MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnPressCallback), copyLobbyIDButton);
+                    copyLobbyIDButton.OnBtnPressCallback += CopyLobbyIdToClipboard;
                 }
             }
         }
 
-        [ArchivePatch(typeof(CM_PageLoadout), nameof(CM_PageLoadout.Setup), RundownFlags.RundownFour, RundownFlags.RundownFive)]
+        [ArchivePatch(typeof(CM_PageLoadout), nameof(CM_PageLoadout.Setup))]
         internal static class CM_PageLoadout_SetupPatch
         {
             public static void Postfix(CM_PageLoadout __instance)
             {
-                CM_Item copyLobbyIDButton = __instance.m_movingContentHolder?.GetChildWithExactName("ShareServerId")?.GetChildWithExactName("Button Copy Clipboard")?.GetComponent<CM_Item>();
+                CM_Item copyLobbyIDButton = __instance.m_copyLobbyIdButton;
 
                 if(copyLobbyIDButton != null)
                 {
                     ArchiveLogger.Info("Hooking CM_PageLoadout Copy Lobby ID Button ...");
-                    copyLobbyIDButton.OnBtnPressCallback = (Action<int>) CopyLobbyIdToClipboard;
+                    MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnPressCallback), copyLobbyIDButton);
+                    copyLobbyIDButton.OnBtnPressCallback += CopyLobbyIdToClipboard;
                 }
             }
         }

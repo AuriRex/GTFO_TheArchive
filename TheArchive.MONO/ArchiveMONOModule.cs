@@ -1,7 +1,6 @@
 ﻿using GameData;
 using Globals;
 using System;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using TheArchive.Core;
 using TheArchive.Core.Managers;
@@ -49,7 +48,7 @@ namespace TheArchive
             typeof(GameDataBlockBase<>).RegisterSelf();
             typeof(GameDataBlockWrapper<>).RegisterSelf();
 
-            //typeof(TypeHere).RegisterAllPresenceFormatProviders();
+            typeof(HarmonyPatches.Patches.RichPresencePatches).RegisterAllPresenceFormatProviders();
 
             Core.GameDataInitialized += OnGameDataInitialized;
             Core.DataBlocksReady += OnDataBlocksReady;
