@@ -3,6 +3,7 @@ using System;
 using System.Reflection;
 using TheArchive.Core;
 using TheArchive.Utilities;
+using static GearIconRendering;
 using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive.HarmonyPatches.Patches
@@ -47,6 +48,20 @@ namespace TheArchive.HarmonyPatches.Patches
                 return true;
             }
         }
+/*
+        [ArchivePatch(typeof(GearIconRendering), "RenderIconPrep")]
+        internal static class GearIconRendering_RenderIconPrepPatch
+        {
+            public static int ResMultiplier { get; set; } = 5;
+            public static void Prefix(ref IconRenderJob job)
+            {
+                var settings = job.datas[job.currentIconIndex].settings;
+
+                settings.resX = settings.resX * ResMultiplier;
+                settings.resY = settings.resY * ResMultiplier;
+            }
+        }*/
+
         /*
                 public static RundownProgression RundownProgression { get; private set; } = null;
 
