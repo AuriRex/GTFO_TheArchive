@@ -7,6 +7,7 @@ namespace TheArchive.Utilities
 {
     public static class Utils
     {
+        public static string GetRundownTitle() => GetRundownTitle(ArchiveMod.CurrentRundown);
         public static string GetRundownTitle(RundownID rundown)
         {
             switch(rundown)
