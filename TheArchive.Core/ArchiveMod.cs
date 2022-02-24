@@ -209,6 +209,7 @@ namespace TheArchive
             try
             {
                 PresenceFormatter.Setup();
+                DiscordManager.Setup();
             }
             catch(Exception ex)
             {

@@ -31,12 +31,12 @@ namespace TheArchive.HarmonyPatches.Patches
             if (FlagsContain(RundownFlags.RundownSix.To(RundownFlags.Latest), ArchiveMod.CurrentRundown))
                 return GetPlayerCountR6Plus();
 
-            return SNet.Lobby?.Players?.Count ?? 0;
+            return SNet.Lobby?.Players?.Count ?? 1;
         }
 
         private static int GetPlayerCountR6Plus()
         {
-            return SNet.Lobby?.Players.ToSystemList()?.Where(ply => !ply.IsBot)?.Count() ?? 0;
+            return SNet.Lobby?.Players.ToSystemList()?.Where(ply => !ply.IsBot)?.Count() ?? 1;
         }
 
         [PresenceFormatProvider("ExpeditionTier")]
