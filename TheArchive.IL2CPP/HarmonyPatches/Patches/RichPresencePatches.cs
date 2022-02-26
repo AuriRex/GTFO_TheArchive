@@ -1,7 +1,10 @@
 ﻿using CellMenu;
+using LevelGeneration;
+using Player;
 using SNetwork;
 using System;
 using System.Linq;
+using TheArchive.Core.Managers;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Core.ArchivePatcher;
@@ -13,9 +16,53 @@ namespace TheArchive.HarmonyPatches.Patches
     public class RichPresencePatches
     {
 
+        [PresenceFormatProvider("EquippedMeleeWeaponName")]
+        public static string EquippedMeleeWeaponName
+        {
+            get
+            {
+                BackpackItem item = null;
+                if(PlayerBackpackManager.LocalBackpack?.TryGetBackpackItem(InventorySlot.GearMelee, out item) ?? false)
+                {
+                    return item?.GearIDRange?.PublicGearName;
+                }
+                return null;
+            }
+        }
+
+        [PresenceFormatProvider("EquippedMeleeWeaponID")]
+        public static string EquippedMeleeWeaponID
+        {
+            get
+            {
+                BackpackItem item = null;
+                if (PlayerBackpackManager.LocalBackpack?.TryGetBackpackItem(InventorySlot.GearMelee, out item) ?? false)
+                {
+                    return item?.GearIDRange?.PlayfabItemId;
+                }
+                return null;
+            }
+        }
+
 
         [PresenceFormatProvider("LobbyID")]
         public static string LobbyID => SNet.Lobby?.Identifier?.ID.ToString() ?? "0123456789";
+
+        [PresenceFormatProvider("LocalCharacterID")]
+        public static int LocalCharacterID
+        {
+            get
+            {
+                try
+                {
+                    return PlayerManager.GetLocalPlayerSlotIndex();
+                }
+                catch(Exception)
+                {
+                    return 0;
+                }
+            }
+        }
 
         [PresenceFormatProvider("OpenSlots")]
         public static int OpenSlots
@@ -125,5 +172,81 @@ namespace TheArchive.HarmonyPatches.Patches
                 }
             }
         }
+
+        [ArchivePatch(typeof(GameStateManager), nameof(GameStateManager.ChangeState))]
+        internal static class GameStateManager_Patch
+        {
+            public static void Postfix(eGameStateName nextState)
+            {
+                switch (nextState)
+                {
+                    case eGameStateName.NoLobby:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.NoLobby, keepTimer: DiscordManager.LastState == Core.Models.PresenceGameState.Startup);
+                        break;
+                    case eGameStateName.ExpeditionAbort:
+                    case eGameStateName.Lobby:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLobby);
+                        break;
+                    case eGameStateName.Generating:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.Dropping);
+                        break;
+                    case eGameStateName.ReadyToStopElevatorRide:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.LevelGenerationFinished, keepTimer: true);
+                        break;
+                    case eGameStateName.InLevel:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLevel, keepTimer: DiscordManager.LastState == Core.Models.PresenceGameState.ExpeditionFailed);
+                        break;
+                    case eGameStateName.ExpeditionFail:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.ExpeditionFailed, keepTimer: true);
+                        break;
+                    case eGameStateName.ExpeditionSuccess:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.ExpeditionSuccess, keepTimer: true);
+                        break;
+                }
+            }
+        }
+
+        //public override void OnLevelCleanup()
+        /*[ArchivePatch(typeof(Builder), nameof(Builder.OnLevelCleanup))]
+        internal static class Builder_OnLevelCleanupPatch
+        {
+            public static void Postfix()
+            {
+                DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLobby);
+            }
+        }
+
+        //public static void StartElevatorRide()
+        //public static void StartPreReleaseSequence(Action onDone)
+        [ArchivePatch(typeof(ElevatorRide), nameof(ElevatorRide.StartPreReleaseSequence))]
+        internal static class ElevatorRide_StartPreReleaseSequencePatch
+        {
+            public static void Postfix()
+            {
+                DiscordManager.UpdateGameState(Core.Models.PresenceGameState.Dropping);
+            }
+        }
+
+        [ArchivePatch(typeof(Builder), nameof(Builder.BuildDone))]
+        internal static class Builder_BuildDonePatch
+        {
+            public static void Postfix()
+            {
+                DiscordManager.UpdateGameState(Core.Models.PresenceGameState.LevelGenerationFinished, true);
+            }
+        }
+
+        //private void ChangeState(ElevatorRideState state)
+        [ArchivePatch(typeof(ElevatorRide), nameof(ElevatorRide.ChangeState))]
+        internal static class ElevatorRide_ChangeStatePatch
+        {
+            public static void Postfix(ElevatorRideState state)
+            {
+                if(state == ElevatorRideState.PlayerExit)
+                {
+                    DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLevel);
+                }
+            }
+        }*/
     }
 }

@@ -72,6 +72,7 @@ namespace TheArchive
 
         public override void OnApplicationQuit()
         {
+            DiscordManager.OnApplicationQuit();
             // Doesn't work properly anyways ...
             // UnpatchAll();
 
@@ -210,6 +211,7 @@ namespace TheArchive
             {
                 PresenceFormatter.Setup();
                 DiscordManager.Setup();
+                DiscordManager.UpdateGameState(Core.Models.PresenceGameState.Startup);
             }
             catch(Exception ex)
             {
