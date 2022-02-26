@@ -4,6 +4,7 @@ using Player;
 using SNetwork;
 using System;
 using System.Linq;
+using TheArchive.Core;
 using TheArchive.Core.Managers;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -13,6 +14,7 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.HarmonyPatches.Patches
 {
+    [BindPatchToSetting(nameof(ArchiveSettings.EnableDiscordRichPresence), "Discord-RPC")]
     public class RichPresencePatches
     {
 
@@ -181,7 +183,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 switch (nextState)
                 {
                     case eGameStateName.NoLobby:
-                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.NoLobby, keepTimer: DiscordManager.LastState == Core.Models.PresenceGameState.Startup);
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.NoLobby, keepTimer: DiscordManager.CurrentState == Core.Models.PresenceGameState.Startup);
                         break;
                     case eGameStateName.ExpeditionAbort:
                     case eGameStateName.Lobby:
@@ -194,7 +196,7 @@ namespace TheArchive.HarmonyPatches.Patches
                         DiscordManager.UpdateGameState(Core.Models.PresenceGameState.LevelGenerationFinished, keepTimer: true);
                         break;
                     case eGameStateName.InLevel:
-                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLevel, keepTimer: DiscordManager.LastState == Core.Models.PresenceGameState.ExpeditionFailed);
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLevel, keepTimer: DiscordManager.CurrentState == Core.Models.PresenceGameState.ExpeditionFailed);
                         break;
                     case eGameStateName.ExpeditionFail:
                         DiscordManager.UpdateGameState(Core.Models.PresenceGameState.ExpeditionFailed, keepTimer: true);
