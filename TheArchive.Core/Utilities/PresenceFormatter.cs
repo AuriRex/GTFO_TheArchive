@@ -94,9 +94,8 @@ namespace TheArchive.Utilities
 
             foreach(var former in _formatters)
             {
-
-                formatted = formatted.ReplaceCaseInsensitive($"%{former.Key}%", former.Value.PropertyInfo.GetValue(null)?.ToString() ?? "null");
-
+                if(formatted.Contains($"%{former.Key}%"))
+                    formatted = formatted.ReplaceCaseInsensitive($"%{former.Key}%", former.Value.PropertyInfo.GetValue(null)?.ToString() ?? "null");
             }
 
             return formatted;

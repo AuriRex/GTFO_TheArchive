@@ -1,12 +1,8 @@
 ﻿using Discord;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
 
@@ -42,6 +38,7 @@ namespace TheArchive.Core.Managers
 
         public static void UpdateGameState(PresenceGameState state, bool keepTimer = false)
         {
+            ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{nameof(DiscordManager)}] UpdateGameState(): {CurrentState} --> {state}, keepTimer: {keepTimer}");
             LastState = CurrentState;
             CurrentState = state;
             if(!keepTimer)
@@ -52,6 +49,12 @@ namespace TheArchive.Core.Managers
 
         internal static void Setup()
         {
+            if (!ArchiveMod.Settings.EnableDiscordRichPresence)
+            {
+                ArchiveLogger.Notice($"[{nameof(DiscordManager)}] Discord Rich Presence disabled, skipping setup!");
+                return;
+            }
+
             if(!_hasDiscordDllBeenLoaded)
             {
                 if(!File.Exists("discord_game_sdk.dll"))
@@ -76,22 +79,24 @@ namespace TheArchive.Core.Managers
 
         internal static void Update()
         {
+            if (_discord == null) return;
+
             if(_lastCheckedTime + 5 <= Utils.Time)
             {
                 _lastCheckedTime = Utils.Time;
 
-                Discord.Activity? activity = _discord?.BuildActivity(CurrentState, CurrentStateStartTime);
+                Discord.Activity activity = _discord.BuildActivity(CurrentState, CurrentStateStartTime);
 
-                _discord?.RunCallbacks();
-
-                if(activity != null && !activity.Equals(_lastActivity))
+                if(!activity.Equals(_lastActivity))
                 {
-                    if(_discord?.TryUpdateActivity(activity.Value) ?? false)
+                    if(_discord.TryUpdateActivity(activity))
                     {
-                        _lastActivity = activity.Value;
+                        _lastActivity = activity;
                     }
                 }
             }
+
+            _discord.RunCallbacks();
         }
 
         internal static void OnApplicationQuit()
@@ -125,51 +130,11 @@ namespace TheArchive.Core.Managers
                 _discordClient.SetLogHook(Discord.LogLevel.Debug, LogHook);
 
                 _activityManager = _discordClient.GetActivityManager();
-#warning todo: replace with command that runs steam://
+#warning todo: replace with command that runs steam:// maybe?
                 _activityManager.RegisterSteam(493520); // GTFO App ID
 
                 TryUpdateActivity(BuildActivity(PresenceGameState.Startup, DateTimeOffset.UtcNow));
-                /*_activityManager.UpdateActivity(new Activity
-                {
-                    State = "Waking prisoners ...",
-                    Details = $"Rundown #{ArchiveMod.CurrentRundown.GetIntValue()}: \"{Utils.GetRundownTitle()}\"",
-                    ApplicationId = _clientId,
-                    Timestamps = new ActivityTimestamps
-                    {
-                        Start = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-                    },
-                    Assets = new ActivityAssets
-                    {
-                        LargeImage = "gtfo_icon",
-                        LargeText = "GTFO",
-                    }
-                }, ActivityUpdateDebugLog);*/
 
-                /*_activityManager.UpdateActivity(new Activity
-                {
-                    State = "In Expedition",
-                    Details = "R1 B2 \"The Officer\" [Zone 48]",
-                    ApplicationId = _clientId,
-                    Timestamps = new ActivityTimestamps
-                    {
-                        Start = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-                    },
-                    Assets = new ActivityAssets
-                    {
-                        LargeImage = "gtfo_icon",
-                        LargeText = "GTFO",
-                        SmallImage = "weapon_maul",
-                        SmallText = "Maul Mafia - Playing as Woods",
-                    },
-                    Party = new ActivityParty
-                    {
-                        Size = new PartySize
-                        {
-                            CurrentSize = (int) PresenceFormatter.Get("MaxPlayerSlots") - (int) PresenceFormatter.Get("OpenSlots"),
-                            MaxSize = (int) PresenceFormatter.Get("MaxPlayerSlots")
-                        }
-                    }
-                }, callbackthing);*/
             }
 
             private static Activity DefaultFallbackActivity = new Activity
@@ -184,6 +149,35 @@ namespace TheArchive.Core.Managers
                 }
             };
 
+            public static ActivityParty GetParty(string partyId = null)
+            {
+                return new ActivityParty
+                {
+                    Id = partyId,
+                    Size = new PartySize
+                    {
+                        CurrentSize = (int) PresenceFormatter.Get("MaxPlayerSlots") - (int) PresenceFormatter.Get("OpenSlots"),
+                        MaxSize = (int) PresenceFormatter.Get("MaxPlayerSlots")
+                    }
+                };
+            }
+
+            public ActivityTimestamps GetTimestamp(DateTimeOffset startTime, DateTimeOffset? endTime = null)
+            {
+                if (endTime.HasValue)
+                {
+                    return new ActivityTimestamps
+                    {
+                        Start = startTime.ToUnixTimeSeconds(),
+                        End = endTime.Value.ToUnixTimeSeconds()
+                    };
+                }
+                return new ActivityTimestamps
+                {
+                    Start = startTime.ToUnixTimeSeconds()
+                };
+            }
+
             internal Activity BuildActivity(PresenceGameState state, DateTimeOffset startTime)
             {
                 switch (state)
@@ -194,10 +188,7 @@ namespace TheArchive.Core.Managers
                             ApplicationId = _clientId,
                             Details = $"Rundown {ArchiveMod.CurrentRundown.GetIntValue()}: \"{Utils.GetRundownTitle()}\"",
                             State = "Waking prisoners ...",
-                            Timestamps = new ActivityTimestamps
-                            {
-                                Start = startTime.ToUnixTimeSeconds()
-                            },
+                            Timestamps = GetTimestamp(startTime),
                             Assets = new ActivityAssets
                             {
                                 LargeImage = "gtfo_icon",
@@ -210,10 +201,7 @@ namespace TheArchive.Core.Managers
                             ApplicationId = _clientId,
                             Details = $"Rundown {ArchiveMod.CurrentRundown.GetIntValue()}: \"{Utils.GetRundownTitle()}\"",
                             State = "Deciding what to do",
-                            Timestamps = new ActivityTimestamps
-                            {
-                                Start = startTime.ToUnixTimeSeconds()
-                            },
+                            Timestamps = GetTimestamp(startTime),
                             Assets = new ActivityAssets
                             {
                                 LargeImage = "gtfo_icon",
@@ -226,10 +214,7 @@ namespace TheArchive.Core.Managers
                             ApplicationId = _clientId,
                             Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
                             State = "In Lobby",
-                            Timestamps = new ActivityTimestamps
-                            {
-                                Start = startTime.ToUnixTimeSeconds()
-                            },
+                            Timestamps = GetTimestamp(startTime),
                             Assets = new ActivityAssets
                             {
                                 LargeImage = "icon_lobby",
@@ -237,14 +222,7 @@ namespace TheArchive.Core.Managers
                                 SmallImage = PresenceManager.GetCharacterImageKey(),
                                 SmallText = $"Playing as {PresenceManager.GetCharacterName()}",
                             },
-                            Party = new ActivityParty
-                            {
-                                Size = new PartySize
-                                {
-                                    CurrentSize = (int) PresenceFormatter.Get("MaxPlayerSlots") - (int) PresenceFormatter.Get("OpenSlots"),
-                                    MaxSize = (int) PresenceFormatter.Get("MaxPlayerSlots")
-                                }
-                            }
+                            Party = GetParty()
                         };
                     case PresenceGameState.Dropping:
                         return new Activity
@@ -252,23 +230,13 @@ namespace TheArchive.Core.Managers
                             ApplicationId = _clientId,
                             Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
                             State = "Dropping ...",
-                            Timestamps = new ActivityTimestamps
-                            {
-                                Start = startTime.ToUnixTimeSeconds()
-                            },
+                            Timestamps = GetTimestamp(startTime),
                             Assets = new ActivityAssets
                             {
                                 LargeImage = "icon_dropping",
                                 LargeText = "Riding the elevator to hell ...",
                             },
-                            Party = new ActivityParty
-                            {
-                                Size = new PartySize
-                                {
-                                    CurrentSize = (int) PresenceFormatter.Get("MaxPlayerSlots") - (int) PresenceFormatter.Get("OpenSlots"),
-                                    MaxSize = (int) PresenceFormatter.Get("MaxPlayerSlots")
-                                }
-                            }
+                            Party = GetParty()
                         };
                     case PresenceGameState.LevelGenerationFinished:
                         return new Activity
@@ -276,23 +244,13 @@ namespace TheArchive.Core.Managers
                             ApplicationId = _clientId,
                             Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
                             State = "Activating breaks ...",
-                            Timestamps = new ActivityTimestamps
-                            {
-                                Start = startTime.ToUnixTimeSeconds()
-                            },
+                            Timestamps = GetTimestamp(startTime),
                             Assets = new ActivityAssets
                             {
                                 LargeImage = "icon_dropping",
                                 LargeText = "Next stop: Hell",
                             },
-                            Party = new ActivityParty
-                            {
-                                Size = new PartySize
-                                {
-                                    CurrentSize = (int) PresenceFormatter.Get("MaxPlayerSlots") - (int) PresenceFormatter.Get("OpenSlots"),
-                                    MaxSize = (int) PresenceFormatter.Get("MaxPlayerSlots")
-                                }
-                            }
+                            Party = GetParty()
                         };
                     case PresenceGameState.InLevel:
                         return new Activity
@@ -300,10 +258,7 @@ namespace TheArchive.Core.Managers
                             ApplicationId = _clientId,
                             Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
                             State = "In Expedition",
-                            Timestamps = new ActivityTimestamps
-                            {
-                                Start = startTime.ToUnixTimeSeconds()
-                            },
+                            Timestamps = GetTimestamp(startTime),
                             Assets = new ActivityAssets
                             {
                                 LargeImage = "gtfo_icon",
@@ -311,14 +266,7 @@ namespace TheArchive.Core.Managers
                                 SmallImage = PresenceManager.GetMeleeWeaponKey(),
                                 SmallText = (string) PresenceFormatter.Get("EquippedMeleeWeaponName")
                             },
-                            Party = new ActivityParty
-                            {
-                                Size = new PartySize
-                                {
-                                    CurrentSize = (int) PresenceFormatter.Get("MaxPlayerSlots") - (int) PresenceFormatter.Get("OpenSlots"),
-                                    MaxSize = (int) PresenceFormatter.Get("MaxPlayerSlots")
-                                }
-                            }
+                            Party = GetParty()
                         };
                     case PresenceGameState.ExpeditionFailed:
                         return new Activity
@@ -326,10 +274,7 @@ namespace TheArchive.Core.Managers
                             ApplicationId = _clientId,
                             Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
                             State = "EXPD FAILED",
-                            Timestamps = new ActivityTimestamps
-                            {
-                                Start = startTime.ToUnixTimeSeconds()
-                            },
+                            Timestamps = GetTimestamp(startTime),
                             Assets = new ActivityAssets
                             {
                                 LargeImage = "icon_failed",
@@ -337,14 +282,7 @@ namespace TheArchive.Core.Managers
                                 SmallImage = PresenceManager.GetCharacterImageKey(),
                                 SmallText = $"Prisoner \"{PresenceManager.GetCharacterName()}\", Status: DECEASED",
                             },
-                            Party = new ActivityParty
-                            {
-                                Size = new PartySize
-                                {
-                                    CurrentSize = (int) PresenceFormatter.Get("MaxPlayerSlots") - (int) PresenceFormatter.Get("OpenSlots"),
-                                    MaxSize = (int) PresenceFormatter.Get("MaxPlayerSlots")
-                                }
-                            }
+                            Party = GetParty()
                         };
                     case PresenceGameState.ExpeditionSuccess:
                         return new Activity
@@ -352,10 +290,7 @@ namespace TheArchive.Core.Managers
                             ApplicationId = _clientId,
                             Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
                             State = "EXPD SURVIVED",
-                            Timestamps = new ActivityTimestamps
-                            {
-                                Start = startTime.ToUnixTimeSeconds()
-                            },
+                            Timestamps = GetTimestamp(startTime),
                             Assets = new ActivityAssets
                             {
                                 LargeImage = "icon_survived",
@@ -363,14 +298,7 @@ namespace TheArchive.Core.Managers
                                 SmallImage = PresenceManager.GetCharacterImageKey(),
                                 SmallText = $"Prisoner \"{PresenceManager.GetCharacterName()}\", Status: ALIVE",
                             },
-                            Party = new ActivityParty
-                            {
-                                Size = new PartySize
-                                {
-                                    CurrentSize = (int) PresenceFormatter.Get("MaxPlayerSlots") - (int) PresenceFormatter.Get("OpenSlots"),
-                                    MaxSize = (int) PresenceFormatter.Get("MaxPlayerSlots")
-                                }
-                            }
+                            Party = GetParty()
                         };
                 }
                 return DefaultFallbackActivity;
@@ -392,12 +320,30 @@ namespace TheArchive.Core.Managers
 
             private void ActivityUpdateDebugLog(Result result)
             {
-                ArchiveLogger.Debug($"Activity Updated: {result}");
+                ArchiveLogger.Debug($"[{nameof(DiscordManager)}] Activity update result: {result}");
             }
 
             private static void LogHook(LogLevel level, string message)
             {
-                ArchiveLogger.Notice($"[{nameof(DiscordClient)}] {level}: {message}");
+                Action<string> log;
+                switch(level)
+                {
+                    case LogLevel.Error:
+                        log = ArchiveLogger.Error;
+                        break;
+                    case LogLevel.Warn:
+                        log = ArchiveLogger.Warning;
+                        break;
+                    default:
+                    case LogLevel.Info:
+                        log = ArchiveLogger.Notice;
+                        break;
+                    case LogLevel.Debug:
+                        log = ArchiveLogger.Debug;
+                        break;
+                }
+
+                log.Invoke($"[{nameof(DiscordClient)}] {level}: {message}");
             }
 
             public void RunCallbacks()
