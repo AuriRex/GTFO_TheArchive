@@ -1,6 +1,8 @@
 ﻿using CellMenu;
+using Player;
 using SNetwork;
 using System;
+using TheArchive.Core.Managers;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Core.ArchivePatcher;
@@ -11,17 +13,60 @@ namespace TheArchive.HarmonyPatches.Patches
 {
     public class RichPresencePatches
     {
+        [PresenceFormatProvider("EquippedMeleeWeaponName")]
+        public static string EquippedMeleeWeaponName
+        {
+            get
+            {
+                BackpackItem item = null;
+                if (PlayerBackpackManager.LocalBackpack?.TryGetBackpackItem(InventorySlot.GearMelee, out item) ?? false)
+                {
+                    return item?.GearIDRange?.PublicGearName;
+                }
+                return null;
+            }
+        }
+
+        [PresenceFormatProvider("EquippedMeleeWeaponID")]
+        public static string EquippedMeleeWeaponID
+        {
+            get
+            {
+                BackpackItem item = null;
+                if (PlayerBackpackManager.LocalBackpack?.TryGetBackpackItem(InventorySlot.GearMelee, out item) ?? false)
+                {
+                    return item?.GearIDRange?.PlayfabItemId;
+                }
+                return null;
+            }
+        }
 
 
         [PresenceFormatProvider("LobbyID")]
         public static string LobbyID => SNet.Lobby?.Identifier?.ID.ToString() ?? "0123456789";
+
+        [PresenceFormatProvider("LocalCharacterID")]
+        public static int LocalCharacterID
+        {
+            get
+            {
+                try
+                {
+                    return PlayerManager.GetLocalPlayerSlotIndex();
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
+            }
+        }
 
         [PresenceFormatProvider("OpenSlots")]
         public static int OpenSlots
         {
             get
             {
-                return Core.Managers.PresenceManager.MaxPlayerSlots - SNet.Lobby?.Players?.Count ?? 0;
+                return Core.Managers.PresenceManager.MaxPlayerSlots - SNet.Lobby?.Players?.Count ?? 1;
             }
         }
 
@@ -126,6 +171,38 @@ namespace TheArchive.HarmonyPatches.Patches
                     ArchiveLogger.Info("Hooking CM_PageLoadout Copy Lobby ID Button ...");
                     MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnPressCallback), copyLobbyIDButton);
                     copyLobbyIDButton.OnBtnPressCallback += CopyLobbyIdToClipboard;
+                }
+            }
+        }
+
+        [ArchivePatch(typeof(GameStateManager), nameof(GameStateManager.ChangeState))]
+        internal static class GameStateManager_Patch
+        {
+            public static void Postfix(eGameStateName nextState)
+            {
+                switch (nextState)
+                {
+                    case eGameStateName.NoLobby:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.NoLobby, keepTimer: DiscordManager.LastState == Core.Models.PresenceGameState.Startup);
+                        break;
+                    case eGameStateName.Lobby:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLobby);
+                        break;
+                    case eGameStateName.Generating:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.Dropping);
+                        break;
+                    case eGameStateName.ReadyToStopElevatorRide:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.LevelGenerationFinished, keepTimer: true);
+                        break;
+                    case eGameStateName.InLevel:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLevel, keepTimer: DiscordManager.LastState == Core.Models.PresenceGameState.ExpeditionFailed);
+                        break;
+                    case eGameStateName.ExpeditionFail:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.ExpeditionFailed, keepTimer: true);
+                        break;
+                    case eGameStateName.ExpeditionSuccess:
+                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.ExpeditionSuccess, keepTimer: true);
+                        break;
                 }
             }
         }
