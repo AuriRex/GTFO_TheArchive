@@ -3,9 +3,12 @@
     public enum PresenceGameState
     {
         Startup,
+        NoLobby,
         InLobby,
-        InMatchmaking,
         Dropping,
-        InLevel
+        LevelGenerationFinished,
+        InLevel,
+        ExpeditionFailed,
+        ExpeditionSuccess
     }
 }
