@@ -205,48 +205,5 @@ namespace TheArchive.HarmonyPatches.Patches
                 }
             }
         }
-
-        //public override void OnLevelCleanup()
-        /*[ArchivePatch(typeof(Builder), nameof(Builder.OnLevelCleanup))]
-        internal static class Builder_OnLevelCleanupPatch
-        {
-            public static void Postfix()
-            {
-                DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLobby);
-            }
-        }
-
-        //public static void StartElevatorRide()
-        //public static void StartPreReleaseSequence(Action onDone)
-        [ArchivePatch(typeof(ElevatorRide), nameof(ElevatorRide.StartPreReleaseSequence))]
-        internal static class ElevatorRide_StartPreReleaseSequencePatch
-        {
-            public static void Postfix()
-            {
-                DiscordManager.UpdateGameState(Core.Models.PresenceGameState.Dropping);
-            }
-        }
-
-        [ArchivePatch(typeof(Builder), nameof(Builder.BuildDone))]
-        internal static class Builder_BuildDonePatch
-        {
-            public static void Postfix()
-            {
-                DiscordManager.UpdateGameState(Core.Models.PresenceGameState.LevelGenerationFinished, true);
-            }
-        }
-
-        //private void ChangeState(ElevatorRideState state)
-        [ArchivePatch(typeof(ElevatorRide), nameof(ElevatorRide.ChangeState))]
-        internal static class ElevatorRide_ChangeStatePatch
-        {
-            public static void Postfix(ElevatorRideState state)
-            {
-                if(state == ElevatorRideState.PlayerExit)
-                {
-                    DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLevel);
-                }
-            }
-        }*/
     }
 }

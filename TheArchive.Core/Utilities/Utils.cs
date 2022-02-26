@@ -9,21 +9,13 @@ namespace TheArchive.Utilities
     {
 
         private static Type _UnityEngine_Time = Type.GetType("UnityEngine.Time, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
-        private static PropertyInfo _il2cpp_time = _UnityEngine_Time.GetProperty("time");
-        private static FieldInfo _mono_time = _UnityEngine_Time.GetField("time");
+        private static PropertyInfo _UnityEngine_time_PI = _UnityEngine_Time.GetProperty("time");
 
         internal static float Time
         {
             get
             {
-                if (MelonLoader.MelonUtils.IsGameIl2Cpp())
-                {
-                    return (float) _il2cpp_time.GetValue(null);
-                }
-                else
-                {
-                    return (float) _mono_time.GetValue(null);
-                }
+                return (float) _UnityEngine_time_PI.GetValue(null);
             }
         }
 
