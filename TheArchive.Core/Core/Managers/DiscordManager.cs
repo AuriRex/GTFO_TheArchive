@@ -26,6 +26,8 @@ namespace TheArchive.Core.Managers
         public static PresenceGameState LastState { get; private set; }
         public static PresenceGameState CurrentState { get; private set; }
 
+        public static RichPresenceSettings Settings { get; private set; } = new RichPresenceSettings();
+
         public static DateTimeOffset CurrentStateStartTime { get; private set; }
 
         private static Discord.Activity _lastActivity;
@@ -49,7 +51,15 @@ namespace TheArchive.Core.Managers
 
         internal static void Setup()
         {
-            if (!ArchiveMod.Settings.EnableDiscordRichPresence)
+            Settings = LocalFiles.LoadConfig<RichPresenceSettings>(out var fileExists, false).FillDefaultDictValues();
+            if (!fileExists)
+            {
+                LocalFiles.SaveConfig(Settings);
+            }
+
+            ArchiveMod.Settings.EnableDiscordRichPresence = Settings.EnableDiscordRichPresence;
+
+            if (!Settings.EnableDiscordRichPresence)
             {
                 ArchiveLogger.Notice($"[{nameof(DiscordManager)}] Discord Rich Presence disabled, skipping setup!");
                 return;
@@ -70,6 +80,7 @@ namespace TheArchive.Core.Managers
                 }
                 
                 LoadLibrary("discord_game_sdk.dll");
+                _hasDiscordDllBeenLoaded = true;
             }
 
             _discord = new DiscordClient();
@@ -103,6 +114,7 @@ namespace TheArchive.Core.Managers
         {
             _discord?.Dispose();
             _discord = null;
+            LocalFiles.SaveConfig(Settings);
         }
 
         public class DiscordClient
@@ -133,8 +145,9 @@ namespace TheArchive.Core.Managers
 #warning todo: replace with command that runs steam:// maybe?
                 _activityManager.RegisterSteam(493520); // GTFO App ID
 
-                TryUpdateActivity(BuildActivity(PresenceGameState.Startup, DateTimeOffset.UtcNow));
-
+                UpdateGameState(PresenceGameState.Startup, false);
+                TryUpdateActivity(BuildActivity(PresenceGameState.Startup, CurrentStateStartTime));
+                _discord.RunCallbacks();
             }
 
             private static Activity DefaultFallbackActivity = new Activity
@@ -180,128 +193,45 @@ namespace TheArchive.Core.Managers
 
             internal Activity BuildActivity(PresenceGameState state, DateTimeOffset startTime)
             {
-                switch (state)
+                if(Settings.DiscordRPCFormat.TryGetValue(state, out var format))
                 {
-                    case PresenceGameState.Startup:
-                        return new Activity
-                        {
-                            ApplicationId = _clientId,
-                            Details = $"Rundown {ArchiveMod.CurrentRundown.GetIntValue()}: \"{Utils.GetRundownTitle()}\"",
-                            State = "Waking prisoners ...",
-                            Timestamps = GetTimestamp(startTime),
-                            Assets = new ActivityAssets
-                            {
-                                LargeImage = "gtfo_icon",
-                                LargeText = "GTFO",
-                            }
-                        };
-                    case PresenceGameState.NoLobby:
-                        return new Activity
-                        {
-                            ApplicationId = _clientId,
-                            Details = $"Rundown {ArchiveMod.CurrentRundown.GetIntValue()}: \"{Utils.GetRundownTitle()}\"",
-                            State = "Deciding what to do",
-                            Timestamps = GetTimestamp(startTime),
-                            Assets = new ActivityAssets
-                            {
-                                LargeImage = "gtfo_icon",
-                                LargeText = "GTFO",
-                            }
-                        };
-                    case PresenceGameState.InLobby:
-                        return new Activity
-                        {
-                            ApplicationId = _clientId,
-                            Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
-                            State = "In Lobby",
-                            Timestamps = GetTimestamp(startTime),
-                            Assets = new ActivityAssets
-                            {
-                                LargeImage = "icon_lobby",
-                                LargeText = $"GTFO - R{ArchiveMod.CurrentRundown.GetIntValue()}: \"{Utils.GetRundownTitle()}\"",
-                                SmallImage = PresenceManager.GetCharacterImageKey(),
-                                SmallText = $"Playing as {PresenceManager.GetCharacterName()}",
-                            },
-                            Party = GetParty()
-                        };
-                    case PresenceGameState.Dropping:
-                        return new Activity
-                        {
-                            ApplicationId = _clientId,
-                            Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
-                            State = "Dropping ...",
-                            Timestamps = GetTimestamp(startTime),
-                            Assets = new ActivityAssets
-                            {
-                                LargeImage = "icon_dropping",
-                                LargeText = "Riding the elevator to hell ...",
-                            },
-                            Party = GetParty()
-                        };
-                    case PresenceGameState.LevelGenerationFinished:
-                        return new Activity
-                        {
-                            ApplicationId = _clientId,
-                            Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
-                            State = "Activating breaks ...",
-                            Timestamps = GetTimestamp(startTime),
-                            Assets = new ActivityAssets
-                            {
-                                LargeImage = "icon_dropping",
-                                LargeText = "Next stop: Hell",
-                            },
-                            Party = GetParty()
-                        };
-                    case PresenceGameState.InLevel:
-                        return new Activity
-                        {
-                            ApplicationId = _clientId,
-                            Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
-                            State = "In Expedition",
-                            Timestamps = GetTimestamp(startTime),
-                            Assets = new ActivityAssets
-                            {
-                                LargeImage = "gtfo_icon",
-                                LargeText = "Exploring ...",
-                                SmallImage = PresenceManager.GetMeleeWeaponKey(),
-                                SmallText = (string) PresenceFormatter.Get("EquippedMeleeWeaponName")
-                            },
-                            Party = GetParty()
-                        };
-                    case PresenceGameState.ExpeditionFailed:
-                        return new Activity
-                        {
-                            ApplicationId = _clientId,
-                            Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
-                            State = "EXPD FAILED",
-                            Timestamps = GetTimestamp(startTime),
-                            Assets = new ActivityAssets
-                            {
-                                LargeImage = "icon_failed",
-                                LargeText = "Beep, Beep, Beeeeeeeeeeep",
-                                SmallImage = PresenceManager.GetCharacterImageKey(),
-                                SmallText = $"Prisoner \"{PresenceManager.GetCharacterName()}\", Status: DECEASED",
-                            },
-                            Party = GetParty()
-                        };
-                    case PresenceGameState.ExpeditionSuccess:
-                        return new Activity
-                        {
-                            ApplicationId = _clientId,
-                            Details = PresenceFormatter.FormatPresenceString("%Rundown% %Expedition% \"%ExpeditionName%\""),
-                            State = "EXPD SURVIVED",
-                            Timestamps = GetTimestamp(startTime),
-                            Assets = new ActivityAssets
-                            {
-                                LargeImage = "icon_survived",
-                                LargeText = "Hydrostasis awaits ...",
-                                SmallImage = PresenceManager.GetCharacterImageKey(),
-                                SmallText = $"Prisoner \"{PresenceManager.GetCharacterName()}\", Status: ALIVE",
-                            },
-                            Party = GetParty()
-                        };
+                    return ActivityFromFormat(format.GetNext(), state, startTime);
                 }
                 return DefaultFallbackActivity;
+            }
+
+            private Activity ActivityFromFormat(RichPresenceSettings.GSActivityFormat format, PresenceGameState state, DateTimeOffset startTime)
+            {
+                if (format == null) return DefaultFallbackActivity;
+
+                var extra = ("state", state.ToString());
+
+                var activity = new Activity
+                {
+                    ApplicationId = _clientId,
+                    Details = format.Details?.Format(extra),
+                    State = format.Status?.Format(extra),
+                };
+
+                activity.Assets = new ActivityAssets
+                {
+                    LargeImage = format.Assets.LargeImageKey?.Format(extra),
+                    LargeText = format.Assets.LargeTooltip?.Format(extra),
+                    SmallImage = format.Assets.SmallImageKey?.Format(extra),
+                    SmallText = format.Assets.SmallTooltip?.Format(extra)
+                };
+
+                if (format.DisplayTimeElapsed)
+                {
+                    activity.Timestamps = GetTimestamp(startTime);
+                }
+
+                if (format.DisplayPartyInfo)
+                {
+                    activity.Party = GetParty();
+                }
+
+                 return activity;
             }
 
             internal bool TryUpdateActivity(Discord.Activity activity)

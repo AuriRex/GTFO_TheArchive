@@ -209,28 +209,34 @@ namespace TheArchive.Utilities
             SaveToFilesDir(kRundownProgressionFileName, json);
         }
 
-        public static T LoadConfig<T>(bool saveIfNonExistent = true) where T : new()
+        public static T LoadConfig<T>(out bool fileExists, bool saveIfNonExistent = true) where T : new()
         {
             var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
 
-            if(!File.Exists(path))
+            if (!File.Exists(path))
             {
                 var newT = new T();
-                if(saveIfNonExistent)
+                if (saveIfNonExistent)
                 {
                     SaveConfig(newT);
                 }
+                fileExists = false;
                 return newT;
             }
 
-            return JsonConvert.DeserializeObject<T>(File.ReadAllText(path));
+            fileExists = true;
+            return JsonConvert.DeserializeObject<T>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+        }
+        public static T LoadConfig<T>(bool saveIfNonExistent = true) where T : new()
+        {
+            return LoadConfig<T>(out _, saveIfNonExistent);
         }
 
         public static void SaveConfig<T>(T config)
         {
             var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
 
-            File.WriteAllText(path, JsonConvert.SerializeObject(config, Formatting.Indented));
+            File.WriteAllText(path, JsonConvert.SerializeObject(config, ArchiveMod.JsonSerializerSettings));
         }
     }
 }

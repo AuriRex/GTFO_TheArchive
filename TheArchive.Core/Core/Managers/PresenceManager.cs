@@ -7,60 +7,73 @@ namespace TheArchive.Core.Managers
     public class PresenceManager
     {
 
-        public static string GetMeleeWeaponKey()
+        [PresenceFormatProvider("MeleeWeaponKey")]
+        public static string MeleeWeaponKey
         {
-            string weaponId = ((string) Get("EquippedMeleeWeaponID"))?.ToLower();
-            
-            if(weaponId != null)
+            get
             {
-                // 😩
-                switch (weaponId)
+                string weaponId = ((string) Get("EquippedMeleeWeaponID"))?.ToLower();
+
+                if (weaponId != null)
                 {
-                    case "heavydutyhammer":
-                        weaponId = "hammer";
-                        break;
-                    case "sledgehammer":
-                        weaponId = "sledge";
-                        break;
+                    // 😩
+                    switch (weaponId)
+                    {
+                        case "heavydutyhammer":
+                            weaponId = "hammer";
+                            break;
+                        case "sledgehammer":
+                            weaponId = "sledge";
+                            break;
+                    }
+                    return $"weapon_{weaponId}";
                 }
-                return $"weapon_{weaponId}";
-            }
 
-            return "please_just_work";
+                return "please_just_work";
+            }
         }
 
-        public static string GetCharacterImageKey()
+
+        [PresenceFormatProvider("CharacterImageKey")]
+        public static string CharacterImageKey
         {
-            int charId = (int) Get("LocalCharacterID");
-            switch(charId)
+            get
             {
-                case 0:
-                    return "char_woods";
-                case 1:
-                    return "char_dauda";
-                case 2:
-                    return "char_hackett";
-                case 3:
-                    return "char_bishop";
+                int charId = (int) Get("LocalCharacterID");
+                switch (charId)
+                {
+                    case 0:
+                        return "char_woods";
+                    case 1:
+                        return "char_dauda";
+                    case 2:
+                        return "char_hackett";
+                    case 3:
+                        return "char_bishop";
+                }
+                return "please_just_work";
             }
-            return "please_just_work";
         }
 
-        public static string GetCharacterName()
+        [PresenceFormatProvider("CharacterName")]
+        public static string CharacterName
         {
-            int charId = (int) Get("LocalCharacterID");
-            switch (charId)
+            get
             {
-                case 0:
-                    return "Woods";
-                case 1:
-                    return "Dauda";
-                case 2:
-                    return "Hackett";
-                case 3:
-                    return "Bishop";
+                int charId = (int) Get("LocalCharacterID");
+                switch (charId)
+                {
+                    case 0:
+                        return "Woods";
+                    case 1:
+                        return "Dauda";
+                    case 2:
+                        return "Hackett";
+                    case 3:
+                        return "Bishop";
+                }
+                return "The Warden uwu";
             }
-            return "The Warden uwu";
         }
 
         [FallbackPresenceFormatProvider("EquippedMeleeWeaponName")]
