@@ -88,7 +88,11 @@ namespace TheArchive.Utilities
             return former.PropertyInfo?.GetValue(null);
         }
 
-        public static string FormatPresenceString(string formatString)
+        public static string Format(this string formatString, params (string search, string replace)[] extraFormatters) => FormatPresenceString(formatString, extraFormatters);
+
+        public static string FormatPresenceString(string formatString) => FormatPresenceString(formatString, null);
+
+        public static string FormatPresenceString(string formatString, params (string search, string replace)[] extraFormatters)
         {
             string formatted = formatString;
 
@@ -96,6 +100,15 @@ namespace TheArchive.Utilities
             {
                 if(formatted.Contains($"%{former.Key}%"))
                     formatted = formatted.ReplaceCaseInsensitive($"%{former.Key}%", former.Value.PropertyInfo.GetValue(null)?.ToString() ?? "null");
+            }
+
+            if(extraFormatters != null)
+            {
+                foreach (var extraFormer in extraFormatters)
+                {
+                    if (formatted.Contains($"%{extraFormer.search}%"))
+                        formatted = formatted.ReplaceCaseInsensitive($"%{extraFormer.search}%", extraFormer.replace);
+                }
             }
 
             return formatted;

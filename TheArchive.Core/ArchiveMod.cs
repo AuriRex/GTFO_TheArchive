@@ -21,6 +21,23 @@ namespace TheArchive
     {
         public static ArchiveSettings Settings { get; private set; } = new ArchiveSettings();
 
+        private static JsonSerializerSettings _jsonSerializerSettings = null;
+        public static JsonSerializerSettings JsonSerializerSettings
+        {
+            get
+            {
+                if(_jsonSerializerSettings == null)
+                {
+                    _jsonSerializerSettings = new JsonSerializerSettings()
+                    {
+                        Formatting = Formatting.Indented,
+                    };
+                    _jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                }
+                return _jsonSerializerSettings;
+            }
+        }
+
         private static uint _currentRundownInt = 0;
         public static uint CurrentRundownInt
         {
@@ -63,11 +80,21 @@ namespace TheArchive
 
             LoadConfig();
 
+
             var archiveModule = LoadMainArchiveModule(MelonUtils.IsGameIl2Cpp());
 
             var moduleMainType = archiveModule.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
 
             _mainModule = CreateAndInitModule(moduleMainType);
+
+            try
+            {
+                DiscordManager.Setup();
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
+            }
         }
 
         public override void OnApplicationQuit()
@@ -98,18 +125,24 @@ namespace TheArchive
         {
             try
             {
-                ArchiveLogger.Info("Loading config file ...");
+                ArchiveLogger.Info($"Loading config file ... [{path}]");
                 
                 if (File.Exists(path))
                 {
-                    Settings = JsonConvert.DeserializeObject<ArchiveSettings>(File.ReadAllText(path));
+                    Settings = JsonConvert.DeserializeObject<ArchiveSettings>(File.ReadAllText(path), JsonSerializerSettings);
                 }
-                File.WriteAllText(path, JsonConvert.SerializeObject(Settings, Formatting.Indented));
+                SaveConfig(path);
             }
             catch (Exception ex)
             {
                 ArchiveLogger.Exception(ex);
             }
+        }
+
+        private void SaveConfig(string path)
+        {
+            ArchiveLogger.Debug($"Saving config file ... [{path}]");
+            File.WriteAllText(path, JsonConvert.SerializeObject(Settings, JsonSerializerSettings));
         }
 
         public static void RegisterArchiveModule(Assembly asm)
@@ -210,10 +243,8 @@ namespace TheArchive
             try
             {
                 PresenceFormatter.Setup();
-                DiscordManager.Setup();
-                DiscordManager.UpdateGameState(Core.Models.PresenceGameState.Startup);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ArchiveLogger.Exception(ex);
             }
