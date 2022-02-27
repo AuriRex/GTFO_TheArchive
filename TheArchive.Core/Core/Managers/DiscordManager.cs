@@ -137,9 +137,9 @@ namespace TheArchive.Core.Managers
 
             public void Initialize()
             {
-                _discordClient = new Discord.Discord(_clientId, (UInt64) Discord.CreateFlags.NoRequireDiscord);
+                _discordClient = new Discord.Discord(_clientId, (UInt64) CreateFlags.NoRequireDiscord);
 
-                _discordClient.SetLogHook(Discord.LogLevel.Debug, LogHook);
+                _discordClient.SetLogHook(Settings.DEBUG_EnableRichPresenceLogSpam ? LogLevel.Debug : LogLevel.Info, LogHook);
 
                 _activityManager = _discordClient.GetActivityManager();
 #warning todo: replace with command that runs steam:// maybe?
@@ -237,8 +237,15 @@ namespace TheArchive.Core.Managers
             internal bool TryUpdateActivity(Discord.Activity activity)
             {
                 if (_activityManager == null) return false;
-                ArchiveLogger.Notice($"[{nameof(DiscordManager)}] Activity updated: Details:{activity.Details} State:{activity.State}");
-                _activityManager.UpdateActivity(activity, ActivityUpdateDebugLog);
+                
+                if(Settings.DEBUG_EnableRichPresenceLogSpam)
+                {
+                    ArchiveLogger.Notice($"[{nameof(DiscordManager)}] Activity updated: Details:{activity.Details} State:{activity.State}");
+                    _activityManager.UpdateActivity(activity, ActivityUpdateDebugLog);
+                    return true;
+                }
+
+                _activityManager.UpdateActivity(activity, ActivityVoidLog);
                 return true;
             }
 
@@ -252,6 +259,8 @@ namespace TheArchive.Core.Managers
             {
                 ArchiveLogger.Debug($"[{nameof(DiscordManager)}] Activity update result: {result}");
             }
+
+            private void ActivityVoidLog(Result result) { }
 
             private static void LogHook(LogLevel level, string message)
             {

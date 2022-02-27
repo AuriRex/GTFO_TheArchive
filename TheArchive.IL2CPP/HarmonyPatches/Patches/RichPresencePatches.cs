@@ -18,7 +18,7 @@ namespace TheArchive.HarmonyPatches.Patches
     public class RichPresencePatches
     {
 
-        [PresenceFormatProvider("EquippedMeleeWeaponName")]
+        [PresenceFormatProvider(nameof(PresenceManager.EquippedMeleeWeaponName))]
         public static string EquippedMeleeWeaponName
         {
             get
@@ -32,7 +32,7 @@ namespace TheArchive.HarmonyPatches.Patches
             }
         }
 
-        [PresenceFormatProvider("EquippedMeleeWeaponID")]
+        [PresenceFormatProvider(nameof(PresenceManager.EquippedMeleeWeaponID))]
         public static string EquippedMeleeWeaponID
         {
             get
@@ -46,11 +46,16 @@ namespace TheArchive.HarmonyPatches.Patches
             }
         }
 
+        [PresenceFormatProvider(nameof(PresenceManager.HealthRaw))]
+        public static float HealthRaw => PlayerManager.GetLocalPlayerAgent()?.Damage?.Health ?? -1;
 
-        [PresenceFormatProvider("LobbyID")]
+        [PresenceFormatProvider(nameof(PresenceManager.MaxHealthRaw))]
+        public static float MaxHealthRaw => PlayerManager.GetLocalPlayerAgent()?.Damage?.HealthMax ?? -1;
+
+        [PresenceFormatProvider(nameof(PresenceManager.LobbyID))]
         public static string LobbyID => SNet.Lobby?.Identifier?.ID.ToString() ?? "0123456789";
 
-        [PresenceFormatProvider("LocalCharacterID")]
+        [PresenceFormatProvider(nameof(PresenceManager.LocalCharacterID))]
         public static int LocalCharacterID
         {
             get
@@ -88,13 +93,13 @@ namespace TheArchive.HarmonyPatches.Patches
             return SNet.Lobby?.Players.ToSystemList()?.Where(ply => !ply.IsBot)?.Count() ?? 1;
         }
 
-        [PresenceFormatProvider("ExpeditionTier")]
+        [PresenceFormatProvider(nameof(PresenceManager.ExpeditionTier))]
         public static string ExpeditionTier => RundownManager.ActiveExpedition?.Descriptive?.Prefix ?? "?";
 
-        [PresenceFormatProvider("ExpeditionNumber")]
+        [PresenceFormatProvider(nameof(PresenceManager.ExpeditionNumber))]
         public static int ExpeditionNumber { get; set; } = 0;
 
-        [PresenceFormatProvider("ExpeditionName")]
+        [PresenceFormatProvider(nameof(PresenceManager.ExpeditionName))]
         public static string ExpeditionName => RundownManager.ActiveExpedition?.Descriptive?.PublicName ?? "???";
 
         // Disables or changes Steam rich presence
