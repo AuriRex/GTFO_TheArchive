@@ -11,6 +11,8 @@ namespace TheArchive.Core.Models
         public string CopyLobbyIDFormatString { get; set; } = "LF%OpenSlots% %Rundown%%Expedition% \"%ExpeditionName%\": `%LobbyID%`";
         public bool EnableDiscordRichPresence { get; set; } = true;
 
+        public bool DEBUG_EnableRichPresenceLogSpam { get; set; } = false;
+
         [JsonIgnore]
         private static RichPresenceSettings Default => new RichPresenceSettings();
 
@@ -155,7 +157,7 @@ namespace TheArchive.Core.Models
                         },
                         new GSActivityFormat()
                         {
-                            Details = "TODO: Display Health here :)",
+                            Details = "Health: %HealthPercent%%",
                             Status = "In Expedition",
                             Assets = new GSActivityAssets
                             {

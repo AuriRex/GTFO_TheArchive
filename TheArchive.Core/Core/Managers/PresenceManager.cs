@@ -6,13 +6,18 @@ namespace TheArchive.Core.Managers
 {
     public class PresenceManager
     {
+        [FallbackPresenceFormatProvider(nameof(EquippedMeleeWeaponName))]
+        public static string EquippedMeleeWeaponName => "None";
 
-        [PresenceFormatProvider("MeleeWeaponKey")]
+        [FallbackPresenceFormatProvider(nameof(EquippedMeleeWeaponID))]
+        public static string EquippedMeleeWeaponID => "None";
+
+        [PresenceFormatProvider(nameof(MeleeWeaponKey))]
         public static string MeleeWeaponKey
         {
             get
             {
-                string weaponId = ((string) Get("EquippedMeleeWeaponID"))?.ToLower();
+                string weaponId = ((string) Get(nameof(EquippedMeleeWeaponID)))?.ToLower();
 
                 if (weaponId != null)
                 {
@@ -33,13 +38,15 @@ namespace TheArchive.Core.Managers
             }
         }
 
+        [FallbackPresenceFormatProvider(nameof(LocalCharacterID))]
+        public static int LocalCharacterID { get; set; } = 0;
 
-        [PresenceFormatProvider("CharacterImageKey")]
+        [PresenceFormatProvider(nameof(CharacterImageKey))]
         public static string CharacterImageKey
         {
             get
             {
-                int charId = (int) Get("LocalCharacterID");
+                int charId = (int) Get(nameof(LocalCharacterID));
                 switch (charId)
                 {
                     case 0:
@@ -55,12 +62,12 @@ namespace TheArchive.Core.Managers
             }
         }
 
-        [PresenceFormatProvider("CharacterName")]
+        [PresenceFormatProvider(nameof(CharacterName))]
         public static string CharacterName
         {
             get
             {
-                int charId = (int) Get("LocalCharacterID");
+                int charId = (int) Get(nameof(LocalCharacterID));
                 switch (charId)
                 {
                     case 0:
@@ -76,43 +83,51 @@ namespace TheArchive.Core.Managers
             }
         }
 
-        [FallbackPresenceFormatProvider("EquippedMeleeWeaponName")]
-        public static string EquippedMeleeWeaponName => "None";
+        [FallbackPresenceFormatProvider(nameof(HealthRaw))]
+        public static float HealthRaw => -1;
 
-        [FallbackPresenceFormatProvider("EquippedMeleeWeaponID")]
-        public static string EquippedMeleeWeaponID => "None";
+        [FallbackPresenceFormatProvider(nameof(MaxHealthRaw))]
+        public static float MaxHealthRaw => 25;
 
-        [FallbackPresenceFormatProvider("LobbyID")]
+        [PresenceFormatProvider(nameof(HealthPercent))]
+        public static int HealthPercent
+        {
+            get
+            {
+                var health = (float) Get(nameof(HealthRaw));
+                var healthMax = (float) Get(nameof(MaxHealthRaw));
+                return (int) Math.Round(health / healthMax * 100f);
+            }
+        }
+
+        [FallbackPresenceFormatProvider(nameof(LobbyID))]
         public static string LobbyID => "0123456789";
 
-        [FallbackPresenceFormatProvider("ExpeditionTier")]
+        [FallbackPresenceFormatProvider(nameof(ExpeditionTier))]
         public static string ExpeditionTier { get; set; } = string.Empty; // A, B, C, D, E
 
-        [FallbackPresenceFormatProvider("ExpeditionNumber")]
+        [FallbackPresenceFormatProvider(nameof(ExpeditionNumber))]
         public static string ExpeditionNumber { get; set; } = string.Empty; // 1, 2, 3, 4
 
-        [FallbackPresenceFormatProvider("ExpeditionName")]
+        [FallbackPresenceFormatProvider(nameof(ExpeditionName))]
         public static string ExpeditionName { get; set; } = string.Empty; // "The Admin", "Crossways", "Deeper"
 
-        [FallbackPresenceFormatProvider("OpenSlots")]
+        [FallbackPresenceFormatProvider(nameof(OpenSlots))]
         public static int OpenSlots { get; set; } = 0;
 
-        [FallbackPresenceFormatProvider("LocalCharacterID")]
-        public static int LocalCharacterID { get; set; } = 0;
-
-        [FallbackPresenceFormatProvider("MaxPlayerSlots", true)]
+        [FallbackPresenceFormatProvider(nameof(MaxPlayerSlots), true)]
         public static int MaxPlayerSlots { get; set; } = 4;
 
-        [PresenceFormatProvider("Expedition")]
+        [PresenceFormatProvider(nameof(Expedition))]
         public static string Expedition
         {
             get
             {
-                return $"{Get("ExpeditionTier")}{Get("ExpeditionNumber")}";
+                return $"{Get(nameof(ExpeditionTier))}{Get(nameof(ExpeditionNumber))}";
             }
         }
 
-        [PresenceFormatProvider("Rundown")]
+        [PresenceFormatProvider(nameof(Rundown))]
         public static string Rundown
         {
             get
@@ -121,7 +136,7 @@ namespace TheArchive.Core.Managers
             }
         }
 
-        [PresenceFormatProvider("RundownNumber")]
+        [PresenceFormatProvider(nameof(RundownNumber))]
         public static int RundownNumber
         {
             get
@@ -130,10 +145,10 @@ namespace TheArchive.Core.Managers
             }
         }
 
-        [PresenceFormatProvider("RundownName")]
+        [PresenceFormatProvider(nameof(RundownName))]
         public static string RundownName => RundownTitle;
 
-        [PresenceFormatProvider("RundownTitle")]
+        [PresenceFormatProvider(nameof(RundownTitle))]
         public static string RundownTitle
         {
             get
