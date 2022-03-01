@@ -6,6 +6,23 @@ namespace TheArchive.Core.Managers
 {
     public class PresenceManager
     {
+        public static int GetPercentFromInts(string val, string max)
+        {
+            var value = (float) Get<int>(val);
+            var maximum = (float) Get<int>(max);
+            return GetPercent(value, maximum);
+        }
+
+        public static int GetPercentFromFloats(string val, string max)
+        {
+            var value = Get<float>(val);
+            var maximum = Get<float>(max);
+            return GetPercent(value, maximum);
+        }
+
+        public static int GetPercent(float val, float max) => (int) Math.Round(val / max * 100f);
+
+        #region weapons
         [FallbackPresenceFormatProvider(nameof(EquippedMeleeWeaponName))]
         public static string EquippedMeleeWeaponName => "None";
 
@@ -17,7 +34,7 @@ namespace TheArchive.Core.Managers
         {
             get
             {
-                string weaponId = ((string) Get(nameof(EquippedMeleeWeaponID)))?.ToLower();
+                string weaponId = Get<string>(nameof(EquippedMeleeWeaponID))?.ToLower();
 
                 if (weaponId != null)
                 {
@@ -38,6 +55,120 @@ namespace TheArchive.Core.Managers
             }
         }
 
+        [FallbackPresenceFormatProvider(nameof(EquippedToolName))]
+        public static string EquippedToolName => "None";
+
+        [FallbackPresenceFormatProvider(nameof(EquippedToolID))]
+        public static string EquippedToolID => "None";
+
+        [PresenceFormatProvider(nameof(ToolKey))]
+        public static string ToolKey
+        {
+            get
+            {
+                string toolId = Get<string>(nameof(EquippedToolID))?.ToLower();
+
+                if (toolId != null)
+                {
+                    if (toolId.Contains("sentry"))
+                        return "tool_sentry";
+                    if (toolId.Contains("bio"))
+                        return "tool_bio";
+                    if (toolId.Contains("mine"))
+                        return "tool_mine";
+                    if (toolId.Contains("glue"))
+                        return "tool_glue";
+                }
+
+                return "please_just_work";
+            }
+        }
+        #endregion weapons
+
+        #region player_ammo
+        [FallbackPresenceFormatProvider(nameof(PrimaryAmmo))]
+        public static int PrimaryAmmo => -1;
+
+        [FallbackPresenceFormatProvider(nameof(MaxPrimaryAmmo))]
+        public static int MaxPrimaryAmmo => -1;
+
+        [PresenceFormatProvider(nameof(PrimaryAmmoPercent))]
+        public static int PrimaryAmmoPercent => GetPercentFromInts(nameof(PrimaryAmmo), nameof(MaxPrimaryAmmo));
+
+        [FallbackPresenceFormatProvider(nameof(SpecialAmmo))]
+        public static int SpecialAmmo => -1;
+
+        [FallbackPresenceFormatProvider(nameof(MaxSpecialAmmo))]
+        public static int MaxSpecialAmmo => -1;
+
+        [PresenceFormatProvider(nameof(SpecialAmmoPercent))]
+        public static int SpecialAmmoPercent => GetPercentFromInts(nameof(SpecialAmmo), nameof(MaxSpecialAmmo));
+
+        [FallbackPresenceFormatProvider(nameof(ToolAmmo))]
+        public static int ToolAmmo => -1;
+
+        [FallbackPresenceFormatProvider(nameof(MaxToolAmmo))]
+        public static int MaxToolAmmo => -1;
+
+        [PresenceFormatProvider(nameof(ToolAmmoOrStatus))]
+        public static string ToolAmmoOrStatus
+        {
+            get
+            {
+                var toolKey = Get<string>(nameof(ToolKey));
+                var toolAmmo = Get<int>(nameof(ToolAmmo));
+                var maxToolAmmo = Get<int>(nameof(MaxToolAmmo));
+
+                switch (toolKey)
+                {
+                    case "tool_bio":
+                        return "∞";
+                    case "tool_sentry":
+                        if (toolAmmo > 0)
+                            return $"{toolAmmo}/{maxToolAmmo}";
+                        return "Deployed/Empty";
+                    default:
+                        if (toolAmmo > 0)
+                            return $"{toolAmmo}/{maxToolAmmo}";
+                        break;
+                }
+
+                return "Empty";
+            }
+        }
+
+        [PresenceFormatProvider(nameof(ToolAmmoPercent))]
+        public static int ToolAmmoPercent => GetPercentFromInts(nameof(ToolAmmo), nameof(MaxToolAmmo));
+
+        [PresenceFormatProvider(nameof(ToolAmmoPercentOrStatus))]
+        public static string ToolAmmoPercentOrStatus
+        {
+            get
+            {
+                var toolKey = Get<string>(nameof(ToolKey));
+                var toolAmmo = (float) Get<int>(nameof(ToolAmmo));
+                var maxToolAmmo = (float) Get<int>(nameof(MaxToolAmmo));
+
+                switch (toolKey)
+                {
+                    case "tool_bio":
+                        return "∞";
+                    case "tool_sentry":
+                        if (toolAmmo > 0)
+                            return $"{GetPercent(toolAmmo, maxToolAmmo)}%";
+                        return "Deployed/Empty";
+                    default:
+                        if (toolAmmo > 0)
+                            return $"{GetPercent(toolAmmo, maxToolAmmo)}%";
+                        break;
+                }
+
+                return "Empty";
+            }
+        }
+        #endregion player_ammo
+
+        #region player
         [FallbackPresenceFormatProvider(nameof(LocalCharacterID))]
         public static int LocalCharacterID { get; set; } = 0;
 
@@ -46,7 +177,7 @@ namespace TheArchive.Core.Managers
         {
             get
             {
-                int charId = (int) Get(nameof(LocalCharacterID));
+                int charId = Get<int>(nameof(LocalCharacterID));
                 switch (charId)
                 {
                     case 0:
@@ -67,7 +198,7 @@ namespace TheArchive.Core.Managers
         {
             get
             {
-                int charId = (int) Get(nameof(LocalCharacterID));
+                int charId = Get<int>(nameof(LocalCharacterID));
                 switch (charId)
                 {
                     case 0:
@@ -90,19 +221,21 @@ namespace TheArchive.Core.Managers
         public static float MaxHealthRaw => 25;
 
         [PresenceFormatProvider(nameof(HealthPercent))]
-        public static int HealthPercent
-        {
-            get
-            {
-                var health = (float) Get(nameof(HealthRaw));
-                var healthMax = (float) Get(nameof(MaxHealthRaw));
-                return (int) Math.Round(health / healthMax * 100f);
-            }
-        }
+        public static int HealthPercent => GetPercentFromFloats(nameof(HealthRaw), nameof(MaxHealthRaw));
+        #endregion player
 
+        #region lobby
         [FallbackPresenceFormatProvider(nameof(LobbyID))]
         public static string LobbyID => "0123456789";
 
+        [FallbackPresenceFormatProvider(nameof(OpenSlots))]
+        public static int OpenSlots { get; set; } = 0;
+
+        [FallbackPresenceFormatProvider(nameof(MaxPlayerSlots), true)]
+        public static int MaxPlayerSlots { get; set; } = 4;
+        #endregion lobby
+
+        #region expedition
         [FallbackPresenceFormatProvider(nameof(ExpeditionTier))]
         public static string ExpeditionTier { get; set; } = string.Empty; // A, B, C, D, E
 
@@ -112,11 +245,6 @@ namespace TheArchive.Core.Managers
         [FallbackPresenceFormatProvider(nameof(ExpeditionName))]
         public static string ExpeditionName { get; set; } = string.Empty; // "The Admin", "Crossways", "Deeper"
 
-        [FallbackPresenceFormatProvider(nameof(OpenSlots))]
-        public static int OpenSlots { get; set; } = 0;
-
-        [FallbackPresenceFormatProvider(nameof(MaxPlayerSlots), true)]
-        public static int MaxPlayerSlots { get; set; } = 4;
 
         [PresenceFormatProvider(nameof(Expedition))]
         public static string Expedition
@@ -126,7 +254,9 @@ namespace TheArchive.Core.Managers
                 return $"{Get(nameof(ExpeditionTier))}{Get(nameof(ExpeditionNumber))}";
             }
         }
+        #endregion expedition
 
+        #region rundown
         [PresenceFormatProvider(nameof(Rundown))]
         public static string Rundown
         {
@@ -156,5 +286,6 @@ namespace TheArchive.Core.Managers
                 return Utilities.Utils.GetRundownTitle(ArchiveMod.CurrentRundown);
             }
         }
+        #endregion rundown
     }
 }
