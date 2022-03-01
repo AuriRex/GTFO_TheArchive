@@ -15,32 +15,54 @@ namespace TheArchive.HarmonyPatches.Patches
     [BindPatchToSetting(nameof(ArchiveSettings.EnableDiscordRichPresence), "Discord-RPC")]
     public class RichPresencePatches
     {
-        [PresenceFormatProvider(nameof(PresenceManager.EquippedMeleeWeaponName))]
-        public static string EquippedMeleeWeaponName
+        #region weapons
+        public static string ItemNameForSlot(InventorySlot slot)
         {
-            get
+            BackpackItem item = null;
+            if (PlayerBackpackManager.LocalBackpack?.TryGetBackpackItem(slot, out item) ?? false)
             {
-                BackpackItem item = null;
-                if (PlayerBackpackManager.LocalBackpack?.TryGetBackpackItem(InventorySlot.GearMelee, out item) ?? false)
-                {
-                    return item?.GearIDRange?.PublicGearName;
-                }
-                return null;
+                return item?.GearIDRange?.PublicGearName;
             }
+            return null;
         }
 
-        [PresenceFormatProvider(nameof(PresenceManager.EquippedMeleeWeaponID))]
-        public static string EquippedMeleeWeaponID
+        public static string ItemIDForSlot(InventorySlot slot)
         {
-            get
+            BackpackItem item = null;
+            if (PlayerBackpackManager.LocalBackpack?.TryGetBackpackItem(slot, out item) ?? false)
             {
-                BackpackItem item = null;
-                if (PlayerBackpackManager.LocalBackpack?.TryGetBackpackItem(InventorySlot.GearMelee, out item) ?? false)
-                {
-                    return item?.GearIDRange?.PlayfabItemId;
-                }
-                return null;
+                return item?.GearIDRange?.PlayfabItemId;
             }
+            return null;
+        }
+
+
+        [PresenceFormatProvider(nameof(PresenceManager.EquippedMeleeWeaponName))]
+        public static string EquippedMeleeWeaponName => ItemNameForSlot(InventorySlot.GearMelee);
+
+        [PresenceFormatProvider(nameof(PresenceManager.EquippedMeleeWeaponID))]
+        public static string EquippedMeleeWeaponID => ItemIDForSlot(InventorySlot.GearMelee);
+
+
+
+        [PresenceFormatProvider(nameof(PresenceManager.EquippedToolName))]
+        public static string EquippedToolName => ItemNameForSlot(InventorySlot.GearClass);
+
+        [PresenceFormatProvider(nameof(PresenceManager.EquippedToolID))]
+        public static string EquippedToolID => ItemIDForSlot(InventorySlot.GearClass);
+        #endregion weapons
+
+        #region player_values
+        private static PlayerAmmoStorage LocalAmmo => PlayerBackpackManager.LocalBackpack?.AmmoStorage;
+
+        private static int GetClip(InventorySlot slot)
+        {
+            BackpackItem backpackItem = null;
+            if (PlayerBackpackManager.LocalBackpack?.TryGetBackpackItem(slot, out backpackItem) ?? false)
+            {
+                return (backpackItem?.Instance as ItemEquippable)?.GetCurrentClip() ?? -1;
+            }
+            return -1;
         }
 
         [PresenceFormatProvider(nameof(PresenceManager.HealthRaw))]
@@ -49,6 +71,26 @@ namespace TheArchive.HarmonyPatches.Patches
         [PresenceFormatProvider(nameof(PresenceManager.MaxHealthRaw))]
         public static float MaxHealthRaw => PlayerManager.GetLocalPlayerAgent()?.Damage?.HealthMax ?? -1;
 
+        [PresenceFormatProvider(nameof(PresenceManager.ToolAmmo))]
+        public static int ToolAmmo => LocalAmmo?.ClassAmmo?.BulletsInPack ?? -1;
+
+        [PresenceFormatProvider(nameof(PresenceManager.MaxToolAmmo))]
+        public static int MaxToolAmmo => LocalAmmo?.ClassAmmo?.BulletsMaxCap ?? -1;
+
+        [PresenceFormatProvider(nameof(PresenceManager.PrimaryAmmo))]
+        public static int PrimaryAmmo => (LocalAmmo?.StandardAmmo?.BulletsInPack ?? -1) + GetClip(InventorySlot.GearStandard);
+
+        [PresenceFormatProvider(nameof(PresenceManager.MaxPrimaryAmmo))]
+        public static int MaxPrimaryAmmo => (LocalAmmo?.StandardAmmo?.BulletsMaxCap ?? -1);
+
+        [PresenceFormatProvider(nameof(PresenceManager.SpecialAmmo))]
+        public static int SpecialAmmo => (LocalAmmo?.SpecialAmmo?.BulletsInPack ?? -1) + GetClip(InventorySlot.GearSpecial);
+
+        [PresenceFormatProvider(nameof(PresenceManager.MaxSpecialAmmo))]
+        public static int MaxSpecialAmmo => (LocalAmmo?.SpecialAmmo?.BulletsMaxCap ?? -1);
+        #endregion player_values
+
+        #region lobby
         [PresenceFormatProvider(nameof(PresenceManager.LobbyID))]
         public static string LobbyID => SNet.Lobby?.Identifier?.ID.ToString() ?? "0123456789";
 
@@ -76,7 +118,9 @@ namespace TheArchive.HarmonyPatches.Patches
                 return Core.Managers.PresenceManager.MaxPlayerSlots - SNet.Lobby?.Players?.Count ?? 1;
             }
         }
+        #endregion lobby
 
+        #region expedition
         [PresenceFormatProvider(nameof(PresenceManager.ExpeditionTier))]
         public static string ExpeditionTier
         {
@@ -101,6 +145,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
         [PresenceFormatProvider(nameof(PresenceManager.ExpeditionName))]
         public static string ExpeditionName => RundownManager.ActiveExpedition?.Descriptive?.PublicName ?? "???";
+        #endregion expedition
 
         // Disables or changes Steam rich presence
         [ArchivePatch(typeof(SNet_Core_STEAM), "SetFriendsData", new Type[] { typeof(FriendsDataType), typeof(string) })]

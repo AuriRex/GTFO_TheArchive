@@ -163,8 +163,34 @@ namespace TheArchive.Core.Models
                             {
                                 LargeImageKey = "gtfo_icon",
                                 LargeTooltip = "Exploring ...",
-                                SmallImageKey = "%MeleeWeaponKey%",
-                                SmallTooltip = "%EquippedMeleeWeaponName%"
+                                SmallImageKey = "res_meds",
+                                SmallTooltip = "Prisoner vitals"
+                            },
+                            DisplayPartyInfo = true
+                        },
+                        new GSActivityFormat()
+                        {
+                            Details = "Primary: %PrimaryAmmoPercent%% Special: %SpecialAmmoPercent%%",
+                            Status = "In Expedition",
+                            Assets = new GSActivityAssets
+                            {
+                                LargeImageKey = "gtfo_icon",
+                                LargeTooltip = "Exploring ...",
+                                SmallImageKey = "res_ammo",
+                                SmallTooltip = "Ammo levels"
+                            },
+                            DisplayPartyInfo = true
+                        },
+                        new GSActivityFormat()
+                        {
+                            Details = "Tool: %ToolAmmoPercentOrStatus%",
+                            Status = "In Expedition",
+                            Assets = new GSActivityAssets
+                            {
+                                LargeImageKey = "%ToolKey%",
+                                LargeTooltip = "%EquippedToolName%",
+                                SmallImageKey = "res_tool",
+                                SmallTooltip = "Resource level"
                             },
                             DisplayPartyInfo = true
                         }

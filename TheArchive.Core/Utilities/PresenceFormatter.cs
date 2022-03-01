@@ -88,6 +88,17 @@ namespace TheArchive.Utilities
             return former.PropertyInfo?.GetValue(null);
         }
 
+        internal static T Get<T>(string identifier)
+        {
+            _formatters.TryGetValue(identifier, out var former);
+
+            if (former == null) return default(T);
+
+            if (!former.PropertyInfo.PropertyType.IsAssignableFrom(typeof(T)) && typeof(T) != typeof(string)) throw new ArgumentException($"The property at identifier \"{identifier}\" is not declared as Type \"{typeof(T).Name}\"!");
+
+            return (T) former.PropertyInfo?.GetValue(null);
+        }
+
         public static string Format(this string formatString, params (string search, string replace)[] extraFormatters) => FormatPresenceString(formatString, extraFormatters);
 
         public static string FormatPresenceString(string formatString) => FormatPresenceString(formatString, null);
