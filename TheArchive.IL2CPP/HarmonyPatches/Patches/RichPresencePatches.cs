@@ -208,7 +208,7 @@ namespace TheArchive.HarmonyPatches.Patches
             }
         }
 
-        [ArchivePatch(typeof(CM_PageLoadout), nameof(CM_PageLoadout.Setup), RundownFlags.RundownFour, RundownFlags.RundownFive)]
+        [ArchivePatch(typeof(CM_PageLoadout), nameof(CM_PageLoadout.Setup))]
         internal static class CM_PageLoadout_SetupPatch
         {
             public static void Postfix(CM_PageLoadout __instance)
