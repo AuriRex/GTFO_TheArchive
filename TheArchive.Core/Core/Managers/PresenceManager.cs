@@ -1,4 +1,5 @@
 ﻿using System;
+using TheArchive.Core.Models;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.PresenceFormatter;
 
@@ -6,6 +7,50 @@ namespace TheArchive.Core.Managers
 {
     public class PresenceManager
     {
+        public static PresenceGameState LastState { get; private set; }
+        public static PresenceGameState CurrentState { get; private set; }
+
+        public static RichPresenceSettings Settings { get; private set; } = new RichPresenceSettings();
+
+        public static DateTimeOffset CurrentStateStartTime { get; private set; }
+
+        public static void UpdateGameState(PresenceGameState state, bool keepTimer = false)
+        {
+            ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{nameof(PresenceManager)}] UpdateGameState(): {CurrentState} --> {state}, keepTimer: {keepTimer}");
+            LastState = CurrentState;
+            CurrentState = state;
+            if (!keepTimer)
+            {
+                CurrentStateStartTime = DateTimeOffset.UtcNow;
+            }
+        }
+
+        internal static void Setup()
+        {
+            Settings = LocalFiles.LoadConfig<RichPresenceSettings>(out var fileExists, false).FillDefaultDictValues();
+            if (!fileExists)
+            {
+                LocalFiles.SaveConfig(Settings);
+            }
+
+#warning TODO: implement new settings system and remove this jank:
+            ArchiveMod.Settings.EnableDiscordRichPresence = Settings.EnableDiscordRichPresence;
+
+            if (Settings.UseFormatStringForCopyLobbyIDButton)
+            {
+                ArchiveMod.Settings.LobbyIdFormatString = Settings.CopyLobbyIDFormatString;
+            }
+            else
+            {
+                ArchiveMod.Settings.LobbyIdFormatString = string.Empty;
+            }
+        }
+
+        internal static void OnApplicationQuit()
+        {
+            LocalFiles.SaveConfig(Settings);
+        }
+
         public static int GetPercentFromInts(string val, string max)
         {
             var value = (float) Get<int>(val);

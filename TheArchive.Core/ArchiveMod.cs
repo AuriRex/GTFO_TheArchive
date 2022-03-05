@@ -89,6 +89,7 @@ namespace TheArchive
 
             try
             {
+                PresenceManager.Setup();
                 DiscordManager.Setup();
             }
             catch (Exception ex)
@@ -99,6 +100,7 @@ namespace TheArchive
 
         public override void OnApplicationQuit()
         {
+            PresenceManager.OnApplicationQuit();
             DiscordManager.OnApplicationQuit();
             // Doesn't work properly anyways ...
             // UnpatchAll();

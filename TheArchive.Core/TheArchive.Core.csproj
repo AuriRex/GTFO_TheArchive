@@ -94,6 +94,16 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\discord_game_sdk.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\README.md">
+      <Link>Resources\README.md</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE">
+      <Link>Resources\LICENSE</Link>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>cd $(ProjectDir)Resources\
