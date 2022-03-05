@@ -235,25 +235,25 @@ namespace TheArchive.HarmonyPatches.Patches
                 switch (nextState)
                 {
                     case eGameStateName.NoLobby:
-                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.NoLobby, keepTimer: DiscordManager.CurrentState == Core.Models.PresenceGameState.Startup);
+                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.NoLobby, keepTimer: PresenceManager.CurrentState == Core.Models.PresenceGameState.Startup);
                         break;
                     case eGameStateName.Lobby:
-                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLobby);
+                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.InLobby);
                         break;
                     case eGameStateName.Generating:
-                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.Dropping);
+                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.Dropping);
                         break;
                     case eGameStateName.ReadyToStopElevatorRide:
-                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.LevelGenerationFinished, keepTimer: true);
+                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.LevelGenerationFinished, keepTimer: true);
                         break;
                     case eGameStateName.InLevel:
-                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.InLevel, keepTimer: DiscordManager.CurrentState == Core.Models.PresenceGameState.ExpeditionFailed);
+                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.InLevel, keepTimer: PresenceManager.CurrentState == Core.Models.PresenceGameState.ExpeditionFailed);
                         break;
                     case eGameStateName.ExpeditionFail:
-                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.ExpeditionFailed, keepTimer: true);
+                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.ExpeditionFailed, keepTimer: true);
                         break;
                     case eGameStateName.ExpeditionSuccess:
-                        DiscordManager.UpdateGameState(Core.Models.PresenceGameState.ExpeditionSuccess, keepTimer: true);
+                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.ExpeditionSuccess, keepTimer: true);
                         break;
                 }
             }

@@ -21,44 +21,18 @@ namespace TheArchive.Core.Managers
         public static extern bool FreeLibrary(IntPtr hModule);
         #endregion native_methods
 
-        public static bool Active { get; internal set; } = false;
-
-        public static PresenceGameState LastState { get; private set; }
-        public static PresenceGameState CurrentState { get; private set; }
-
-        public static RichPresenceSettings Settings { get; private set; } = new RichPresenceSettings();
-
-        public static DateTimeOffset CurrentStateStartTime { get; private set; }
-
         private static Discord.Activity _lastActivity;
 
         private static bool _hasDiscordDllBeenLoaded = false;
         private static float _lastCheckedTime = 0f;
 
 
-        private static DiscordClient _discord;
+        private static DiscordClient _discordClient;
 
-        public static void UpdateGameState(PresenceGameState state, bool keepTimer = false)
-        {
-            ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{nameof(DiscordManager)}] UpdateGameState(): {CurrentState} --> {state}, keepTimer: {keepTimer}");
-            LastState = CurrentState;
-            CurrentState = state;
-            if(!keepTimer)
-            {
-                CurrentStateStartTime = DateTimeOffset.UtcNow;
-            }
-        }
+        private static RichPresenceSettings Settings => PresenceManager.Settings;
 
         internal static void Setup()
         {
-            Settings = LocalFiles.LoadConfig<RichPresenceSettings>(out var fileExists, false).FillDefaultDictValues();
-            if (!fileExists)
-            {
-                LocalFiles.SaveConfig(Settings);
-            }
-
-            ArchiveMod.Settings.EnableDiscordRichPresence = Settings.EnableDiscordRichPresence;
-
             if (!Settings.EnableDiscordRichPresence)
             {
                 ArchiveLogger.Notice($"[{nameof(DiscordManager)}] Discord Rich Presence disabled, skipping setup!");
@@ -67,54 +41,67 @@ namespace TheArchive.Core.Managers
 
             if(!_hasDiscordDllBeenLoaded)
             {
-                if(!File.Exists("discord_game_sdk.dll"))
+                try
                 {
-                    ArchiveLogger.Notice("Extracting discord_game_sdk.dll into game folder ...");
-                    using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("TheArchive.Resources.discord_game_sdk.dll"))
+                    if (!File.Exists("discord_game_sdk.dll"))
                     {
-                        using (var file = new FileStream("discord_game_sdk.dll", FileMode.Create, FileAccess.Write))
+                        ArchiveLogger.Notice("Extracting discord_game_sdk.dll into game folder ...");
+                        using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("TheArchive.Resources.discord_game_sdk.dll"))
                         {
-                            resource.CopyTo(file);
+                            using (var file = new FileStream("discord_game_sdk.dll", FileMode.Create, FileAccess.Write))
+                            {
+                                resource.CopyTo(file);
+                            }
                         }
                     }
+
+                    LoadLibrary("discord_game_sdk.dll");
                 }
-                
-                LoadLibrary("discord_game_sdk.dll");
-                _hasDiscordDllBeenLoaded = true;
+                catch (Exception ex)
+                {
+                    ArchiveLogger.Exception(ex);
+                }
+                finally
+                {
+                    _hasDiscordDllBeenLoaded = true;
+                }
             }
 
-            _discord = new DiscordClient();
+            _discordClient = new DiscordClient();
 
-            _discord.Initialize();
+            _discordClient.Initialize();
+
+            PresenceManager.UpdateGameState(PresenceGameState.Startup, false);
+            _discordClient.TryUpdateActivity(_discordClient.BuildActivity(PresenceGameState.Startup, PresenceManager.CurrentStateStartTime));
+            _discordClient.RunCallbacks();
         }
 
         internal static void Update()
         {
-            if (_discord == null) return;
+            if (_discordClient == null) return;
 
             if(_lastCheckedTime + 5 <= Utils.Time)
             {
                 _lastCheckedTime = Utils.Time;
 
-                Discord.Activity activity = _discord.BuildActivity(CurrentState, CurrentStateStartTime);
+                Discord.Activity activity = _discordClient.BuildActivity(PresenceManager.CurrentState, PresenceManager.CurrentStateStartTime);
 
                 if(!activity.Equals(_lastActivity))
                 {
-                    if(_discord.TryUpdateActivity(activity))
+                    if(_discordClient.TryUpdateActivity(activity))
                     {
                         _lastActivity = activity;
                     }
                 }
             }
 
-            _discord.RunCallbacks();
+            _discordClient.RunCallbacks();
         }
 
         internal static void OnApplicationQuit()
         {
-            _discord?.Dispose();
-            _discord = null;
-            LocalFiles.SaveConfig(Settings);
+            _discordClient?.Dispose();
+            _discordClient = null;
         }
 
         public class DiscordClient
@@ -144,10 +131,6 @@ namespace TheArchive.Core.Managers
                 _activityManager = _discordClient.GetActivityManager();
 #warning todo: replace with command that runs steam:// maybe?
                 _activityManager.RegisterSteam(493520); // GTFO App ID
-
-                UpdateGameState(PresenceGameState.Startup, false);
-                TryUpdateActivity(BuildActivity(PresenceGameState.Startup, CurrentStateStartTime));
-                _discord.RunCallbacks();
             }
 
             private static Activity DefaultFallbackActivity = new Activity
@@ -169,8 +152,8 @@ namespace TheArchive.Core.Managers
                     Id = partyId,
                     Size = new PartySize
                     {
-                        CurrentSize = (int) PresenceFormatter.Get("MaxPlayerSlots") - (int) PresenceFormatter.Get("OpenSlots"),
-                        MaxSize = (int) PresenceFormatter.Get("MaxPlayerSlots")
+                        CurrentSize = PresenceFormatter.Get<int>("MaxPlayerSlots") - PresenceFormatter.Get<int>("OpenSlots"),
+                        MaxSize = PresenceFormatter.Get<int>("MaxPlayerSlots")
                     }
                 };
             }
