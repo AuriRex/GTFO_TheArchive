@@ -162,7 +162,7 @@ namespace TheArchive.Core.Models
                             Assets = new GSActivityAssets
                             {
                                 LargeImageKey = "gtfo_icon",
-                                LargeTooltip = "Exploring ...",
+                                LargeTooltip = "%Rundown% %Expedition% \"%ExpeditionName%\"",
                                 SmallImageKey = "res_meds",
                                 SmallTooltip = "Prisoner vitals"
                             },
@@ -175,7 +175,7 @@ namespace TheArchive.Core.Models
                             Assets = new GSActivityAssets
                             {
                                 LargeImageKey = "gtfo_icon",
-                                LargeTooltip = "Exploring ...",
+                                LargeTooltip = "%Rundown% %Expedition% \"%ExpeditionName%\"",
                                 SmallImageKey = "res_ammo",
                                 SmallTooltip = "Ammo levels"
                             },
