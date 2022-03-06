@@ -1,18 +1,20 @@
 ﻿using CellMenu;
 using Gear;
+using HarmonyLib;
 using Player;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using TheArchive.Core;
 using TheArchive.Utilities;
 using TMPro;
 using UnityEngine;
 using static TheArchive.Core.ArchivePatcher;
-using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.HarmonyPatches.Patches
 {
-    [BindPatchToSetting(nameof(ArchiveMod.Settings.EnableLoadoutRandomizer), "LoadoutRandomizer")]
-    public class CM_TimedButtonPatches
+    [BindPatchToSetting(nameof(ArchiveSettings.EnableLoadoutRandomizer), "LoadoutRandomizer")]
+    public class LoadoutRandomizerPatches
     {
         [ArchivePatch(typeof(CM_TimedButton), nameof(CM_TimedButton.SetupCMItem))]
         public class CM_TimedButton_SetupCMItemPatch
@@ -34,18 +36,6 @@ namespace TheArchive.HarmonyPatches.Patches
 
                             var PlayerMovement = __instance.transform.parent.parent;
 
-                            if (FlagsContain(RundownFlags.RundownSix.To(RundownFlags.Latest), ArchiveMod.CurrentRundown))
-                            {
-                                __instance.OnBtnPressCallback += (Action<int>) OnReadyUpButtonPressed;
-
-                                CM_Item changeLoadoutButton = PlayerMovement.GetChildWithExactName("ChangeLoadoutButton")?.GetComponent<CM_Item>();
-
-                                if(changeLoadoutButton != null)
-                                {
-                                    changeLoadoutButton.OnBtnPressCallback += (Action<int>) OnUnreadyButtonPressed;
-                                }
-                            }
-
                             var playerPillars = PlayerMovement.GetChildWithExactName("PlayerPillars");
 
                             if(playerPillars == null)
@@ -63,8 +53,10 @@ namespace TheArchive.HarmonyPatches.Patches
 
                             LoadoutRandomizerButton = GameObject.Instantiate(__instance.gameObject, __instance.transform.parent).GetComponent<CM_TimedButton>();
 
-                            LoadoutRandomizerButton.OnBtnHoverChanged = (Action<int,bool>) OnButtonHoverChanged;
-                            LoadoutRandomizerButton.OnBtnPressCallback = (Action<int>) OnRandomizeLoadoutButtonPressed;
+                            MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_TimedButton.OnBtnHoverChanged), LoadoutRandomizerButton);
+                            MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_TimedButton.OnBtnPressCallback), LoadoutRandomizerButton);
+                            LoadoutRandomizerButton.OnBtnHoverChanged += OnButtonHoverChanged;
+                            LoadoutRandomizerButton.OnBtnPressCallback += OnRandomizeLoadoutButtonPressed;
 
                             LoadoutRandomizerButton.gameObject.transform.Translate(new Vector3(-500,0,0));
 
@@ -111,15 +103,20 @@ namespace TheArchive.HarmonyPatches.Patches
                 });
             }
 
+            private static FieldInfo _CM_PlayerLobbyBar_m_player = typeof(CM_PlayerLobbyBar).GetField("m_player", AccessTools.all);
+            private static FieldInfo _CM_PlayerLobbyBar_m_inventorySlotItems = typeof(CM_PlayerLobbyBar).GetField("m_inventorySlotItems", AccessTools.all);
+
             public static void OnRandomizeLoadoutButtonPressed(int _)
             {
                 ArchiveLogger.Notice("Randomizer Button has been pressed!");
                 CM_PlayerLobbyBar LocalCM_PlayerLobbyBar = null;
                 foreach (var lobbyBar in CM_PlayerLobbyBarInstances)
                 {
-                    var agent = lobbyBar.m_player?.PlayerAgent?.Cast<PlayerAgent>();
+                    var snet_player = ((SNetwork.SNet_Player) _CM_PlayerLobbyBar_m_player.GetValue(lobbyBar));
 
-                    if (lobbyBar?.m_player?.CharacterIndex == PlayerManager.GetLocalPlayerAgent()?.CharacterID)
+                    var agent = (PlayerAgent) snet_player?.PlayerAgent;
+
+                    if (snet_player?.CharacterIndex == PlayerManager.GetLocalPlayerAgent()?.CharacterID)
                     {
                         LocalCM_PlayerLobbyBar = lobbyBar;
                     }
@@ -131,7 +128,7 @@ namespace TheArchive.HarmonyPatches.Patches
                     return;
                 }
 
-                foreach (var kvp in LocalCM_PlayerLobbyBar.m_inventorySlotItems)
+                foreach (var kvp in (Dictionary<InventorySlot, CM_InventorySlotItem>) _CM_PlayerLobbyBar_m_inventorySlotItems.GetValue(LocalCM_PlayerLobbyBar))
                 {
                     var slot = kvp.Key;
                     GearIDRange[] allGearForSlot = GearManager.GetAllGearForSlot(slot);
