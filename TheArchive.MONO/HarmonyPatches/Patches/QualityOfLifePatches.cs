@@ -16,64 +16,6 @@ namespace TheArchive.HarmonyPatches.Patches
     [BindPatchToSetting(nameof(ArchiveSettings.EnableQualityOfLifeImprovements), "QOL")]
     public class QualityOfLifePatches
     {
-        // Restyle Hacking minigame (success = blue) & fail = Red, smaller & expanding elements
-        //MinigameBlock
-        /*[ArchivePatch(typeof(HologramGraphics), "Awake")]
-        internal static class HologramGraphics_AwakePatch
-        {
-            public static void Postfix(HologramGraphics __instance)
-            {
-                __instance.m_spherify = 1f;
-            }
-        }*/
-
-        // At this point it might be easier to just recreate the R4/5 minigame alltogether ...
-        // SetSelectorRows(int width, Color colNeutral)
-        /*[ArchivePatch(typeof(HackingMinigame_TimingGrid), "SetSelectorRows")]
-        internal static class HackingMinigame_TimingGrid_SetSelectorRowsPatch
-        {
-            static Color colorWrong = new Color(0.509f, 0.129f, 0.164f, 0.85f);
-            static Color colorCorrect = new Color(0f, 0.392f, 0.737f, 0.85f);
-            static Color colorHighlight = new Color(0.847f, 0.898f, 0.850f, 1f);
-            static FieldInfo FIm_colSelectorRow; // Color
-            static FieldInfo FIm_colSelectorRowActive; // Color
-            static FieldInfo FIm_moveOffUp; // float
-            public static void Prefix(HackingMinigame_TimingGrid __instance, int width, ref Color colNeutral)
-            {
-                switch(width)
-                {
-                    case 9:
-
-                        break;
-                    case 6:
-
-                        break;
-                    default:
-                    case 3:
-
-                        break;
-                }
-                if(FIm_colSelectorRow == null)
-                {
-                    FIm_colSelectorRow = typeof(HackingMinigame_TimingGrid).GetField("m_colSelectorRow", HarmonyLib.AccessTools.all);
-                    FIm_colSelectorRow.SetValue(__instance, colorCorrect);
-                }
-                if(FIm_colSelectorRowActive == null)
-                {
-                    FIm_colSelectorRowActive = typeof(HackingMinigame_TimingGrid).GetField("m_colSelectorRowActive", HarmonyLib.AccessTools.all);
-                    FIm_colSelectorRowActive.SetValue(__instance, colorHighlight);
-                }
-                if(FIm_moveOffUp == null)
-                {
-                    FIm_moveOffUp = typeof(HackingMinigame_TimingGrid).GetField("m_moveOffUp", HarmonyLib.AccessTools.all);
-                    FIm_moveOffUp.SetValue(__instance, .23f);
-                }
-                
-                
-                colNeutral = colorWrong;
-            }
-        }*/
-
         // Fix ladder movement so that W is always upwards and S always downwards no matter where you're looking
         [ArchivePatch(typeof(LG_Ladder), "GetMoveVec", RundownFlags.RundownOne)]
         internal static class LG_Ladder_GetMoveVecPatch
@@ -123,7 +65,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // Change the "WARDEN OBJECTIVE" text in the top left of the screen to the current selected mission, ex: "R1A1:The Admin"
-        [ArchivePatch(typeof(PlayerGuiLayer), "UpdateObjectives", RundownFlags.RundownOne, RundownFlags.RundownThree)] 
+        [ArchivePatch(typeof(PlayerGuiLayer), "UpdateObjectives")] 
         internal static class PlayerGuiLayer_UpdateObjectivesPatch
         {
             public static void Postfix(ref PlayerGuiLayer __instance, ref PUI_GameObjectives ___m_wardenObjective)
@@ -156,7 +98,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // Change hacking minigame to be more in line with newest version of the game -> minigame finishes and hack disappears instantly
-        [ArchivePatch(typeof(HackingTool), "UpdateHackSequence", RundownFlags.RundownOne, RundownFlags.RundownThree)]
+        [ArchivePatch(typeof(HackingTool), "UpdateHackSequence")]
         internal static class HackingTool_UpdateHackSequencePatch
         {
             private static MethodInfo HackingTool_ClearScreen = typeof(HackingTool).GetMethod("ClearScreen", AnyBindingFlags);
@@ -210,7 +152,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // Add alarm classes to security door interaction text
-        [ArchivePatch(typeof(LG_SecurityDoor_Locks), "OnDoorState", RundownFlags.RundownOne | RundownFlags.RundownTwo)]
+        [ArchivePatch(typeof(LG_SecurityDoor_Locks), "OnDoorState", RundownFlags.RundownOne, RundownFlags.RundownThree)]
         internal static class LG_SecurityDoor_Locks_OnDoorStatePatch
         {
             // iChainedPuzzleCore[]
@@ -240,7 +182,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // R2 and up like hack fail effect (might be a bit stricter than the officially implemented one because it's essentially the same as hitting your hammer on the box)
-        [ArchivePatch(typeof(HackingMinigame_TimingGrid), "OnMiss", RundownFlags.RundownOne)]
+        /*[ArchivePatch(typeof(HackingMinigame_TimingGrid), "OnMiss", RundownFlags.RundownOne)]
         internal static class HackingMinigame_TimingGrid_OnMissPatch
         {
             public static void Postfix(ref HackingTool ___m_tool)
@@ -248,10 +190,10 @@ namespace TheArchive.HarmonyPatches.Patches
                 ___m_tool.Owner.Noise = Agents.Agent.NoiseType.MeleeHit;
                 ___m_tool.Sound.Post(EVENTS.SENTRYGUN_ACTIVATED, ___m_tool.transform.position);
             }
-        }
+        }*/
 
         // prioritize resources in ping raycasts
-        [ArchivePatch(typeof(CrosshairGuiLayer), "ShowPingIndicator")]
+        [ArchivePatch(typeof(CrosshairGuiLayer), "ShowPingIndicator", RundownFlags.RundownOne, RundownFlags.RundownThree)]
         internal static class CrosshairGuiLayer_ShowPingIndicatorPatch
         {
             internal static bool ShouldRun { get; set; } = false;
@@ -265,7 +207,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // prioritize resources in ping raycasts
-        [ArchivePatch(typeof(PlayerAgent), "LateUpdate")]
+        [ArchivePatch(typeof(PlayerAgent), "LateUpdate", RundownFlags.RundownOne, RundownFlags.RundownThree)]
         internal static class PlayerAgent_LateUpdatePatch
         {
             
