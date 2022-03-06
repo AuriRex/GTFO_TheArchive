@@ -6,7 +6,6 @@ using TheArchive.Core;
 using TheArchive.Managers;
 using TheArchive.Utilities;
 using static TheArchive.Core.ArchivePatcher;
-using static TheArchive.Utilities.Il2CppUtils;
 using static TheArchive.Utilities.Utils;
 using IL2Tasks = Il2CppSystem.Threading.Tasks;
 
@@ -15,11 +14,6 @@ namespace TheArchive.HarmonyPatches.Patches
     [BindPatchToSetting(nameof(ArchiveSettings.EnableLocalProgressionPatches), "LocalProgression")]
     public class DropServerClientAPIViaPlayFabPatches
     {
-        [Obsolete]
-        public static bool EnableCustomProgressionPatch { get; set; } = true;
-        [Obsolete]
-        public static bool EnableCustomBoosterProgressionPatch { get; set; } = true;
-
         // Rundown 4
         // public unsafe Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request, [Optional] RequestContext context)
         // public unsafe Task<LayerProgressionResult> LayerProgressionAsync(LayerProgressionRequest request, [Optional] RequestContext context)
@@ -76,7 +70,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 var result = new GetBoosterImplantPlayerDataResult();
 
                 // NativeFieldInfoPtr_Data
-                Utilities.Il2CppUtils.SetFieldUnsafe(result, bipd, nameof(GetBoosterImplantPlayerDataResult.Data));
+                Il2CppUtils.SetFieldUnsafe(result, bipd, nameof(GetBoosterImplantPlayerDataResult.Data));
                 // old-- result.Data = bipd;
 
                 __result = IL2Tasks.Task.FromResult(result);
@@ -104,7 +98,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 var result = new UpdateBoosterImplantPlayerDataResult();
 
                 var value = (DropServer.BoosterImplants.BoosterImplantPlayerData) CustomBoosterManager.Instance.UpdateBoosterImplantPlayerData(request.Transaction);
-                Utilities.Il2CppUtils.SetFieldUnsafe(result, value, nameof(UpdateBoosterImplantPlayerDataResult.Data));
+                Il2CppUtils.SetFieldUnsafe(result, value, nameof(UpdateBoosterImplantPlayerDataResult.Data));
 
                 __result = IL2Tasks.Task.FromResult(result);
                 return false;
@@ -169,62 +163,37 @@ namespace TheArchive.HarmonyPatches.Patches
 
             public static void Postfix(ref IL2Tasks.Task<EndSessionResult> __result)
             {
-                var result = __result.Result;
-                
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> received {nameof(EndSessionResult)}");
             }
         }
 
         // ---------------------------------------------------------------
 
-        /*[HarmonyPatch(typeof(DropServerClientAPIViaPlayFab))]
-        [HarmonyPatch(MethodType.Constructor, new Type[] { typeof(string), typeof(bool) })] // Rundown 5 added a second parameter bool isDeveloper which is not present in R4 ...
-        public static class Test2_DropServerClientAPIViaPlayFab
-        {
-            public static void Postfix()
-            {
-                ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} has been constructed!");
-            }
-        }*/
-
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.NewSessionAsync))]
         public static class DropServerClientAPI_NewSessionAsyncPatch
         {
             public static bool Prefix(NewSessionRequest request, ref IL2Tasks.Task<NewSessionResult> __result)
             {
-                if(request != null)
                 ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(NewSessionRequest)}: Expedition:{request.Expedition}, Rundown:{request.Rundown}, SessionId:{request.SessionId}");
 
-                
-                if(ArchiveMod.CurrentRundown != RundownID.RundownFour)
+                if (ArchiveMod.CurrentRundown != RundownID.RundownFour)
                 {
-                    RundownFiveBoosterStartSession(request);
+                    StartBoostersSession(request);
                 }
 
-                if(EnableCustomProgressionPatch)
-                {
-                    CustomProgressionManager.Instance.StartNewExpeditionSession(request.Rundown, request.Expedition, request.SessionId);
-                }
+                CustomProgressionManager.Instance.StartNewExpeditionSession(request.Rundown, request.Expedition, request.SessionId);
 
-                if (EnableCustomProgressionPatch || EnableCustomBoosterProgressionPatch)
-                {
-                    var ns = new NewSessionResult();
+                var ns = new NewSessionResult();
 
-                    __result = IL2Tasks.Task.FromResult<NewSessionResult>(ns);
+                __result = IL2Tasks.Task.FromResult<NewSessionResult>(ns);
 
-                    return false;
-                }
-
-                return true;
+                return false;
             }
 
             [MethodImpl(MethodImplOptions.NoInlining)]
-            public static void RundownFiveBoosterStartSession(NewSessionRequest request)
+            public static void StartBoostersSession(NewSessionRequest request)
             {
-                if (EnableCustomBoosterProgressionPatch)
-                {
-                    CustomBoosterManager.Instance.StartSession(request.BoosterIds.ToArray(), request.SessionId);
-                }
+                CustomBoosterManager.Instance.StartSession(request.BoosterIds.ToArray(), request.SessionId);
             }
         }
 
@@ -233,27 +202,17 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(LayerProgressionRequest request, ref IL2Tasks.Task<LayerProgressionResult> __result)
             {
-                if(request != null)
                 ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(LayerProgressionRequest)}: Layer:{request.Layer} ,LayerProgressionState:{request.LayerProgressionState}");
 
-                if (EnableCustomProgressionPatch)
-                {
-                    Enum.TryParse(request.LayerProgressionState, out DropServer.LayerProgressionState layerProgressionState);
+                Enum.TryParse(request.LayerProgressionState, out DropServer.LayerProgressionState layerProgressionState);
 
-                    Enum.TryParse(request.Layer, out DropServer.ExpeditionLayers expeditionLayer);
+                Enum.TryParse(request.Layer, out DropServer.ExpeditionLayers expeditionLayer);
 
-                    CustomProgressionManager.Instance.SetLayeredDifficultyObjectiveState(expeditionLayer, layerProgressionState);
+                CustomProgressionManager.Instance.SetLayeredDifficultyObjectiveState(expeditionLayer, layerProgressionState);
 
-                    var result = new LayerProgressionResult();
+                __result = IL2Tasks.Task.FromResult<LayerProgressionResult>(new LayerProgressionResult());
 
-
-
-                    __result = IL2Tasks.Task.FromResult<LayerProgressionResult>(result);
-
-                    return false;
-                }
-
-                return true;
+                return false;
             }
         }
 
@@ -267,19 +226,11 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(RundownProgressionRequest request, ref IL2Tasks.Task<RundownProgressionResult> __result)
             {
-                if(request != null)
                 ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(RundownProgressionRequest)}: Rundown:{request.Rundown}");
 
-                if (EnableCustomProgressionPatch)
-                {
-                    var result = new RundownProgressionResult();
+                __result = IL2Tasks.Task.FromResult(new RundownProgressionResult());
 
-                    __result = IL2Tasks.Task.FromResult(result);
-
-                    return false;
-                }
-
-                return true; 
+                return false;
             }
         }
 
@@ -289,18 +240,11 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(ClearRundownProgressionRequest request, ref IL2Tasks.Task<ClearRundownProgressionResult> __result)
             {
-                if(request != null)
                 ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(ClearRundownProgressionRequest)}: Rundown:{request.Rundown}");
-                if (EnableCustomProgressionPatch)
-                {
-                    var result = new ClearRundownProgressionResult();
 
-                    __result = IL2Tasks.Task.FromResult(result);
+                __result = IL2Tasks.Task.FromResult(new ClearRundownProgressionResult());
 
-                    return false;
-                }
-
-                return true;
+                return false;
             }
         }
 
@@ -310,21 +254,15 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(IsTesterRequest request, ref IL2Tasks.Task<IsTesterResult> __result)
             {
-                if(request != null)
                 ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(IsTesterRequest)} (this should not happen I think?): SteamId:{request.SteamId}");
 
-                if (EnableCustomProgressionPatch)
-                {
-                    var result = new IsTesterResult();
+                var result = new IsTesterResult();
 
-                    result.IsTester = false;
+                result.IsTester = false;
 
-                    __result = IL2Tasks.Task.FromResult(result);
+                __result = IL2Tasks.Task.FromResult(result);
 
-                    return false;
-                }
-
-                return true; 
+                return false;
             }
         }
 
@@ -334,21 +272,15 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(AddRequest request, ref IL2Tasks.Task<AddResult> __result)
             {
-                if(request != null)
-                ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(AddRequest)}: X:{request.X}, Y:{request.Y}, Sum={(request.X+request.Y)}");
+                ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(AddRequest)}: X:{request.X}, Y:{request.Y}, Sum={(request.X + request.Y)}");
 
-                if (EnableCustomProgressionPatch)
-                {
-                    var result = new AddResult();
+                var result = new AddResult();
 
-                    result.Sum = request.X + request.Y;
+                result.Sum = request.X + request.Y;
 
-                    __result = IL2Tasks.Task.FromResult(result);
+                __result = IL2Tasks.Task.FromResult(result);
 
-                    return false;
-                }
-
-                return true;
+                return false;
             }
         }
     }

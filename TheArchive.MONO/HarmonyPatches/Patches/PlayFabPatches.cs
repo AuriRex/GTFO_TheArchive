@@ -51,7 +51,6 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(string fileName, out string value, ref bool __result)
             {
-
                 __result = _playerEntityData.TryGetValue(fileName, out value);
 
                 ArchiveLogger.Msg(ConsoleColor.Green, $"Getting {fileName} from playerEntityData.");
@@ -234,7 +233,6 @@ namespace TheArchive.HarmonyPatches.Patches
             public static bool Prefix()
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled CloudGiveItemToLocalPlayer");
-                // other stuff maybe ?
                 return false;
             }
         }
@@ -256,7 +254,6 @@ namespace TheArchive.HarmonyPatches.Patches
             public static bool Prefix()
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled RefreshItemCatalog");
-
                 return false;
             }
         }
@@ -312,7 +309,6 @@ namespace TheArchive.HarmonyPatches.Patches
             public static bool Prefix()
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled RefreshStoreItems");
-
                 return false;
             }
         }
