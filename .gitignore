@@ -11,6 +11,8 @@
 *.sln.docstates
 
 # Special Stuff
+out/*
+
 _R_LATEST/*
 _R_LATEST/MelonLoader/*
 _R_LATEST/MelonLoader/Managed/*

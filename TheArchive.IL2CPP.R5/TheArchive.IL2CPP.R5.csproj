@@ -104,8 +104,6 @@ GOTO END
 :DEBUG
 copy /y bin\debug\TheArchive.IL2CPP.R5.dll ..\TheArchive.IL2CPP\Resources\TheArchive.IL2CPP.R5.dll
 :END
-cd $(ProjectDir)..\TheArchive.IL2CPP\
-dotnet clean
-dotnet build -c $(ConfigurationName)</PostBuildEvent>
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

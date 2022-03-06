@@ -358,8 +358,21 @@ GOTO END
 :DEBUG
 copy /y bin\debug\TheArchive.IL2CPP.dll ..\TheArchive.Core\Resources\TheArchive.IL2CPP.dll
 :END
-cd $(ProjectDir)..\TheArchive.CORE\
-dotnet clean
-dotnet build -c $(ConfigurationName)</PostBuildEvent>
+</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>cd $(ProjectDir)Resources\
+if exist TheArchive.IL2CPP.R5.dll (
+    ECHO Not generating IL2CPP.R5 dummy dll
+) else (
+    ECHO Generating IL2CPP.R5 dummy dll ...
+    ECHO DUMMY &gt; TheArchive.IL2CPP.R5.dll
+)
+if exist TheArchive.IL2CPP.R6.dll (
+    ECHO Not generating IL2CPP.R6 dummy dll
+) else (
+    ECHO Generating IL2CPP.R6 dummy dll ...
+    ECHO DUMMY &gt; TheArchive.IL2CPP.R6.dll
+)</PreBuildEvent>
   </PropertyGroup>
 </Project>

@@ -171,8 +171,6 @@ GOTO END
 :DEBUG
 copy /y bin\debug\TheArchive.MONO.dll ..\TheArchive.Core\Resources\TheArchive.MONO.dll
 :END
-cd $(ProjectDir)..\TheArchive.CORE\
-dotnet clean
-dotnet build -c $(ConfigurationName)</PostBuildEvent>
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

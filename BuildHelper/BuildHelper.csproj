@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8513A936-3C6F-4207-B60A-5DE9788275DE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BuildHelper</RootNamespace>
+    <AssemblyName>BuildHelper</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>cd $(ProjectDir)
+ECHO [#0] Cleaning out directory
+if exist ..\out\TheArchive.Core.dll del ..\out\TheArchive.Core.dll
+if exist ..\out\TheArchive.Core.pdb del ..\out\TheArchive.Core.pdb
+
+ECHO [#1] Building SubModules ...
+cd $(ProjectDir)..\TheArchive.IL2CPP.R5\
+dotnet build -c $(ConfigurationName)
+cd $(ProjectDir)..\TheArchive.IL2CPP.R6\
+dotnet build -c $(ConfigurationName)
+
+ECHO [#2] Building Support Modules ...
+ECHO [#2.1] - IL2CPP ...
+cd $(ProjectDir)..\TheArchive.IL2CPP\
+dotnet clean
+dotnet build -c $(ConfigurationName)
+ECHO [#2.2] - MONO ...
+cd $(ProjectDir)..\TheArchive.MONO\
+dotnet clean
+dotnet build -c $(ConfigurationName)
+
+ECHO [#3] Building Core Mod
+cd $(ProjectDir)..\TheArchive.CORE\
+dotnet clean
+dotnet build -c $(ConfigurationName)
+
+ECHO [#4] All done!</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>cd $(ProjectDir)
+dotnet clean
+ECHO [#5] Copying $(ConfigurationName) TheArchive.Core.dll to out directory.
+if exist ..\TheArchive.CORE\bin\$(ConfigurationName)\TheArchive.Core.dll copy /y ..\TheArchive.CORE\bin\$(ConfigurationName)\TheArchive.Core.dll ..\out\TheArchive.Core.dll
+if exist ..\TheArchive.CORE\bin\$(ConfigurationName)\TheArchive.Core.pdb copy /y ..\TheArchive.CORE\bin\$(ConfigurationName)\TheArchive.Core.pdb ..\out\TheArchive.Core.pdb</PostBuildEvent>
+  </PropertyGroup>
+</Project>
