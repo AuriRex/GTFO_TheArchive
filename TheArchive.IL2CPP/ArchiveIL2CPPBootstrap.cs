@@ -63,5 +63,16 @@ namespace TheArchive
                 OnDataBlocksReady();
             }
         }
+
+        [ArchivePatch(typeof(GameStateManager), nameof(GameStateManager.ChangeState))]
+        internal static class GameStateManager_ChangeStatePatch
+        {
+            public static void Postfix(eGameStateName nextState)
+            {
+#pragma warning disable CS0618 // Type or member is obsolete
+                ArchiveIL2CPPModule.instance.Core.InvokeGameStateChanged((int) nextState);
+#pragma warning restore CS0618 // Type or member is obsolete
+            }
+        }
     }
 }

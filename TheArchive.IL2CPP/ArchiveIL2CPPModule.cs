@@ -19,6 +19,8 @@ namespace TheArchive
     {
         internal static ArchiveIL2CPPModule instance;
 
+        public static event Action<eGameStateName> OnGameStateChanged;
+
         public bool ApplyHarmonyPatches => true;
 
         public ArchivePatcher Patcher { get; set; }
@@ -53,6 +55,7 @@ namespace TheArchive
 
             Core.GameDataInitialized += OnGameDataInitialized;
             Core.DataBlocksReady += OnDataBlocksReady;
+            Core.GameStateChanged += (eGameStateName_state) => OnGameStateChanged?.Invoke((eGameStateName) eGameStateName_state);
         }
 
         private void OnGameDataInitialized(Utils.RundownID rundownId)

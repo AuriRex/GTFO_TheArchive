@@ -35,7 +35,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
                             var PlayerMovement = __instance.transform.parent.parent;
 
-                            if (FlagsContain(RundownFlags.RundownSix.To(RundownFlags.Latest), ArchiveMod.CurrentRundown))
+                            if (ArchiveMod.CurrentRundown.IsIncludedIn(RundownFlags.RundownSix.ToLatest()))
                             {
                                 __instance.OnBtnPressCallback += (Action<int>) OnReadyUpButtonPressed;
 
@@ -45,6 +45,8 @@ namespace TheArchive.HarmonyPatches.Patches
                                 {
                                     changeLoadoutButton.OnBtnPressCallback += (Action<int>) OnUnreadyButtonPressed;
                                 }
+
+                                ArchiveIL2CPPModule.OnGameStateChanged += OnGameStateChanged;
                             }
 
                             var playerPillars = PlayerMovement.GetChildWithExactName("PlayerPillars");
@@ -82,6 +84,14 @@ namespace TheArchive.HarmonyPatches.Patches
                 catch(Exception ex)
                 {
                     ArchiveLogger.Exception(ex);
+                }
+            }
+
+            private static void OnGameStateChanged(eGameStateName state)
+            {
+                if(state == eGameStateName.Lobby)
+                {
+                    OnUnreadyButtonPressed(0);
                 }
             }
 

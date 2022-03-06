@@ -214,6 +214,7 @@ namespace TheArchive.Utilities
         public static RundownFlags FlagsFromTo(RundownFlags from, RundownFlags to)
         {
             if (from == to) return from;
+            if ((int) from > (int) to) throw new ArgumentException($"{nameof(from)} ({from}) may not be larger than {nameof(to)} ({to})!");
 
             if(!IsPowerOfTwo((ulong) from) || !IsPowerOfTwo((ulong) to) || from > to)
             {

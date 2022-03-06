@@ -16,6 +16,8 @@ namespace TheArchive
     {
         internal static ArchiveMONOModule instance;
 
+        public static event Action<eGameStateName> OnGameStateChanged;
+
         public static SharedCoroutineStarter CoroutineHelper { get; private set; } = null;
 
         public bool ApplyHarmonyPatches => true;
@@ -52,6 +54,7 @@ namespace TheArchive
 
             Core.GameDataInitialized += OnGameDataInitialized;
             Core.DataBlocksReady += OnDataBlocksReady;
+            Core.GameStateChanged += (eGameStateName_state) => OnGameStateChanged?.Invoke((eGameStateName) eGameStateName_state);
         }
 
         private void OnDataBlocksReady()

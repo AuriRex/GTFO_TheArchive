@@ -62,6 +62,7 @@ namespace TheArchive
 
         public event Action<RundownID> GameDataInitialized;
         public event Action DataBlocksReady;
+        public event Action<int> GameStateChanged;
 
         public static bool HudIsVisible { get; set; } = true;
 
@@ -263,6 +264,9 @@ namespace TheArchive
             ArchiveLogger.Info($"DataBlocks should be ready to be interacted with, invoking event.");
             DataBlocksReady?.Invoke();
         }
+
+        [Obsolete("Do not call!")]
+        public void InvokeGameStateChanged(int eGameState_state) => GameStateChanged?.Invoke(eGameState_state);
 
         private IArchiveModule CreateAndInitModule(Type moduleType)
         {
