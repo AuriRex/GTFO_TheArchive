@@ -37,7 +37,7 @@ A [MelonLoader](https://github.com/LavaGang/MelonLoader) based [GTFO](https://gt
 │   │       └── ...
 │   └── MelonLoader/
 │       └── MelonLoader.dll
-└── _R_RD005/                               # Rundown 5 Assemblies go here
+├── _R_RD005/                               # Rundown 5 Assemblies go here
 │   └── MelonLoader/
 │       ├── Managed/
 │       │   ├── Accessibility.dll
