@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace TheArchive.Utilities
 {
@@ -17,14 +18,6 @@ namespace TheArchive.Utilities
             }
         }
 
-        public static bool LogDebug { get; set; }
-#if DEBUG
-            = true;
-#else
-            = false;
-#endif
-
-
         public static void Success(string msg)
         {
             Logger.Msg(ConsoleColor.Green, msg);
@@ -40,9 +33,9 @@ namespace TheArchive.Utilities
             Logger.Msg(col, msg);
         }
 
+        [Conditional("DEBUG")]
         public static void Debug(string msg)
         {
-            if (!LogDebug) return;
             Logger.Msg(ConsoleColor.Gray, msg);
         }
 

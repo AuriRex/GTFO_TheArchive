@@ -108,7 +108,7 @@ namespace TheArchive.Core.Managers
         {
             public const long CLIENT_ID = 946141176338190346L;
 
-            private long _clientId = 0L;
+            private readonly long _clientId = 0L;
             private Discord.Discord _discordClient;
             private Discord.ActivityManager _activityManager;
 
@@ -247,25 +247,22 @@ namespace TheArchive.Core.Managers
 
             private static void LogHook(LogLevel level, string message)
             {
-                Action<string> log;
                 switch(level)
                 {
                     case LogLevel.Error:
-                        log = ArchiveLogger.Error;
-                        break;
+                        ArchiveLogger.Error($"[{nameof(DiscordClient)}] {level}: {message}");
+                        return;
                     case LogLevel.Warn:
-                        log = ArchiveLogger.Warning;
-                        break;
+                        ArchiveLogger.Warning($"[{nameof(DiscordClient)}] {level}: {message}");
+                        return;
                     default:
                     case LogLevel.Info:
-                        log = ArchiveLogger.Notice;
-                        break;
+                        ArchiveLogger.Notice($"[{nameof(DiscordClient)}] {level}: {message}");
+                        return;
                     case LogLevel.Debug:
-                        log = ArchiveLogger.Debug;
-                        break;
+                        ArchiveLogger.Debug($"[{nameof(DiscordClient)}] {level}: {message}");
+                        return;
                 }
-
-                log.Invoke($"[{nameof(DiscordClient)}] {level}: {message}");
             }
 
             public void RunCallbacks()

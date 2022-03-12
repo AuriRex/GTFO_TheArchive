@@ -223,18 +223,14 @@ namespace TheArchive.Core.Managers
             get
             {
                 int charId = Get<int>(nameof(LocalCharacterID));
-                switch (charId)
+                return charId switch
                 {
-                    case 0:
-                        return "char_woods";
-                    case 1:
-                        return "char_dauda";
-                    case 2:
-                        return "char_hackett";
-                    case 3:
-                        return "char_bishop";
-                }
-                return "please_just_work";
+                    0 => "char_woods",
+                    1 => "char_dauda",
+                    2 => "char_hackett",
+                    3 => "char_bishop",
+                    _ => "please_just_work",
+                };
             }
         }
 
@@ -244,18 +240,14 @@ namespace TheArchive.Core.Managers
             get
             {
                 int charId = Get<int>(nameof(LocalCharacterID));
-                switch (charId)
+                return charId switch
                 {
-                    case 0:
-                        return "Woods";
-                    case 1:
-                        return "Dauda";
-                    case 2:
-                        return "Hackett";
-                    case 3:
-                        return "Bishop";
-                }
-                return "The Warden uwu";
+                    0 => "Woods",
+                    1 => "Dauda",
+                    2 => "Hackett",
+                    3 => "Bishop",
+                    _ => "The Warden uwu",
+                };
             }
         }
 
