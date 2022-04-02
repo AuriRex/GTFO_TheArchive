@@ -79,7 +79,11 @@ namespace TheArchive.Core.Managers
                     var genericType = ImplementationManager.GameTypeByIdentifier("GameDataBlockBase<>").MakeGenericType(type);
 
                     string fileContents = (string) genericType.GetMethod("GetFileContents").Invoke(null, new object[0]);
-
+                    
+                    if (string.IsNullOrWhiteSpace(fileContents))
+                    {
+                        ArchiveLogger.Warning($"  X returned string is empty!!");
+                    }
 
                     if (ArchiveMod.Settings.DumpDataBlocks && (ArchiveMod.Settings.AlwaysOverrideDataBlocks || !File.Exists(path)))
                     {
