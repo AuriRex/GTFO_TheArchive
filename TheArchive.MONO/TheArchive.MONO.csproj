@@ -147,6 +147,7 @@
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\RichPresencePatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\ThrowingWeaponPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\UnityLoggerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\HudTogglePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />
