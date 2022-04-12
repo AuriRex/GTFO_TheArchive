@@ -67,13 +67,22 @@ namespace TheArchive.Core.Managers
                 }
             }
 
-            _discordClient = new DiscordClient();
+            try
+            {
+                _discordClient = new DiscordClient();
 
-            _discordClient.Initialize();
+                _discordClient.Initialize();
 
-            PresenceManager.UpdateGameState(PresenceGameState.Startup, false);
-            _discordClient.TryUpdateActivity(_discordClient.BuildActivity(PresenceGameState.Startup, PresenceManager.CurrentStateStartTime));
-            _discordClient.RunCallbacks();
+                PresenceManager.UpdateGameState(PresenceGameState.Startup, false);
+                _discordClient.TryUpdateActivity(_discordClient.BuildActivity(PresenceGameState.Startup, PresenceManager.CurrentStateStartTime));
+                _discordClient.RunCallbacks();
+            }
+            catch(Discord.ResultException ex)
+            {
+                ArchiveLogger.Warning($"Discord seems to be closed, disabling Rich Presence Features ... ({ex}: {ex.Message})");
+                _discordClient = null;
+            }
+
         }
 
         internal static void Update()
@@ -234,7 +243,7 @@ namespace TheArchive.Core.Managers
 
             public void Dispose()
             {
-                _discordClient.Dispose();
+                _discordClient?.Dispose();
                 _discordClient = null;
             }
 

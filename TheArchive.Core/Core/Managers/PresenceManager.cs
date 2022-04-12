@@ -276,6 +276,9 @@ namespace TheArchive.Core.Managers
         [FallbackPresenceFormatProvider(nameof(ExpeditionTier))]
         public static string ExpeditionTier { get; set; } = string.Empty; // A, B, C, D, E
 
+        [FallbackPresenceFormatProvider(nameof(ExpeditionTierIsSpecial), true)]
+        public static bool ExpeditionTierIsSpecial { get; set; } = false; // True on R6 Extended Levels
+
         [FallbackPresenceFormatProvider(nameof(ExpeditionNumber))]
         public static string ExpeditionNumber { get; set; } = string.Empty; // 1, 2, 3, 4
 
@@ -283,11 +286,22 @@ namespace TheArchive.Core.Managers
         public static string ExpeditionName { get; set; } = string.Empty; // "The Admin", "Crossways", "Deeper"
 
 
+        [PresenceFormatProvider(nameof(ExpeditionWithNumber))]
+        public static string ExpeditionWithNumber
+        {
+            get
+            {
+                return $"{Get(nameof(ExpeditionTier))}{Get(nameof(ExpeditionNumber))}";
+            }
+        }
+
         [PresenceFormatProvider(nameof(Expedition))]
         public static string Expedition
         {
             get
             {
+                if(Get<bool>(nameof(ExpeditionTierIsSpecial)))
+                    return $"{Get(nameof(ExpeditionTier))}";
                 return $"{Get(nameof(ExpeditionTier))}{Get(nameof(ExpeditionNumber))}";
             }
         }

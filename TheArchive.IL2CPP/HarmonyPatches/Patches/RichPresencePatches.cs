@@ -138,6 +138,9 @@ namespace TheArchive.HarmonyPatches.Patches
         [PresenceFormatProvider(nameof(PresenceManager.ExpeditionTier))]
         public static string ExpeditionTier => RundownManager.ActiveExpedition?.Descriptive?.Prefix ?? "?";
 
+        [PresenceFormatProvider(nameof(PresenceManager.ExpeditionTierIsSpecial))]
+        public static bool ExpeditionTierIsSpecial => (RundownManager.ActiveExpedition?.Descriptive?.Prefix ?? "?").EndsWith("X");
+
         [PresenceFormatProvider(nameof(PresenceManager.ExpeditionNumber))]
         public static int ExpeditionNumber { get; set; } = 0;
 
