@@ -67,7 +67,7 @@ namespace TheArchive.Core.Models
                             Assets = new GSActivityAssets
                             {
                                 LargeImageKey = "icon_lobby",
-                                LargeTooltip = "GTFO \"%RundownTitle%\"",
+                                LargeTooltip = "GTFO %Rundown% \"%RundownTitle%\"",
                                 SmallImageKey = "%CharacterImageKey%",
                                 SmallTooltip = "Playing as %CharacterName%"
                             },
@@ -149,7 +149,7 @@ namespace TheArchive.Core.Models
                             Assets = new GSActivityAssets
                             {
                                 LargeImageKey = "gtfo_icon",
-                                LargeTooltip = "Exploring ...",
+                                LargeTooltip = "Exploring %CurrentZoneShort% Area %AreaSuffix%",
                                 SmallImageKey = "%MeleeWeaponKey%",
                                 SmallTooltip = "%EquippedMeleeWeaponName%"
                             },

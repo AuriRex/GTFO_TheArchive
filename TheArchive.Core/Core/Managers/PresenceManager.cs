@@ -286,6 +286,45 @@ namespace TheArchive.Core.Managers
         public static string ExpeditionName { get; set; } = string.Empty; // "The Admin", "Crossways", "Deeper"
 
 
+        [FallbackPresenceFormatProvider(nameof(ZonePrefix))]
+        public static string ZonePrefix { get; set; } = string.Empty;
+
+        [FallbackPresenceFormatProvider(nameof(ZonePrefixLong))]
+        public static string ZonePrefixLong { get; set; } = string.Empty;
+
+        [FallbackPresenceFormatProvider(nameof(ZoneAlias))]
+        public static string ZoneAlias { get; set; } = string.Empty;
+
+        [FallbackPresenceFormatProvider(nameof(AreaSuffix))]
+        public static string AreaSuffix { get; set; } = string.Empty;
+
+        [PresenceFormatProvider(nameof(CurrentZoneShort))]
+        public static string CurrentZoneShort
+        {
+            get
+            {
+                return $"{Get(nameof(ZonePrefix))}_{Get(nameof(ZoneAlias))}";
+            }
+        }
+
+        [PresenceFormatProvider(nameof(CurrentZoneLong))]
+        public static string CurrentZoneLong
+        {
+            get
+            {
+                return $"{Get(nameof(ZonePrefixLong))} {Get(nameof(ZoneAlias))}";
+            }
+        }
+
+        [PresenceFormatProvider(nameof(CurrentArea))]
+        public static string CurrentArea
+        {
+            get
+            {
+                return $"Area {Get(nameof(AreaSuffix))}";
+            }
+        }
+
         [PresenceFormatProvider(nameof(ExpeditionWithNumber))]
         public static string ExpeditionWithNumber
         {
@@ -302,7 +341,7 @@ namespace TheArchive.Core.Managers
             {
                 if(Get<bool>(nameof(ExpeditionTierIsSpecial)))
                     return $"{Get(nameof(ExpeditionTier))}";
-                return $"{Get(nameof(ExpeditionTier))}{Get(nameof(ExpeditionNumber))}";
+                return $"{ExpeditionWithNumber}";
             }
         }
         #endregion expedition

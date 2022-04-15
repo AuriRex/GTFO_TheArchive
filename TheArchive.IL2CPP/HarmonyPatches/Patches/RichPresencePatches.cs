@@ -146,6 +146,20 @@ namespace TheArchive.HarmonyPatches.Patches
 
         [PresenceFormatProvider(nameof(PresenceManager.ExpeditionName))]
         public static string ExpeditionName => RundownManager.ActiveExpedition?.Descriptive?.PublicName ?? "???";
+
+
+        [PresenceFormatProvider(nameof(PresenceManager.ZonePrefix))]
+        public static string ZonePrefix => PlayerManager.GetLocalPlayerAgent()?.CourseNode?.m_zone?.NavInfo?.PrefixShort ?? "?";
+
+        [PresenceFormatProvider(nameof(PresenceManager.ZonePrefixLong))]
+        public static string ZonePrefixLong => PlayerManager.GetLocalPlayerAgent()?.CourseNode?.m_zone?.NavInfo?.PrefixLong ?? "?";
+
+        [PresenceFormatProvider(nameof(PresenceManager.ZoneAlias))]
+        public static string ZoneAlias => PlayerManager.GetLocalPlayerAgent()?.CourseNode?.m_zone?.NavInfo?.Number.ToString() ?? "?";
+
+        [PresenceFormatProvider(nameof(PresenceManager.AreaSuffix))]
+        public static string AreaSuffix => PlayerManager.GetLocalPlayerAgent()?.CourseNode?.m_area?.m_navInfo?.Suffix ?? "?";
+
         #endregion expedition
 
         // Disables or changes Steam rich presence
