@@ -81,6 +81,7 @@ namespace TheArchive
 
             LoadConfig();
 
+            GTFOLogger.Logger = new MelonLogger.Instance("GTFO-Internals", ConsoleColor.DarkGray);
 
             var archiveModule = LoadMainArchiveModule(MelonUtils.IsGameIl2Cpp());
 
