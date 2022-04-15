@@ -19,6 +19,16 @@ namespace TheArchive.Utilities
             }
         }
 
+        public static T GetEnumFromName<T>(string name) where T : struct
+        {
+            if(Enum.TryParse<T>(name, out var value))
+            {
+                return value;
+            }
+
+            return default;
+        }
+
         public static string GetRundownTitle() => GetRundownTitle(ArchiveMod.CurrentRundown);
         public static string GetRundownTitle(RundownID rundown)
         {

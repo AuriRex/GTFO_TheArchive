@@ -8,6 +8,7 @@ namespace TheArchive.HarmonyPatches.Patches
     public class StatePatches
     {
         public static bool LocalPlayerIsInTerminal { get; private set; } = false;
+        public static bool LocalPlayerIsInMap { get; private set; } = false;
 
         private static PropertyInfo[] _statePatchesProperties = null;
 
@@ -35,6 +36,9 @@ namespace TheArchive.HarmonyPatches.Patches
                 {
                     case eFocusState.ComputerTerminal:
                         LocalPlayerIsInTerminal = true;
+                        break;
+                    case eFocusState.Map:
+                        LocalPlayerIsInMap = true;
                         break;
                 }
             }

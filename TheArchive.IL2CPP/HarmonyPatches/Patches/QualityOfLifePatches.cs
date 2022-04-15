@@ -89,5 +89,22 @@ namespace TheArchive.HarmonyPatches.Patches
             }
         }
 
+        // Prevent a switch to the Objectives Screen whenever the chat is open
+        [ArchivePatch(typeof(MainMenuGuiLayer), nameof(MainMenuGuiLayer.ChangePage))]
+        internal static class MainMenuGuiLayer_ChangePagePatch
+        {
+            public static readonly eCM_MenuPage eCM_MenuPage_CMP_OBJECTIVES = GetEnumFromName<eCM_MenuPage>(nameof(eCM_MenuPage.CMP_OBJECTIVES));
+
+            public static bool Prefix(eCM_MenuPage pageEnum)
+            {
+                if(pageEnum == eCM_MenuPage_CMP_OBJECTIVES && PlayerChatManager.InChatMode)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
     }
 }
