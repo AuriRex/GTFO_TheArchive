@@ -291,6 +291,7 @@
     <Compile Include="HarmonyPatches\AutoPatches\GameSettingsPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CM_ItemPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CM_PageMatchmakingPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\AutoIntroPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LoadoutRandomizerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerClientAPIViaPlayFabPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerPatches.cs" />

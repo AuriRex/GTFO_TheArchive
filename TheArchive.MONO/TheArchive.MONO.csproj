@@ -143,6 +143,7 @@
     <Compile Include="ArchiveMONOModule.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CELLSettingsPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\AutoIntroPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LoadoutRandomizerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />

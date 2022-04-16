@@ -20,6 +20,7 @@
 
         /// <summary> Allows the player to run / jump / fall with charged throwables instead of automatically throwing them. </summary>
         public bool EnableAccidentalThrowablesThrowProtection { get; set; } = true;
+        public bool AutoSkipIntro { get; set; } = false;
 
     }
 }
