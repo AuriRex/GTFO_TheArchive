@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,11 +40,11 @@ namespace TheArchive.Core.Managers
             if (!_transformationDictionary.TryGetValue(typeof(T), out var list))
             {
                 list = new List<Action<object>>();
+
+                _transformationDictionary.Add(typeof(T), list);
             }
 
             list.Add(func);
-
-            _transformationDictionary.Add(typeof(T), list);
         }
 
         public static object GetWrapper(Type type, out Type wrapperType)
