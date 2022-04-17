@@ -169,6 +169,17 @@ namespace TheArchive.Utilities
             }
         }
 
+        private static string _vanityItemsPath = null;
+        public static string VanityItemsPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_vanityItemsPath))
+                    _vanityItemsPath = Path.Combine(SaveDirectoryPath, $"VanityItems_Data.json");
+                return _vanityItemsPath;
+            }
+        }
+
         public static void SaveToFilesDir(string filename, string jsonOrSomething)
         {
 

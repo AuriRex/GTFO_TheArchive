@@ -80,6 +80,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArchivePatches\DropServerClientAPIViaPlayFabPatches.cs" />
     <Compile Include="ArchivePatches\QualityOfLifePatches.cs" />
     <Compile Include="ArchivePatches\VanityItemPatches.cs" />
     <Compile Include="Factories\Boosters\CustomBoosterImplantFactory.cs" />

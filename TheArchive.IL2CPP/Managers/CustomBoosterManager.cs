@@ -150,7 +150,7 @@ namespace TheArchive.Managers
         public static void SaveToBoosterFile(CustomBoosterImplantPlayerData data)
         {
             if (data == null)
-                throw new ArgumentException(nameof(data));
+                throw new ArgumentNullException(nameof(data));
             ArchiveLogger.Msg(ConsoleColor.DarkRed, $"Saving boosters to disk at: {LocalFiles.BoostersPath}");
             var json = JsonConvert.SerializeObject(data, Formatting.Indented);
             File.WriteAllText(LocalFiles.BoostersPath, json);
