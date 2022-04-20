@@ -2,22 +2,22 @@
 using TheArchive.HarmonyPatches.Patches;
 using UnityEngine;
 
-namespace TheArchive.Managers
+namespace TheArchive
 {
     /// <summary>
     /// Play voice lines on a key press!
     /// </summary>
-    public class MuteSpeakManager
+    public class MuteSpeak
     {
         public static bool EnableOtherVoiceBinds { get; set; } = false;
+
+        private static PlayerAgent LocalPlayerAgent { get; set; }
 
         public static void IfKeySay(KeyCode key, uint soundId)
         {
             if (Input.GetKeyDown(key))
             {
-                var localPlayer = PlayerManager.GetLocalPlayerAgent();
-
-                PlayerVoiceManager.WantToSay(localPlayer.CharacterID, soundId);
+                PlayerVoiceManager.WantToSay(LocalPlayerAgent.CharacterID, soundId);
             }
         }
 
@@ -34,8 +34,11 @@ namespace TheArchive.Managers
 
             if (StatePatches.LocalPlayerIsInTerminal) return;
             if (PlayerChatManager.InChatMode) return;
+            if (!PlayerManager.TryGetLocalPlayerAgent(out var lpa) || lpa == null) return;
 
-            if(Input.GetKey(KeyCode.RightControl))
+            LocalPlayerAgent = lpa;
+
+            if (Input.GetKey(KeyCode.RightControl))
             {
                 IfKeySay(KeyCode.UpArrow, AK.EVENTS.PLAY_CL_NORTH);
                 IfKeySay(KeyCode.RightArrow, AK.EVENTS.PLAY_CL_EAST);

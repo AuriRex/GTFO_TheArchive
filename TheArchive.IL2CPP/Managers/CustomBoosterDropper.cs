@@ -1,27 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TheArchive.Core;
 using TheArchive.Core.Managers;
+using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
 using TheArchive.Models.DataBlocks;
 using TheArchive.Utilities;
 
 namespace TheArchive.Managers
 {
-    public class CustomBoosterDropManager
+    public class CustomBoosterDropper : InitSingletonBase<CustomBoosterDropper>, IInitAfterDataBlocksReady, IInitCondition
     {
         private static bool _hasBeenSetup = false;
-
-        private static CustomBoosterDropManager _instance = null;
-        public static CustomBoosterDropManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new CustomBoosterDropManager();
-                return _instance;
-            }
-        }
 
         public CustomBoosterImplantTemplateDataBlock[] MutedTemplates { get; private set; }
         public CustomBoosterImplantTemplateDataBlock[] BoldTemplates { get; private set; }
@@ -30,29 +21,31 @@ namespace TheArchive.Managers
         public CustomBoosterImplantEffectDataBlock[] Effects { get; private set; }
         public CustomBoosterImplantConditionDataBlock[] Conditions { get; private set; }
 
-        /// <summary>
-        /// Call after GameDataInit has done it's thing
-        /// </summary>
-        public void Setup()
+        public bool InitCondition()
+        {
+            return ArchiveMod.CurrentRundown != Utils.RundownID.RundownFour;
+        }
+
+        public void Init()
         {
             if(_hasBeenSetup)
             {
-                ArchiveLogger.Info($"{nameof(CustomBoosterDropManager)} already setup, skipping ...");
+                ArchiveLogger.Info($"{nameof(CustomBoosterDropper)} already setup, skipping ...");
                 return;
             }
-            ArchiveLogger.Info($"Setting up {nameof(CustomBoosterDropManager)} ...");
+            ArchiveLogger.Info($"Setting up {nameof(CustomBoosterDropper)} ...");
 
-            //var templates = BoosterImplantTemplateDataBlock.GetAllBlocks().ToArray();
-            var templates = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantTemplateDataBlock>("BoosterImplantTemplateDataBlock").ToArray();
+            var templates = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantTemplateDataBlock>();
 
             MutedTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Muted).ToArray();
             BoldTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Bold).ToArray();
             AgrressiveTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Aggressive).ToArray();
 
-            Effects = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantEffectDataBlock>("BoosterImplantEffectDataBlock").ToArray();
-            Conditions = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantConditionDataBlock>("BoosterImplantConditionDataBlock").ToArray();
+            Effects = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantEffectDataBlock>();
+            Conditions = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantConditionDataBlock>();
 
-            ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(CustomBoosterDropManager)}.{nameof(Setup)}() complete, retrieved {MutedTemplates.Length} Muted, {BoldTemplates.Length} Bold and {AgrressiveTemplates.Length} Agrressive Templates as well as {Effects?.Length} Effects and {Conditions?.Length} Conditions.");
+            ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(CustomBoosterDropper)}.{nameof(Init)}() complete, retrieved {MutedTemplates.Length} Muted, {BoldTemplates.Length} Bold and {AgrressiveTemplates.Length} Agrressive Templates as well as {Effects?.Length} Effects and {Conditions?.Length} Conditions.");
+            Instance = this;
             _hasBeenSetup = true;
         }
 
@@ -66,7 +59,7 @@ namespace TheArchive.Managers
         public CustomDropServerBoosterImplantInventoryItem GenerateBooster(BoosterImplantCategory category, uint[] usedIds)
         {
             CustomBoosterImplantTemplateDataBlock template;
-            float weight;
+            float weight = 1f;
 
             int maxUses;
 
@@ -86,11 +79,12 @@ namespace TheArchive.Managers
                         template = AgrressiveTemplates[UnityEngine.Random.Range(0, AgrressiveTemplates.Length)];
                         break;
                 }
+                if (template == null) continue;
                 if (count > BOOSTER_DROP_MAX_REROLL_COUNT) break;
                 weight = 1f;
                 if (template.DropWeight != 0) weight = 1 / template.DropWeight;
                 count++;
-            } while (UnityEngine.Random.Range(0f, 1f) > weight);
+            } while (template == null || UnityEngine.Random.Range(0f, 1f) > weight);
 
             switch (category)
             {
@@ -120,7 +114,7 @@ namespace TheArchive.Managers
             }
 
             // Choose from random effects
-            foreach(var randomEffectList in template.RandomEffects)
+            foreach (var randomEffectList in template.RandomEffects)
             {
                 if (randomEffectList == null || randomEffectList.Count < 1) continue;
                 var fx = randomEffectList[UnityEngine.Random.Range(0, randomEffectList.Count)];
@@ -147,6 +141,8 @@ namespace TheArchive.Managers
             var instanceId = GenerateInstanceId(usedIds);
 
             var value = new CustomDropServerBoosterImplantInventoryItem(template.PersistentID, instanceId, maxUses, effects.ToArray(), conditionIds.ToArray());
+
+            value.Category = category;
 
 #pragma warning disable CS0618 // Type or member is obsolete
             value.Template = template;

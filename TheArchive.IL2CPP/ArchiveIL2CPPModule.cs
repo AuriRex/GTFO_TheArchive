@@ -31,6 +31,8 @@ namespace TheArchive
         [SubModule(Utils.RundownFlags.RundownSix, Utils.RundownFlags.Latest)]
         public static string R6SubModule => "TheArchive.Resources.TheArchive.IL2CPP.R6.dll";
 
+        public CustomBoosterDropper BoosterDropManager { internal get; set; } = null;
+
         public void Init()
         {
             instance = this;
@@ -77,12 +79,9 @@ namespace TheArchive
 
         private void OnDataBlocksReady()
         {
-            if (ArchiveMod.CurrentRundown != Utils.RundownID.RundownFour)
-            {
-                BoosterSetup();
-            }
+        
         }
-
+/*
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal static void BoosterSetup()
         {
@@ -95,7 +94,7 @@ namespace TheArchive
                 ArchiveLogger.Error($"Error while trying to Setup {nameof(CustomBoosterDropManager)}!");
                 ArchiveLogger.Exception(ex);
             }
-        }
+        }*/
 
         public void OnSceneWasLoaded(int buildIndex, string sceneName)
         {

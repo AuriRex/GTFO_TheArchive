@@ -71,7 +71,28 @@ namespace TheArchive.Utilities
 
         public static T PickRandom<T>(this T[] array)
         {
+            if (array.Length == 0)
+                return default;
             return (T) array.GetValue(UnityEngine.Random.RandomRangeInt(0, array.Length - 1));
+        }
+
+        public static T PickRandom<T>(this List<T> list)
+        {
+            if (list.Count == 0)
+                return default;
+            return list[UnityEngine.Random.RandomRangeInt(0, list.Count - 1)];
+        }
+
+        public static bool TryPickRandom<T>(this List<T> list, out T value)
+        {
+            if (list.Count == 0)
+            {
+                value = default;
+                return false;
+            }
+               
+            value = list[UnityEngine.Random.RandomRangeInt(0, list.Count - 1)];
+            return true;
         }
 
         /// <summary>

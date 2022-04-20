@@ -50,9 +50,9 @@ namespace TheArchive.Models.Boosters
         {
             var cats = new List<CustomCategory>();
 
-            if (Basic.Currency > CurrencyNewBoosterCost) cats.Add(Basic);
-            if (Advanced.Currency > CurrencyNewBoosterCost) cats.Add(Advanced);
-            if (Specialized.Currency > CurrencyNewBoosterCost) cats.Add(Specialized);
+            if (Basic.Currency >= CurrencyNewBoosterCost) cats.Add(Basic);
+            if (Advanced.Currency >= CurrencyNewBoosterCost) cats.Add(Advanced);
+            if (Specialized.Currency >= CurrencyNewBoosterCost) cats.Add(Specialized);
 
             return cats.ToArray();
         }
@@ -201,8 +201,13 @@ namespace TheArchive.Models.Boosters
             // Helper
             public BoosterImplantCategory CategoryType { get; set; } = BoosterImplantCategory.Muted;
 
+            private int _currency = 0;
             /// <summary> 1000 -> 100% -> new booster </summary>
-            public int Currency { get; set; } = 0;
+            public int Currency
+            {
+                get => _currency;
+                set => _currency = value > 0 ? value : 0;
+            }
             /// <summary> Number of missed boosters </summary>
             public int Missed { get; set; } = 0;
             /// <summary> Number of missed boosters that have been acknowledged by the player (displays missed boosters popup ingame if unequal with <see cref="Missed"/>) </summary>
@@ -218,22 +223,14 @@ namespace TheArchive.Models.Boosters
             }
 
             [JsonIgnore]
-            public static int MaxBoostersInCategoryInventory
-            {
-                get
-                {
-                    return GetMaxBoostersInCategory();
-                }
-            }
+            public static int MaxBoostersInCategoryInventory => GetMaxBoostersInCategory();
 
             [JsonIgnore]
-            public bool InventoryIsFull
-            {
-                get
-                {
-                    return Inventory.Length >= MaxBoostersInCategoryInventory;
-                }
-            }
+            public bool InventoryIsFull => Inventory.Length >= MaxBoostersInCategoryInventory;
+
+            [JsonIgnore]
+            public bool HasEnoughCurrencyForDrop => Currency >= CustomBoosterImplantPlayerData.CurrencyNewBoosterCost;
+
 
             public uint[] GetUsedIds()
             {

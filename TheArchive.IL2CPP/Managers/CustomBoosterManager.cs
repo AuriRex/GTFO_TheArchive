@@ -3,23 +3,15 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
+using TheArchive.Core;
+using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
 using TheArchive.Utilities;
 
 namespace TheArchive.Managers
 {
-    public class CustomBoosterManager
+    public class CustomBoosterManager : InitSingletonBase<CustomBoosterManager>, IInitAfterGameDataInitialized
     {
-        private static CustomBoosterManager _instance = null;
-        public static CustomBoosterManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new CustomBoosterManager();
-                return _instance;
-            }
-        }
 
         public static bool DoConsumeBoosters { get; set; } = true;
 
@@ -62,7 +54,13 @@ namespace TheArchive.Managers
         }
 
 
-        public CustomBoosterDropManager BoosterDropper { get; private set; } = CustomBoosterDropManager.Instance;
+        public CustomBoosterDropper BoosterDropper => CustomBoosterDropper.Instance;
+
+        public void Init()
+        {
+            ArchiveLogger.Notice($"{nameof(CustomBoosterManager)} Init called!");
+            Instance = this;
+        }
 
         internal void SaveBoostersToDisk()
         {
@@ -125,17 +123,21 @@ namespace TheArchive.Managers
 
             foreach(var cat in cats)
             {
-                cat.Currency -= CustomBoosterImplantPlayerData.CurrencyNewBoosterCost;
-
-                if(cat.InventoryIsFull)
+                while(cat.HasEnoughCurrencyForDrop)
                 {
-                    ArchiveLogger.Warning($"Inventory full, missed 1 {cat.CategoryType} booster.");
-                    cat.Missed++;
-                    continue;
-                }
+                    cat.Currency -= CustomBoosterImplantPlayerData.CurrencyNewBoosterCost;
 
-                ArchiveLogger.Notice($"Generating 1 {cat.CategoryType} booster ...");
-                BoosterDropper.GenerateAndAddBooster(ref _customBoosterImplantPlayerData, cat.CategoryType);
+                    if (cat.InventoryIsFull)
+                    {
+                        ArchiveLogger.Warning($"Inventory full, missed 1 {cat.CategoryType} booster.");
+                        cat.Missed++;
+                        continue;
+                    }
+
+                    ArchiveLogger.Notice($"Generating 1 {cat.CategoryType} booster ... [CurrencyRemaining:{cat.Currency}]");
+                    BoosterDropper.GenerateAndAddBooster(ref _customBoosterImplantPlayerData, cat.CategoryType);
+                }
+                
             }
             
 

@@ -36,6 +36,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\_R_LATEST\MelonLoader\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="MelonLoader">
       <HintPath>..\_R_LATEST\MelonLoader\MelonLoader.dll</HintPath>
       <Private>False</Private>
@@ -68,6 +71,7 @@
     <Compile Include="Core\DiscordApi\StoreManager.cs" />
     <Compile Include="Core\IArchiveModule.cs" />
     <Compile Include="Core\ArchivePatcher.cs" />
+    <Compile Include="Core\InitSingletonBase.cs" />
     <Compile Include="Core\Managers\DataBlockManager.cs" />
     <Compile Include="Core\Managers\DiscordManager.cs" />
     <Compile Include="Core\Managers\ImplementationManager.cs" />
@@ -76,6 +80,10 @@
     <Compile Include="Core\Models\RichPresenceSettings.cs" />
     <Compile Include="Core\SubModuleAttribute.cs" />
     <Compile Include="Interfaces\IBaseGameConverter.cs" />
+    <Compile Include="Interfaces\IInitAfterDataBlocksReady.cs" />
+    <Compile Include="Interfaces\IInitAfterGameDataInitialized.cs" />
+    <Compile Include="Interfaces\IInitCondition.cs" />
+    <Compile Include="Interfaces\IInitializable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ArchiveLogger.cs" />
     <Compile Include="Utilities\GTFOLogger.cs" />
@@ -104,6 +112,7 @@
       <Link>Resources\LICENSE</Link>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>cd $(ProjectDir)Resources\

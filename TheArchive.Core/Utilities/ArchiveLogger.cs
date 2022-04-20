@@ -36,7 +36,7 @@ namespace TheArchive.Utilities
         [Conditional("DEBUG")]
         public static void Debug(string msg)
         {
-            Logger.Msg(ConsoleColor.Gray, msg);
+            Logger.Msg(ConsoleColor.DarkGray, msg);
         }
 
         public static void Info(string msg)

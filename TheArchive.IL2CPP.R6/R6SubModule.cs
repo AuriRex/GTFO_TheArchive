@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheArchive.Core;
-using TheArchive.IL2CPP.R6.ArchivePatches;
-using TheArchive.Managers;
+﻿using TheArchive.Core;
 using TheArchive.Utilities;
-using UnhollowerRuntimeLib;
 using UnityEngine;
 
 namespace TheArchive.IL2CPP.R6
@@ -32,12 +24,12 @@ namespace TheArchive.IL2CPP.R6
         public void OnLateUpdate()
         {
 
-            MuteSpeakManager.Update();
+            MuteSpeak.Update();
 
             if (Input.GetKeyDown(KeyCode.F8))
             {
-                MuteSpeakManager.EnableOtherVoiceBinds = !MuteSpeakManager.EnableOtherVoiceBinds;
-                ArchiveLogger.Notice($"Voice binds enabled: {MuteSpeakManager.EnableOtherVoiceBinds}");
+                MuteSpeak.EnableOtherVoiceBinds = !MuteSpeak.EnableOtherVoiceBinds;
+                ArchiveLogger.Notice($"Voice binds enabled: {MuteSpeak.EnableOtherVoiceBinds}");
             }
         }
 

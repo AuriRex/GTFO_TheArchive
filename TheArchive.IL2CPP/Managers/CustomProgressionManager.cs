@@ -1,30 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using TheArchive.Core;
 using TheArchive.HarmonyPatches.Patches;
+using TheArchive.Interfaces;
 
 namespace TheArchive.Managers
 {
-    public class CustomProgressionManager
+    public class CustomProgressionManager : InitSingletonBase<CustomProgressionManager>, IInitAfterGameDataInitialized
     {
 #warning TODO: Artifact Heat for R5
-        private static CustomProgressionManager _instance = null;
-        public static CustomProgressionManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new CustomProgressionManager();
-                return _instance;
-            }
-        }
-
         public static Action<string> Logger = null;
 
         public ExpeditionSession CurrentActiveSession { get; private set; }
 
-        private CustomProgressionManager() { }
-
         public static event Action<ExpeditionSession> OnExpeditionCompleted;
+
+        public void Init()
+        {
+            Instance = this;
+        }
 
         public void StartNewExpeditionSession(string rundownId, string expeditionId, string sessionId)
         {
@@ -61,9 +55,9 @@ namespace TheArchive.Managers
                     return CompletionTime.HasValue;
                 }
             }
-            public string RundownId { get; set; }
-            public string ExpeditionId { get; set; }
-            public string SessionId { get; set; }
+            public string RundownId { get; internal set; }
+            public string ExpeditionId { get; internal set; }
+            public string SessionId { get; internal set; }
 
             public Dictionary<DropServer.ExpeditionLayers, DropServer.LayerProgressionState> LatestLayeredDifficultyObjectivesStates { get; private set; } = new Dictionary<DropServer.ExpeditionLayers, DropServer.LayerProgressionState>();
             public Dictionary<DropServer.ExpeditionLayers, List<(DropServer.LayerProgressionState, DateTime)>> LayeredDifficultyObjectivesStatesHistory { get; private set; } = new Dictionary<DropServer.ExpeditionLayers, List<(DropServer.LayerProgressionState, DateTime)>>();

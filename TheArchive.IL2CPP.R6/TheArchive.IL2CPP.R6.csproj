@@ -93,6 +93,9 @@
     <Compile Include="Factories\DataBlocks\CustomBoosterImplantEffectDataBlockFactory.cs" />
     <Compile Include="Factories\DataBlocks\CustomBoosterImplantTemplateDataBlockFactory.cs" />
     <Compile Include="Factories\DataBlocks\CustomGameDataBlockBaseFactory.cs" />
+    <Compile Include="Factories\DataBlocks\CustomVanityItemsGroupDataBlockFactory.cs" />
+    <Compile Include="Factories\DataBlocks\CustomVanityItemsLayerDropsDataBlockFactory.cs" />
+    <Compile Include="Factories\DataBlocks\CustomVanityItemsTemplateDataBlockFactory.cs" />
     <Compile Include="R6SubModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,23 +1,16 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
+using TheArchive.Core;
+using TheArchive.Interfaces;
 using TheArchive.Models;
 using TheArchive.Utilities;
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Managers
 {
-    public class CustomVanityItemManager
+    public class CustomVanityItemManager : InitSingletonBase<CustomVanityItemManager>, IInitAfterDataBlocksReady, IInitCondition
     {
-        private static CustomVanityItemManager _instance = null;
-        public static CustomVanityItemManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new CustomVanityItemManager();
-                return _instance;
-            }
-        }
 
         private LocalVanityItemStorage _localVanityItemStorage;
         public LocalVanityItemStorage LocalVanityItemPlayerData
@@ -30,14 +23,40 @@ namespace TheArchive.Managers
                     try
                     {
                         _localVanityItemStorage = LoadFromLocalFile();
+                        
                     }
                     catch (FileNotFoundException)
                     {
                         _localVanityItemStorage = new LocalVanityItemStorage();
                     }
+
+                    if (_localVanityItemStorage.Items.Count == 0)
+                    {
+                        Dropper.DropFirstTimePlayingItems(_localVanityItemStorage);
+                    }
                 }
 
                 return _localVanityItemStorage;
+            }
+        }
+
+        private CustomVanityItemDropper Dropper => CustomVanityItemDropper.Instance;
+
+        public bool InitCondition()
+        {
+            return ArchiveMod.CurrentRundown.IsIncludedIn(RundownFlags.RundownSix.ToLatest());
+        }
+
+        public void Init()
+        {
+            Instance = this;
+        }
+
+        public void OnExpeditionFirstTimeCompletion(GameData.ExpeditionInTierData expeditionData)
+        {
+            foreach(var group in expeditionData.VanityItemsDropData.Groups)
+            {
+                Dropper.DropRandomFromGroup(group, LocalVanityItemPlayerData);
             }
         }
 

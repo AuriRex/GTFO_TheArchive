@@ -110,16 +110,15 @@ namespace TheArchive.Core.Managers
         }
 
         /// <summary>
-        /// Gets all internaly enabled data blocks of type with name <paramref name="datablockTypeName"/> and converts them to a custom implemention <typeparamref name="T"/> using a factory that implements <see cref="IBaseGameConverter{CT}"/> (where <typeparamref name="CT"/> is <typeparamref name="T"/>).
+        /// Gets all internaly enabled data blocks and converts them to a custom implemention <typeparamref name="T"/> using a factory that implements <see cref="IBaseGameConverter{CT}"/> (where <typeparamref name="CT"/> is <typeparamref name="T"/>).
         /// </summary>
         /// <typeparam name="T">The custom data block equivalent.</typeparam>
-        /// <param name="datablockTypeName">The base game data block type name.</param>
         /// <returns>An array of all the enabled data blocks as the custom variant <typeparamref name="T"/>.</returns>
-        public static T[] GetAllCustomDataBlocksFor<T>(string datablockTypeName) where T : class, new()
+        public static T[] GetAllCustomDataBlocksFor<T>() where T : class, new()
         {
             var getter = GetOrFindImplementation<IBaseGameConverter<T>>();
 
-            var blockType = DataBlockManager.DataBlockTypes.First(t => t.Name == datablockTypeName);
+            var blockType = getter.GetBaseGameType(); //DataBlockManager.DataBlockTypes.First(t => t.Name == datablockTypeName);
 
             //GetAllBlocks();
             var allBlocks = GameTypeByIdentifier("GameDataBlockBase<>").MakeGenericType(new Type[] { blockType }).GetMethod("GetAllBlocks").Invoke(null, new object[0]);

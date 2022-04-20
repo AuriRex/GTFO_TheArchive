@@ -33,7 +33,8 @@ namespace TheArchive.Models
         {
             None = 0,
             Acknowledged = 1,
-            Touched = 2
+            Touched = 2,
+            ALL = Acknowledged | Touched,
         }
 
         public object ToBaseGame() => ToBaseGame(this);

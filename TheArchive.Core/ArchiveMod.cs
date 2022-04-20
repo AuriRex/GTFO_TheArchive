@@ -8,6 +8,7 @@ using System.Reflection;
 using TheArchive;
 using TheArchive.Core;
 using TheArchive.Core.Managers;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -70,9 +71,14 @@ namespace TheArchive
 
         private IArchiveModule _mainModule;
 
-        private List<Type> moduleTypes = new List<Type>();
+        private readonly HashSet<Assembly> _inspectedAssemblies = new HashSet<Assembly>();
+        private readonly HashSet<Type> _typesToInitOnDataBlocksReady = new HashSet<Type>();
+        private readonly HashSet<Type> _typesToInitOnGameDataInit = new HashSet<Type>();
 
-        private List<IArchiveModule> modules = new List<IArchiveModule>();
+        private readonly HashSet<Assembly> _moduleAssemblies = new HashSet<Assembly>();
+        private readonly List<Type> _moduleTypes = new List<Type>();
+
+        private readonly List<IArchiveModule> _modules = new List<IArchiveModule>();
         private const string kArchiveSettingsFile = "TheArchive_Settings.json";
 
         public override void OnApplicationStart()
@@ -165,7 +171,7 @@ namespace TheArchive
         public bool RegisterModule(Type moduleType)
         {
             if (moduleType == null) throw new ArgumentException("Module can't be null!");
-            if (moduleTypes.Contains(moduleType)) throw new ArgumentException($"Module \"{moduleType.Name}\" is already registered!");
+            if (_moduleTypes.Contains(moduleType)) throw new ArgumentException($"Module \"{moduleType.Name}\" is already registered!");
             if (!typeof(IArchiveModule).IsAssignableFrom(moduleType)) throw new ArgumentException($"Type \"{moduleType.Name}\" does not implement {nameof(IArchiveModule)}!");
 
             var module = CreateAndInitModule(moduleType);
@@ -183,7 +189,7 @@ namespace TheArchive
         private void LoadSubModules()
         {
             ArchiveLogger.Info("Loading all SubModules ...");
-            foreach (var moduleType in new List<Type>(moduleTypes))
+            foreach (var moduleType in new List<Type>(_moduleTypes))
             {
                 LoadSubModulesFrom(moduleType);
             }
@@ -253,6 +259,29 @@ namespace TheArchive
                 ArchiveLogger.Exception(ex);
             }
 
+            foreach (var type in _typesToInitOnGameDataInit)
+            {
+                IInitializable instance = null;
+                try
+                {
+                    InitInitializables(type, out instance);
+                }
+                catch (Exception ex)
+                {
+                    ArchiveLogger.Error($"Trying to Init \"{type.FullName}\" threw an exception:");
+                    ArchiveLogger.Exception(ex);
+                }
+                try
+                {
+                    InjectInstanceIntoModules(instance);
+                }
+                catch (Exception ex)
+                {
+                    ArchiveLogger.Error($"Trying to Inject \"{type.FullName}\" threw an exception:");
+                    ArchiveLogger.Exception(ex);
+                }
+            }
+
             var rundown = Utils.IntToRundownEnum((int) rundownId);
             ApplyPatches(rundown);
 
@@ -263,19 +292,111 @@ namespace TheArchive
         public void InvokeDataBlocksReady()
         {
             ArchiveLogger.Info($"DataBlocks should be ready to be interacted with, invoking event.");
+
+            foreach(var type in _typesToInitOnDataBlocksReady)
+            {
+                IInitializable instance = null;
+                try
+                {
+                    InitInitializables(type, out instance);
+                }
+                catch(Exception ex)
+                {
+                    ArchiveLogger.Error($"Trying to Init \"{type.FullName}\" threw an exception:");
+                    ArchiveLogger.Exception(ex);
+                }
+                try
+                {
+                    InjectInstanceIntoModules(instance);
+                }
+                catch (Exception ex)
+                {
+                    ArchiveLogger.Error($"Trying to Inject \"{type.FullName}\" threw an exception:");
+                    ArchiveLogger.Exception(ex);
+                }
+            }
+
             DataBlocksReady?.Invoke();
         }
 
         [Obsolete("Do not call!")]
         public void InvokeGameStateChanged(int eGameState_state) => GameStateChanged?.Invoke(eGameState_state);
 
+
+
+        public void InjectInstanceIntoModules(object instance)
+        {
+            if (instance == null) return;
+
+            foreach (var module in _modules)
+            {
+                InjectInstanceIntoModules(instance, module);
+            }
+        }
+
+        private void InjectInstanceIntoModules(object instance, IArchiveModule module)
+        {
+            foreach (var prop in module.GetType().GetProperties().Where(p => p.SetMethod != null && !p.SetMethod.IsStatic && p.PropertyType.IsAssignableFrom(instance.GetType())))
+            {
+                prop.SetValue(module, instance);
+            }
+        }
+
+        private void InitInitializables(Type type, out IInitializable initializable)
+        {
+            ArchiveLogger.Debug($"Creating instance of: \"{type.FullName}\".");
+            var instance = (IInitializable) Activator.CreateInstance(type);
+            initializable = instance;
+
+            bool init = true;
+
+            if (typeof(IInitCondition).IsAssignableFrom(type))
+            {
+                var conditional = (IInitCondition)instance;
+
+                init = conditional.InitCondition();
+            }
+
+            if (init)
+            {
+                //ArchiveLogger.Info($"Initializing instance of type \"{type.FullName}\", Interfaces:[{string.Join(",", type.GetInterfaces().Select(x => x.FullName))}]");
+                instance.Init();
+            }
+            else
+            {
+                //ArchiveLogger.Info($"NOT Initializing instance of type \"{type.FullName}\", Interfaces:[{string.Join(",", type.GetInterfaces().Select(x => x.FullName))}], {nameof(IInitCondition.InitCondition)} returned false");
+            }
+        }
+
+        private void InspectType(Type type)
+        {
+            if (typeof(IInitAfterGameDataInitialized).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+            {
+                _typesToInitOnGameDataInit.Add(type);
+                return;
+            }
+
+            if (typeof(IInitAfterDataBlocksReady).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+            {
+                _typesToInitOnDataBlocksReady.Add(type);
+                return;
+            }
+        }
+
         private IArchiveModule CreateAndInitModule(Type moduleType)
         {
             if (moduleType == null) throw new ArgumentException($"Parameter {nameof(moduleType)} can not be null!");
 
-            moduleTypes.Add(moduleType);
+            _moduleTypes.Add(moduleType);
             ArchiveLogger.Info($"Initializing module \"{moduleType.FullName}\" ...");
             var module = (IArchiveModule) Activator.CreateInstance(moduleType);
+
+            foreach(var type in moduleType.Assembly.GetTypes())
+            {
+                InspectType(type);
+            }
+
+            _moduleAssemblies.Add(moduleType.Assembly);
 
             module.Patcher = new ArchivePatcher(HarmonyInstance, $"{moduleType.Assembly.GetName().Name}_{moduleType.FullName}_ArchivePatcher");
             module.Core = this;
@@ -296,7 +417,7 @@ namespace TheArchive
                 ArchiveLogger.Exception(ex);
             }
 
-            modules.Add(module);
+            _modules.Add(module);
             return module;
         }
 
@@ -304,7 +425,7 @@ namespace TheArchive
         {
             if (rundownID != RundownID.RundownUnitialized)
             {
-                foreach (var module in modules)
+                foreach (var module in _modules)
                 {
                     module.Patcher.PatchRundownSpecificMethods(module.GetType().Assembly);
                 }
@@ -314,7 +435,7 @@ namespace TheArchive
 
         internal void UnpatchAll()
         {
-            foreach (var module in modules)
+            foreach (var module in _modules)
             {
                 UnpatchModule(module);
             }
@@ -322,9 +443,9 @@ namespace TheArchive
 
         public void UnpatchModule(Type moduleType)
         {
-            if (!moduleTypes.Contains(moduleType)) throw new ArgumentException($"Can't unpatch non patched module \"{moduleType.FullName}\".");
+            if (!_moduleTypes.Contains(moduleType)) throw new ArgumentException($"Can't unpatch non patched module \"{moduleType.FullName}\".");
 
-            foreach (var module in modules)
+            foreach (var module in _modules)
             {
                 if (module.GetType() == moduleType)
                 {
@@ -348,13 +469,13 @@ namespace TheArchive
                 ArchiveLogger.Error($"Error while trying to unpatch and/or run {nameof(IArchiveModule.OnExit)} in module \"{module?.GetType()?.FullName ?? "Unknown"}\"!");
                 ArchiveLogger.Exception(ex);
             }
-            modules.Remove(module);
-            moduleTypes.Remove(module.GetType());
+            _modules.Remove(module);
+            _moduleTypes.Remove(module.GetType());
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            foreach(var module in modules)
+            foreach(var module in _modules)
             {
                 try
                 {
@@ -376,7 +497,7 @@ namespace TheArchive
 
         public override void OnLateUpdate()
         {
-            foreach (var module in modules)
+            foreach (var module in _modules)
             {
                 try
                 {
