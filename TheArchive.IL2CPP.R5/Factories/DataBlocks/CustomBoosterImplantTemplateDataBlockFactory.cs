@@ -5,6 +5,7 @@ using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
 using TheArchive.Models.DataBlocks;
 using TheArchive.Utilities;
+using static TheArchive.Models.Boosters.CustomBoosterImplant;
 
 namespace TheArchive.IL2CPP.R5.Factories.DataBlocks
 {
@@ -23,15 +24,34 @@ namespace TheArchive.IL2CPP.R5.Factories.DataBlocks
             customBlock.Description = baseBlock.Description;
             customBlock.DropWeight = baseBlock.DropWeight;
             customBlock.DurationRange = baseBlock.DurationRange;
-            customBlock.Effects = baseBlock.Effects.ToSystemList();
-            customBlock.ImplantCategory = baseBlock.ImplantCategory;
-            customBlock.MainEffectType = baseBlock.MainEffectType;
+            var efx = new List<CustomBoosterImplantTemplateDataBlock.A_BoosterImplantEffectInstance>();
+            foreach (var bgEffect in baseBlock.Effects)
+            {
+                efx.Add(new CustomBoosterImplantTemplateDataBlock.A_BoosterImplantEffectInstance {
+                    BoosterImplantEffect = bgEffect.BoosterImplantEffect,
+                    MaxValue = bgEffect.MaxValue,
+                    MinValue = bgEffect.MinValue
+                });
+            }
+            customBlock.Effects = efx;
+            customBlock.ImplantCategory = (A_BoosterImplantCategory) baseBlock.ImplantCategory;
+            customBlock.MainEffectType = (int) baseBlock.MainEffectType;
             customBlock.PublicName = baseBlock.PublicName;
             customBlock.RandomConditions = baseBlock.RandomConditions.ToSystemList();
-            var randomEffects = new List<List<BoosterImplantEffectInstance>>();
+            var randomEffects = new List<List<CustomBoosterImplantTemplateDataBlock.A_BoosterImplantEffectInstance>>();
             foreach(var list in baseBlock.RandomEffects)
             {
-                randomEffects.Add(list.ToSystemList());
+                var refx = new List<CustomBoosterImplantTemplateDataBlock.A_BoosterImplantEffectInstance>();
+                foreach (var bgEffect in list)
+                {
+                    refx.Add(new CustomBoosterImplantTemplateDataBlock.A_BoosterImplantEffectInstance
+                    {
+                        BoosterImplantEffect = bgEffect.BoosterImplantEffect,
+                        MaxValue = bgEffect.MaxValue,
+                        MinValue = bgEffect.MinValue
+                    });
+                }
+                randomEffects.Add(refx);
             }
             customBlock.RandomEffects = randomEffects;
 

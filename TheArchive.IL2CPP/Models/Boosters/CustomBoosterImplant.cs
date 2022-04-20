@@ -1,5 +1,4 @@
-﻿using GameData;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using TheArchive.Models.DataBlocks;
 
@@ -34,11 +33,11 @@ namespace TheArchive.Models.Boosters
         public static string TraitNegativeColor { get; private set; }
         public static string TraitPositiveColor { get; private set; }
         public uint TemplateId { get; set; } // Readonly in basegame
-        public BoosterImplantCategory Category { get; set; } // Readonly in basegame
+        public A_BoosterImplantCategory Category { get; set; } // Readonly in basegame
         public int Uses { get; set; }
         public Effect[] Effects { get; set; }
         [JsonIgnore]
-        [Obsolete("Expect this to be null for everything that has not been created with an BoosterImplant object as prefab")]
+        [Obsolete("Expect this to be null")]
         public CustomBoosterImplantTemplateDataBlock Template { get; set; }
         public uint InstanceId { get; set; }
         public uint[] Conditions { get; set; }
@@ -47,6 +46,13 @@ namespace TheArchive.Models.Boosters
         {
             public uint Id;
             public float Value;
+        }
+
+        public enum A_BoosterImplantCategory
+        {
+            Muted,
+            Bold,
+            Aggressive
         }
     }
 }

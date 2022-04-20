@@ -3,7 +3,7 @@ using System;
 using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
 using TheArchive.Models.DataBlocks;
-using TheArchive.Utilities;
+using static TheArchive.Models.DataBlocks.CustomVanityItemsTemplateDataBlock;
 
 namespace TheArchive.IL2CPP.R6.Factories.DataBlocks
 {
@@ -18,7 +18,7 @@ namespace TheArchive.IL2CPP.R6.Factories.DataBlocks
             customBlock = (CustomVanityItemsTemplateDataBlock) ImplementationManager.FromBaseGameConverter<CustomGameDataBlockBase>(baseGame, customBlock);
 
             customBlock.PublicName = baseBlock.publicName;
-            customBlock.Type = baseBlock.type;
+            customBlock.Type = (A_ClothesType) baseBlock.type;
             customBlock.Prefab = baseBlock.prefab;
             customBlock.DropWeight = baseBlock.DropWeight;
             customBlock.Icon = baseBlock.icon;

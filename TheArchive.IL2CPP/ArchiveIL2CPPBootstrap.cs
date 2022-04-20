@@ -42,10 +42,24 @@ namespace TheArchive
 
                     OnGameDataInitialized(rundownId);
                 }
+                catch(System.Reflection.ReflectionTypeLoadException rtlex)
+                {
+                    ArchiveLogger.Error($"Exception thrown in {nameof(ArchiveIL2CPPBootstrap)}");
+                    ArchiveLogger.Msg(ConsoleColor.Green, "Oh no, seems like someone's referencing game types from an older/newer game version that do not exist anymore! :c");
+                    ArchiveLogger.Exception(rtlex);
+                    ArchiveLogger.Warning($"{rtlex.Types?.Length} Types loaded.");
+                    ArchiveLogger.Notice("Exceptions:");
+                    foreach(var expt in rtlex.LoaderExceptions)
+                    {
+                        ArchiveLogger.Error(expt.Message);
+                    }
+                }
                 catch (Exception ex)
                 {
                     ArchiveLogger.Error($"Exception thrown in {nameof(ArchiveIL2CPPBootstrap)}");
                     ArchiveLogger.Exception(ex);
+                    if(ex.InnerException != null)
+                        ArchiveLogger.Exception(ex?.InnerException);
                 }
             }
         }

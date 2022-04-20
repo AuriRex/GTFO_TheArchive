@@ -39,7 +39,7 @@ namespace TheArchive.Models
 
         public object ToBaseGame() => ToBaseGame(this);
 
-        public static /*object*/ VanityItemPlayerData ToBaseGame(LocalVanityItemStorage customData)
+        public static object ToBaseGame(LocalVanityItemStorage customData)
         {
             //return ImplementationManager.ToBaseGameConverter(customData);
 
@@ -63,13 +63,13 @@ namespace TheArchive.Models
             return vipd;
         }
 
-        public static LocalVanityItemStorage FromBaseGame(/*object*/ VanityItemPlayerData VanityItemPlayerData)
+        public static LocalVanityItemStorage FromBaseGame(object VanityItemPlayerData)
         {
             //return ImplementationManager.FromBaseGameConverter<LocalVanityItemStorage>(VanityItemPlayerData);
 
             var items = new List<LocalVanityItem>();
 
-            foreach(var item in VanityItemPlayerData.Items)
+            foreach(var item in ((VanityItemPlayerData) VanityItemPlayerData).Items)
             {
                 items.Add(new LocalVanityItem() {
                     ItemID = item.ItemId,

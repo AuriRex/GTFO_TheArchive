@@ -16,7 +16,7 @@ namespace TheArchive.IL2CPP.R6.Factories.DataBlocks
 
             customBlock = (CustomBoosterImplantEffectDataBlock) ImplementationManager.FromBaseGameConverter<CustomGameDataBlockBase>(baseGame, customBlock);
 
-            customBlock.BoosterEffectCategory = baseBlock.BoosterEffectCategory;
+            customBlock.BoosterEffectCategory = (int) baseBlock.BoosterEffectCategory;
             customBlock.Description = baseBlock.Description;
             customBlock.DescriptionNegative = baseBlock.DescriptionNegative;
             customBlock.Effect = (int) baseBlock.Effect;

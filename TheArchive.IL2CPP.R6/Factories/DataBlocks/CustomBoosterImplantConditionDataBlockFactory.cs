@@ -16,7 +16,7 @@ namespace TheArchive.IL2CPP.R6.Factories.DataBlocks
 
             customBlock = (CustomBoosterImplantConditionDataBlock) ImplementationManager.FromBaseGameConverter<CustomGameDataBlockBase>(baseGame, customBlock);
 
-            customBlock.Condition = baseBlock.Condition;
+            customBlock.Condition = (int) baseBlock.Condition;
             customBlock.Description = baseBlock.Description;
             customBlock.PublicName = baseBlock.PublicName;
             customBlock.PublicShortName = baseBlock.PublicShortName;

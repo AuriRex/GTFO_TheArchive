@@ -10,7 +10,7 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Managers
 {
-    public class CustomBoosterManager : InitSingletonBase<CustomBoosterManager>, IInitAfterGameDataInitialized
+    public class CustomBoosterManager : InitSingletonBase<CustomBoosterManager>, IInitAfterGameDataInitialized, IInitCondition
     {
 
         public static bool DoConsumeBoosters { get; set; } = true;
@@ -56,9 +56,13 @@ namespace TheArchive.Managers
 
         public CustomBoosterDropper BoosterDropper => CustomBoosterDropper.Instance;
 
+        public bool InitCondition()
+        {
+            return ArchiveMod.CurrentRundown.IsIncludedIn(Utils.RundownFlags.RundownFive.ToLatest());
+        }
+
         public void Init()
         {
-            ArchiveLogger.Notice($"{nameof(CustomBoosterManager)} Init called!");
             Instance = this;
         }
 

@@ -1,6 +1,4 @@
-﻿using GameData;
-
-namespace TheArchive.Models.DataBlocks
+﻿namespace TheArchive.Models.DataBlocks
 {
     public class CustomBoosterImplantEffectDataBlock : CustomGameDataBlockBase
     {
@@ -10,7 +8,8 @@ namespace TheArchive.Models.DataBlocks
         public string PublicName { get; set; }
         public string Description { get; set; }
         public string DescriptionNegative { get; set; }
-        public BoosterEffectCategory BoosterEffectCategory { get; set; }
+        // enum (BoosterEffectCategory)
+        public int BoosterEffectCategory { get; set; }
 
     }
 }

@@ -7,6 +7,7 @@ using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
 using TheArchive.Models.DataBlocks;
 using TheArchive.Utilities;
+using static TheArchive.Models.Boosters.CustomBoosterImplant;
 
 namespace TheArchive.Managers
 {
@@ -23,7 +24,7 @@ namespace TheArchive.Managers
 
         public bool InitCondition()
         {
-            return ArchiveMod.CurrentRundown != Utils.RundownID.RundownFour;
+            return ArchiveMod.CurrentRundown.IsIncludedIn(Utils.RundownFlags.RundownFive.ToLatest());
         }
 
         public void Init()
@@ -37,9 +38,9 @@ namespace TheArchive.Managers
 
             var templates = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantTemplateDataBlock>();
 
-            MutedTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Muted).ToArray();
-            BoldTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Bold).ToArray();
-            AgrressiveTemplates = templates.Where(t => t.ImplantCategory == BoosterImplantCategory.Aggressive).ToArray();
+            MutedTemplates = templates.Where(t => t.ImplantCategory == A_BoosterImplantCategory.Muted).ToArray();
+            BoldTemplates = templates.Where(t => t.ImplantCategory == A_BoosterImplantCategory.Bold).ToArray();
+            AgrressiveTemplates = templates.Where(t => t.ImplantCategory == A_BoosterImplantCategory.Aggressive).ToArray();
 
             Effects = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantEffectDataBlock>();
             Conditions = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantConditionDataBlock>();
@@ -49,14 +50,9 @@ namespace TheArchive.Managers
             _hasBeenSetup = true;
         }
 
-        public void Test()
-        {
-            ArchiveLogger.Msg(ConsoleColor.Cyan, $"!!!!!!!!! TEST !!!!!!!!!");
-        }
-
         public static int BOOSTER_DROP_MAX_REROLL_COUNT { get; internal set; } = 25;
 
-        public CustomDropServerBoosterImplantInventoryItem GenerateBooster(BoosterImplantCategory category, uint[] usedIds)
+        public CustomDropServerBoosterImplantInventoryItem GenerateBooster(A_BoosterImplantCategory category, uint[] usedIds)
         {
             CustomBoosterImplantTemplateDataBlock template;
             float weight = 1f;
@@ -69,13 +65,13 @@ namespace TheArchive.Managers
                 switch (category)
                 {
                     default:
-                    case BoosterImplantCategory.Muted:
+                    case A_BoosterImplantCategory.Muted:
                         template = MutedTemplates[UnityEngine.Random.Range(0, MutedTemplates.Length)];
                         break;
-                    case BoosterImplantCategory.Bold:
+                    case A_BoosterImplantCategory.Bold:
                         template = BoldTemplates[UnityEngine.Random.Range(0, BoldTemplates.Length)];
                         break;
-                    case BoosterImplantCategory.Aggressive:
+                    case A_BoosterImplantCategory.Aggressive:
                         template = AgrressiveTemplates[UnityEngine.Random.Range(0, AgrressiveTemplates.Length)];
                         break;
                 }
@@ -89,13 +85,13 @@ namespace TheArchive.Managers
             switch (category)
             {
                 default:
-                case BoosterImplantCategory.Muted:
+                case A_BoosterImplantCategory.Muted:
                     maxUses = 1; // 1
                     break;
-                case BoosterImplantCategory.Bold:
+                case A_BoosterImplantCategory.Bold:
                     maxUses = UnityEngine.Random.Range(1, 3); // 1-2
                     break;
-                case BoosterImplantCategory.Aggressive:
+                case A_BoosterImplantCategory.Aggressive:
                     maxUses = UnityEngine.Random.Range(2, 4); // 2-3
                     break;
             }
@@ -142,7 +138,7 @@ namespace TheArchive.Managers
 
             var value = new CustomDropServerBoosterImplantInventoryItem(template.PersistentID, instanceId, maxUses, effects.ToArray(), conditionIds.ToArray());
 
-            value.Category = category;
+            value.Category = (CustomBoosterImplant.A_BoosterImplantCategory) category;
 
 #pragma warning disable CS0618 // Type or member is obsolete
             value.Template = template;
@@ -184,7 +180,7 @@ namespace TheArchive.Managers
             }
         }
 
-        public void GenerateAndAddBooster(ref CustomBoosterImplantPlayerData data, BoosterImplantCategory category)
+        public void GenerateAndAddBooster(ref CustomBoosterImplantPlayerData data, A_BoosterImplantCategory category)
         {
             var newBooster = GenerateBooster(category, data.GetUsedIds());
 

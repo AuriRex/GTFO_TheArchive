@@ -4,6 +4,7 @@ using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
 using TheArchive.Utilities;
 using UnhollowerRuntimeLib;
+using static TheArchive.Models.Boosters.CustomBoosterImplant;
 
 namespace TheArchive.IL2CPP.R5.Factories
 {
@@ -16,11 +17,11 @@ namespace TheArchive.IL2CPP.R5.Factories
             var customData = existingCBIP ?? new CustomBoosterImplantPlayerData();
 
             customData.Basic = CustomBoosterImplantPlayerData.CustomCategory.FromBaseGame(data.Basic);
-            customData.Basic.CategoryType = BoosterImplantCategory.Muted;
+            customData.Basic.CategoryType = A_BoosterImplantCategory.Muted;
             customData.Advanced = CustomBoosterImplantPlayerData.CustomCategory.FromBaseGame(data.Advanced);
-            customData.Advanced.CategoryType = BoosterImplantCategory.Bold;
+            customData.Advanced.CategoryType = A_BoosterImplantCategory.Bold;
             customData.Specialized = CustomBoosterImplantPlayerData.CustomCategory.FromBaseGame(data.Specialized);
-            customData.Specialized.CategoryType = BoosterImplantCategory.Aggressive;
+            customData.Specialized.CategoryType = A_BoosterImplantCategory.Aggressive;
 
             customData.New = new uint[data.New.Count];
             for (int i = 0; i < data.New.Count; i++)

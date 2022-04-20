@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Core.Managers;
 using TheArchive.Utilities;
+using static TheArchive.Models.Boosters.CustomBoosterImplant;
 
 namespace TheArchive.Models.Boosters
 {
@@ -15,15 +16,15 @@ namespace TheArchive.Models.Boosters
         /// <summary>
         /// Muted Boosters
         /// </summary>
-        public CustomCategory Basic { get; set; } = new CustomCategory(BoosterImplantCategory.Muted);
+        public CustomCategory Basic { get; set; } = new CustomCategory(A_BoosterImplantCategory.Muted);
         /// <summary>
         /// Bold Boosters
         /// </summary>
-        public CustomCategory Advanced { get; set; } = new CustomCategory(BoosterImplantCategory.Bold);
+        public CustomCategory Advanced { get; set; } = new CustomCategory(A_BoosterImplantCategory.Bold);
         /// <summary>
         /// Agressive Boosters
         /// </summary>
-        public CustomCategory Specialized { get; set; } = new CustomCategory(BoosterImplantCategory.Aggressive);
+        public CustomCategory Specialized { get; set; } = new CustomCategory(A_BoosterImplantCategory.Aggressive);
         /// <summary>
         /// Array of Boosters InstanceIds that are new (in game popup in lobby screen)
         /// </summary>
@@ -165,15 +166,15 @@ namespace TheArchive.Models.Boosters
             };
         }
 
-        public CustomCategory GetCategory(BoosterImplantCategory category)
+        public CustomCategory GetCategory(A_BoosterImplantCategory category)
         {
             switch(category)
             {
-                case BoosterImplantCategory.Muted:
+                case A_BoosterImplantCategory.Muted:
                     return Basic;
-                case BoosterImplantCategory.Bold:
+                case A_BoosterImplantCategory.Bold:
                     return Advanced;
-                case BoosterImplantCategory.Aggressive:
+                case A_BoosterImplantCategory.Aggressive:
                     return Specialized;
             }
             return null;
@@ -199,7 +200,7 @@ namespace TheArchive.Models.Boosters
             public const int MAX_BOOSTERS_R6 = 20;
 
             // Helper
-            public BoosterImplantCategory CategoryType { get; set; } = BoosterImplantCategory.Muted;
+            public A_BoosterImplantCategory CategoryType { get; set; } = A_BoosterImplantCategory.Muted;
 
             private int _currency = 0;
             /// <summary> 1000 -> 100% -> new booster </summary>
@@ -217,7 +218,7 @@ namespace TheArchive.Models.Boosters
 
             public CustomCategory() { }
 
-            public CustomCategory(BoosterImplantCategory cat)
+            public CustomCategory(A_BoosterImplantCategory cat)
             {
                 CategoryType = cat;
             }
