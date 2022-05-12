@@ -5,7 +5,8 @@ using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive.HarmonyPatches.Patches
 {
-    [BindPatchToSetting(nameof(ArchiveSettings.EnableLocalProgressionPatches), "LocalProgression")]
+    // Do not cancel setup or else it messes up the number of packets
+    /*[BindPatchToSetting(nameof(ArchiveSettings.EnableLocalProgressionPatches), "LocalProgression")]
     public class PlayfabMatchmakingManagerPatches
     {
 
@@ -22,5 +23,5 @@ namespace TheArchive.HarmonyPatches.Patches
 
         }
 
-    }
+    }*/
 }

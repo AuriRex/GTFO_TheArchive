@@ -1,4 +1,5 @@
 ﻿using Gear;
+using SNetwork;
 using System;
 using System.Reflection;
 using TheArchive.Core;
@@ -48,19 +49,31 @@ namespace TheArchive.HarmonyPatches.Patches
                 return true;
             }
         }
-/*
-        [ArchivePatch(typeof(GearIconRendering), "RenderIconPrep")]
-        internal static class GearIconRendering_RenderIconPrepPatch
-        {
-            public static int ResMultiplier { get; set; } = 5;
-            public static void Prefix(ref IconRenderJob job)
-            {
-                var settings = job.datas[job.currentIconIndex].settings;
 
-                settings.resX = settings.resX * ResMultiplier;
-                settings.resY = settings.resY * ResMultiplier;
+        //Packet debug stuff >.>
+        /*[ArchivePatch(typeof(SNet_Replicator), nameof(SNet_Replicator.AddPacket), Utils.RundownFlags.RundownSix)]
+        internal static class SNet_Replicator_AddPacketPatch
+        {
+            public static void Prefix(SNet_Replicator __instance, SNet_Packet packet)
+            {
+                
+                ArchiveLogger.Notice($"AddPacket called: ({__instance?.name}) #{__instance?.m_packets?.Count} - PacketName:{packet?.GetIl2CppType()?.FullName}, packet.Index:{packet?.Index}");
             }
         }*/
+
+        /*
+                [ArchivePatch(typeof(GearIconRendering), "RenderIconPrep")]
+                internal static class GearIconRendering_RenderIconPrepPatch
+                {
+                    public static int ResMultiplier { get; set; } = 5;
+                    public static void Prefix(ref IconRenderJob job)
+                    {
+                        var settings = job.datas[job.currentIconIndex].settings;
+
+                        settings.resX = settings.resX * ResMultiplier;
+                        settings.resY = settings.resY * ResMultiplier;
+                    }
+                }*/
 
         /*
                 public static RundownProgression RundownProgression { get; private set; } = null;

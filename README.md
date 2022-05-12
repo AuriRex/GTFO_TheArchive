@@ -57,5 +57,5 @@ Have fun, you'll figure it out.
 
 # License
 
-Everything in [this repository](https://github.com/AuriRex/GTFO_TheArchive) is licensed under the MIT License,
+Everything in [this repository](https://github.com/AuriRex/GTFO_TheArchive) is licensed under the MIT License (unless stated otherwise inside of a given source file),
 **excluding** `TheArchive.Core/Resources/discord_game_sdk.dll` and all of the files inside of `TheArchive.Core/Core/DiscordApi/*`, which are copyright [Discord](https://discord.com/developers/docs/legal) and only included for convenience.

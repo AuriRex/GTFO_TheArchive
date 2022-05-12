@@ -1,5 +1,4 @@
-﻿using MelonLoader;
-using SNetwork;
+﻿using SNetwork;
 using System;
 using System.IO;
 using TheArchive.Core;
@@ -11,7 +10,7 @@ using IL2Tasks = Il2CppSystem.Threading.Tasks;
 namespace TheArchive.HarmonyPatches.Patches
 {
     [BindPatchToSetting(nameof(ArchiveSettings.EnableLocalProgressionPatches), "LocalProgression")]
-    public class PlayFabPatches
+    public class PlayFabManagerPatches
     {
         public static bool IsLoggedIn { get; private set; } = false;
 
@@ -26,7 +25,7 @@ namespace TheArchive.HarmonyPatches.Patches
         /*[ArchivePatch(typeof(PlayFabManager), "RefreshGlobalTitleData")]*/
 
         [ArchivePatch(typeof(PlayFabManager), "TryGetRundownTimerData")]
-        internal static class PlayFabManager_TryGetRundownTimerDataPatch
+        internal static class TryGetRundownTimerDataPatch
         {
             public static bool Prefix(ref bool __result, out RundownTimerData data)
             {
@@ -59,7 +58,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         [ArchivePatch(typeof(PlayFabManager), nameof(PlayFabManager.Setup))]
-        internal class PlayFabManager_SetupPatch
+        internal class SetupPatch
         {
             public static void Prefix(PlayFabManager __instance)
             {
@@ -72,7 +71,7 @@ namespace TheArchive.HarmonyPatches.Patches
         public static StartupScreenData StartupScreenData { get; private set; } = null;
 
         [ArchivePatch(typeof(PlayFabManager), "TryGetStartupScreenData")]
-        internal class PlayFabManager_TryGetStartupScreenDataPatch
+        internal class TryGetStartupScreenDataPatch
         {
             public static bool Prefix(eStartupScreenKey key, out StartupScreenData data, ref bool __result)
             {
@@ -95,22 +94,20 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         [ArchivePatch(typeof(PlayFabManager), nameof(PlayFabManager.OnGetAuthSessionTicketResponse))]
-        internal class LoginWithSteamPatch_WhyTheFuckAreYouNotWorking
+        internal class OnGetAuthSessionTicketResponsePatch
         {
             public static bool Prefix(/*PlayFabManager __instance*/)
             {
-                ArchiveLogger.Msg(ConsoleColor.Yellow, "OnGetAuthSessionTicketResponse() was called!");
-
-                ArchiveLogger.Msg(ConsoleColor.Yellow, "Reading Files ... ");
+                ArchiveLogger.Msg(ConsoleColor.Yellow, "Reading Playfab files ... ");
                 ReadAllFilesFromDisk();
 
-                ArchiveLogger.Msg(ConsoleColor.Yellow, "Trying to fake a PlayFab login ...");
+                ArchiveLogger.Msg(ConsoleColor.Yellow, "Skipping PlayFab entirely ...");
 
                 PlayFabManager.Current.m_globalTitleDataLoaded = true;
                 PlayFabManager.Current.m_playerDataLoaded = true;
                 PlayFabManager.Current.m_entityId = "steamplayer_" + new System.Random().Next(int.MinValue, int.MaxValue);
                 PlayFabManager.Current.m_entityType = "Player";
-                PlayFabManager.Current.m_entityToken = "bogus_token_ " + new System.Random().Next(int.MinValue, int.MaxValue);
+                PlayFabManager.Current.m_entityToken = "bogus_token_" + new System.Random().Next(int.MinValue, int.MaxValue);
                 PlayFabManager.Current.m_entityLoggedIn = true;
 
 
@@ -121,20 +118,16 @@ namespace TheArchive.HarmonyPatches.Patches
 
                 IsLoggedIn = true;
 
-                ArchiveLogger.Msg("Starting one second timer.");
-                MelonCoroutines.Start(Il2CppUtils.DoAfter(1f, () => {
-                    ArchiveLogger.Msg("One second has elapsed. - calling events!");
-                    try
-                    {
-                        Il2CppUtils.CallEvent<PlayFabManager>("OnLoginSuccess");
-                        Il2CppUtils.CallEvent<PlayFabManager>("OnTitleDataUpdated");
-                    }
-                    catch (Exception ex)
-                    {
-                        ArchiveLogger.Error(ex.Message);
-                        ArchiveLogger.Error(ex.StackTrace);
-                    }
-                }));
+                try
+                {
+                    Il2CppUtils.CallEvent<PlayFabManager>("OnLoginSuccess");
+                    Il2CppUtils.CallEvent<PlayFabManager>("OnTitleDataUpdated");
+                }
+                catch (Exception ex)
+                {
+                    ArchiveLogger.Error(ex.Message);
+                    ArchiveLogger.Error(ex.StackTrace);
+                }
 
                 return false;
             }
@@ -151,13 +144,11 @@ namespace TheArchive.HarmonyPatches.Patches
 
         //GetEntityTokenAsync
         [ArchivePatch(typeof(PlayFabManager), nameof(PlayFabManager.GetEntityTokenAsync))]
-        internal class PlayFabManager_GetEntityTokenAsyncPatch
+        internal class GetEntityTokenAsyncPatch
         {
             public static bool Prefix(ref IL2Tasks.Task<string> __result)
             {
-                ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"Something's calling GetEntityTokenAsync.");
-
-                __result = IL2Tasks.Task.FromResult<string>("bogus_token_hfdztfc6873e2witgf78rw_42069_768dftw3768ft76fte78fet76ft67");
+                __result = IL2Tasks.Task.FromResult<string>(PlayFabManager.Current.m_entityToken);
 
                 return false;
             }
@@ -165,7 +156,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
         //RefreshGlobalTitleDataForKeys
         [ArchivePatch(typeof(PlayFabManager), nameof(PlayFabManager.RefreshGlobalTitleDataForKeys))]
-        internal class PlayFabManager_RefreshGlobalTitleDataForKeysPatch
+        internal class RefreshGlobalTitleDataForKeysPatch
         {
             public static bool Prefix(Il2ColGen.List<string> keys, Il2CppSystem.Action OnSuccess)
             {
@@ -184,7 +175,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         [ArchivePatch(typeof(PlayFabManager), "AddToOrUpdateLocalPlayerTitleData", new Type[] { typeof(string), typeof(string), typeof(Il2CppSystem.Action) })]
-        internal class PlayFabManager_AddToOrUpdateLocalPlayerTitleDataPatch
+        internal class AddToOrUpdateLocalPlayerTitleDataPatch
         {
             public static bool Prefix(string key, string value, Il2CppSystem.Action OnSuccess)
             {
@@ -198,7 +189,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
         //AddToOrUpdateLocalPlayerTitleData(Dictionary<string, string> keys, Action OnSuccess)
         [ArchivePatch(typeof(PlayFabManager), "AddToOrUpdateLocalPlayerTitleData", new Type[] { typeof(Il2ColGen.Dictionary<string, string>), typeof(Il2CppSystem.Action) })]
-        internal class PlayFabManager_AddToOrUpdateLocalPlayerTitleDataOverloadPatch
+        internal class AddToOrUpdateLocalPlayerTitleDataOverloadPatch
         {
             public static bool Prefix(Il2ColGen.Dictionary<string, string> keys, Il2CppSystem.Action OnSuccess)
             {
@@ -219,7 +210,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         [ArchivePatch(typeof(PlayFabManager), "CloudGiveAlwaysInInventory")]
-        internal class PlayFabManager_CloudGiveAlwaysInInventoryPatch
+        internal class CloudGiveAlwaysInInventoryPatch
         {
             public static bool Prefix(Il2CppSystem.Action onSucess)
             {
@@ -232,7 +223,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         [ArchivePatch(typeof(PlayFabManager), "CloudGiveItemToLocalPlayer")]
-        internal class PlayFabManager_CloudGiveItemToLocalPlayerPatch
+        internal class CloudGiveItemToLocalPlayerPatch
         {
             public static bool Prefix(string ItemId, Il2CppSystem.Action onSucess)
             {
@@ -245,7 +236,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         [ArchivePatch(typeof(PlayFabManager), "JSONTest")]
-        internal class PlayFabManager_JSONTestPatch
+        internal class JSONTestPatch
         {
             public static bool Prefix()
             {
@@ -255,7 +246,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         [ArchivePatch(typeof(PlayFabManager), "RefreshItemCatalog")]
-        internal class PlayFabManager_RefreshItemCatalogPatch
+        internal class RefreshItemCatalogPatch
         {
             public static bool Prefix(PlayFabManager.delUpdateItemCatalogDone OnSuccess, string catalogVersion)
             {
@@ -293,7 +284,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         [ArchivePatch(typeof(PlayFabManager), "RefreshGlobalTitleData")]
-        internal class PlayFabManager_RefreshStartupScreenTitelDataPatch
+        internal class RefreshStartupScreenTitelDataPatch
         {
             public static bool Prefix(Il2CppSystem.Action OnSuccess)
             {
@@ -306,7 +297,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         [ArchivePatch(typeof(PlayFabManager), "RefreshStoreItems")]
-        internal class PlayFabManager_RefreshStoreItemsPatch
+        internal class RefreshStoreItemsPatch
         {
             public static bool Prefix(string storeID, PlayFabManager.delUpdateStoreItemsDone OnSuccess)
             {

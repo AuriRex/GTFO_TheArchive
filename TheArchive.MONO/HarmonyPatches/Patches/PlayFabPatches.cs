@@ -146,7 +146,7 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static bool Prefix(PlayFabManager __instance, ref bool ___m_globalTitleDataLoaded, ref bool ___m_playerDataLoaded, ref bool ___m_loggedIn, ref string ___m_entityId, ref string ___m_entityType)
             {
-                ArchiveLogger.Msg(ConsoleColor.Yellow, "Faking a PlayFab login ...");
+                ArchiveLogger.Msg(ConsoleColor.Yellow, "Skipping PlayFab entirely ...");
 
                 ___m_globalTitleDataLoaded = true;
                 ___m_playerDataLoaded = true;
@@ -159,7 +159,10 @@ namespace TheArchive.HarmonyPatches.Patches
                 PlayFabManager.LoggedInSeconds = Clock.Time;
                 ___m_loggedIn = true;
 
-                ArchiveLogger.Info("Starting point one second timer.");
+                MonoUtils.CallEvent<PlayFabManager>("OnAllPlayerEntityFilesLoaded");
+                MonoUtils.CallEvent<PlayFabManager>("OnLoginSuccess");
+
+                /*ArchiveLogger.Info("Starting point one second timer.");
                 ArchiveMONOModule.CoroutineHelper.StartCoroutine(MonoUtils.DoAfter(.1f, () => {
                     ArchiveLogger.Info("Calling event OnAllPlayerEntityFilesLoaded() ...");
                     MonoUtils.CallEvent<PlayFabManager>("OnAllPlayerEntityFilesLoaded");
@@ -169,7 +172,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 ArchiveMONOModule.CoroutineHelper.StartCoroutine(MonoUtils.DoAfter(.2f, () => {
                     ArchiveLogger.Info("Calling event OnLoginSucess() ...");
                     MonoUtils.CallEvent<PlayFabManager>("OnLoginSuccess");
-                }));
+                }));*/
                 return false;
             }
         }
