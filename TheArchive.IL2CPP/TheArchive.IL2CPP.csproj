@@ -325,7 +325,7 @@
     <Compile Include="Models\Boosters\CustomBoosterTransaction.cs" />
     <Compile Include="Models\CustomRundownProgression.cs" />
     <Compile Include="HarmonyPatches\Patches\AnalyticsPatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\PlayFabManagerPatches.cs" />
     <Compile Include="Models\DataBlocks\CustomBoosterImplantConditionDataBlock.cs" />
     <Compile Include="Models\DataBlocks\CustomBoosterImplantEffectDataBlock.cs" />
     <Compile Include="Models\DataBlocks\CustomBoosterImplantTemplateDataBlock.cs" />
