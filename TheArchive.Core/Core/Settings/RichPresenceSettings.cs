@@ -1,7 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using TheArchive.Core.Models;
 
-namespace TheArchive.Core.Models
+namespace TheArchive.Core.Settings
 {
     public class RichPresenceSettings
     {

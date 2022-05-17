@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -7,6 +8,24 @@ namespace TheArchive.Utilities
 {
     public static class Utils
     {
+
+        private static Type _UnityEngine_Random = Type.GetType("UnityEngine.Random, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+        private static MethodInfo _UnityEngine_Random_RandomRangeInt;
+        private static MethodInfo _UnityEngine_Random_Range;
+
+        static Utils()
+        {
+            try
+            {
+                _UnityEngine_Random_RandomRangeInt = _UnityEngine_Random.GetMethod("RandomRangeInt");
+            } catch(Exception) { }
+
+            try
+            {
+                _UnityEngine_Random_Range = _UnityEngine_Random.GetMethod("Range", new Type[] { typeof(int), typeof(int) });
+            }
+            catch (Exception) { }
+        }
 
         private static Type _UnityEngine_Time = Type.GetType("UnityEngine.Time, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         private static PropertyInfo _UnityEngine_time_PI = _UnityEngine_Time.GetProperty("time");
@@ -17,6 +36,93 @@ namespace TheArchive.Utilities
             {
                 return (float) _UnityEngine_time_PI.GetValue(null);
             }
+        }
+
+        internal static int RandomRangeInt(int min, int max)
+        {
+            if(_UnityEngine_Random_RandomRangeInt != null)
+                return (int) _UnityEngine_Random_RandomRangeInt.Invoke(null, new object[] { min, max });
+            return (int) _UnityEngine_Random_Range.Invoke(null, new object[] { min, max });
+        }
+
+        public static T PickRandom<T>(this T[] array)
+        {
+            if (array.Length == 0)
+                return default;
+            return (T)array.GetValue(RandomRangeInt(0, array.Length - 1));
+        }
+
+        public static T PickRandom<T>(this List<T> list) => list.ToArray().PickRandom();
+
+        public static T PickRandomExcept<T>(this T[] array, T except)
+        {
+            if (array.Length == 1) return array[0];
+            int c = 0;
+            T random;
+            do
+            {
+                random = array.PickRandom();
+                c++;
+            }
+            while (random.Equals(except) && c < 20);
+            return random;
+        }
+
+        public static T PickRandomExcept<T>(this List<T> list, T except) => list == null ? default : list.ToArray().PickRandomExcept(except);
+
+        /// <summary>
+        /// Pick a Random value in the list using a <paramref name="selectFunction"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array"></param>
+        /// <param name="selectFunction">Return true to select.</param>
+        /// <returns></returns>
+        public static T PickRandomExcept<T>(this T[] array, Func<T, bool> selectFunction)
+        {
+            if (array.Length == 1) return array[0];
+            int c = 0;
+            T random;
+            do
+            {
+                random = array.PickRandom();
+                c++;
+            }
+            while (!selectFunction.Invoke(random) && c < 20);
+            return random;
+        }
+
+        /// <summary>
+        /// Pick a Random value in the list using a <paramref name="selectFunction"/>
+        /// (calls <seealso cref="List{T}.ToArray"/>)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="selectFunction">Return true to select.</param>
+        /// <returns></returns>
+        public static T PickRandomExcept<T>(this List<T> list, Func<T, bool> selectFunction) => list == null ? default : list.ToArray().PickRandomExcept(selectFunction);
+
+        public static bool TryPickRandom<T>(this T[] array, out T value)
+        {
+            if (array.Length == 0)
+            {
+                value = default;
+                return false;
+            }
+
+            value = array[RandomRangeInt(0, array.Length - 1)];
+            return true;
+        }
+
+        public static bool TryPickRandom<T>(this List<T> list, out T value)
+        {
+            if (list.Count == 0)
+            {
+                value = default;
+                return false;
+            }
+
+            value = list[RandomRangeInt(0, list.Count - 1)];
+            return true;
         }
 
         public static T GetEnumFromName<T>(string name) where T : struct

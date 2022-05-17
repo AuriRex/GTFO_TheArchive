@@ -52,11 +52,6 @@ namespace TheArchive.Utilities
             eventFieldInfo?.SetValue(instance, null);
         }
 
-        public static T PickRandom<T>(this T[] array)
-        {
-            return (T) array.GetValue(UnityEngine.Random.Range(0, array.Length - 1));
-        }
-
         /// <summary>
         /// Run <paramref name="func"/> on every first child of <paramref name="trans"/>
         /// </summary>

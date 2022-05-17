@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using TheArchive.Core;
+using TheArchive.Core.Settings;
 using TheArchive.Utilities;
 using TMPro;
 using UnityEngine;
+using static TheArchive.Utilities.Utils;
 using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive.HarmonyPatches.Patches
@@ -21,6 +23,7 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             private static bool _hasFoundReadyButton = false;
             public static bool HasSetupLoadoutRandoButton { get; private set; } = false;
+            private static LoadoutRandomizerSettings Settings { get; set; }
             public static CM_TimedButton LoadoutRandomizerButton { get; private set; }
             public static List<CM_PlayerLobbyBar> CM_PlayerLobbyBarInstances { get; private set; } = new List<CM_PlayerLobbyBar>();
             public static void Postfix(CM_TimedButton __instance)
@@ -64,7 +67,9 @@ namespace TheArchive.HarmonyPatches.Patches
 
                             ChangeColor(LoadoutRandomizerButton, new Color(1, 1, 1, 0.5f));
 
-                            LoadoutRandomizerButton.gameObject.SetActive(true);
+                            Settings = LocalFiles.LoadConfig<LoadoutRandomizerSettings>();
+
+                            LoadoutRandomizerButton.gameObject.SetActive(Settings.Enable);
 
                             HasSetupLoadoutRandoButton = true;
                         }
@@ -78,7 +83,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
             private static void OnUnreadyButtonPressed(int _)
             {
-                LoadoutRandomizerButton.gameObject.SetActive(true);
+                LoadoutRandomizerButton.gameObject.SetActive(Settings.Enable);
             }
 
             public static void OnReadyUpButtonPressed(int _)
@@ -103,45 +108,89 @@ namespace TheArchive.HarmonyPatches.Patches
                 });
             }
 
+            private static readonly Dictionary<InventorySlot, LoadoutRandomizerSettings.InventorySlots> _invSlotMap = new Dictionary<InventorySlot, LoadoutRandomizerSettings.InventorySlots>
+            {
+                { GetEnumFromName<InventorySlot>(nameof(InventorySlot.GearMelee)), LoadoutRandomizerSettings.InventorySlots.Melee },
+                { GetEnumFromName<InventorySlot>(nameof(InventorySlot.GearStandard)), LoadoutRandomizerSettings.InventorySlots.Primary },
+                { GetEnumFromName<InventorySlot>(nameof(InventorySlot.GearSpecial)), LoadoutRandomizerSettings.InventorySlots.Special },
+                { GetEnumFromName<InventorySlot>(nameof(InventorySlot.GearClass)), LoadoutRandomizerSettings.InventorySlots.Tool },
+            };
+
             private static FieldInfo _CM_PlayerLobbyBar_m_player = typeof(CM_PlayerLobbyBar).GetField("m_player", AccessTools.all);
             private static FieldInfo _CM_PlayerLobbyBar_m_inventorySlotItems = typeof(CM_PlayerLobbyBar).GetField("m_inventorySlotItems", AccessTools.all);
 
             public static void OnRandomizeLoadoutButtonPressed(int _)
             {
                 ArchiveLogger.Notice("Randomizer Button has been pressed!");
-                CM_PlayerLobbyBar LocalCM_PlayerLobbyBar = null;
-                foreach (var lobbyBar in CM_PlayerLobbyBarInstances)
+                try
                 {
-                    var snet_player = ((SNetwork.SNet_Player) _CM_PlayerLobbyBar_m_player.GetValue(lobbyBar));
-
-                    var agent = (PlayerAgent) snet_player?.PlayerAgent;
-
-                    if (snet_player?.CharacterIndex == PlayerManager.GetLocalPlayerAgent()?.CharacterID)
+                    CM_PlayerLobbyBar LocalCM_PlayerLobbyBar = null;
+                    foreach (var lobbyBar in CM_PlayerLobbyBarInstances)
                     {
-                        LocalCM_PlayerLobbyBar = lobbyBar;
+                        var snet_player = ((SNetwork.SNet_Player)_CM_PlayerLobbyBar_m_player.GetValue(lobbyBar));
+
+                        var agent = (PlayerAgent)snet_player?.PlayerAgent;
+
+                        if (snet_player?.CharacterIndex == PlayerManager.GetLocalPlayerAgent()?.CharacterID)
+                        {
+                            LocalCM_PlayerLobbyBar = lobbyBar;
+                        }
+                    }
+
+                    if (LocalCM_PlayerLobbyBar == null)
+                    {
+                        ArchiveLogger.Error($"Couldn't find the local players {nameof(CM_PlayerLobbyBar)}, aborting randomization of loadout!");
+                        return;
+                    }
+
+                    foreach (var kvp in (Dictionary<InventorySlot, CM_InventorySlotItem>)_CM_PlayerLobbyBar_m_inventorySlotItems.GetValue(LocalCM_PlayerLobbyBar))
+                    {
+                        var slot = kvp.Key;
+
+                        if (_invSlotMap.TryGetValue(slot, out var randoInvSlot) && Settings.ExcludedSlots.Contains(randoInvSlot))
+                        {
+                            // Skip if slot is excluded.
+                            continue;
+                        }
+
+                        GearIDRange[] allGearForSlot = GearManager.GetAllGearForSlot(slot);
+
+                        PlayerBackpackManager.LocalBackpack.TryGetBackpackItem(slot, out var itemForSlot);
+
+                        var currentGearIdForSlot = itemForSlot?.GearIDRange;
+
+                        GearIDRange gearID;
+                        switch (Settings.Mode)
+                        {
+                            case LoadoutRandomizerSettings.RandomizerMode.NoDuplicate:
+                                gearID = allGearForSlot.PickRandomExcept((random) => {
+                                    return !currentGearIdForSlot.GetChecksum().Equals(random.GetChecksum());
+                                });
+                                break;
+                            default:
+                            case LoadoutRandomizerSettings.RandomizerMode.True:
+                                gearID = allGearForSlot.PickRandom();
+                                break;
+                        }
+
+
+                        if (gearID == null)
+                        {
+                            ArchiveLogger.Error($"Tried to randomize Gear for slot {slot} but received null!");
+                            continue;
+                        }
+
+                        ArchiveLogger.Notice($"Picked random gear \"{gearID.PublicGearName}\" for slot {slot}!");
+
+                        PlayerBackpackManager.ResetLocalAmmoStorage();
+                        PlayerBackpackManager.EquipLocalGear(gearID);
+                        GearManager.RegisterGearInSlotAsEquipped(gearID.PlayfabItemInstanceId, slot);
                     }
                 }
-
-                if(LocalCM_PlayerLobbyBar == null)
+                catch(Exception ex)
                 {
-                    ArchiveLogger.Error($"Couldn't find the local players {nameof(CM_PlayerLobbyBar)}, aborting randomization of loadout!");
-                    return;
+                    ArchiveLogger.Exception(ex);
                 }
-
-                foreach (var kvp in (Dictionary<InventorySlot, CM_InventorySlotItem>) _CM_PlayerLobbyBar_m_inventorySlotItems.GetValue(LocalCM_PlayerLobbyBar))
-                {
-                    var slot = kvp.Key;
-                    GearIDRange[] allGearForSlot = GearManager.GetAllGearForSlot(slot);
-
-                    var gearID = allGearForSlot.PickRandom();
-
-                    ArchiveLogger.Notice($"Picked random gear \"{gearID.PublicGearName}\" for slot {slot}!");
-
-                    PlayerBackpackManager.ResetLocalAmmoStorage();
-                    PlayerBackpackManager.EquipLocalGear(gearID);
-                    GearManager.RegisterGearInSlotAsEquipped(gearID.PlayfabItemInstanceId, slot);
-                }
-
             }
 
             public static void OnButtonHoverChanged(int i, bool b)

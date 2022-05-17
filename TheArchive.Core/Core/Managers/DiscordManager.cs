@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using TheArchive.Core.Models;
+using TheArchive.Core.Settings;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core.Managers

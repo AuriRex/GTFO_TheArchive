@@ -4,6 +4,7 @@ using Player;
 using System;
 using System.Collections.Generic;
 using TheArchive.Core;
+using TheArchive.Core.Settings;
 using TheArchive.Utilities;
 using TMPro;
 using UnityEngine;
@@ -20,6 +21,7 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             private static bool _hasFoundReadyButton = false;
             public static bool HasSetupLoadoutRandoButton { get; private set; } = false;
+            private static LoadoutRandomizerSettings Settings { get; set; }
             public static CM_TimedButton LoadoutRandomizerButton { get; private set; }
             public static List<CM_PlayerLobbyBar> CM_PlayerLobbyBarInstances { get; private set; } = new List<CM_PlayerLobbyBar>();
             public static void Postfix(CM_TimedButton __instance)
@@ -75,7 +77,9 @@ namespace TheArchive.HarmonyPatches.Patches
 
                             ChangeColor(LoadoutRandomizerButton, new Color(1, 1, 1, 0.5f));
 
-                            LoadoutRandomizerButton.gameObject.SetActive(true);
+                            Settings = LocalFiles.LoadConfig<LoadoutRandomizerSettings>();
+
+                            LoadoutRandomizerButton.gameObject.SetActive(Settings.Enable);
 
                             HasSetupLoadoutRandoButton = true;
                         }
@@ -97,7 +101,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
             private static void OnUnreadyButtonPressed(int _)
             {
-                LoadoutRandomizerButton.gameObject.SetActive(true);
+                LoadoutRandomizerButton.gameObject.SetActive(Settings.Enable);
             }
 
             public static void OnReadyUpButtonPressed(int _)
@@ -122,6 +126,14 @@ namespace TheArchive.HarmonyPatches.Patches
                 });
             }
 
+            private static readonly Dictionary<InventorySlot, LoadoutRandomizerSettings.InventorySlots> _invSlotMap = new Dictionary<InventorySlot, LoadoutRandomizerSettings.InventorySlots>
+            {
+                { GetEnumFromName<InventorySlot>(nameof(InventorySlot.GearMelee)), LoadoutRandomizerSettings.InventorySlots.Melee },
+                { GetEnumFromName<InventorySlot>(nameof(InventorySlot.GearStandard)), LoadoutRandomizerSettings.InventorySlots.Primary },
+                { GetEnumFromName<InventorySlot>(nameof(InventorySlot.GearSpecial)), LoadoutRandomizerSettings.InventorySlots.Special },
+                { GetEnumFromName<InventorySlot>(nameof(InventorySlot.GearClass)), LoadoutRandomizerSettings.InventorySlots.Tool },
+            };
+
             public static void OnRandomizeLoadoutButtonPressed(int _)
             {
                 ArchiveLogger.Notice("Randomizer Button has been pressed!");
@@ -145,9 +157,39 @@ namespace TheArchive.HarmonyPatches.Patches
                 foreach (var kvp in LocalCM_PlayerLobbyBar.m_inventorySlotItems)
                 {
                     var slot = kvp.Key;
+
+                    if (_invSlotMap.TryGetValue(slot, out var randoInvSlot) && Settings.ExcludedSlots.Contains(randoInvSlot))
+                    {
+                        // Skip if slot is excluded.
+                        continue;
+                    }
+
                     GearIDRange[] allGearForSlot = GearManager.GetAllGearForSlot(slot);
 
-                    var gearID = allGearForSlot.PickRandom();
+                    PlayerBackpackManager.LocalBackpack.TryGetBackpackItem(slot, out var itemForSlot);
+
+                    var currentGearIdForSlot = itemForSlot?.GearIDRange;
+
+                    GearIDRange gearID;
+                    switch(Settings.Mode)
+                    {
+                        case LoadoutRandomizerSettings.RandomizerMode.NoDuplicate:
+                            gearID = allGearForSlot.PickRandomExcept((random) => {
+                                return !currentGearIdForSlot.GetChecksum().Equals(random.GetChecksum());
+                            });
+                            break;
+                        default:
+                        case LoadoutRandomizerSettings.RandomizerMode.True:
+                            gearID = allGearForSlot.PickRandom();
+                            break;
+                    }
+                    
+
+                    if(gearID == null)
+                    {
+                        ArchiveLogger.Error($"Tried to randomize Gear for slot {slot} but received null!");
+                        continue;
+                    }
 
                     ArchiveLogger.Notice($"Picked random gear \"{gearID.PublicGearName}\" for slot {slot}!");
 
