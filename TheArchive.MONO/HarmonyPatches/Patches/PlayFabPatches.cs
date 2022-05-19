@@ -131,9 +131,9 @@ namespace TheArchive.HarmonyPatches.Patches
                 sud.AllowedToStartGame = true;
 
                 sud.IntroText = Utils.GetStartupTextForRundown((int) Global.RundownIdToLoad);
-                sud.ShowDiscordButton = true;
+                sud.ShowDiscordButton = false;
                 sud.ShowBugReportButton = false;
-                sud.ShowRoadmapButton = true;
+                sud.ShowRoadmapButton = false;
                 //sud.ShowOvertoneButton = false;
                 sud.ShowIntroText = true;
                 data = sud;

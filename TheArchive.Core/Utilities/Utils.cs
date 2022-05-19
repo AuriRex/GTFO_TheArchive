@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace TheArchive.Utilities
@@ -230,22 +231,39 @@ namespace TheArchive.Utilities
         public static string GetStartupTextForRundown(int rundownID) => GetStartupTextForRundown(IntToRundownEnum(rundownID));
         public static string GetStartupTextForRundown(RundownID currentRundownID)
         {
+            StringBuilder sb = new StringBuilder();
             switch (currentRundownID)
             {
                 case RundownID.RundownOne:
-                    return "<color=red>Rundown #001</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\n";
+                    sb.Append("<color=red>Rundown #001</color>");
+                    break;
                 case RundownID.RundownTwo:
-                    return "<color=red>Rundown #002 Infection</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\n";
+                    sb.Append("<color=red>Rundown #002 Infection</color>");
+                    break;
                 case RundownID.RundownThree:
-                    return "<color=red>Rundown #003 The Vessel</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\n";
+                    sb.Append("<color=red>Rundown #003 The Vessel</color>");
+                    break;
                 case RundownID.RundownFour:
-                    return "<color=red>Rundown #004 Contact</color><color=orange>://Extended</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\n";
+                    sb.Append("<color=red>Rundown #004 Contact</color>");
+                    break;
                 case RundownID.RundownFive:
-                    return "<color=red>Rundown #005 Rebirth</color><color=orange>://Extended</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\n";
+                    sb.Append("<color=red>Rundown #005 Rebirth</color>");
+                    break;
                 default:
                 case RundownID.RundownUnknown:
-                    return "<color=red>Rundown #??? Yo Waddup?!</color>\n<size=80%><color=#8211b2>The Archive active.</color></size>\n\nIt's most likely not going to do what it's supposed to ... yet.";
+                    return "<color=red>Rundown #??? Yo Waddup?!</color>\n\nThis shouldn't happen unless you somehow modified the datablocks in R1 to R5 builds ...\nAnyways, things are probably gonna break :)";
             }
+
+            if(false)
+            {
+                sb.Append("<color=orange>://Extended</color>");
+            }
+
+            sb.Append("\n");
+
+            sb.Append("<size=80%><color=#8211b2>The Archive active.</color></size>\n\n");
+
+            return sb.ToString();
         }
 
         public static RundownID IntToRundownEnum(int rundown)
