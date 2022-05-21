@@ -107,6 +107,14 @@ namespace TheArchive
                 GuiManager.WatermarkLayer.SetVisible(ArchiveMod.HudIsVisible);
                 GuiManager.CrosshairLayer.SetVisible(ArchiveMod.HudIsVisible);
             }
+
+            if (Input.GetKeyDown(KeyCode.F2) && ArchiveMod.Settings.EnableHideWeapon)
+            {
+                // Toggle First Person Item hidden
+                var localPlayerAgent = Player.PlayerManager.GetLocalPlayerAgent();
+                if (localPlayerAgent != null && localPlayerAgent.FPItemHolder != null)
+                    localPlayerAgent.FPItemHolder.ForceItemHidden = !localPlayerAgent.FPItemHolder.ForceItemHidden;
+            }
         }
 
         public void OnExit()
