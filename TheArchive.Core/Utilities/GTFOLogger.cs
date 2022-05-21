@@ -1,21 +1,36 @@
 ﻿using MelonLoader;
 using System;
+using System.Collections.Generic;
 
 namespace TheArchive.Utilities
 {
     public static class GTFOLogger
     {
-
         internal static MelonLogger.Instance Logger { private get; set; }
 
-        public const string GTFO_LOG = "GTFO_Log: ";
-        public const string GTFO_WARN = "GTFO_Warn: ";
-        public const string GTFO_ERROR = "GTFO_Error: ";
+        private static readonly HashSet<string> _ignoreList = new HashSet<string>() {
+            "show crosshair",
+            "Setting and getting Body Position/Rotation, IK Goals, Lookat and BoneLocalRotation should only be done in OnAnimatorIK or OnStateIK"
+        };
 
-        public static void Log(string message) => Logger.Msg(message);
+        public static void Ignore(string str) => _ignoreList.Add(str);
 
-        public static void Warn(string message) => Logger.Warning(message);
-        public static void Error(string message) => Logger.Error(message);
+        public static void Log(string message)
+        {
+            if (_ignoreList.Contains(message)) return;
+            Logger.Msg(message);
+        }
 
+        public static void Warn(string message)
+        {
+            if (_ignoreList.Contains(message)) return;
+            Logger.Warning(message);
+        }
+
+        public static void Error(string message)
+        {
+            if (_ignoreList.Contains(message)) return;
+            Logger.Error(message);
+        }
     }
 }
