@@ -116,6 +116,9 @@
       <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.InputModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.Physics2DModule">
+      <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
@@ -147,6 +150,7 @@
     <Compile Include="HarmonyPatches\Patches\LoadoutRandomizerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\PlayerInfoPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\RichPresencePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\ThrowingWeaponPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\UnityLoggerPatches.cs" />

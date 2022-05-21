@@ -269,6 +269,9 @@
       <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.Physics2DModule">
+      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
@@ -300,6 +303,7 @@
     <Compile Include="HarmonyPatches\Patches\LoadoutRandomizerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerClientAPIViaPlayFabPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\PlayerInfoPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayfabMatchmakingManagerPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
