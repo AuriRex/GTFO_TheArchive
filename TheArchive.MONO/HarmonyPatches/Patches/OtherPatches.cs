@@ -32,5 +32,11 @@ namespace TheArchive.HarmonyPatches.Patches
                 return true;
             }
         }
+
+        [ArchivePatch(typeof(DramaManager), "FullDebugLog")]
+        internal static class DramaManager_FullDebugLogPatch
+        {
+            public static bool Prefix() => false;
+        }
     }
 }

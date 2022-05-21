@@ -1,6 +1,7 @@
 ﻿using AK;
 using LevelGeneration;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using TheArchive.Core;
 using TheArchive.Utilities;
@@ -86,6 +87,41 @@ namespace TheArchive.HarmonyPatches.Patches
                     ArchiveLogger.Exception(ex);
                 }
                 
+            }
+        }
+
+        // Add the current Terminal Key as well as the Zone you're in to the terminal text
+        [ArchivePatch(typeof(LG_ComputerTerminalCommandInterpreter), nameof(LG_ComputerTerminalCommandInterpreter.AddOutput), RundownFlags.RundownFour, RundownFlags.RundownFive, new Type[] { typeof(string), typeof(bool) })]
+        internal static class LG_ComputerTerminalCommandInterpreter_AddOutputPatch
+        {
+            private static HashSet<IntPtr> _interpreterSet = new HashSet<IntPtr>();
+
+            public static string GetKey(LG_ComputerTerminal terminal) => "TERMINAL_" + terminal.m_serialNumber;
+
+            public static void Postfix(LG_ComputerTerminalCommandInterpreter __instance, string line)
+            {
+                try
+                {
+                    if (line.Equals("---------------------------------------------------------------"))
+                    {
+                        var terminal = __instance.m_terminal;
+                        if (_interpreterSet.Contains(__instance.Pointer))
+                        {
+                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 2/2 [{GetKey(terminal)}]");
+                            _interpreterSet.Remove(__instance.Pointer);
+                            __instance.AddOutput($"Welcome to {GetKey(terminal)}, located in {terminal.SpawnNode.m_zone.NavInfo.PrefixLong}_{terminal.SpawnNode.m_zone.NavInfo.Number}", true);
+                        }
+                        else
+                        {
+                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 1/2 [{GetKey(terminal)}]");
+                            _interpreterSet.Add(__instance.Pointer);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ArchiveLogger.Exception(ex);
+                }
             }
         }
 

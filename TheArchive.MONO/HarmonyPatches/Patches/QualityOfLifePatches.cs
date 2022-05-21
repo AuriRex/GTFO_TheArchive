@@ -3,6 +3,7 @@ using ChainedPuzzles;
 using LevelGeneration;
 using Player;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using TheArchive.Core;
 using TheArchive.Utilities;
@@ -191,6 +192,62 @@ namespace TheArchive.HarmonyPatches.Patches
                 ___m_tool.Sound.Post(EVENTS.SENTRYGUN_ACTIVATED, ___m_tool.transform.position);
             }
         }*/
+
+        [ArchivePatch(typeof(LG_ComputerTerminalCommandInterpreter), nameof(LG_ComputerTerminalCommandInterpreter.AddOutput), RundownFlags.RundownOne, new Type[] { typeof(string), typeof(bool) })]
+        internal static class LG_ComputerTerminalCommandInterpreter_AddOutputPatch_R1
+        {
+            private static FieldInfo LG_ComputerTerminalCommandInterpreter_m_terminal = typeof(LG_ComputerTerminalCommandInterpreter).GetField("m_terminal", AnyBindingFlags);
+
+            public static void Postfix(LG_ComputerTerminalCommandInterpreter __instance, string line)
+            {
+                try
+                {
+                    var m_terminal = (LG_ComputerTerminal) LG_ComputerTerminalCommandInterpreter_m_terminal.GetValue(__instance);
+                    LG_ComputerTerminalCommandInterpreter_AddOutputPatch.Postfix(__instance, ref m_terminal, line);
+                }
+                catch(Exception ex)
+                {
+                    ArchiveLogger.Exception(ex);
+                }
+            }
+        }
+
+        // Add the current Terminal Key as well as the Zone you're in to the terminal text
+        [ArchivePatch(typeof(LG_ComputerTerminalCommandInterpreter), nameof(LG_ComputerTerminalCommandInterpreter.AddOutput), RundownFlags.RundownTwo, RundownFlags.RundownThree, new Type[] { typeof(string), typeof(bool) })]
+        internal static class LG_ComputerTerminalCommandInterpreter_AddOutputPatch
+        {
+            private static HashSet<LG_ComputerTerminalCommandInterpreter> _interpreterSet = new HashSet<LG_ComputerTerminalCommandInterpreter>();
+
+            public static string GetKey(LG_ComputerTerminal terminal) => "TERMINAL_" + terminal.m_serialNumber;
+
+            public static void Postfix(LG_ComputerTerminalCommandInterpreter __instance, ref LG_ComputerTerminal ___m_terminal, string line)
+            {
+                try
+                {
+                    if (line.Equals("---------------------------------------------------------------"))
+                    {
+                        
+                        if (_interpreterSet.Contains(__instance))
+                        {
+                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 2/2 [{GetKey(___m_terminal)}]");
+                            _interpreterSet.Remove(__instance);
+                            __instance.AddOutput($"Welcome to {GetKey(___m_terminal)}, located in {___m_terminal.SpawnNode.m_zone.NavInfo.PrefixLong}_{___m_terminal.SpawnNode.m_zone.NavInfo.Number}", true);
+                        }
+                        else
+                        {
+                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 1/2 [{GetKey(___m_terminal)}]");
+                            _interpreterSet.Add(__instance);
+                        }
+
+                    }
+                }
+                catch(Exception ex)
+                {
+                    ArchiveLogger.Exception(ex);
+                }
+            }
+        }
+
 
         // prioritize resources in ping raycasts
         [ArchivePatch(typeof(CrosshairGuiLayer), "ShowPingIndicator", RundownFlags.RundownOne, RundownFlags.RundownThree)]
