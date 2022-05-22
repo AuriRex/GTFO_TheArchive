@@ -13,7 +13,6 @@ namespace TheArchive.HarmonyPatches.Patches
             private static eMeleeWeaponState _state_idle = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.Idle));
             private static eMeleeWeaponState _state_none = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.None));
             private static eMeleeWeaponState _state_push = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.Push));
-            private static eMeleeWeaponState _state_hitreact = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.Hitreact));
 
             private static MethodInfo _MI_PlayAnim = typeof(MeleeWeaponFirstPerson).GetMethod(nameof(MeleeWeaponFirstPerson.PlayAnim), AnyBindingFlags);
 
