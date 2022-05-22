@@ -303,6 +303,7 @@
     <Compile Include="HarmonyPatches\Patches\LoadoutRandomizerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerClientAPIViaPlayFabPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\MeleeCancelBackportPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayerInfoPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayfabMatchmakingManagerPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />

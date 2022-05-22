@@ -149,6 +149,7 @@
     <Compile Include="HarmonyPatches\Patches\AutoIntroPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LoadoutRandomizerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
+    <Compile Include="HarmonyPatches\Patches\MeleeCancelBackportPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayerInfoPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\RichPresencePatches.cs" />
