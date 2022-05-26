@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -26,7 +26,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -142,6 +142,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\PlayerInfoPatches.cs">
+      <Link>HarmonyPatches\Patches\PlayerInfoPatches.cs</Link>
+    </Compile>
     <Compile Include="ArchiveMONOBootstrap.cs" />
     <Compile Include="ArchiveMONOModule.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CELLSettingsPatches.cs" />
@@ -151,7 +154,6 @@
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\MeleeCancelBackportPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\PlayerInfoPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\RichPresencePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\ThrowingWeaponPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\UnityLoggerPatches.cs" />
