@@ -62,6 +62,7 @@
     <Compile Include="ArchiveMod.cs" />
     <Compile Include="Core\ArchiveNativePatcher.cs" />
     <Compile Include="Core\ArchiveSettings.cs" />
+    <Compile Include="Core\BuildDB.cs" />
     <Compile Include="Core\DiscordApi\ActivityManager.cs" />
     <Compile Include="Core\DiscordApi\Constants.cs" />
     <Compile Include="Core\DiscordApi\Core.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Core\Managers\DiscordManager.cs" />
     <Compile Include="Core\Managers\ImplementationManager.cs" />
     <Compile Include="Core\Managers\PresenceManager.cs" />
+    <Compile Include="Core\Models\GameBuildFlags.cs" />
     <Compile Include="Core\Settings\LoadoutRandomizerSettings.cs" />
     <Compile Include="Core\Models\PresenceGameState.cs" />
     <Compile Include="Core\Settings\RichPresenceSettings.cs" />

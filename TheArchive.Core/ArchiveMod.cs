@@ -89,6 +89,9 @@ namespace TheArchive
 
             GTFOLogger.Logger = new MelonLogger.Instance("GTFO-Internals", ConsoleColor.DarkGray);
 
+            _currentRundown = BuildDB.GetCurrentRundownID(LocalFiles.BuildNumber);
+            ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"Current game revision determined to be {LocalFiles.BuildNumber}! ({CurrentRundown})");
+
             var archiveModule = LoadMainArchiveModule(MelonUtils.IsGameIl2Cpp());
 
             var moduleMainType = archiveModule.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
@@ -99,6 +102,15 @@ namespace TheArchive
             {
                 PresenceManager.Setup();
                 DiscordManager.Setup();
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
+            }
+
+            try
+            {
+                ApplyPatches(CurrentRundown);
             }
             catch (Exception ex)
             {
@@ -179,6 +191,7 @@ namespace TheArchive
             if (CurrentRundown != RundownID.RundownUnitialized)
             {
                 module.Patcher.PatchRundownSpecificMethods(module.GetType().Assembly);
+                LoadSubModulesFrom(moduleType);
                 return true;
             }
 
@@ -195,8 +208,13 @@ namespace TheArchive
             }
         }
 
+        private HashSet<Type> _submodulesLoadedFrom = new HashSet<Type>();
+
         private void LoadSubModulesFrom(Type moduleType)
         {
+            if (_submodulesLoadedFrom.Contains(moduleType))
+                return;
+
             foreach (var prop in moduleType.GetProperties())
             {
                 if (prop.PropertyType != typeof(string) || !prop.GetMethod.IsStatic) continue;
@@ -242,13 +260,14 @@ namespace TheArchive
                     break;
                 }
             }
+            _submodulesLoadedFrom.Add(moduleType);
         }
 
         [Obsolete("Do not call!")]
         public void InvokeGameDataInitialized(uint rundownId)
         {
             ArchiveLogger.Info($"GameData has been initialized, invoking event.");
-            CurrentRundownInt = rundownId;
+            //CurrentRundownInt = rundownId;
 
             try
             {
@@ -282,8 +301,8 @@ namespace TheArchive
                 }
             }
 
-            var rundown = Utils.IntToRundownEnum((int) rundownId);
-            ApplyPatches(rundown);
+            /*var rundown = Utils.IntToRundownEnum((int) rundownId);
+            ApplyPatches(rundown);*/
 
             GameDataInitialized?.Invoke(CurrentRundown);
         }
