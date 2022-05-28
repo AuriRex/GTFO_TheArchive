@@ -43,7 +43,7 @@ namespace TheArchive.HarmonyPatches.Patches
                     return;
                 }
 
-                var localPlayerAgent = GuiManager.PlayerLayer.m_player; //(PlayerAgent) MusicManager_m_localPlayer.GetValue(MusicManager.Current);
+                var localPlayerAgent = PlayerManager.GetLocalPlayerAgent();
 
                 if (CustomTerminalPingQoLInstance == null)
                 {
@@ -51,7 +51,6 @@ namespace TheArchive.HarmonyPatches.Patches
                     CustomTerminalPingQoLInstance.PingTargetStyle = eNavMarkerStyle.PlayerPingTerminal;
                 }
 
-                MelonLoader.MelonLogger.Msg(ConsoleColor.Red, "Ping patch executing!");
                 try
                 {
                     var bounds = MonoUtils.GetMaxBounds(__instance.gameObject);
@@ -105,6 +104,8 @@ namespace TheArchive.HarmonyPatches.Patches
             private static MethodInfo HackingTool_ClearScreen = typeof(HackingTool).GetMethod("ClearScreen", AnyBindingFlags);
             private static MethodInfo HackingTool_OnStopHacking = typeof(HackingTool).GetMethod("OnStopHacking", AnyBindingFlags);
 
+            private static eHackableStatus _hStatus_Success = GetEnumFromName<eHackableStatus>(nameof(eHackableStatus.Success));
+
             public static bool Prefix(ref HackingTool __instance, ref HackSequenceState ___m_state, ref iHackable ___m_currentHackable, ref float ___m_stateTimer, ref iHackingMinigame ___m_activeMinigame, ref GameObject ___m_holoSourceGFX)
             {
                 try
@@ -119,9 +120,7 @@ namespace TheArchive.HarmonyPatches.Patches
                             ___m_stateTimer = 1f;
                             if (___m_currentHackable != null)
                             {
-                                // Rundown 2 added HackingMiss to the enum pushing Success one back so this should give the correct value and not make you unable to hack anything in R1 ...
-                                eHackableStatus status = ArchiveMod.CurrentRundown == RundownID.RundownOne ? eHackableStatus.HackingMiss : eHackableStatus.Success;
-                                LG_LevelInteractionManager.WantToSetHackableStatus(___m_currentHackable, status, __instance.Owner);
+                                LG_LevelInteractionManager.WantToSetHackableStatus(___m_currentHackable, _hStatus_Success, __instance.Owner);
                             }
                             ___m_state = HackSequenceState.Done;
                             return false;
@@ -131,10 +130,6 @@ namespace TheArchive.HarmonyPatches.Patches
                                 HackingTool_ClearScreen.Invoke(__instance, null);
                                 HackingTool_OnStopHacking.Invoke(__instance, null);
                                 __instance.Sound.Post(EVENTS.BUTTONGENERICSEQUENCEFINISHED);
-                                /*if (m_currentHackable != null)
-                                {
-                                    LG_LevelInteractionManager.WantToSetHackableStatus(m_currentHackable, eHackableStatus.Success, base.Owner);
-                                }*/
                                 ___m_state = HackSequenceState.Idle;
                             }
                             else

@@ -77,7 +77,6 @@
     <Compile Include="Core\Managers\DiscordManager.cs" />
     <Compile Include="Core\Managers\ImplementationManager.cs" />
     <Compile Include="Core\Managers\PresenceManager.cs" />
-    <Compile Include="Core\Models\GameBuildFlags.cs" />
     <Compile Include="Core\Settings\LoadoutRandomizerSettings.cs" />
     <Compile Include="Core\Models\PresenceGameState.cs" />
     <Compile Include="Core\Settings\RichPresenceSettings.cs" />
