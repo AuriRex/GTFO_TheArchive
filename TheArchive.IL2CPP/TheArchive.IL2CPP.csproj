@@ -315,6 +315,7 @@
     <Compile Include="HarmonyPatches\Patches\StatePatches.cs" />
     <Compile Include="ArchiveIL2CPPBootstrap.cs" />
     <Compile Include="HarmonyPatches\Patches\ThrowingWeaponPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\UnreadyButtonPatches.cs" />
     <Compile Include="Managers\CustomBoosterDropper.cs" />
     <Compile Include="Managers\CustomBoosterManager.cs" />
     <Compile Include="Managers\CustomProgressionManager.cs" />

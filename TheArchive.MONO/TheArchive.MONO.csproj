@@ -145,6 +145,9 @@
     <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\PlayerInfoPatches.cs">
       <Link>HarmonyPatches\Patches\PlayerInfoPatches.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\UnreadyButtonPatches.cs">
+      <Link>HarmonyPatches\Patches\UnreadyButtonPatches.cs</Link>
+    </Compile>
     <Compile Include="ArchiveMONOBootstrap.cs" />
     <Compile Include="ArchiveMONOModule.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CELLSettingsPatches.cs" />
