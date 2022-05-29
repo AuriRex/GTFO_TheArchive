@@ -62,51 +62,28 @@ namespace TheArchive.Core
                 {
                     archivePatchInfo = patchContainingType.GetCustomAttribute<ArchivePatch>();
 
+                    if (!archivePatchInfo.GeneralPurposePatch && !FlagsContain(archivePatchInfo.RundownsToPatch, currentRundown))
+                    {
+                        ArchiveLogger.Msg(ConsoleColor.Magenta, $"Not patching method \"{archivePatchInfo.MethodName}\" in type \"{(archivePatchInfo.HasType ? archivePatchInfo.Type?.FullName : "(not yet set for type load reasons)")}\" from patch class: \"{patchContainingType.FullName}\". ({archivePatchInfo.RundownsToPatch})");
+                        continue;
+                    }
+
                     BindPatchToSetting bindPatchToSettingsInfo;
                     TryGetBindToSettingsAttribute(patchContainingType, out bindPatchToSettingsInfo);
 
-
-                    if(!IsPatchEnabledInSettings(ArchiveMod.Settings, bindPatchToSettingsInfo, patchContainingType.FullName))
+                    if (!IsPatchEnabledInSettings(ArchiveMod.Settings, bindPatchToSettingsInfo, patchContainingType.FullName))
                     {
                         ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{bindPatchToSettingsInfo.BindToSetting}==false] Skipped patch: \"{patchContainingType.FullName}\". ({archivePatchInfo.RundownsToPatch})");
                         continue;
                     }
 
-                    /*if (!string.IsNullOrEmpty(bindPatchToSettingsInfo?.BindToSetting))
+                    if (!DoesMatchBuildNumber(patchContainingType, LocalFiles.BuildNumber))
                     {
-                        try
-                        {
-                            if (!settingForString.TryGetValue(bindPatchToSettingsInfo.BindToSetting, out PropertyInfo pi))
-                            {
-                                pi = typeof(Core.ArchiveSettings).GetProperty(bindPatchToSettingsInfo.BindToSetting, AccessTools.all);
-                                if (pi == null || pi.PropertyType != typeof(bool))
-                                {
-                                    throw new ArgumentException();
-                                }
-                                settingForString.Add(bindPatchToSettingsInfo.BindToSetting, pi);
-                            }
-
-                            var shouldEnable = (bool) pi.GetValue(ArchiveMod.Settings);
-
-                            if (!shouldEnable)
-                            {
-                                ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{bindPatchToSettingsInfo.BindToSetting}==false] Skipped patch: \"{patchContainingType.FullName}\". ({archivePatchInfo.RundownsToPatch})");
-                                continue;
-                            }
-                        }
-                        catch (ArgumentException)
-                        {
-                            ArchiveLogger.Error($"Patch \"{patchContainingType.FullName}\" has an invalid Settings string \"{bindPatchToSettingsInfo.BindToSetting}\" set!");
-                        }
-                    }*/
-
-                    if (!archivePatchInfo.GeneralPurposePatch && !FlagsContain(archivePatchInfo.RundownsToPatch, currentRundown))
-                    {
-                        ArchiveLogger.Warning($"Not patching method \"{archivePatchInfo.MethodName}\" in type \"{(archivePatchInfo.HasType ? archivePatchInfo.Type?.FullName : "(not yet set for type load reasons)")}\" from patch class: \"{patchContainingType.FullName}\". ({archivePatchInfo.RundownsToPatch})");
+                        ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{LocalFiles.BuildNumber} not in BuildConstraint] Skipped patch: \"{patchContainingType.FullName}\".");
                         continue;
                     }
 
-                    if(!archivePatchInfo.HasType)
+                    if (!archivePatchInfo.HasType)
                     {
                         if (TryGetMethodByName(patchContainingType, "Type", out var typeMethod) && typeMethod.ReturnType == typeof(Type))
                         {
@@ -187,6 +164,22 @@ namespace TheArchive.Core
             }
 
             IsPatched = true;
+        }
+
+        private bool DoesMatchBuildNumber(Type patchContainingType, int buildNumber)
+        {
+            var constraints = patchContainingType.GetCustomAttributes<BuildConstraint>().ToArray();
+
+            if (constraints.Length == 0)
+                return true;
+
+            foreach(var constraint in constraints)
+            {
+                if (!constraint.Matches(buildNumber))
+                    return false;
+            }
+
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -373,6 +366,48 @@ namespace TheArchive.Core
                 GeneralPurposePatch = true;
             }
 
+        }
+
+        [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+        public class BuildConstraint : Attribute
+        {
+            public int BuildNumber { get; private set; }
+            public string BuildNumberString => BuildNumber.ToString();
+
+            public MatchMode Mode { get; private set; }
+
+            public BuildConstraint(int build, MatchMode mode = MatchMode.Exact)
+            {
+                BuildNumber = build;
+                Mode = mode;
+            }
+
+            public bool Matches(int buildNumber)
+            {
+                switch(Mode)
+                {
+                    default:
+                    case MatchMode.Exact:
+                        return buildNumber == BuildNumber;
+                    case MatchMode.Greater:
+                        return buildNumber > BuildNumber;
+                    case MatchMode.GreaterOrEqual:
+                        return buildNumber >= BuildNumber;
+                    case MatchMode.Lower:
+                        return buildNumber < BuildNumber;
+                    case MatchMode.LowerOrEqual:
+                        return buildNumber <= BuildNumber;
+                }
+            }
+
+            public enum MatchMode
+            {
+                Exact,
+                Lower,
+                LowerOrEqual,
+                Greater,
+                GreaterOrEqual
+            }
         }
 
     }
