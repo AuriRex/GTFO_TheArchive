@@ -157,6 +157,7 @@
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\MeleeCancelBackportPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
+    <Compile Include="HarmonyPatches\Patches\R1SNetRevisionOverridePatch.cs" />
     <Compile Include="HarmonyPatches\Patches\RichPresencePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\ThrowingWeaponPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\UnityLoggerPatches.cs" />
