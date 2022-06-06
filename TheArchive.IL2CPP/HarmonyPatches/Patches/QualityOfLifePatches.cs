@@ -20,7 +20,7 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             public static void Prefix(ref string header)
             {
-                header = $"R{ArchiveMod.CurrentRundown.GetIntValue()}{header}";
+                header = $"R{(int) ArchiveMod.CurrentRundown}{header}";
             }
         }
 

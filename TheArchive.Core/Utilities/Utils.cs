@@ -228,7 +228,6 @@ namespace TheArchive.Utilities
             return data;
         }
 
-        public static string GetStartupTextForRundown(int rundownID) => GetStartupTextForRundown(IntToRundownEnum(rundownID));
         public static string GetStartupTextForRundown(RundownID currentRundownID)
         {
             StringBuilder sb = new StringBuilder();
@@ -266,21 +265,6 @@ namespace TheArchive.Utilities
             return sb.ToString();
         }
 
-        public static RundownID IntToRundownEnum(int rundown)
-        {
-            RundownID currentRundownID;
-            try
-            {
-                currentRundownID = (RundownID) rundown;
-            }
-            catch (Exception)
-            {
-                currentRundownID = RundownID.RundownUnknown;
-            }
-
-            return currentRundownID;
-        }
-
         public class ValueAttribute : Attribute
         {
             public object Value { get; private set; }
@@ -306,21 +290,21 @@ namespace TheArchive.Utilities
         public enum RundownID : int
         {
             [Value(-1)]
-            RundownUnitialized = 0,
+            RundownUnitialized = -1,
             [Value(0)]
-            RundownUnknown = 1,
-            [Value(1)]
-            RundownOne = 17,
-            [Value(2)]
-            RundownTwo = 19,
-            [Value(3)]
-            RundownThree = 22,
-            [Value(4)]
-            RundownFour = 25,
-            [Value(5)]
-            RundownFive = 26,
-            [Value(6)]
-            RundownSix = 29,
+            RundownUnknown = 0,
+            [Value(17)]
+            RundownOne = 1,
+            [Value(19)]
+            RundownTwo = 2,
+            [Value(22)]
+            RundownThree = 3,
+            [Value(25)]
+            RundownFour = 4,
+            [Value(26)]
+            RundownFive = 5,
+            [Value(19)]
+            RundownSix = 6,
         }
 
         [Flags]

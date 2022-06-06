@@ -130,7 +130,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 var sud = new StartupScreenData();
                 sud.AllowedToStartGame = true;
 
-                sud.IntroText = Utils.GetStartupTextForRundown((int) Global.RundownIdToLoad);
+                sud.IntroText = Utils.GetStartupTextForRundown(ArchiveMod.CurrentRundown);
                 sud.ShowDiscordButton = false;
                 sud.ShowBugReportButton = false;
                 sud.ShowRoadmapButton = false;

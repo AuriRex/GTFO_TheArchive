@@ -84,7 +84,7 @@ namespace TheArchive.HarmonyPatches.Patches
                         case RundownID.RundownThree:
                             break;
                         default:
-                            rundownPrefix = $"R{ArchiveMod.CurrentRundown.GetIntValue()}";
+                            rundownPrefix = $"R{(int)ArchiveMod.CurrentRundown}";
                             break;
                     }
 

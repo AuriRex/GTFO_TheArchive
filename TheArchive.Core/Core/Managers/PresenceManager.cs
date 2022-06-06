@@ -362,7 +362,7 @@ namespace TheArchive.Core.Managers
         {
             get
             {
-                return ArchiveMod.CurrentRundown.GetIntValue();
+                return (int) ArchiveMod.CurrentRundown;
             }
         }
 

@@ -39,27 +39,7 @@ namespace TheArchive
             }
         }
 
-        private static uint _currentRundownInt = 0;
-        public static uint CurrentRundownInt
-        {
-            get
-            {
-                return _currentRundownInt;
-            }
-            private set
-            {
-                _currentRundownInt = value;
-                _currentRundown = Utils.IntToRundownEnum((int) value);
-            }
-        }
-        private static RundownID _currentRundown = RundownID.RundownUnitialized;
-        public static RundownID CurrentRundown
-        {
-            get
-            {
-                return _currentRundown;
-            }
-        }
+        public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnitialized;
 
         public event Action<RundownID> GameDataInitialized;
         public event Action DataBlocksReady;
@@ -89,7 +69,7 @@ namespace TheArchive
 
             GTFOLogger.Logger = new MelonLogger.Instance("GTFO-Internals", ConsoleColor.DarkGray);
 
-            _currentRundown = BuildDB.GetCurrentRundownID(LocalFiles.BuildNumber);
+            CurrentRundown = BuildDB.GetCurrentRundownID(LocalFiles.BuildNumber);
             ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"Current game revision determined to be {LocalFiles.BuildNumber}! ({CurrentRundown})");
 
             var archiveModule = LoadMainArchiveModule(MelonUtils.IsGameIl2Cpp());

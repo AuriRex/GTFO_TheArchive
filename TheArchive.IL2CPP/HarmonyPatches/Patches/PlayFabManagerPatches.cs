@@ -80,7 +80,7 @@ namespace TheArchive.HarmonyPatches.Patches
                     StartupScreenData = new StartupScreenData();
                     StartupScreenData.AllowedToStartGame = true;
 
-                    StartupScreenData.IntroText = Utils.GetStartupTextForRundown((int) ArchiveMod.CurrentRundownInt);
+                    StartupScreenData.IntroText = Utils.GetStartupTextForRundown(ArchiveMod.CurrentRundown);
                     StartupScreenData.ShowDiscordButton = false;
                     StartupScreenData.ShowBugReportButton = false;
                     StartupScreenData.ShowRoadmapButton = false;
