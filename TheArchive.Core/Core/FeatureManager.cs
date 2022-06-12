@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using TheArchive.Core.Settings;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core
@@ -10,6 +12,8 @@ namespace TheArchive.Core
 
         public HashSet<Feature> RegisteredFeatures { get; private set; } = new HashSet<Feature>();
 
+        private EnabledFeatures _enabledFeatures { get; set; }
+
         private HashSet<FeatureInternal.Update> _updateMethods = new HashSet<FeatureInternal.Update>();
         private HashSet<FeatureInternal.LateUpdate> _lateUpdateMethods = new HashSet<FeatureInternal.LateUpdate>();
 
@@ -18,6 +22,41 @@ namespace TheArchive.Core
 
         public event Action<Feature> OnFeatureEnabled;
         public event Action<Feature> OnFeatureDisabled;
+
+        internal FeatureManager()
+        {
+            Feature.BuildInfo = ArchiveMod.CurrentBuildInfo;
+            _enabledFeatures = LocalFiles.LoadConfig<EnabledFeatures>();
+        }
+
+        public void OnApplicationQuit()
+        {
+            ArchiveLogger.Info($"[{nameof(FeatureManager)}] {nameof(OnApplicationQuit)}()");
+            try
+            {
+                ArchiveLogger.Info($"[{nameof(FeatureManager)}] Saving settings ... ");
+
+                SaveConfig();
+
+                foreach (var feature in RegisteredFeatures)
+                {
+                    SaveFeatureConfig(feature);
+                }
+
+                ArchiveLogger.Info($"[{nameof(FeatureManager)}] Unpatching ... ");
+
+                foreach (var feature in RegisteredFeatures)
+                {
+                    feature.OnQuit();
+                    DisableFeature(feature);
+                }
+            }
+            catch(Exception ex)
+            {
+                ArchiveLogger.Error($"[{nameof(FeatureManager)}] Exception thrown in {nameof(OnApplicationQuit)}! {ex}: {ex.Message}");
+                ArchiveLogger.Exception(ex);
+            }
+        }
 
         public void OnUpdate()
         {
@@ -71,7 +110,6 @@ namespace TheArchive.Core
 
         private void InitFeature(Feature feature)
         {
-            feature.BuildInfo = ArchiveMod.CurrentBuildInfo;
             FeatureInternal.CreateAndAssign(feature);
             if (feature.Enabled)
             {
@@ -86,6 +124,7 @@ namespace TheArchive.Core
 
         public void EnableFeature(Feature feature)
         {
+            if (feature.Enabled) return;
             ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(FeatureManager)}] Enabling {nameof(Feature)} {feature.Identifier} ...");
             feature.FeatureInternal.Enable();
             if (feature.FeatureInternal.HasUpdateMethod)
@@ -97,6 +136,7 @@ namespace TheArchive.Core
 
         public void DisableFeature(Feature feature)
         {
+            if (!feature.Enabled) return;
             ArchiveLogger.Msg(ConsoleColor.Red, $"[{nameof(FeatureManager)}] Disabling {nameof(Feature)} {feature.Identifier} ...");
             feature.FeatureInternal.Disable();
             if (feature.FeatureInternal.HasUpdateMethod)
@@ -111,9 +151,15 @@ namespace TheArchive.Core
             return Instance.RegisteredFeatures.FirstOrDefault(f => f.Identifier == featureIdentifier);
         }
 
+        public static void SaveFeatureConfig(Feature feature)
+        {
+            feature.FeatureInternal.SaveFeatureSettings();
+        }
+
         internal static void Internal_Init()
         {
             Instance = new FeatureManager();
+            
         }
 
         public void DEBUG_DISABLE()
@@ -130,6 +176,56 @@ namespace TheArchive.Core
             {
                 EnableFeature(f);
             }
+        }
+
+        public void SaveConfig()
+        {
+            LocalFiles.SaveConfig(_enabledFeatures);
+        }
+
+        internal static void SetEnabled(Feature feature, bool value)
+        {
+            Instance.SetFeatureEnabled(feature, value);
+        }
+
+        private void SetFeatureEnabled(Feature feature, bool value)
+        {
+            if(_enabledFeatures.Features.TryGetValue(feature.Identifier, out var currentValue))
+            {
+                if(currentValue == value)
+                {
+                    return;
+                }
+                else
+                {
+                    _enabledFeatures.Features.Remove(feature.Identifier);
+                }
+            }
+            _enabledFeatures.Features.Add(feature.Identifier, value);
+        }
+
+        public static bool IsEnabledInConfig(Feature feature)
+        {
+            return Instance.IsFeatureEnabledInConfig(feature);
+        }
+
+        private bool IsFeatureEnabledInConfig(Feature feature)
+        {
+            if(_enabledFeatures.Features.TryGetValue(feature.Identifier, out var value))
+            {
+                return value;
+            }
+
+            var enableAttribute = feature.GetType().GetCustomAttribute<Attributes.EnableFeatureByDefault>();
+            bool shouldEnable = false;
+
+            if(enableAttribute != null)
+            {
+                shouldEnable = enableAttribute.ShouldEnableByDefault;
+            }
+
+            SetFeatureEnabled(feature, shouldEnable);
+            return shouldEnable;
         }
     }
 }

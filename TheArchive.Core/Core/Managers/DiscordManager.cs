@@ -22,6 +22,8 @@ namespace TheArchive.Core.Managers
         public static extern bool FreeLibrary(IntPtr hModule);
         #endregion native_methods
 
+        public static bool HasBeenSetup => _settings != null;
+
         private static Discord.Activity _lastActivity;
 
         private static bool _hasDiscordDllBeenLoaded = false;
@@ -30,13 +32,18 @@ namespace TheArchive.Core.Managers
 
         private static DiscordClient _discordClient;
 
-        private static RichPresenceSettings Settings => PresenceManager.Settings;
+        private static RichPresenceSettings _settings = null;
+        private static bool _internalDisabled = false;
 
-        internal static void Setup()
+        public static void Enable(RichPresenceSettings rpcSettings)
         {
-            if (!Settings.EnableDiscordRichPresence)
+            if (_internalDisabled) return;
+            if (rpcSettings == null) throw new ArgumentNullException($"{nameof(rpcSettings)}");
+            _settings = rpcSettings;
+
+            if (!_settings.EnableDiscordRichPresence)
             {
-                ArchiveLogger.Notice($"[{nameof(DiscordManager)}] Discord Rich Presence disabled, skipping setup!");
+                ArchiveLogger.Notice($"[{nameof(DiscordManager)}] Discord Rich Presence disabled, skipping setup for now.");
                 return;
             }
 
@@ -60,7 +67,9 @@ namespace TheArchive.Core.Managers
                 }
                 catch (Exception ex)
                 {
+                    ArchiveLogger.Error($"[{nameof(DiscordManager)}] Error while trying to load the native discord dll! {ex}: {ex.Message}");
                     ArchiveLogger.Exception(ex);
+                    _internalDisabled = true;
                 }
                 finally
                 {
@@ -74,7 +83,6 @@ namespace TheArchive.Core.Managers
 
                 _discordClient.Initialize();
 
-                PresenceManager.UpdateGameState(PresenceGameState.Startup, false);
                 _discordClient.TryUpdateActivity(_discordClient.BuildActivity(PresenceGameState.Startup, PresenceManager.CurrentStateStartTime));
                 _discordClient.RunCallbacks();
             }
@@ -86,9 +94,15 @@ namespace TheArchive.Core.Managers
 
         }
 
-        internal static void Update()
+        public static void Disable()
         {
-            if (_discordClient == null) return;
+            _discordClient?.Dispose();
+            _discordClient = null;
+        }
+
+        public static void Update()
+        {
+            if (_discordClient == null || _internalDisabled) return;
 
             if(_lastCheckedTime + 5 <= Utils.Time)
             {
@@ -136,7 +150,7 @@ namespace TheArchive.Core.Managers
             {
                 _discordClient = new Discord.Discord(_clientId, (UInt64) CreateFlags.NoRequireDiscord);
 
-                _discordClient.SetLogHook(Settings.DEBUG_EnableRichPresenceLogSpam ? LogLevel.Debug : LogLevel.Info, LogHook);
+                _discordClient.SetLogHook(_settings.DEBUG_EnableRichPresenceLogSpam ? LogLevel.Debug : LogLevel.Info, LogHook);
 
                 _activityManager = _discordClient.GetActivityManager();
 #warning todo: replace with command that runs steam:// maybe?
@@ -186,7 +200,7 @@ namespace TheArchive.Core.Managers
 
             internal Activity BuildActivity(PresenceGameState state, DateTimeOffset startTime)
             {
-                if(Settings.DiscordRPCFormat.TryGetValue(state, out var format))
+                if(_settings.DiscordRPCFormat.TryGetValue(state, out var format))
                 {
                     return ActivityFromFormat(format.GetNext(), state, startTime);
                 }
@@ -231,7 +245,7 @@ namespace TheArchive.Core.Managers
             {
                 if (_activityManager == null) return false;
                 
-                if(Settings.DEBUG_EnableRichPresenceLogSpam)
+                if(_settings.DEBUG_EnableRichPresenceLogSpam)
                 {
                     ArchiveLogger.Notice($"[{nameof(DiscordManager)}] Activity updated: Details:{activity.Details} State:{activity.State}");
                     _activityManager.UpdateActivity(activity, ActivityUpdateDebugLog);

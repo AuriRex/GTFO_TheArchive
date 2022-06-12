@@ -64,6 +64,8 @@
     <Compile Include="Core\ArchiveSettings.cs" />
     <Compile Include="Core\Attributes\ArchivePatch.cs" />
     <Compile Include="Core\Attributes\BuildConstraint.cs" />
+    <Compile Include="Core\Attributes\EnableFeatureByDefault.cs" />
+    <Compile Include="Core\Attributes\FeatureConfig.cs" />
     <Compile Include="Core\Attributes\IsInitMethod.cs" />
     <Compile Include="Core\Attributes\IsLateUpdate.cs" />
     <Compile Include="Core\Attributes\IsPostfix.cs" />
@@ -92,12 +94,12 @@
     <Compile Include="Core\Managers\PresenceManager.cs" />
     <Compile Include="Core\Models\ExpeditionLog.cs" />
     <Compile Include="Core\Models\GameBuildInfo.cs" />
+    <Compile Include="Core\Settings\EnabledFeatures.cs" />
     <Compile Include="Core\Settings\LoadoutRandomizerSettings.cs" />
     <Compile Include="Core\Models\PresenceGameState.cs" />
     <Compile Include="Core\Settings\RichPresenceSettings.cs" />
     <Compile Include="Core\SubModuleAttribute.cs" />
     <Compile Include="Interfaces\IBaseGameConverter.cs" />
-    <Compile Include="Interfaces\IFeatureData.cs" />
     <Compile Include="Interfaces\IInitAfterDataBlocksReady.cs" />
     <Compile Include="Interfaces\IInitAfterGameDataInitialized.cs" />
     <Compile Include="Interfaces\IInitCondition.cs" />

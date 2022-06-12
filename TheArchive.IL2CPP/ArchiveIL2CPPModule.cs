@@ -49,7 +49,7 @@ namespace TheArchive
             typeof(GameDataBlockBase<>).RegisterSelf();
             typeof(GameDataBlockWrapper<>).RegisterSelf();
 
-            typeof(HarmonyPatches.Patches.RichPresencePatches).RegisterAllPresenceFormatProviders();
+            typeof(Features.RichPresenceCore).RegisterAllPresenceFormatProviders();
 
             CustomProgressionManager.Logger = (string msg) => {
                 ArchiveLogger.Msg(ConsoleColor.Magenta, msg);

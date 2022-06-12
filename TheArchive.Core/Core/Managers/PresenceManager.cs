@@ -8,6 +8,8 @@ namespace TheArchive.Core.Managers
 {
     public class PresenceManager
     {
+        private static Feature _feature;
+
         public static PresenceGameState LastState { get; private set; }
         public static PresenceGameState CurrentState { get; private set; }
 
@@ -24,32 +26,6 @@ namespace TheArchive.Core.Managers
             {
                 CurrentStateStartTime = DateTimeOffset.UtcNow;
             }
-        }
-
-        internal static void Setup()
-        {
-            Settings = LocalFiles.LoadConfig<RichPresenceSettings>(out var fileExists, false).FillDefaultDictValues();
-            if (!fileExists)
-            {
-                LocalFiles.SaveConfig(Settings);
-            }
-
-#warning TODO: implement new settings system and remove this jank:
-            ArchiveMod.Settings.EnableDiscordRichPresence = Settings.EnableDiscordRichPresence;
-
-            if (Settings.UseFormatStringForCopyLobbyIDButton)
-            {
-                ArchiveMod.Settings.LobbyIdFormatString = Settings.CopyLobbyIDFormatString;
-            }
-            else
-            {
-                ArchiveMod.Settings.LobbyIdFormatString = string.Empty;
-            }
-        }
-
-        internal static void OnApplicationQuit()
-        {
-            LocalFiles.SaveConfig(Settings);
         }
 
         public static int GetPercentFromInts(string val, string max)

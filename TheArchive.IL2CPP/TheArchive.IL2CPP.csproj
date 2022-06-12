@@ -296,6 +296,7 @@
   <ItemGroup>
     <Compile Include="ArchiveIL2CPPModule.cs" />
     <Compile Include="ColorConverter.cs" />
+    <Compile Include="Features\SteamRichPresence.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\GameSettingsPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CM_ItemPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CM_PageMatchmakingPatches.cs" />
@@ -305,14 +306,14 @@
     <Compile Include="HarmonyPatches\Patches\DropServerClientAPIViaPlayFabPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerPatches.cs" />
     <Compile Include="Features\MeleeCancelBackport.cs" />
-    <Compile Include="HarmonyPatches\Patches\PlayerInfoPatches.cs" />
+    <Compile Include="Features\PlayerInfo.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayfabMatchmakingManagerPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\UnityLoggerPatches.cs" />
     <Compile Include="Features\HudToggle.cs" />
     <Compile Include="HarmonyPatches\Patches\QualityOfLifePatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\RichPresencePatches.cs" />
+    <Compile Include="Features\RichPresenceCore.cs" />
     <Compile Include="HarmonyPatches\Patches\StatePatches.cs" />
     <Compile Include="ArchiveIL2CPPBootstrap.cs" />
     <Compile Include="HarmonyPatches\Patches\ThrowingWeaponPatches.cs" />

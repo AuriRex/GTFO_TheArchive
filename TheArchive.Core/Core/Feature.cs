@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheArchive.Core.Models;
-using TheArchive.Interfaces;
+﻿using TheArchive.Core.Models;
 
 namespace TheArchive.Core
 {
@@ -21,7 +15,7 @@ namespace TheArchive.Core
         /// <summary>
         /// Information about the current game build.
         /// </summary>
-        public GameBuildInfo BuildInfo { get; internal set; }
+        public static GameBuildInfo BuildInfo { get; internal set; }
 
         public abstract string Name { get; }
         public virtual string Description { get; set; } = string.Empty;
@@ -49,6 +43,14 @@ namespace TheArchive.Core
         /// Called every time the feature gets disabled
         /// </summary>
         public virtual void OnDisable()
+        {
+
+        }
+
+        /// <summary>
+        /// Called whenever the application quits
+        /// </summary>
+        public virtual void OnQuit()
         {
 
         }

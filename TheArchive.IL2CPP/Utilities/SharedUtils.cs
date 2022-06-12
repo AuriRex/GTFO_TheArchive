@@ -224,5 +224,25 @@ namespace TheArchive.Utilities
             EndsWith
         }
 
+        public static bool TryGetPlayerByCharacterIndex(int id, out SNetwork.SNet_Player player)
+        {
+            try
+            {
+                player = SNetwork.SNet.Lobby.Players
+#if IL2CPP
+                    .ToSystemList()
+#endif
+                    .FirstOrDefault(ply => ply.CharacterSlot.index == id);
+
+                return player != null;
+            }
+            catch (Exception)
+            {
+                player = null;
+                ArchiveLogger.Debug($"This shouldn't happen :skull: ({nameof(TryGetPlayerByCharacterIndex)})");
+            }
+            return false;
+        }
+
     }
 }

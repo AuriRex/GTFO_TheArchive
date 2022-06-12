@@ -5,6 +5,8 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Features
 {
+    [EnableFeatureByDefault(true)]
+    [RundownConstraint(Utils.RundownFlags.RundownOne, Utils.RundownFlags.RundownFive)]
     public class MeleeCancelBackport : Feature
     {
         public override string Name => "Modern Melee Cancel";

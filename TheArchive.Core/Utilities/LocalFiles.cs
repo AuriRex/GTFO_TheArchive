@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using TheArchive.Core;
 using TheArchive.Core.Managers;
+using TheArchive.Interfaces;
 
 namespace TheArchive.Utilities
 {
@@ -107,6 +108,23 @@ namespace TheArchive.Utilities
                         Directory.CreateDirectory(_otherConfigsPath);
                 }
                 return _otherConfigsPath;
+            }
+        }
+
+        private static string _featureConfigsPath = null;
+        public static string FeatureConfigsDirectoryPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_featureConfigsPath))
+                {
+                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? MelonUtils.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
+                    _featureConfigsPath = Path.Combine(path, "FeatureSettings/");
+
+                    if (!Directory.Exists(_featureConfigsPath))
+                        Directory.CreateDirectory(_featureConfigsPath);
+                }
+                return _featureConfigsPath;
             }
         }
 
@@ -248,6 +266,44 @@ namespace TheArchive.Utilities
             var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
 
             File.WriteAllText(path, JsonConvert.SerializeObject(config, ArchiveMod.JsonSerializerSettings));
+        }
+
+        internal static object LoadFeatureConfig(string featureIdentifier, Type configType, out bool fileExists, bool saveIfNonExistent = true)
+        {
+            if (string.IsNullOrWhiteSpace(featureIdentifier)) throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
+            if (configType == null) throw new ArgumentNullException($"Parameter {nameof(configType)} may not be null.");
+
+            var path = Path.Combine(FeatureConfigsDirectoryPath, $"{featureIdentifier}_{configType.Name}.json");
+
+            if (!File.Exists(path))
+            {
+                var newT = Activator.CreateInstance(configType);
+                if (saveIfNonExistent)
+                {
+                    SaveFeatureConfig(featureIdentifier, configType, newT);
+                }
+                fileExists = false;
+                return newT;
+            }
+
+            fileExists = true;
+            return JsonConvert.DeserializeObject(File.ReadAllText(path), configType, ArchiveMod.JsonSerializerSettings);
+        }
+
+        internal static object LoadFeatureConfig(string featureIdentifier, Type configType, bool saveIfNonExistent = true)
+        {
+            return LoadFeatureConfig(featureIdentifier, configType, out _, saveIfNonExistent);
+        }
+
+        internal static void SaveFeatureConfig(string featureIdentifier, Type configType, object configInstance)
+        {
+            if (string.IsNullOrWhiteSpace(featureIdentifier)) throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
+            if (configType == null) throw new ArgumentNullException($"Parameter {nameof(configType)} may not be null.");
+            if (configInstance == null) throw new ArgumentNullException($"Parameter {nameof(configInstance)} may not be null.");
+
+            var path = Path.Combine(FeatureConfigsDirectoryPath, $"{featureIdentifier}_{configType.Name}.json");
+
+            File.WriteAllText(path, JsonConvert.SerializeObject(configInstance, ArchiveMod.JsonSerializerSettings));
         }
     }
 }

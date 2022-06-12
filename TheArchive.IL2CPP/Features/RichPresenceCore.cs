@@ -3,19 +3,73 @@ using Player;
 using SNetwork;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using TheArchive.Core;
+using TheArchive.Core.Attributes;
 using TheArchive.Core.Managers;
+using TheArchive.Core.Models;
+using TheArchive.Core.Settings;
 using TheArchive.Utilities;
 using UnityEngine;
-using static TheArchive.Core.ArchivePatcher;
 using static TheArchive.Utilities.PresenceFormatter;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.HarmonyPatches.Patches
+namespace TheArchive.Features
 {
-    [BindPatchToSetting(nameof(ArchiveSettings.EnableDiscordRichPresence), "Discord-RPC")]
-    public class RichPresencePatches
+    [EnableFeatureByDefault(true)]
+    public class RichPresenceCore : Feature
     {
+        public class RichPresenceCoreSettings
+        {
+            public bool EnableDiscordRPC { get; set; } = true;
+        }
+
+        public override string Name => "Rich Presence Core";
+
+        [FeatureConfig]
+        public static RichPresenceCoreSettings Config { get; set; }
+
+        [FeatureConfig]
+        public static RichPresenceSettings DiscordRPCSettings { get; set; }
+
+        public override void Init()
+        {
+            DiscordRPCSettings = DiscordRPCSettings?.FillDefaultDictValues();
+
+            try
+            {
+                DiscordManager.Enable(DiscordRPCSettings);
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
+            }
+
+            PresenceManager.UpdateGameState(PresenceGameState.Startup, false);
+        }
+
+        public override void OnEnable()
+        {
+            try
+            {
+                DiscordManager.Enable(DiscordRPCSettings);
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
+            }
+        }
+
+        public void Update()
+        {
+            DiscordManager.Update();
+        }
+
+        public override void OnQuit()
+        {
+            DiscordManager.Disable();
+        }
+
         #region weapons
         public static string ItemNameForSlot(InventorySlot slot)
         {
@@ -61,7 +115,11 @@ namespace TheArchive.HarmonyPatches.Patches
             BackpackItem backpackItem = null;
             if(PlayerBackpackManager.LocalBackpack?.TryGetBackpackItem(slot, out backpackItem) ?? false)
             {
+#if IL2CPP
                 return backpackItem?.Instance?.TryCast<ItemEquippable>()?.GetCurrentClip() ?? -1;
+#else
+                return (backpackItem?.Instance as ItemEquippable)?.GetCurrentClip() ?? -1;
+#endif
             }
             return -1;
         }
@@ -89,9 +147,9 @@ namespace TheArchive.HarmonyPatches.Patches
 
         [PresenceFormatProvider(nameof(PresenceManager.MaxSpecialAmmo))]
         public static int MaxSpecialAmmo => (LocalAmmo?.SpecialAmmo?.BulletsMaxCap ?? -1);
-        #endregion player_values
+#endregion player_values
 
-        #region lobby
+#region lobby
         [PresenceFormatProvider(nameof(PresenceManager.LobbyID))]
         public static string LobbyID => SNet.Lobby?.Identifier?.ID.ToString() ?? "0123456789";
 
@@ -116,13 +174,13 @@ namespace TheArchive.HarmonyPatches.Patches
         {
             get
             {
-                return Core.Managers.PresenceManager.MaxPlayerSlots - GetPlayerCount();
+                return PresenceManager.MaxPlayerSlots - GetPlayerCount();
             }
         }
 
         private static int GetPlayerCount()
         {
-            if (FlagsContain(RundownFlags.RundownSix.To(RundownFlags.Latest), ArchiveMod.CurrentRundown))
+            if (FlagsContain(RundownFlags.RundownSix.To(RundownFlags.Latest), BuildInfo.Rundown))
                 return GetPlayerCountR6Plus();
 
             return SNet.Lobby?.Players?.Count ?? 1;
@@ -130,11 +188,15 @@ namespace TheArchive.HarmonyPatches.Patches
 
         private static int GetPlayerCountR6Plus()
         {
-            return SNet.Lobby?.Players.ToSystemList()?.Where(ply => !ply.IsBot)?.Count() ?? 1;
+            return SNet.Lobby?.Players
+#if IL2CPP
+                ?.ToSystemList()
+#endif
+                ?.Where(ply => !ply.IsBot)?.Count() ?? 1;
         }
-        #endregion lobby
+#endregion lobby
 
-        #region expedition
+#region expedition
         [PresenceFormatProvider(nameof(PresenceManager.ExpeditionTier))]
         public static string ExpeditionTier => RundownManager.ActiveExpedition?.Descriptive?.Prefix ?? "?";
 
@@ -159,28 +221,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
         [PresenceFormatProvider(nameof(PresenceManager.AreaSuffix))]
         public static string AreaSuffix => PlayerManager.GetLocalPlayerAgent()?.CourseNode?.m_area?.m_navInfo?.Suffix ?? "?";
-
-        #endregion expedition
-
-        // Disables or changes Steam rich presence
-        [ArchivePatch(typeof(SNet_Core_STEAM), "SetFriendsData", new Type[] { typeof(FriendsDataType), typeof(string) })]
-        internal static class SNet_Core_STEAM_SetFriendsDataPatch
-        {
-            public static void Prefix(FriendsDataType type, ref string data)
-            {
-                if (ArchiveMod.Settings.DisableSteamRichPresence)
-                {
-                    data = string.Empty;
-                    return;
-                }
-
-                if (type == FriendsDataType.ExpeditionName)
-                {
-                    data = $"{FormatPresenceString("%Rundown%%Expedition%")} \"{data}\"";
-                }
-                //ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"{nameof(SNet_Core_STEAM)}.{nameof(SNet_Core_STEAM.SetFriendsData)} called: \"{type}\": {data}");
-            }
-        }
+#endregion expedition
 
         // RundownManager.SetActiveExpedition(pActiveExpedition expPackage, ExpeditionInTierData expTierData) calls:
         // RundownManager.GetUniqueExpeditionKey(string rundownKey, eRundownTier tier, int expIndex)
@@ -195,7 +236,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
         public static void CopyLobbyIdToClipboard(int _)
         {
-            if (SNet.IsExternalMatchMakingActive)
+            if (BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownFive.ToLatest()) && IsExternalMatchMakingActive())
             {
                 return;
             }
@@ -208,6 +249,12 @@ namespace TheArchive.HarmonyPatches.Patches
             var formatedLobbyId = PresenceFormatter.FormatPresenceString(ArchiveMod.Settings.LobbyIdFormatString);
             GUIUtility.systemCopyBuffer = formatedLobbyId;
             ArchiveLogger.Notice($"Copied lobby id to clipboard: {formatedLobbyId}");
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static bool IsExternalMatchMakingActive()
+        {
+            return SNet.IsExternalMatchMakingActive;
         }
 
         [ArchivePatch(typeof(CM_PageSettings), nameof(CM_PageSettings.Setup))]
@@ -248,26 +295,26 @@ namespace TheArchive.HarmonyPatches.Patches
                 switch (nextState)
                 {
                     case eGameStateName.NoLobby:
-                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.NoLobby, keepTimer: PresenceManager.CurrentState == Core.Models.PresenceGameState.Startup);
+                        PresenceManager.UpdateGameState(PresenceGameState.NoLobby, keepTimer: PresenceManager.CurrentState == PresenceGameState.Startup);
                         break;
                     case eGameStateName.ExpeditionAbort:
                     case eGameStateName.Lobby:
-                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.InLobby);
+                        PresenceManager.UpdateGameState(PresenceGameState.InLobby);
                         break;
                     case eGameStateName.Generating:
-                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.Dropping);
+                        PresenceManager.UpdateGameState(PresenceGameState.Dropping);
                         break;
                     case eGameStateName.ReadyToStopElevatorRide:
-                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.LevelGenerationFinished, keepTimer: true);
+                        PresenceManager.UpdateGameState(PresenceGameState.LevelGenerationFinished, keepTimer: true);
                         break;
                     case eGameStateName.InLevel:
-                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.InLevel, keepTimer: PresenceManager.CurrentState == Core.Models.PresenceGameState.ExpeditionFailed);
+                        PresenceManager.UpdateGameState(PresenceGameState.InLevel, keepTimer: PresenceManager.CurrentState == PresenceGameState.ExpeditionFailed);
                         break;
                     case eGameStateName.ExpeditionFail:
-                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.ExpeditionFailed, keepTimer: true);
+                        PresenceManager.UpdateGameState(PresenceGameState.ExpeditionFailed, keepTimer: true);
                         break;
                     case eGameStateName.ExpeditionSuccess:
-                        PresenceManager.UpdateGameState(Core.Models.PresenceGameState.ExpeditionSuccess, keepTimer: true);
+                        PresenceManager.UpdateGameState(PresenceGameState.ExpeditionSuccess, keepTimer: true);
                         break;
                 }
             }

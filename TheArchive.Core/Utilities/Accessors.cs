@@ -102,6 +102,79 @@ namespace TheArchive.Utilities
     }
 
     /// <summary>
+    /// Globally cached reflection wrapper for properties.
+    /// </summary>
+    /// <typeparam name="T">The Type that the property belongs to</typeparam>
+    /// <typeparam name="PT">The Type of the property itself</typeparam>
+    public class PropertyAccessor<T, PT> : AccessorBase
+    {
+        /// <summary>
+        /// Gets a <see cref="PropertyAccessor{T, FT}"/> from the global cache or creates a new instance if there is none and adds it to the cache.
+        /// </summary>
+        /// <param name="propertyName">The name of the property</param>
+        /// <returns><see cref="PropertyAccessor{T, FT}"/></returns>
+        public static PropertyAccessor<T, PT> GetAccessor(string propertyName)
+        {
+            var identifier = $"Field_{typeof(T).FullName}_{propertyName}";
+
+            if (Accessors.TryGetValue(identifier, out var val))
+                return (PropertyAccessor<T, PT>)val;
+
+            val = new PropertyAccessor<T, PT>(identifier, propertyName);
+
+            Accessors.Add(identifier, val);
+
+            return (PropertyAccessor<T, PT>)val;
+        }
+
+        private readonly PropertyInfo _property;
+
+        public override bool HasMemberBeenFound => _property != null;
+
+        private PropertyAccessor(string identifier, string propertyName) : base(identifier)
+        {
+            _property = typeof(T).GetProperty(propertyName, AnyBindingFlags);
+        }
+
+        /// <summary>
+        /// Get the value of the reflected property from an <paramref name="instance"/>.
+        /// </summary>
+        /// <param name="instance">An object instance to get the value from</param>
+        /// <returns></returns>
+        public PT Get(T instance)
+        {
+            try
+            {
+                return (PT)_property.GetValue(instance);
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Error($"Exception while getting {nameof(FieldAccessor<T, PT>)} property \"{Identifier}\"!");
+                ArchiveLogger.Exception(ex);
+            }
+            return default;
+        }
+
+        /// <summary>
+        /// Set the <paramref name="value"/> of the reflected property on an <paramref name="instance"/>. 
+        /// </summary>
+        /// <param name="instance">An object instance to set the value of</param>
+        /// <param name="value">The new value</param>
+        public void Set(T instance, PT value)
+        {
+            try
+            {
+                _property.SetValue(instance, value);
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Error($"Exception while setting {nameof(FieldAccessor<T, PT>)} property \"{Identifier}\"!");
+                ArchiveLogger.Exception(ex);
+            }
+        }
+    }
+
+    /// <summary>
     /// Globally cached reflection wrapper for methods.
     /// </summary>
     /// <typeparam name="T">The Type that the method belongs to</typeparam>

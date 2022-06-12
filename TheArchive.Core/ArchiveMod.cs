@@ -90,16 +90,6 @@ namespace TheArchive
 
             try
             {
-                PresenceManager.Setup();
-                DiscordManager.Setup();
-            }
-            catch (Exception ex)
-            {
-                ArchiveLogger.Exception(ex);
-            }
-
-            try
-            {
                 ApplyPatches(CurrentRundown);
             }
             catch (Exception ex)
@@ -110,8 +100,8 @@ namespace TheArchive
 
         public override void OnApplicationQuit()
         {
-            PresenceManager.OnApplicationQuit();
             DiscordManager.OnApplicationQuit();
+            FeatureManager.Instance.OnApplicationQuit();
             // Doesn't work properly anyways ...
             // UnpatchAll();
 
@@ -539,7 +529,6 @@ namespace TheArchive
 
         public override void OnUpdate()
         {
-            DiscordManager.Update();
             FeatureManager.Instance.OnUpdate();
         }
 

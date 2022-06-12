@@ -148,11 +148,11 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\MeleeCancelBackport.cs">
       <Link>Features\MeleeCancelBackport.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
+      <Link>Features\PlayerInfo.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\CM_PageSettingsPatches.cs">
       <Link>HarmonyPatches\Patches\CM_PageSettingsPatches.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\PlayerInfoPatches.cs">
-      <Link>HarmonyPatches\Patches\PlayerInfoPatches.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\UnreadyButtonPatches.cs">
       <Link>HarmonyPatches\Patches\UnreadyButtonPatches.cs</Link>
