@@ -202,7 +202,21 @@ namespace TheArchive.Features
 
 #region expedition
         [PresenceFormatProvider(nameof(PresenceManager.ExpeditionTier))]
-        public static string ExpeditionTier => RundownManager.ActiveExpedition?.Descriptive?.Prefix ?? "?";
+        public static string ExpeditionTier
+        {
+            get
+            {
+                string value = RundownManager.ActiveExpedition?.Descriptive?.Prefix ?? "?";
+
+                if(BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownTwo | RundownFlags.RundownThree))
+                {
+                    if(value.Length > 2)
+                        return value.Substring(2);
+                }
+
+                return value;
+            }
+        }
 
         [PresenceFormatProvider(nameof(PresenceManager.ExpeditionTierIsSpecial))]
         public static bool ExpeditionTierIsSpecial => (RundownManager.ActiveExpedition?.Descriptive?.Prefix ?? "?").EndsWith("X");
