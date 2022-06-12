@@ -3,7 +3,7 @@
 namespace TheArchive.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class IsTypeProvider : Attribute
+    public class IsLateUpdate : Attribute
     {
     }
 }

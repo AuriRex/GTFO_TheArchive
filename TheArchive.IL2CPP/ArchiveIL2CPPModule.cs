@@ -114,15 +114,6 @@ namespace TheArchive
             }
 #endif
 
-            if (Input.GetKeyDown(KeyCode.F1) && ArchiveMod.Settings.EnableHudToggle)
-            {
-                // Toggle hud
-                ArchiveMod.HudIsVisible = !ArchiveMod.HudIsVisible;
-                GuiManager.PlayerLayer.SetVisible(ArchiveMod.HudIsVisible);
-                GuiManager.WatermarkLayer.SetVisible(ArchiveMod.HudIsVisible);
-                GuiManager.CrosshairLayer.SetVisible(ArchiveMod.HudIsVisible);
-            }
-
             if(Input.GetKeyDown(KeyCode.F2) && ArchiveMod.Settings.EnableHideWeapon)
             {
                 // Toggle First Person Item hidden

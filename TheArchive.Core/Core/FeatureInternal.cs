@@ -12,6 +12,10 @@ namespace TheArchive.Core
     internal class FeatureInternal
     {
         internal GameBuildInfo BuildInfo => _feature.BuildInfo;
+        internal bool HasUpdateMethod => UpdateDelegate != null;
+        internal Update UpdateDelegate { get; private set; }
+        internal bool HasLateUpdateMethod => LateUpdateDelegate != null;
+        internal LateUpdate LateUpdateDelegate { get; private set; }
 
         private Feature _feature;
         private HarmonyLib.Harmony _harmonyInstance;
@@ -30,6 +34,9 @@ namespace TheArchive.Core
             fi.Init(feature);
         }
 
+        public delegate void Update();
+        public delegate void LateUpdate();
+
         internal void Init(Feature feature)
         {
             _feature = feature;
@@ -40,6 +47,36 @@ namespace TheArchive.Core
             {
                 throw new ArchivePatchDuplicateIDException($"Provided feature id \"{_feature.Identifier}\" has already been registered by {FeatureManager.GetById(_feature.Identifier)}!");
             }
+
+            var updateMethod = _feature.GetType().GetMethods()
+                .FirstOrDefault(mi => (mi.Name == "Update" || mi.GetCustomAttribute<IsUpdate>() != null)
+                    && mi.GetParameters().Length == 0
+                    && !mi.IsStatic
+                    && RundownConstraintsMatch(mi)
+                    && BuildNumberMatches(mi));
+
+            var updateDelegate = updateMethod?.CreateDelegate(typeof(Update), _feature);
+            if (updateDelegate != null)
+            {
+                ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] {nameof(Update)} method found.");
+                UpdateDelegate = (Update)updateDelegate;
+            }
+
+            var lateUpdateMethod = _feature.GetType().GetMethods()
+                .FirstOrDefault(mi => (mi.Name == "LateUpdate" || mi.GetCustomAttribute<IsLateUpdate>() != null)
+                    && mi.GetParameters().Length == 0
+                    && !mi.IsStatic
+                    && RundownConstraintsMatch(mi)
+                    && BuildNumberMatches(mi));
+
+            var lateUpdateDelegate = lateUpdateMethod?.CreateDelegate(typeof(LateUpdate), _feature);
+            if(lateUpdateDelegate != null)
+            {
+                ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] {nameof(LateUpdate)} method found.");
+                LateUpdateDelegate = (LateUpdate)lateUpdateDelegate;
+            }
+                
+
 
             _harmonyInstance = new HarmonyLib.Harmony(_feature.Identifier);
 
@@ -70,7 +107,7 @@ namespace TheArchive.Core
                     {
                         var typeMethod = patchType.GetMethods(Utils.AnyBindingFlagss)
                             .FirstOrDefault(mi => mi.ReturnType == typeof(Type)
-                                && mi.GetCustomAttribute<IsTypeProvider>() != null
+                                && (mi.Name == "Type" || mi.GetCustomAttribute<IsTypeProvider>() != null)
                                 && RundownConstraintsMatch(mi)
                                 && BuildNumberMatches(mi));
 
@@ -102,12 +139,12 @@ namespace TheArchive.Core
                     }
 
                     var prefixMethodInfo = patchType.GetMethods(Utils.AnyBindingFlagss)
-                            .FirstOrDefault(mi => mi.GetCustomAttribute<IsPrefix>() != null
+                            .FirstOrDefault(mi => (mi.Name == "Prefix" || mi.GetCustomAttribute<IsPrefix>() != null)
                                 && RundownConstraintsMatch(mi)
                                 && BuildNumberMatches(mi));
 
                     var postfixMethodInfo = patchType.GetMethods(Utils.AnyBindingFlagss)
-                            .FirstOrDefault(mi => mi.GetCustomAttribute<IsPostfix>() != null
+                            .FirstOrDefault(mi => (mi.Name == "Postfix" || mi.GetCustomAttribute<IsPostfix>() != null)
                                 && RundownConstraintsMatch(mi)
                                 && BuildNumberMatches(mi));
 

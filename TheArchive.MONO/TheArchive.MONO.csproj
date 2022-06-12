@@ -142,6 +142,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\TheArchive.IL2CPP\Features\HudToggle.cs">
+      <Link>Features\HudToggle.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\MeleeCancelBackport.cs">
       <Link>Features\MeleeCancelBackport.cs</Link>
     </Compile>
@@ -169,7 +172,6 @@
     <Compile Include="HarmonyPatches\Patches\RichPresencePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\ThrowingWeaponPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\UnityLoggerPatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\HudTogglePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\QualityOfLifePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\AnalyticsPatches.cs" />

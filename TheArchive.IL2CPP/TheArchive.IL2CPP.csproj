@@ -310,7 +310,7 @@
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\UnityLoggerPatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\HudTogglePatches.cs" />
+    <Compile Include="Features\HudToggle.cs" />
     <Compile Include="HarmonyPatches\Patches\QualityOfLifePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\RichPresencePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\StatePatches.cs" />

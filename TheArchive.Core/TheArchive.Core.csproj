@@ -65,9 +65,11 @@
     <Compile Include="Core\Attributes\ArchivePatch.cs" />
     <Compile Include="Core\Attributes\BuildConstraint.cs" />
     <Compile Include="Core\Attributes\IsInitMethod.cs" />
+    <Compile Include="Core\Attributes\IsLateUpdate.cs" />
     <Compile Include="Core\Attributes\IsPostfix.cs" />
     <Compile Include="Core\Attributes\IsPrefix.cs" />
     <Compile Include="Core\Attributes\IsTypeProvider.cs" />
+    <Compile Include="Core\Attributes\IsUpdate.cs" />
     <Compile Include="Core\Attributes\RundownConstraint.cs" />
     <Compile Include="Core\BuildDB.cs" />
     <Compile Include="Core\DiscordApi\ActivityManager.cs" />

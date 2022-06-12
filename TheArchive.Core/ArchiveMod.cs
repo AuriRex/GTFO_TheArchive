@@ -47,8 +47,6 @@ namespace TheArchive
         public event Action DataBlocksReady;
         public event Action<int> GameStateChanged;
 
-        public static bool HudIsVisible { get; set; } = true;
-
         internal static ArchiveMod Instance;
         internal static event Action<IArchiveModule> OnNewModuleRegistered;
 
@@ -542,6 +540,7 @@ namespace TheArchive
         public override void OnUpdate()
         {
             DiscordManager.Update();
+            FeatureManager.Instance.OnUpdate();
         }
 
         public override void OnLateUpdate()
@@ -558,7 +557,8 @@ namespace TheArchive
                     ArchiveLogger.Exception(ex);
                 }
             }
-            base.OnLateUpdate();
+
+            FeatureManager.Instance.OnLateUpdate();
         }
 
         private Assembly LoadMainArchiveModule(bool isIl2Cpp)
