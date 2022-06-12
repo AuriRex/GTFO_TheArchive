@@ -24,6 +24,7 @@ namespace TheArchive.Features
         [ArchivePatch(typeof(SNet_Core_STEAM), "SetFriendsData", new Type[] { typeof(FriendsDataType), typeof(string) })]
         internal static class SNet_Core_STEAM_SetFriendsDataPatch
         {
+            // string data here is the expedition name
             public static void Prefix(FriendsDataType type, ref string data)
             {
                 if (Config.DisableSteamRPC)
@@ -34,7 +35,7 @@ namespace TheArchive.Features
 
                 if (type == FriendsDataType.ExpeditionName)
                 {
-                    data = $"{FormatPresenceString("%Rundown%%Expedition%")} \"{data}\"";
+                    data = $"{FormatPresenceString(Config.CustomSteamRPCFormat)} \"{data}\"";
                 }
             }
         }

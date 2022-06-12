@@ -50,7 +50,7 @@ namespace TheArchive
             typeof(GameDataBlockBase<>).RegisterSelf();
             typeof(GameDataBlockWrapper<>).RegisterSelf();
 
-            typeof(HarmonyPatches.Patches.RichPresencePatches).RegisterAllPresenceFormatProviders();
+            typeof(Features.RichPresenceCore).RegisterAllPresenceFormatProviders();
 
             Core.GameDataInitialized += OnGameDataInitialized;
             Core.DataBlocksReady += OnDataBlocksReady;

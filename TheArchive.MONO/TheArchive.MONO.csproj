@@ -151,6 +151,12 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
       <Link>Features\PlayerInfo.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\RichPresenceCore.cs">
+      <Link>Features\RichPresenceCore.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\SteamRichPresence.cs">
+      <Link>Features\SteamRichPresence.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\CM_PageSettingsPatches.cs">
       <Link>HarmonyPatches\Patches\CM_PageSettingsPatches.cs</Link>
     </Compile>
@@ -169,7 +175,6 @@
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\R1SNetRevisionOverridePatch.cs" />
-    <Compile Include="HarmonyPatches\Patches\RichPresencePatches.cs" />
     <Compile Include="HarmonyPatches\Patches\ThrowingWeaponPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\UnityLoggerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />

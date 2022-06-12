@@ -188,11 +188,15 @@ namespace TheArchive.Features
 
         private static int GetPlayerCountR6Plus()
         {
-            return SNet.Lobby?.Players
 #if IL2CPP
+            return SNet.Lobby?.Players
+
                 ?.ToSystemList()
-#endif
+
                 ?.Where(ply => !ply.IsBot)?.Count() ?? 1;
+#else
+            return 1;
+#endif
         }
 #endregion lobby
 
@@ -254,14 +258,20 @@ namespace TheArchive.Features
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool IsExternalMatchMakingActive()
         {
+#if IL2CPP
             return SNet.IsExternalMatchMakingActive;
+#else
+            return false;
+#endif
         }
 
         [ArchivePatch(typeof(CM_PageSettings), nameof(CM_PageSettings.Setup))]
         internal static class CM_PageSettings_SetupPatch
         {
-            public static void Postfix(CM_PageSettings __instance)
+            [IsPostfix, RundownConstraint(RundownFlags.RundownFour, RundownFlags.Latest)]
+            public static void PostfixIL2CPP(CM_PageSettings __instance)
             {
+#if IL2CPP
                 CM_Item copyLobbyIDButton = (CM_Item) __instance.GetType().GetProperty(nameof(__instance.m_copyLobbyIdButton))?.GetValue(__instance, null);
 
                 if(copyLobbyIDButton != null)
@@ -269,6 +279,22 @@ namespace TheArchive.Features
                     ArchiveLogger.Info("Hooking CM_PageSettings Copy Lobby ID Button ...");
                     copyLobbyIDButton.OnBtnPressCallback = (Action<int>) CopyLobbyIdToClipboard;
                 }
+#endif
+            }
+
+            [IsPostfix, RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownThree)]
+            public static void PostfixMono(CM_PageSettings __instance)
+            {
+#if MONO
+                CM_Item copyLobbyIDButton = __instance.m_movingContentHolder.GetChildWithExactName("CM_RedButtonFramed(Clone)")?.GetComponent<CM_Item>();
+
+                if (copyLobbyIDButton != null)
+                {
+                    ArchiveLogger.Info("Hooking CM_PageSettings Copy Lobby ID Button ...");
+                    MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnPressCallback), copyLobbyIDButton);
+                    copyLobbyIDButton.OnBtnPressCallback += CopyLobbyIdToClipboard;
+                }
+#endif
             }
         }
 
@@ -277,12 +303,17 @@ namespace TheArchive.Features
         {
             public static void Postfix(CM_PageLoadout __instance)
             {
-                CM_Item copyLobbyIDButton = __instance.m_movingContentHolder?.GetChildWithExactName("ShareServerId")?.GetChildWithExactName("Button Copy Clipboard")?.GetComponent<CM_Item>();
+                CM_Item copyLobbyIDButton = __instance.m_copyLobbyIdButton;
 
-                if(copyLobbyIDButton != null)
+                if (copyLobbyIDButton != null)
                 {
                     ArchiveLogger.Info("Hooking CM_PageLoadout Copy Lobby ID Button ...");
+#if IL2CPP
                     copyLobbyIDButton.OnBtnPressCallback = (Action<int>) CopyLobbyIdToClipboard;
+#else
+                    MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnPressCallback), copyLobbyIDButton);
+                    copyLobbyIDButton.OnBtnPressCallback += CopyLobbyIdToClipboard;
+#endif
                 }
             }
         }
@@ -297,7 +328,9 @@ namespace TheArchive.Features
                     case eGameStateName.NoLobby:
                         PresenceManager.UpdateGameState(PresenceGameState.NoLobby, keepTimer: PresenceManager.CurrentState == PresenceGameState.Startup);
                         break;
+#if IL2CPP
                     case eGameStateName.ExpeditionAbort:
+#endif
                     case eGameStateName.Lobby:
                         PresenceManager.UpdateGameState(PresenceGameState.InLobby);
                         break;
