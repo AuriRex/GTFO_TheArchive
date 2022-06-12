@@ -100,11 +100,11 @@ namespace TheArchive
         public void OnLateUpdate()
         {
 #if DEBUG
-            if (Input.GetKeyDown(KeyCode.G))
+            if (Input.GetKeyDown(KeyCode.G) && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.RightControl))
             {
                 FeatureManager.Instance.DEBUG_DISABLE();
             }
-            if (Input.GetKeyDown(KeyCode.H))
+            if (Input.GetKeyDown(KeyCode.H) && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.RightControl))
             {
                 FeatureManager.Instance.DEBUG_ENABLE();
             }

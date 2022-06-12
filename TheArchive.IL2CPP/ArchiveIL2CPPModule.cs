@@ -104,17 +104,17 @@ namespace TheArchive
         public void OnLateUpdate()
         {
 #if DEBUG
-            if(Input.GetKeyDown(KeyCode.G))
+            if (Input.GetKeyDown(KeyCode.G) && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.RightControl))
             {
                 FeatureManager.Instance.DEBUG_DISABLE();
             }
-            if (Input.GetKeyDown(KeyCode.H))
+            if (Input.GetKeyDown(KeyCode.H) && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.RightControl))
             {
                 FeatureManager.Instance.DEBUG_ENABLE();
             }
 #endif
 
-            if(Input.GetKeyDown(KeyCode.F2) && ArchiveMod.Settings.EnableHideWeapon)
+            if (Input.GetKeyDown(KeyCode.F2) && ArchiveMod.Settings.EnableHideWeapon)
             {
                 // Toggle First Person Item hidden
                 var localPlayerAgent = Player.PlayerManager.GetLocalPlayerAgent();
