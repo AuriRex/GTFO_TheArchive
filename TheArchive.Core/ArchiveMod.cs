@@ -8,6 +8,7 @@ using System.Reflection;
 using TheArchive;
 using TheArchive.Core;
 using TheArchive.Core.Managers;
+using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
@@ -40,6 +41,7 @@ namespace TheArchive
         }
 
         public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnitialized;
+        public static GameBuildInfo CurrentBuildInfo { get; private set; }
 
         public event Action<RundownID> GameDataInitialized;
         public event Action DataBlocksReady;
@@ -48,12 +50,14 @@ namespace TheArchive
         public static bool HudIsVisible { get; set; } = true;
 
         internal static ArchiveMod Instance;
+        internal static event Action<IArchiveModule> OnNewModuleRegistered;
 
         private IArchiveModule _mainModule;
 
         private readonly HashSet<Assembly> _inspectedAssemblies = new HashSet<Assembly>();
         private readonly HashSet<Type> _typesToInitOnDataBlocksReady = new HashSet<Type>();
         private readonly HashSet<Type> _typesToInitOnGameDataInit = new HashSet<Type>();
+        private readonly HashSet<IInitializable> _iinitializablesToInjectOnGameDataInit = new HashSet<IInitializable>();
 
         private readonly HashSet<Assembly> _moduleAssemblies = new HashSet<Assembly>();
         private readonly List<Type> _moduleTypes = new List<Type>();
@@ -71,6 +75,14 @@ namespace TheArchive
 
             CurrentRundown = BuildDB.GetCurrentRundownID(LocalFiles.BuildNumber);
             ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"Current game revision determined to be {LocalFiles.BuildNumber}! ({CurrentRundown})");
+
+            CurrentBuildInfo = new GameBuildInfo
+            {
+                BuildNumber = LocalFiles.BuildNumber,
+                Rundown = CurrentRundown
+            };
+
+            FeatureManager.Internal_Init();
 
             var archiveModule = LoadMainArchiveModule(MelonUtils.IsGameIl2Cpp());
 
@@ -167,6 +179,8 @@ namespace TheArchive
             if (!typeof(IArchiveModule).IsAssignableFrom(moduleType)) throw new ArgumentException($"Type \"{moduleType.Name}\" does not implement {nameof(IArchiveModule)}!");
 
             var module = CreateAndInitModule(moduleType);
+
+            OnNewModuleRegistered?.Invoke(module);
 
             if (CurrentRundown != RundownID.RundownUnitialized)
             {
@@ -281,6 +295,19 @@ namespace TheArchive
                 }
             }
 
+            foreach(var iinit in _iinitializablesToInjectOnGameDataInit)
+            {
+                try
+                {
+                    InjectInstanceIntoModules(iinit);
+                }
+                catch (Exception ex)
+                {
+                    ArchiveLogger.Error($"Trying to Inject \"{iinit.GetType().FullName}\" threw an exception:");
+                    ArchiveLogger.Exception(ex);
+                }
+            }
+
             /*var rundown = Utils.IntToRundownEnum((int) rundownId);
             ApplyPatches(rundown);*/
 
@@ -369,6 +396,29 @@ namespace TheArchive
 
         private void InspectType(Type type)
         {
+            if(typeof(Feature).IsAssignableFrom(type) && type != typeof(Feature))
+            {
+                FeatureManager.Instance.InitFeature(type);
+                return;
+            }
+
+            if (typeof(IInitImmediately).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+            {
+                IInitializable instance = null;
+                try
+                {
+                    InitInitializables(type, out instance);
+                }
+                catch (Exception ex)
+                {
+                    ArchiveLogger.Error($"Trying to Init \"{type.FullName}\" (immediately) threw an exception:");
+                    ArchiveLogger.Exception(ex);
+                }
+                if(instance != null)
+                    _iinitializablesToInjectOnGameDataInit.Add(instance);
+                return;
+            }
+
             if (typeof(IInitAfterGameDataInitialized).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
             {
                 _typesToInitOnGameDataInit.Add(type);

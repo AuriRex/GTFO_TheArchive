@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,6 +10,7 @@ namespace TheArchive.Utilities
 {
     public static class Utils
     {
+        public const BindingFlags AnyBindingFlagss = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
         private static Type _UnityEngine_Random = Type.GetType("UnityEngine.Random, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         private static MethodInfo _UnityEngine_Random_RandomRangeInt;
@@ -325,18 +327,12 @@ namespace TheArchive.Utilities
         {
             if (id == RundownID.RundownUnknown) return false;
 
-            RundownFlags currentRundown;
-            if (!Enum.TryParse<RundownFlags>(id.ToString(), out currentRundown))
+            if (!Enum.TryParse(id.ToString(), out RundownFlags currentRundown))
             {
                 return false;
             }
 
-            if((flags & currentRundown) == currentRundown)
-            {
-                return true;
-            }
-
-            return false;
+            return (flags & currentRundown) == currentRundown;
         }
 
         public static RundownFlags FlagsFromTo(RundownFlags from, RundownFlags to)
@@ -362,6 +358,17 @@ namespace TheArchive.Utilities
             }
 
             return flags.Value;
+        }
+
+        public static bool TryGetMethodByName(Type type, string name, out MethodInfo methodInfo)
+        {
+            if (type.GetMethods(AnyBindingFlagss).Any(x => x.Name.Equals(name)))
+            {
+                methodInfo = type.GetMethod(name, AnyBindingFlagss);
+                return true;
+            }
+            methodInfo = null;
+            return false;
         }
     }
 }

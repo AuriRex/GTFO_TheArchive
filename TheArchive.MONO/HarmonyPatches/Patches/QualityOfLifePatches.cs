@@ -38,7 +38,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
             public static void Prefix(ref LG_GenericTerminalItem __instance)
             {
-                if(!SNetwork.SNet.IsMaster)
+                if (!SNetwork.SNet.IsMaster)
                 {
                     return;
                 }
@@ -55,7 +55,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 {
                     var bounds = MonoUtils.GetMaxBounds(__instance.gameObject);
 
-                    PlayerAgent_TriggerMarkerPing.Invoke(localPlayerAgent, new object[] { (iPlayerPingTarget) CustomTerminalPingQoLInstance, bounds.center });
+                    PlayerAgent_TriggerMarkerPing.Invoke(localPlayerAgent, new object[] { (iPlayerPingTarget)CustomTerminalPingQoLInstance, bounds.center });
                 }
                 catch (Exception ex)
                 {
@@ -65,7 +65,7 @@ namespace TheArchive.HarmonyPatches.Patches
         }
 
         // Change the "WARDEN OBJECTIVE" text in the top left of the screen to the current selected mission, ex: "R1A1:The Admin"
-        [ArchivePatch(typeof(PlayerGuiLayer), "UpdateObjectives")] 
+        [ArchivePatch(typeof(PlayerGuiLayer), "UpdateObjectives")]
         internal static class PlayerGuiLayer_UpdateObjectivesPatch
         {
             public static void Postfix(ref PlayerGuiLayer __instance, ref PUI_GameObjectives ___m_wardenObjective)
@@ -78,7 +78,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
                     string rundownPrefix = string.Empty;
 
-                    switch(ArchiveMod.CurrentRundown)
+                    switch (ArchiveMod.CurrentRundown)
                     {
                         case RundownID.RundownTwo:
                         case RundownID.RundownThree:
@@ -151,8 +151,7 @@ namespace TheArchive.HarmonyPatches.Patches
         [ArchivePatch(typeof(LG_SecurityDoor_Locks), "OnDoorState", RundownFlags.RundownOne, RundownFlags.RundownThree)]
         internal static class LG_SecurityDoor_Locks_OnDoorStatePatch
         {
-            // iChainedPuzzleCore[]
-            static FieldInfo ChainedPuzzleInstance_m_chainedPuzzleCores = typeof(ChainedPuzzleInstance).GetField("m_chainedPuzzleCores", AnyBindingFlags);
+            static FieldAccessor<ChainedPuzzleInstance, iChainedPuzzleCore[]> A_ChainedPuzzleInstance_m_chainedPuzzleCores = FieldAccessor<ChainedPuzzleInstance, iChainedPuzzleCore[]>.GetAccessor("m_chainedPuzzleCores");
 
             public static void Postfix(LG_SecurityDoor_Locks __instance, pDoorState state, ref Interact_Timed ___m_intOpenDoor)
             {
@@ -162,7 +161,7 @@ namespace TheArchive.HarmonyPatches.Patches
                     {
                         case eDoorStatus.Closed_LockedWithChainedPuzzle_Alarm:
                             if (__instance.ChainedPuzzleToSolve == null) break;
-                            var puzzles = (iChainedPuzzleCore[]) ChainedPuzzleInstance_m_chainedPuzzleCores.GetValue(__instance.ChainedPuzzleToSolve);
+                            var puzzles = A_ChainedPuzzleInstance_m_chainedPuzzleCores.Get(__instance.ChainedPuzzleToSolve);
 
                             if (puzzles == null) break;
                             var value = Utils.ToRoman(puzzles.Length);
@@ -170,7 +169,7 @@ namespace TheArchive.HarmonyPatches.Patches
                             break;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     ArchiveLogger.Exception(ex);
                 }
@@ -191,16 +190,16 @@ namespace TheArchive.HarmonyPatches.Patches
         [ArchivePatch(typeof(LG_ComputerTerminalCommandInterpreter), nameof(LG_ComputerTerminalCommandInterpreter.AddOutput), RundownFlags.RundownOne, new Type[] { typeof(string), typeof(bool) })]
         internal static class LG_ComputerTerminalCommandInterpreter_AddOutputPatch_R1
         {
-            private static FieldInfo LG_ComputerTerminalCommandInterpreter_m_terminal = typeof(LG_ComputerTerminalCommandInterpreter).GetField("m_terminal", AnyBindingFlags);
+            static FieldAccessor<LG_ComputerTerminalCommandInterpreter, LG_ComputerTerminal> A_LG_ComputerTerminalCommandInterpreter_m_terminal = FieldAccessor<LG_ComputerTerminalCommandInterpreter, LG_ComputerTerminal>.GetAccessor("m_terminal");
 
             public static void Postfix(LG_ComputerTerminalCommandInterpreter __instance, string line)
             {
                 try
                 {
-                    var m_terminal = (LG_ComputerTerminal) LG_ComputerTerminalCommandInterpreter_m_terminal.GetValue(__instance);
+                    var m_terminal = A_LG_ComputerTerminalCommandInterpreter_m_terminal.Get(__instance);
                     LG_ComputerTerminalCommandInterpreter_AddOutputPatch.Postfix(__instance, ref m_terminal, line);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     ArchiveLogger.Exception(ex);
                 }
@@ -221,7 +220,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 {
                     if (line.Equals("---------------------------------------------------------------"))
                     {
-                        
+
                         if (_interpreterSet.Contains(__instance))
                         {
                             ArchiveLogger.Debug($"Key & Zone in Terminal: Step 2/2 [{GetKey(___m_terminal)}]");
@@ -236,7 +235,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     ArchiveLogger.Exception(ex);
                 }
@@ -252,7 +251,7 @@ namespace TheArchive.HarmonyPatches.Patches
             internal static bool WouldHaveRun { get; set; } = false;
             public static bool Prefix()
             {
-                if(!ShouldRun)
+                if (!ShouldRun)
                     WouldHaveRun = true;
                 return ShouldRun;
             }
@@ -262,7 +261,7 @@ namespace TheArchive.HarmonyPatches.Patches
         [ArchivePatch(typeof(PlayerAgent), "LateUpdate", RundownFlags.RundownOne, RundownFlags.RundownThree)]
         internal static class PlayerAgent_LateUpdatePatch
         {
-            
+
             private static void PlayPingSfxAndStuff(iPlayerPingTarget ___m_pingTarget)
             {
                 CrosshairGuiLayer_ShowPingIndicatorPatch.ShouldRun = true;
@@ -333,7 +332,7 @@ namespace TheArchive.HarmonyPatches.Patches
                     }
                     CrosshairGuiLayer_ShowPingIndicatorPatch.WouldHaveRun = false;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     ArchiveLogger.Exception(ex);
                 }

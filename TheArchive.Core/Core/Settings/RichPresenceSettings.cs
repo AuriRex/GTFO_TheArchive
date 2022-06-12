@@ -233,7 +233,7 @@ namespace TheArchive.Core.Settings
                                 LargeImageKey = "icon_survived",
                                 LargeTooltip = "Hydrostasis awaits ...",
                                 SmallImageKey = "%CharacterImageKey%",
-                                SmallTooltip = "\"%CharacterName%\"\nStatus: ALIVE"
+                                SmallTooltip = "\"%CharacterName%\", Status: ALIVE"
                             },
                             DisplayPartyInfo = true
                         }

@@ -171,12 +171,12 @@ namespace TheArchive.Core
 
             private NativePatchInstance(ArchiveNativePatch nativePatchInfo, Type patchContainingType)
             {
-                if (!TryGetMethodByName(nativePatchInfo.Type, nativePatchInfo.MethodName, out var originalMethodInfo))
+                if (!ArchivePatcher.TryGetMethodByName(nativePatchInfo.Type, nativePatchInfo.MethodName, out var originalMethodInfo))
                 {
                     throw new ArgumentException($"Could not find the original method \"{nativePatchInfo.Type.FullName}.{nativePatchInfo.MethodName}\" targeted by patch \"{patchContainingType.FullName}\"");
                 }
 
-                if (!TryGetMethodByName(patchContainingType, kReplacementMethodName, out var replacementMethodInfo))
+                if (!ArchivePatcher.TryGetMethodByName(patchContainingType, kReplacementMethodName, out var replacementMethodInfo))
                 {
                     throw new ArgumentException($"Could not find \"{kReplacementMethodName}\" method for patch \"{patchContainingType.FullName}\"!");
                 }
@@ -204,7 +204,7 @@ namespace TheArchive.Core
                     OriginalMethod = Marshal.GetDelegateForFunctionPointer(ptr, DelegateType);
                 }
 
-                var prop = patchContainingType.GetProperty(nameof(NativePatchInstance), AnyBindingFlags);
+                var prop = patchContainingType.GetProperty(nameof(NativePatchInstance), ArchivePatcher.AnyBindingFlags);
 
                 if(prop != null && prop.SetMethod != null && prop.SetMethod.IsStatic)
                 {

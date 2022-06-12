@@ -5,7 +5,7 @@ namespace TheArchive.Core
 {
     public static class BuildDB
     {
-        // The last game build/revision number for each rundown
+        /// <summary> The last game build/revision number for each rundown </summary>
         public static Dictionary<int, RundownID> rundownIDMapping = new Dictionary<int, RundownID>()
         {
             { 19715, RundownID.RundownOne },

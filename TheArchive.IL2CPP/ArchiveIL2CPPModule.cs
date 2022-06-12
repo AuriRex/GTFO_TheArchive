@@ -103,6 +103,17 @@ namespace TheArchive
 
         public void OnLateUpdate()
         {
+#if DEBUG
+            if(Input.GetKeyDown(KeyCode.G))
+            {
+                FeatureManager.Instance.DEBUG_DISABLE();
+            }
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                FeatureManager.Instance.DEBUG_ENABLE();
+            }
+#endif
+
             if (Input.GetKeyDown(KeyCode.F1) && ArchiveMod.Settings.EnableHudToggle)
             {
                 // Toggle hud

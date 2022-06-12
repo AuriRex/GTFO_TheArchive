@@ -142,11 +142,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\TheArchive.IL2CPP\Features\MeleeCancelBackport.cs">
+      <Link>Features\MeleeCancelBackport.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\CM_PageSettingsPatches.cs">
+      <Link>HarmonyPatches\Patches\CM_PageSettingsPatches.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\PlayerInfoPatches.cs">
       <Link>HarmonyPatches\Patches\PlayerInfoPatches.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\UnreadyButtonPatches.cs">
       <Link>HarmonyPatches\Patches\UnreadyButtonPatches.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Utilities\SharedUtils.cs">
+      <Link>Utilities\SharedUtils.cs</Link>
     </Compile>
     <Compile Include="ArchiveMONOBootstrap.cs" />
     <Compile Include="ArchiveMONOModule.cs" />
@@ -155,7 +164,6 @@
     <Compile Include="HarmonyPatches\Patches\AutoIntroPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LoadoutRandomizerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
-    <Compile Include="HarmonyPatches\Patches\MeleeCancelBackportPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\R1SNetRevisionOverridePatch.cs" />
     <Compile Include="HarmonyPatches\Patches\RichPresencePatches.cs" />
