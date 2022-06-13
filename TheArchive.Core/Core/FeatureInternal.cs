@@ -51,13 +51,13 @@ namespace TheArchive.Core
                 throw new ArchivePatchDuplicateIDException($"Provided feature id \"{_feature.Identifier}\" has already been registered by {FeatureManager.GetById(_feature.Identifier)}!");
             }
 
-            if(!RundownConstraintsMatch(feature.GetType()))
+            if(!AnyRundownConstraintMatches(feature.GetType()))
             {
                 InternalDisabled = true;
                 DisabledReason |= InternalDisabledReason.RundownConstraintMismatch;
             }
 
-            if (!BuildConstraintsMatch(feature.GetType()))
+            if (!AnyBuildConstraintMatches(feature.GetType()))
             {
                 InternalDisabled = true;
                 DisabledReason |= InternalDisabledReason.BuildConstraintMismatch;
@@ -73,8 +73,8 @@ namespace TheArchive.Core
                 .FirstOrDefault(mi => (mi.Name == "Update" || mi.GetCustomAttribute<IsUpdate>() != null)
                     && mi.GetParameters().Length == 0
                     && !mi.IsStatic
-                    && RundownConstraintsMatch(mi)
-                    && BuildConstraintsMatch(mi));
+                    && AnyRundownConstraintMatches(mi)
+                    && AnyBuildConstraintMatches(mi));
 
             var updateDelegate = updateMethod?.CreateDelegate(typeof(Update), _feature);
             if (updateDelegate != null)
@@ -87,8 +87,8 @@ namespace TheArchive.Core
                 .FirstOrDefault(mi => (mi.Name == "LateUpdate" || mi.GetCustomAttribute<IsLateUpdate>() != null)
                     && mi.GetParameters().Length == 0
                     && !mi.IsStatic
-                    && RundownConstraintsMatch(mi)
-                    && BuildConstraintsMatch(mi));
+                    && AnyRundownConstraintMatches(mi)
+                    && AnyBuildConstraintMatches(mi));
 
             var lateUpdateDelegate = lateUpdateMethod?.CreateDelegate(typeof(LateUpdate), _feature);
             if(lateUpdateDelegate != null)
@@ -119,7 +119,7 @@ namespace TheArchive.Core
 
             foreach(var type in potentialPatchTypes)
             {
-                if(RundownConstraintsMatch(type) && BuildConstraintsMatch(type))
+                if(AnyRundownConstraintMatches(type) && AnyBuildConstraintMatches(type))
                 {
                     _patchTypes.Add(type);
                     continue;
@@ -143,8 +143,8 @@ namespace TheArchive.Core
                         var typeMethod = patchType.GetMethods(Utils.AnyBindingFlagss)
                             .FirstOrDefault(mi => mi.ReturnType == typeof(Type)
                                 && (mi.Name == "Type" || mi.GetCustomAttribute<IsTypeProvider>() != null)
-                                && RundownConstraintsMatch(mi)
-                                && BuildConstraintsMatch(mi));
+                                && AnyRundownConstraintMatches(mi)
+                                && AnyBuildConstraintMatches(mi));
 
                         if(typeMethod != null)
                         {
@@ -175,13 +175,13 @@ namespace TheArchive.Core
 
                     var prefixMethodInfo = patchType.GetMethods(Utils.AnyBindingFlagss)
                             .FirstOrDefault(mi => (mi.Name == "Prefix" || mi.GetCustomAttribute<IsPrefix>() != null)
-                                && RundownConstraintsMatch(mi)
-                                && BuildConstraintsMatch(mi));
+                                && AnyRundownConstraintMatches(mi)
+                                && AnyBuildConstraintMatches(mi));
 
                     var postfixMethodInfo = patchType.GetMethods(Utils.AnyBindingFlagss)
                             .FirstOrDefault(mi => (mi.Name == "Postfix" || mi.GetCustomAttribute<IsPostfix>() != null)
-                                && RundownConstraintsMatch(mi)
-                                && BuildConstraintsMatch(mi));
+                                && AnyRundownConstraintMatches(mi)
+                                && AnyBuildConstraintMatches(mi));
 
                     if (prefixMethodInfo == null && postfixMethodInfo == null)
                     {
@@ -195,8 +195,8 @@ namespace TheArchive.Core
                         var initMethod = patchType.GetMethods(Utils.AnyBindingFlagss)
                             .FirstOrDefault(mi => mi.IsStatic 
                                 && (mi.Name == "Init" || mi.GetCustomAttribute<IsInitMethod>() != null)
-                                && RundownConstraintsMatch(mi)
-                                && BuildConstraintsMatch(mi));
+                                && AnyRundownConstraintMatches(mi)
+                                && AnyBuildConstraintMatches(mi));
 
                         var initMethodParameters = initMethod?.GetParameters();
                         if (initMethod != null)
@@ -334,27 +334,24 @@ namespace TheArchive.Core
             }
         }
 
-        private bool RundownConstraintsMatch(MemberInfo memberInfo)
+        private bool AnyRundownConstraintMatches(MemberInfo memberInfo)
         {
-            var rundownConstraints = memberInfo.GetCustomAttributes<RundownConstraint>().ToArray();
+            var constraints = memberInfo.GetCustomAttributes<RundownConstraint>().ToArray();
 
-            if (rundownConstraints.Length == 0)
-            {
+            if (constraints.Length == 0)
                 return true;
-            }
 
             var rundown = BuildInfo.Rundown;
-            foreach (var constraint in rundownConstraints)
+            foreach (var constraint in constraints)
             {
-                if (!constraint.Matches(rundown))
-                {
-                    return false;
-                }
+                if (constraint.Matches(rundown))
+                    return true;
             }
-            return true;
+
+            return false;
         }
 
-        private bool BuildConstraintsMatch(MemberInfo memberInfo)
+        private bool AnyBuildConstraintMatches(MemberInfo memberInfo)
         {
             var constraints = memberInfo.GetCustomAttributes<BuildConstraint>().ToArray();
 
@@ -364,11 +361,11 @@ namespace TheArchive.Core
             int buildNumber = BuildInfo.BuildNumber;
             foreach (var constraint in constraints)
             {
-                if (!constraint.Matches(buildNumber))
-                    return false;
+                if (constraint.Matches(buildNumber))
+                    return true;
             }
 
-            return true;
+            return false;
         }
 
         [Flags]
