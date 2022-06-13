@@ -294,9 +294,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\TheArchive.MONO\Features\Backport\AlarmClassOnDoors.cs">
+      <Link>Features\Backport\AlarmClassOnDoors.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.MONO\Features\Backport\R1LadderFix.cs">
+      <Link>Features\Backport\R1LadderFix.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.MONO\Features\Backport\R1VisualPings.cs">
+      <Link>Features\Backport\R1VisualPings.cs</Link>
+    </Compile>
     <Compile Include="ArchiveIL2CPPModule.cs" />
     <Compile Include="ColorConverter.cs" />
-    <Compile Include="Features\SteamRichPresence.cs" />
+    <Compile Include="Features\Backport\InstantHackRelease.cs" />
+    <Compile Include="Features\Backport\TerminalKeyMessage.cs" />
+    <Compile Include="Features\Backport\ThrowablesRunFix.cs" />
+    <Compile Include="Features\QoL\MapToObjectivesSwitchFix.cs" />
+    <Compile Include="Features\QoL\ResourcePrioritizationPings.cs" />
+    <Compile Include="Features\QoL\RundownInHeader.cs" />
+    <Compile Include="Features\SteamRichPresenceTweaks.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\GameSettingsPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CM_ItemPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CM_PageMatchmakingPatches.cs" />
@@ -305,7 +320,7 @@
     <Compile Include="HarmonyPatches\Patches\LoadoutRandomizerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerClientAPIViaPlayFabPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerPatches.cs" />
-    <Compile Include="Features\MeleeCancelBackport.cs" />
+    <Compile Include="Features\Backport\MeleeCancelBackport.cs" />
     <Compile Include="Features\PlayerInfo.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayfabMatchmakingManagerPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
@@ -316,8 +331,7 @@
     <Compile Include="Features\RichPresenceCore.cs" />
     <Compile Include="HarmonyPatches\Patches\StatePatches.cs" />
     <Compile Include="ArchiveIL2CPPBootstrap.cs" />
-    <Compile Include="HarmonyPatches\Patches\ThrowingWeaponPatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\UnreadyButtonPatches.cs" />
+    <Compile Include="Features\QoL\UnreadyButtonPatches.cs" />
     <Compile Include="Managers\CustomBoosterDropper.cs" />
     <Compile Include="Managers\CustomBoosterManager.cs" />
     <Compile Include="Managers\CustomProgressionManager.cs" />

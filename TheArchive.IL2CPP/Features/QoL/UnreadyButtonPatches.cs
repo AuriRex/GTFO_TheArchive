@@ -1,15 +1,17 @@
 ﻿using CellMenu;
 using SNetwork;
 using TheArchive.Core;
-using TheArchive.Utilities;
-using static TheArchive.Core.ArchivePatcher;
+using TheArchive.Core.Attributes;
+using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.HarmonyPatches.Patches
+namespace TheArchive.Features.QoL
 {
-    [BindPatchToSetting(nameof(ArchiveSettings.EnableQualityOfLifeImprovements), "QOL")]
-    internal class UnreadyButtonPatches
+    [RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownFive)]
+    internal class UnreadyButtonPatches : Feature
     {
-        [ArchivePatch(typeof(CM_PageLoadout), "UpdateReadyButton", Utils.RundownFlags.RundownOne, Utils.RundownFlags.RundownFive)]
+        public override string Name => "Unready Button";
+
+        [ArchivePatch(typeof(CM_PageLoadout), "UpdateReadyButton")]
         internal static class CM_PageLoadout_UpdateReadyButtonPatch
         {
 #if IL2CPP

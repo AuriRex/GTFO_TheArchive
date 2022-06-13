@@ -142,32 +142,53 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Backport\InstantHackRelease.cs">
+      <Link>Features\Backport\InstantHackRelease.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Backport\MeleeCancelBackport.cs">
+      <Link>Features\Backport\MeleeCancelBackport.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Backport\TerminalKeyMessage.cs">
+      <Link>Features\Backport\TerminalKeyMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Backport\ThrowablesRunFix.cs">
+      <Link>Features\Backport\ThrowablesRunFix.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\HudToggle.cs">
       <Link>Features\HudToggle.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\MeleeCancelBackport.cs">
-      <Link>Features\MeleeCancelBackport.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
       <Link>Features\PlayerInfo.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\MapToObjectivesSwitchFix.cs">
+      <Link>Features\QoL\MapToObjectivesSwitchFix.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\ResourcePrioritizationPings.cs">
+      <Link>Features\QoL\ResourcePrioritizationPings.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\RundownInHeader.cs">
+      <Link>Features\QoL\RundownInHeader.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\UnreadyButtonPatches.cs">
+      <Link>Features\QoL\UnreadyButtonPatches.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\RichPresenceCore.cs">
       <Link>Features\RichPresenceCore.cs</Link>
     </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\SteamRichPresence.cs">
-      <Link>Features\SteamRichPresence.cs</Link>
+    <Compile Include="..\TheArchive.IL2CPP\Features\SteamRichPresenceTweaks.cs">
+      <Link>Features\SteamRichPresenceTweaks.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\CM_PageSettingsPatches.cs">
       <Link>HarmonyPatches\Patches\CM_PageSettingsPatches.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\UnreadyButtonPatches.cs">
-      <Link>HarmonyPatches\Patches\UnreadyButtonPatches.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Utilities\SharedUtils.cs">
       <Link>Utilities\SharedUtils.cs</Link>
     </Compile>
     <Compile Include="ArchiveMONOBootstrap.cs" />
     <Compile Include="ArchiveMONOModule.cs" />
+    <Compile Include="Features\Backport\AlarmClassOnDoors.cs" />
+    <Compile Include="Features\Backport\R1LadderFix.cs" />
+    <Compile Include="Features\Backport\R1VisualPings.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CELLSettingsPatches.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\AutoIntroPatches.cs" />
@@ -175,7 +196,6 @@
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\R1SNetRevisionOverridePatch.cs" />
-    <Compile Include="HarmonyPatches\Patches\ThrowingWeaponPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\UnityLoggerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\QualityOfLifePatches.cs" />

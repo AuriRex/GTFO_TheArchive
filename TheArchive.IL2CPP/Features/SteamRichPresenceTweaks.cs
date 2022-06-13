@@ -7,7 +7,7 @@ using static TheArchive.Utilities.PresenceFormatter;
 namespace TheArchive.Features
 {
     [EnableFeatureByDefault(true)]
-    public class SteamRichPresence : Feature
+    public class SteamRichPresenceTweaks : Feature
     {
         public class SteamRPCSettings
         {
