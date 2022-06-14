@@ -18,7 +18,18 @@ namespace TheArchive.Features.QoL
         [ArchivePatch(typeof(PlayerAgent), "TriggerMarkerPing")]
         internal static class PlayerAgent_TriggerMarkerPingPatch
         {
-            public static void Prefix(dynamic __instance, ref iPlayerPingTarget target, ref Vector3 worldPos)
+            private static PropertyAccessor<PlayerAgent, Vector3> A_PlayerAgent_CamPos;
+            private static PropertyAccessor<PlayerAgent, iPlayerPingTarget> A_PlayerAgent_m_pingTargets;
+            private static PropertyAccessor<PlayerAgent, Vector3> A_PlayerAgent_m_pingPos;
+
+            public static void Init()
+            {
+                A_PlayerAgent_CamPos = PropertyAccessor<PlayerAgent, Vector3>.GetAccessor("CamPos");
+                A_PlayerAgent_m_pingTargets = PropertyAccessor<PlayerAgent, iPlayerPingTarget>.GetAccessor("m_pingTarget");
+                A_PlayerAgent_m_pingPos = PropertyAccessor<PlayerAgent, Vector3>.GetAccessor("m_pingPos");
+            }
+
+            public static void Prefix(PlayerAgent __instance, ref iPlayerPingTarget target, ref Vector3 worldPos)
             {
                 try
                 {
@@ -27,7 +38,7 @@ namespace TheArchive.Features.QoL
                         return;
                     }
 
-                    var rayCastHits = Physics.RaycastAll(__instance.CamPos, __instance.FPSCamera.Forward, 40f, LayerManager.MASK_PING_TARGET, QueryTriggerInteraction.Ignore);
+                    var rayCastHits = Physics.RaycastAll(A_PlayerAgent_CamPos.Get(__instance), __instance.FPSCamera.Forward, 40f, LayerManager.MASK_PING_TARGET, QueryTriggerInteraction.Ignore);
 
                     if (rayCastHits == null || rayCastHits.Length == 0)
                     {
@@ -65,8 +76,8 @@ namespace TheArchive.Features.QoL
                         {
                             target = hitTarget;
                             worldPos = hit.point;
-                            __instance.m_pingTarget = hitTarget;
-                            __instance.m_pingPos = hit.point;
+                            A_PlayerAgent_m_pingTargets.Set(__instance, hitTarget);
+                            A_PlayerAgent_m_pingPos.Set(__instance, hit.point);
                             break;
                         }
                     }

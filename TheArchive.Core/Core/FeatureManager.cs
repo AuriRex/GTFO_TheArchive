@@ -47,7 +47,8 @@ namespace TheArchive.Core
 
                 foreach (var feature in RegisteredFeatures)
                 {
-                    feature.OnQuit();
+                    feature.FeatureInternal.Quit();
+                    
                     DisableFeature(feature);
                 }
             }
@@ -118,7 +119,6 @@ namespace TheArchive.Core
                 if (feature.FeatureInternal.HasLateUpdateMethod)
                     _lateUpdateMethods.Add(feature.FeatureInternal.LateUpdateDelegate);
             }
-            feature.Init();
             RegisteredFeatures.Add(feature);
         }
 
@@ -183,12 +183,12 @@ namespace TheArchive.Core
             LocalFiles.SaveConfig(_enabledFeatures);
         }
 
-        internal static void SetEnabled(Feature feature, bool value)
+        internal static void SetEnabledInConfig(Feature feature, bool value)
         {
-            Instance.SetFeatureEnabled(feature, value);
+            Instance.SetFeatureEnabledInConfig(feature, value);
         }
 
-        private void SetFeatureEnabled(Feature feature, bool value)
+        private void SetFeatureEnabledInConfig(Feature feature, bool value)
         {
             if(_enabledFeatures.Features.TryGetValue(feature.Identifier, out var currentValue))
             {
@@ -224,7 +224,7 @@ namespace TheArchive.Core
                 shouldEnable = enableAttribute.ShouldEnableByDefault;
             }
 
-            SetFeatureEnabled(feature, shouldEnable);
+            SetFeatureEnabledInConfig(feature, shouldEnable);
             return shouldEnable;
         }
     }

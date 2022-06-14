@@ -44,7 +44,7 @@ namespace TheArchive.Core
         {
             _feature = feature;
 
-            ArchiveLogger.Notice($"[{nameof(FeatureInternal)}] Initializing {_feature.Identifier} ...");
+            ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(FeatureInternal)}] Initializing {_feature.Identifier} ...");
 
             if(_usedIdentifiers.Contains(_feature.Identifier))
             {
@@ -216,6 +216,8 @@ namespace TheArchive.Core
                     {
                         ArchiveLogger.Error($"[{nameof(FeatureInternal)}] static Init method on {_feature.Identifier} failed! - {ex}: {ex.Message}");
                         ArchiveLogger.Exception(ex);
+                        InternalyDisableFeature(InternalDisabledReason.PatchInitMethodFailed);
+                        return;
                     }
                 }
                 catch(Exception ex)
@@ -237,7 +239,17 @@ namespace TheArchive.Core
                 _feature.Enabled = false;
             }
 
-            _feature.Init();
+            try
+            {
+                _feature.Init();
+            }
+            catch(Exception ex)
+            {
+                ArchiveLogger.Error($"[{nameof(FeatureInternal)}] Main Feature Init method on {_feature.Identifier} failed! - {ex}: {ex.Message}");
+                ArchiveLogger.Exception(ex);
+                InternalyDisableFeature(InternalDisabledReason.MainInitMethodFailed);
+                return;
+            }
         }
 
         internal void LoadFeatureSettings()
@@ -294,7 +306,7 @@ namespace TheArchive.Core
             if (_feature.Enabled) return;
             ApplyPatches();
             _feature.Enabled = true;
-            FeatureManager.SetEnabled(_feature, true);
+            FeatureManager.SetEnabledInConfig(_feature, true);
             _feature.OnEnable();
         }
 
@@ -305,8 +317,21 @@ namespace TheArchive.Core
             if (!_feature.Enabled) return;
             _harmonyInstance.UnpatchSelf();
             _feature.Enabled = false;
-            FeatureManager.SetEnabled(_feature, false);
+            FeatureManager.SetEnabledInConfig(_feature, false);
             _feature.OnDisable();
+        }
+
+        internal void Quit()
+        {
+            try
+            {
+                _feature.OnQuit();
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Error($"[{nameof(FeatureManager)}] Exception thrown during {nameof(Feature.OnQuit)} in Feature {_feature.Identifier}!");
+                ArchiveLogger.Exception(ex);
+            }
         }
 
         private class FeaturePatchInfo
@@ -332,6 +357,13 @@ namespace TheArchive.Core
                 if(postfix != null)
                     HarmonyPostfixMethod = new HarmonyLib.HarmonyMethod(postfix);
             }
+        }
+
+        private void InternalyDisableFeature(InternalDisabledReason reason)
+        {
+            InternalDisabled = true;
+            DisabledReason |= reason;
+            FeatureManager.Instance.DisableFeature(_feature);
         }
 
         private bool AnyRundownConstraintMatches(MemberInfo memberInfo)
@@ -373,6 +405,10 @@ namespace TheArchive.Core
         {
             RundownConstraintMismatch,
             BuildConstraintMismatch,
+            MainInitMethodFailed,
+            PatchInitMethodFailed,
+            UpdateMethodFailed,
+            LateUpdateMethodFailed,
             Other
         }
     }

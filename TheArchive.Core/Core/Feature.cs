@@ -2,6 +2,9 @@
 
 namespace TheArchive.Core
 {
+    /// <summary>
+    /// An enableable / disableable feature
+    /// </summary>
     public abstract class Feature
     {
         private string _identifier = null;
@@ -10,14 +13,20 @@ namespace TheArchive.Core
         /// <summary>
         /// If the <see cref="Feature"/> is currently enabled.
         /// </summary>
-        public bool Enabled { get; internal set; }
+        public bool Enabled { get; internal set; } = false;
 
         /// <summary>
         /// Information about the current game build.
         /// </summary>
         public static GameBuildInfo BuildInfo { get; internal set; }
 
+        /// <summary>
+        /// The Features Name,<br/> used in Mod Settings
+        /// </summary>
         public abstract string Name { get; }
+        /// <summary>
+        /// A short description about this Feature,<br/> used in Mod Settings
+        /// </summary>
         public virtual string Description { get; set; } = string.Empty;
 
         public virtual bool RequiresRestart => false;
