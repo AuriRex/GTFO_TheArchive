@@ -157,6 +157,9 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\HudToggle.cs">
       <Link>Features\HudToggle.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\ModSettings.cs">
+      <Link>Features\ModSettings.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
       <Link>Features\PlayerInfo.cs</Link>
     </Compile>
@@ -177,9 +180,6 @@
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\SteamRichPresenceTweaks.cs">
       <Link>Features\SteamRichPresenceTweaks.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\HarmonyPatches\Patches\CM_PageSettingsPatches.cs">
-      <Link>HarmonyPatches\Patches\CM_PageSettingsPatches.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Utilities\SharedUtils.cs">
       <Link>Utilities\SharedUtils.cs</Link>

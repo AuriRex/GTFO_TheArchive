@@ -170,6 +170,23 @@ namespace TheArchive.Core
             }
         }
 
+        public static void ToggleFeature(Feature feature)
+        {
+            Instance.ToggleFeatureInstance(feature);
+        }
+
+        public void ToggleFeatureInstance(Feature feature)
+        {
+            if(feature.Enabled)
+            {
+                DisableFeature(feature);
+            }
+            else
+            {
+                EnableFeature(feature);
+            }
+        }
+
         public void DEBUG_ENABLE()
         {
             foreach (var f in RegisteredFeatures)

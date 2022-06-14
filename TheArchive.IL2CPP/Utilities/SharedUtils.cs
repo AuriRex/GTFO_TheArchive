@@ -244,5 +244,26 @@ namespace TheArchive.Utilities
             return false;
         }
 
+#if IL2CPP
+        public static T CastTo<T>(this Il2CppSystem.Object value) where T : UnhollowerBaseLib.Il2CppObjectBase
+        {
+            return value.Cast<T>();
+        }
+
+        public static T TryCastTo<T>(this Il2CppSystem.Object value) where T : UnhollowerBaseLib.Il2CppObjectBase
+        {
+            return value.TryCast<T>();
+        }
+#else
+        public static T CastTo<T>(this object value)
+        {
+            return (T) value;
+        }
+
+        public static T TryCastTo<T>(this object value) where T : class
+        {
+            return value as T;
+        }
+#endif
     }
 }

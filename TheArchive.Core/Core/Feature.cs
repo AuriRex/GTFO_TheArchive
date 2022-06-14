@@ -15,6 +15,8 @@ namespace TheArchive.Core
         /// </summary>
         public bool Enabled { get; internal set; } = false;
 
+        public bool AppliesToThisGameBuild => !FeatureInternal.InternalDisabled;
+
         /// <summary>
         /// Information about the current game build.
         /// </summary>
