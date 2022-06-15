@@ -115,55 +115,23 @@ namespace TheArchive.Features
 
                         CM_SettingsToggleButton cm_SettingsToggleButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(settingsItem.m_toggleInputPrefab, settingsItem.m_inputAlign);
 
-                        Component.Destroy(cm_SettingsToggleButton);
-
                         var buttonItem = cm_SettingsToggleButton.gameObject.AddComponent<CM_Item>();
 
-                        buttonItem.m_onBtnPress = new UnityEngine.Events.UnityEvent();
-
-                        
+                        Component.Destroy(cm_SettingsToggleButton);
 
                         var text = buttonItem.GetComponentInChildren<TMPro.TextMeshPro>();
-                        text.SetText(feature.Enabled ? "Enabled" : "Disabled");
 
-                        if(!feature.AppliesToThisGameBuild)
-                        {
-                            text.color = DISABLED;
-                        }
-                        else if (feature.Enabled)
-                        {
-                            text.color = GREEN;
-                        }
-                        else
-                        {
-                            text.color = RED;
-                        }
+                        SetFeatureItemTextAndColor(feature, buttonItem, text);
 
                         var collider = buttonItem.GetComponent<BoxCollider2D>();
-                        collider.size = new Vector2(1700, 50);
-                        collider.offset = new Vector2(-300, -25);
+                        collider.size = new Vector2(550, 50);
+                        collider.offset = new Vector2(250, -25);
 
-#if IL2CPP
-                        buttonItem.OnBtnPressCallback = (Action<int>)delegate (int id)
-#else
-                        buttonItem.OnBtnPressCallback += delegate (int id)
-#endif
-                        {
+                        buttonItem.SetCMItemEvents(delegate (int id) {
                             FeatureManager.ToggleFeature(feature);
-                            text.SetText(feature.Enabled ? "Enabled" : "Disabled");
-                            if (!feature.AppliesToThisGameBuild)
-                            {
-                                text.color = DISABLED;
-                            }
-                            else if (feature.Enabled)
-                            {
-                                text.color = GREEN;
-                            }
-                            else
-                            {
-                                text.color = RED;
-                            }
-                        };
+
+                            SetFeatureItemTextAndColor(feature, buttonItem, text);
+                        });
 
                     }
 
@@ -173,6 +141,30 @@ namespace TheArchive.Features
                 catch(Exception ex)
                 {
                     ArchiveLogger.Exception(ex);
+                }
+            }
+
+            private static void SetFeatureItemTextAndColor(Feature feature, CM_Item buttonItem, TMPro.TextMeshPro text)
+            {
+                bool enabled = feature.AppliesToThisGameBuild ? feature.Enabled : FeatureManager.IsEnabledInConfig(feature);
+                text.SetText(enabled ? "Enabled" : "Disabled");
+
+                SetFeatureItemColor(feature, buttonItem);
+            }
+
+            private static void SetFeatureItemColor(Feature feature, CM_Item item)
+            {
+                if (!feature.AppliesToThisGameBuild)
+                {
+                    SharedUtils.ChangeColorCMItem(item, DISABLED);
+                }
+                else if (feature.Enabled)
+                {
+                    SharedUtils.ChangeColorCMItem(item, GREEN);
+                }
+                else
+                {
+                    SharedUtils.ChangeColorCMItem(item, RED);
                 }
             }
         }

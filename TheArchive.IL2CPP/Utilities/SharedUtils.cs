@@ -34,11 +34,12 @@ namespace TheArchive.Utilities
             item.m_spriteColorOrg = colorOut;
             item.m_spriteColorOut = colorOut;
             item.m_spriteColorOver = colorOver;
-            foreach (Color textCol in item.m_textColorOrg)
-            {
-                textColorsOut.Add(colorOut);
-                textColorsOver.Add(colorOver);
-            }
+            if (item.m_textColorOrg != null)
+                foreach (Color textCol in item.m_textColorOrg)
+                {
+                    textColorsOut.Add(colorOut);
+                    textColorsOver.Add(colorOver);
+                }
             item.m_textColorOrg = textColorsOut.ToArray();
             item.m_textColorOut = textColorsOut.ToArray();
             item.m_textColorOver = textColorsOver.ToArray();
@@ -46,11 +47,13 @@ namespace TheArchive.Utilities
             A_CM_Item_m_spriteColorOrg.Set(item, colorOut);
             A_CM_Item_m_spriteColorOut.Set(item, colorOut);
             A_CM_Item_m_spriteColorOver.Set(item, colorOver);
-            foreach (var textCol in A_CM_Item_m_textColorOrg.Get(item))
-            {
-                textColorsOut.Add(colorOut);
-                textColorsOver.Add(colorOver);
-            }
+            var m_textColorOrg = A_CM_Item_m_textColorOrg.Get(item);
+            if (m_textColorOrg != null)
+                foreach (var textCol in m_textColorOrg)
+                {
+                    textColorsOut.Add(colorOut);
+                    textColorsOver.Add(colorOver);
+                }
             A_CM_Item_m_textColorOrg.Set(item, textColorsOut.ToArray());
             A_CM_Item_m_textColorOut.Set(item, textColorsOut.ToArray());
             A_CM_Item_m_textColorOver.Set(item, textColorsOver.ToArray());
@@ -65,41 +68,16 @@ namespace TheArchive.Utilities
 
         public static void ChangeColorOnAllChildren(Transform trans, Color col, IList<string> excludeNames = null, IgnoreMode mode = IgnoreMode.StartsWith, Action<Transform> extraModificationForEachChild = null)
         {
+            if (trans == null) return;
             trans.ForEachChildDo((child) => {
-                if(excludeNames != null)
-                {
-                    switch (mode)
-                    {
-                        case IgnoreMode.Match:
-                            if (excludeNames.Contains(child.name))
-                                return;
-                            break;
-                        case IgnoreMode.StartsWith:
-                            if (excludeNames.Any(s => child.name.StartsWith(s)))
-                                return;
-                            break;
-                        case IgnoreMode.EndsWith:
-                            if (excludeNames.Any(s => child.name.EndsWith(s)))
-                                return;
-                            break;
-                    }
-                }
-                var spriteRenderer = child.GetComponent<SpriteRenderer>();
-                if (spriteRenderer != null)
-                {
-                    spriteRenderer.color = col;
-                }
-                var tmp = child.GetComponent<TextMeshPro>();
-                if (tmp != null)
-                {
-                    tmp.color = col;
-                }
-                extraModificationForEachChild?.Invoke(child);
+                ChangeColor(child?.transform, col, excludeNames, mode, extraModificationForEachChild);
             });
         }
 
         public static void ChangeColor(Transform trans, Color col, IList<string> excludeNames = null, IgnoreMode mode = IgnoreMode.StartsWith, Action<Transform> extraModificationForEachChild = null)
         {
+            if (trans == null) return;
+            if (col == null) return;
             if (excludeNames != null)
             {
                 switch (mode)
@@ -134,10 +112,30 @@ namespace TheArchive.Utilities
         public static void RemoveAllEventHandlers<T>(string eventFieldName, object instance = null)
         {
 #if IL2CPP
-            typeof(T).GetProperty(eventFieldName, Core.ArchivePatcher.AnyBindingFlags).SetValue(instance, null);
+            typeof(T).GetProperty(eventFieldName, Utils.AnyBindingFlagss).SetValue(instance, null);
 #else
             MonoUtils.RemoveAllEventHandlers<T>(eventFieldName, instance);
 #endif
+        }
+
+        public static CM_Item SetCMItemEvents(this CM_Item item, Action<int> onButtonPress, Action<int, bool> onButtonHover = null)
+        {
+            if (item == null) throw new ArgumentNullException($"Parameter {nameof(item)} may not be null!");
+
+            if(item.m_onBtnPress == null)
+                item.m_onBtnPress = new UnityEngine.Events.UnityEvent();
+
+#if IL2CPP
+            item.OnBtnPressCallback = onButtonPress;
+            if(onButtonHover != null)
+                item.OnBtnHoverChanged = onButtonHover;
+#else
+            item.OnBtnPressCallback += onButtonPress;
+            if(onButtonHover != null)
+                item.OnBtnHoverChanged += onButtonHover;
+#endif
+
+            return item;
         }
 
         /// <summary>
@@ -166,6 +164,7 @@ namespace TheArchive.Utilities
         /// <param name="recursive">If the children of every child should be included</param>
         public static void ForEachChildDo(this Transform trans, Action<Transform> func, bool recursive = true)
         {
+            if (trans == null) throw new ArgumentNullException($"Parameter {nameof(trans)} may not be null!");
             for (int i = 0; i < trans.childCount; i++)
             {
                 var child = trans.GetChild(i);

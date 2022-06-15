@@ -122,10 +122,18 @@ namespace TheArchive.Core
             RegisteredFeatures.Add(feature);
         }
 
-        public void EnableFeature(Feature feature)
+        public void EnableFeature(Feature feature, bool setConfig = true)
         {
+            if (setConfig)
+            {
+                SetEnabledInConfig(feature, true);
+            }
+
             if (feature.Enabled) return;
-            ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(FeatureManager)}] Enabling {nameof(Feature)} {feature.Identifier} ...");
+
+            if (feature.AppliesToThisGameBuild)
+                ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(FeatureManager)}] Enabling {nameof(Feature)} {feature.Identifier} ...");
+
             feature.FeatureInternal.Enable();
             if (feature.FeatureInternal.HasUpdateMethod)
                 _updateMethods.Add(feature.FeatureInternal.UpdateDelegate);
@@ -134,10 +142,18 @@ namespace TheArchive.Core
             OnFeatureEnabled?.Invoke(feature);
         }
 
-        public void DisableFeature(Feature feature)
+        public void DisableFeature(Feature feature, bool setConfig = true)
         {
+            if (setConfig)
+            {
+                SetEnabledInConfig(feature, false);
+            }
+
             if (!feature.Enabled) return;
-            ArchiveLogger.Msg(ConsoleColor.Red, $"[{nameof(FeatureManager)}] Disabling {nameof(Feature)} {feature.Identifier} ...");
+
+            if(feature.AppliesToThisGameBuild)
+                ArchiveLogger.Msg(ConsoleColor.Red, $"[{nameof(FeatureManager)}] Disabling {nameof(Feature)} {feature.Identifier} ...");
+
             feature.FeatureInternal.Disable();
             if (feature.FeatureInternal.HasUpdateMethod)
                 _updateMethods.Remove(feature.FeatureInternal.UpdateDelegate);
@@ -177,7 +193,8 @@ namespace TheArchive.Core
 
         public void ToggleFeatureInstance(Feature feature)
         {
-            if(feature.Enabled)
+            bool enabled = feature.AppliesToThisGameBuild ? feature.Enabled : IsEnabledInConfig(feature);
+            if(enabled)
             {
                 DisableFeature(feature);
             }

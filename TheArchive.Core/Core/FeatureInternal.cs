@@ -299,26 +299,26 @@ namespace TheArchive.Core
             }
         }
 
-        internal void Enable()
+        internal bool Enable()
         {
-            if (InternalDisabled) return;
+            if (InternalDisabled) return false;
 
-            if (_feature.Enabled) return;
+            if (_feature.Enabled) return false;
             ApplyPatches();
             _feature.Enabled = true;
-            FeatureManager.SetEnabledInConfig(_feature, true);
             _feature.OnEnable();
+            return true;
         }
 
-        internal void Disable()
+        internal bool Disable()
         {
-            if (InternalDisabled) return;
+            if (InternalDisabled) return false;
 
-            if (!_feature.Enabled) return;
+            if (!_feature.Enabled) return false;
             _harmonyInstance.UnpatchSelf();
             _feature.Enabled = false;
-            FeatureManager.SetEnabledInConfig(_feature, false);
             _feature.OnDisable();
+            return true;
         }
 
         internal void Quit()
