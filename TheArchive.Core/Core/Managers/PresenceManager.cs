@@ -8,9 +8,9 @@ namespace TheArchive.Core.Managers
 {
     public class PresenceManager
     {
-        public static PresenceGameState LastState { get; private set; }
-        public static PresenceGameState CurrentState { get; private set; }
-        public static DateTimeOffset CurrentStateStartTime { get; private set; }
+        public static PresenceGameState LastState { get; private set; } = PresenceGameState.Startup;
+        public static PresenceGameState CurrentState { get; private set; } = PresenceGameState.Startup;
+        public static DateTimeOffset CurrentStateStartTime { get; private set; } = DateTimeOffset.UtcNow;
 
         public static void UpdateGameState(PresenceGameState state, bool keepTimer = false)
         {
