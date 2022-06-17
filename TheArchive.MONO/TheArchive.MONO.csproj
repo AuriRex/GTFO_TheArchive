@@ -154,6 +154,12 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\Backport\ThrowablesRunFix.cs">
       <Link>Features\Backport\ThrowablesRunFix.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\CustomLobbyCodeString.cs">
+      <Link>Features\CustomLobbyCodeString.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\GameDebugLogRedirect.cs">
+      <Link>Features\Dev\GameDebugLogRedirect.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\HudToggle.cs">
       <Link>Features\HudToggle.cs</Link>
     </Compile>
@@ -162,6 +168,9 @@
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
       <Link>Features\PlayerInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\LoadoutRandomizer.cs">
+      <Link>Features\QoL\LoadoutRandomizer.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\QoL\MapToObjectivesSwitchFix.cs">
       <Link>Features\QoL\MapToObjectivesSwitchFix.cs</Link>
@@ -190,9 +199,7 @@
     <Compile Include="Features\Backport\R1LadderFix.cs" />
     <Compile Include="Features\Backport\R1VisualPings.cs" />
     <Compile Include="HarmonyPatches\AutoPatches\CELLSettingsPatches.cs" />
-    <Compile Include="HarmonyPatches\AutoPatches\RandomInfoPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\AutoIntroPatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\LoadoutRandomizerPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\R1SNetRevisionOverridePatch.cs" />

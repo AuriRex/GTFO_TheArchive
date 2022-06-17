@@ -26,7 +26,7 @@ namespace TheArchive.Core
                 }
             }
 
-            return RundownID.RundownUnknown;
+            return RundownID.Latest;
         }
 
     }

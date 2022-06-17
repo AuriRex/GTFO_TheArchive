@@ -258,6 +258,7 @@ namespace TheArchive.Core.Managers
 
             public void Dispose()
             {
+                _activityManager?.ClearActivity((result) => ArchiveLogger.Debug($"[{nameof(DiscordManager)}] Activity clear result: {result}"));
                 _discordClient?.Dispose();
                 _discordClient = null;
             }

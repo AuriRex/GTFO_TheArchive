@@ -165,6 +165,8 @@ namespace TheArchive.Utilities
                     return "Rebirth";
                 case RundownID.RundownSix:
                     return "Destination";
+                case RundownID.RundownSeven:
+                    return "Rise";
             }
             return "Unknown";
         }
@@ -305,8 +307,12 @@ namespace TheArchive.Utilities
             RundownFour = 4,
             [Value(26)]
             RundownFive = 5,
-            [Value(19)]
+            [Value(29)]
             RundownSix = 6,
+            [Value(-2)]
+            RundownSeven = 7,
+
+            Latest = RundownSeven,
         }
 
         [Flags]
@@ -319,8 +325,9 @@ namespace TheArchive.Utilities
             RundownFour = 1 << 3,
             RundownFive = 1 << 4,
             RundownSix = 1 << 5,
-            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive | RundownSix,
-            Latest = RundownSix,
+            RundownSeven = 1 << 6,
+            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive | RundownSix | RundownSeven,
+            Latest = RundownSeven,
         }
 
         public static bool FlagsContain(RundownFlags flags, RundownID id)

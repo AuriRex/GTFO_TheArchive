@@ -96,6 +96,13 @@ namespace TheArchive.Core
                         }
                     }
 
+                    if (TryGetMethodByName(patchContainingType, "ParameterTypes", out var paramTypesMethod))
+                    {
+                        ArchiveLogger.Debug($"Patch \"{patchContainingType.FullName}\" - found ParameterTypes method.");
+                        var parameterTypes = (Type[]) paramTypesMethod.Invoke(null, null);
+                        archivePatchInfo.ParameterTypes = parameterTypes;
+                    }
+
                     MethodInfo original;
 
                     if (archivePatchInfo.ParameterTypes != null)

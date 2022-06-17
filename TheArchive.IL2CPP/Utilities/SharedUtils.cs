@@ -118,6 +118,15 @@ namespace TheArchive.Utilities
 #endif
         }
 
+        public static CM_Item AddCMItemEvents(this CM_Item item, Action<int> onButtonPress, Action<int, bool> onButtonHover = null)
+        {
+            item.OnBtnPressCallback += onButtonPress;
+            if (onButtonHover != null)
+                item.OnBtnHoverChanged += onButtonHover;
+
+            return item;
+        }
+
         public static CM_Item SetCMItemEvents(this CM_Item item, Action<int> onButtonPress, Action<int, bool> onButtonHover = null)
         {
             if (item == null) throw new ArgumentNullException($"Parameter {nameof(item)} may not be null!");
@@ -130,10 +139,22 @@ namespace TheArchive.Utilities
             if(onButtonHover != null)
                 item.OnBtnHoverChanged = onButtonHover;
 #else
+            MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnHoverChanged), item);
+            MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnPressCallback), item);
+
             item.OnBtnPressCallback += onButtonPress;
             if(onButtonHover != null)
                 item.OnBtnHoverChanged += onButtonHover;
 #endif
+
+            return item;
+        }
+
+        public static CM_Item RemoveCMItemEvents(this CM_Item item, bool keepHover = false)
+        {
+            RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnPressCallback), item);
+            if(!keepHover)
+                RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnHoverChanged), item);
 
             return item;
         }
@@ -243,6 +264,26 @@ namespace TheArchive.Utilities
             return false;
         }
 
+        public static eGameStateName GetGameState() => (eGameStateName) ArchiveMod.CurrentGameState;
+
+        public static void RegisterOnGameStateChangedEvent(Action<eGameStateName> onGameStateChanged)
+        {
+#if IL2CPP
+            ArchiveIL2CPPModule.OnGameStateChanged += onGameStateChanged;
+#else
+            ArchiveMONOModule.OnGameStateChanged += onGameStateChanged;
+#endif
+        }
+
+        public static void UnregisterOnGameStateChangedEvent(Action<eGameStateName> onGameStateChanged)
+        {
+#if IL2CPP
+            ArchiveIL2CPPModule.OnGameStateChanged -= onGameStateChanged;
+#else
+            ArchiveMONOModule.OnGameStateChanged -= onGameStateChanged;
+#endif
+        }
+
 #if IL2CPP
         public static T CastTo<T>(this Il2CppSystem.Object value) where T : UnhollowerBaseLib.Il2CppObjectBase
         {
@@ -264,5 +305,5 @@ namespace TheArchive.Utilities
             return value as T;
         }
 #endif
-    }
+        }
 }

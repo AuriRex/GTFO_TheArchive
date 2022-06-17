@@ -68,6 +68,7 @@
     <Compile Include="Core\Attributes\FeatureConfig.cs" />
     <Compile Include="Core\Attributes\IsInitMethod.cs" />
     <Compile Include="Core\Attributes\IsLateUpdate.cs" />
+    <Compile Include="Core\Attributes\IsParameterTypesProvider.cs" />
     <Compile Include="Core\Attributes\IsPostfix.cs" />
     <Compile Include="Core\Attributes\IsPrefix.cs" />
     <Compile Include="Core\Attributes\IsTypeProvider.cs" />

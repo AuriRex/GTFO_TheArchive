@@ -1,18 +1,23 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
+using TheArchive.Core;
+using TheArchive.Core.Attributes;
 using TheArchive.Utilities;
 
-namespace TheArchive.HarmonyPatches.AutoPatches
+namespace TheArchive.Features
 {
-    public class GameSettingsPatches
+    [EnableFeatureByDefault(true)]
+    public class RedirectSettings : Feature
     {
+        public override string Name => "Redirect Settings";
 
-        [HarmonyPatch(typeof(Il2CppSystem.IO.Path), nameof(Il2CppSystem.IO.Path.Combine), new Type[] { typeof(string), typeof(string) })]
+
+#if IL2CPP
+        [ArchivePatch(typeof(Il2CppSystem.IO.Path), nameof(Il2CppSystem.IO.Path.Combine), new Type[] { typeof(string), typeof(string) })]
         public static class Il2CppSystem_IO_Path_Combine_Patch
         {
             public static bool Prefix(ref string __result, ref string path1, ref string path2)
             {
-                switch(path2)
+                switch (path2)
                 {
                     case "GTFO_Settings.txt":
                         __result = LocalFiles.SettingsPath;
@@ -28,6 +33,7 @@ namespace TheArchive.HarmonyPatches.AutoPatches
                 }
             }
         }
+#endif
 
     }
 }

@@ -42,6 +42,7 @@ namespace TheArchive
 
         public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnitialized;
         public static GameBuildInfo CurrentBuildInfo { get; private set; }
+        public static int CurrentGameState { get; private set; }
 
         public event Action<RundownID> GameDataInitialized;
         public event Action DataBlocksReady;
@@ -334,7 +335,11 @@ namespace TheArchive
         }
 
         [Obsolete("Do not call!")]
-        public void InvokeGameStateChanged(int eGameState_state) => GameStateChanged?.Invoke(eGameState_state);
+        public void InvokeGameStateChanged(int eGameState_state)
+        {
+            CurrentGameState = eGameState_state;
+            GameStateChanged?.Invoke(eGameState_state);
+        }
 
 
 

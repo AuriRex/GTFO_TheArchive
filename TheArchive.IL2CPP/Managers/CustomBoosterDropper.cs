@@ -24,7 +24,7 @@ namespace TheArchive.Managers
 
         public bool InitCondition()
         {
-            return ArchiveMod.CurrentRundown.IsIncludedIn(Utils.RundownFlags.RundownFive.ToLatest());
+            return ArchiveMod.CurrentBuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFive.ToLatest());
         }
 
         public void Init()

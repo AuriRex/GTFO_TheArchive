@@ -7,6 +7,11 @@ namespace TheArchive.Core.Exceptions
         public ArchivePatchDuplicateIDException(string message) : base(message) { }
     }
 
+    public class ArchivePatchMethodNotStaticException : Exception
+    {
+        public ArchivePatchMethodNotStaticException(string message) : base(message) { }
+    }
+
     public class ArchivePatchNoTypeProvidedException : Exception
     {
         public ArchivePatchNoTypeProvidedException(string message) : base(message) { }

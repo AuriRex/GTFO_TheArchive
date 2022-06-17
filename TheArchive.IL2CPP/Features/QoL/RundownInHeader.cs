@@ -17,11 +17,27 @@ namespace TheArchive.Features.QoL
         [ArchivePatch(typeof(PlayerGuiLayer), "UpdateObjectiveHeader")]
         internal static class PlayerGuiLayer_UpdateObjectiveHeaderPatch
         {
-            
+            [RundownConstraint(RundownFlags.RundownFour, RundownFlags.RundownSix)]
             public static void Prefix(ref string header)
             {
                 header = $"R{(int)BuildInfo.Rundown}{header}";
             }
+
+#if IL2CPP
+            [RundownConstraint(RundownFlags.RundownSeven, RundownFlags.Latest)]
+            public static void Postfix(PlayerGuiLayer __instance, ref Il2CppSystem.Func<string> header)
+            {
+                /*var headerText = header.Invoke();
+                header = new Func<string>(() =>
+                {
+                    return $"R{(int)BuildInfo.Rundown}{headerText}";
+                });*/
+                var headerText = __instance.m_wardenObjective.m_header.text;
+
+                __instance.m_wardenObjective.m_header.text = $"R{(int)BuildInfo.Rundown}{headerText}";
+            }
+#endif
+
         }
 
         // Change the "WARDEN OBJECTIVE" text in the top left of the screen to the current selected mission, ex: "R1A1: The Admin"

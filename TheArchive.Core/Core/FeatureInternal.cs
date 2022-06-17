@@ -148,6 +148,11 @@ namespace TheArchive.Core
 
                         if(typeMethod != null)
                         {
+                            if (!typeMethod.IsStatic)
+                            {
+                                throw new ArchivePatchMethodNotStaticException($"Method \"{typeMethod.Name}\" in Feature \"{feature.Identifier}\" must be static!");
+                            }
+
                             archivePatchInfo.Type = (Type) typeMethod.Invoke(null, new object[0]);
                             ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] Discovered target Type for Patch \"{patchType.FullName}\" to be \"{archivePatchInfo.Type.FullName}\"");
                         }
@@ -155,6 +160,20 @@ namespace TheArchive.Core
                         {
                             throw new ArchivePatchNoTypeProvidedException($"Patch \"{patchType.FullName}\" has no Type to patch! Add a static method returning Type and decorate it with the {nameof(IsTypeProvider)} Attribute!");
                         }
+                    }
+
+                    var parameterTypesMethod = patchType.GetMethods(Utils.AnyBindingFlagss)
+                            .FirstOrDefault(mi => mi.ReturnType == typeof(Type[])
+                                && (mi.Name == "ParameterTypes" || mi.GetCustomAttribute<IsParameterTypesProvider>() != null)
+                                && AnyRundownConstraintMatches(mi)
+                                && AnyBuildConstraintMatches(mi));
+
+                    if (parameterTypesMethod != null)
+                    {
+                        if(!parameterTypesMethod.IsStatic)
+                            throw new ArchivePatchMethodNotStaticException($"Method \"{parameterTypesMethod.Name}\" in Feature \"{feature.Identifier}\" must be static!");
+
+                        archivePatchInfo.ParameterTypes = (Type[]) parameterTypesMethod.Invoke(null, null);
                     }
 
                     MethodInfo original;
@@ -229,16 +248,6 @@ namespace TheArchive.Core
 
             LoadFeatureSettings();
 
-            if(FeatureManager.IsEnabledInConfig(_feature))
-            {
-                ApplyPatches();
-                _feature.Enabled = true;
-            }
-            else
-            {
-                _feature.Enabled = false;
-            }
-
             try
             {
                 _feature.Init();
@@ -249,6 +258,15 @@ namespace TheArchive.Core
                 ArchiveLogger.Exception(ex);
                 InternalyDisableFeature(InternalDisabledReason.MainInitMethodFailed);
                 return;
+            }
+
+            if (FeatureManager.IsEnabledInConfig(_feature))
+            {
+                Enable();
+            }
+            else
+            {
+                _feature.Enabled = false;
             }
         }
 

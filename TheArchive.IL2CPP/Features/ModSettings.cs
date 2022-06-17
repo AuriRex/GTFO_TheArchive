@@ -19,10 +19,41 @@ namespace TheArchive.Features
         private static readonly MethodAccessor<CM_PageSettings> A_CM_PageSettings_ResetAllValueHolders = MethodAccessor<CM_PageSettings>.GetAccessor("ResetAllValueHolders");
         private static readonly MethodAccessor<CM_PageSettings> A_CM_PageSettings_ShowSettingsWindow = MethodAccessor<CM_PageSettings>.GetAccessor("ShowSettingsWindow");
 #endif
+        private static MethodAccessor<TMPro.TextMeshPro> A_TextMeshPro_ForceMeshUpdate;
 
         public static Color RED = new Color(0.8f, 0.1f, 0.1f, 0.8f);
         public static Color GREEN = new Color(0.1f, 0.8f, 0.1f, 0.8f);
         public static Color DISABLED = new Color(0.3f, 0.3f, 0.3f, 0.8f);
+
+
+        public class JankTextMeshProUpdaterOnce : MonoBehaviour
+        {
+#if IL2CPP
+            public JankTextMeshProUpdaterOnce(IntPtr ptr) : base(ptr)
+            {
+
+            }
+#endif
+
+            public void Awake()
+            {
+                TMPro.TextMeshPro textMesh = this.GetComponent<TMPro.TextMeshPro>();
+
+                A_TextMeshPro_ForceMeshUpdate.Invoke(textMesh);
+
+                Destroy(this);
+            }
+        }
+
+
+        public override void Init()
+        {
+#if IL2CPP
+            UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<JankTextMeshProUpdaterOnce>();
+#endif
+
+            A_TextMeshPro_ForceMeshUpdate = MethodAccessor<TMPro.TextMeshPro>.GetAccessor("ForceMeshUpdate", new Type[0]);
+        }
 
         //Setup(MainMenuGuiLayer guiLayer)
         [ArchivePatch(typeof(CM_PageSettings), "Setup")]
@@ -50,92 +81,116 @@ namespace TheArchive.Features
 
                     var title = "Mod Settings";
 
-                    CM_Item cM_Item = guiLayer.AddRectComp(m_subMenuButtonPrefab, GuiAnchor.TopLeft, new Vector2(70f, m_subMenuItemOffset), m_movingContentHolder).TryCastTo<CM_Item>();
+                    CM_Item mainModSettingsButton = guiLayer.AddRectComp(m_subMenuButtonPrefab, GuiAnchor.TopLeft, new Vector2(70f, m_subMenuItemOffset), m_movingContentHolder).TryCastTo<CM_Item>();
 
-                    cM_Item.SetScaleFactor(0.85f);
-                    cM_Item.UpdateColliderOffset();
+                    mainModSettingsButton.SetScaleFactor(0.85f);
+                    mainModSettingsButton.UpdateColliderOffset();
 #if IL2CPP
                     __instance.m_subMenuItemOffset -= 80f;
 #else
                     ___m_subMenuItemOffset -= 80f;
 #endif
-                    cM_Item.SetText(title);
+                    mainModSettingsButton.SetText(title);
 
                     
 
-                    SharedUtils.ChangeColorCMItem(cM_Item, Color.magenta);
+                    SharedUtils.ChangeColorCMItem(mainModSettingsButton, Color.magenta);
 
-                    CM_ScrollWindow window = guiLayer.AddRectComp(m_scrollwindowPrefab, GuiAnchor.TopLeft, new Vector2(420f, -200f), m_movingContentHolder).TryCastTo<CM_ScrollWindow>();
+                    CM_ScrollWindow mainModSettingsScrollWindow = guiLayer.AddRectComp(m_scrollwindowPrefab, GuiAnchor.TopLeft, new Vector2(420f, -200f), m_movingContentHolder).TryCastTo<CM_ScrollWindow>();
 
-                    window.Setup();
-                    window.SetSize(new Vector2(1020f, 900f));
-                    window.SetVisible(visible: false);
-                    window.SetHeader(title);
-
-#if IL2CPP
-                    __instance.m_allSettingsWindows.Add(window);
-                    cM_Item.OnBtnPressCallback = (Action<int>)delegate (int id)
-                    {
-                        CM_PageSettings.ToggleAudioTestLoop(false);
-                        __instance.ResetAllInputFields();
-                        __instance.ResetAllValueHolders();
-                        __instance.m_currentSubMenuId = eSettingsSubMenuId.None;
-                        __instance.ShowSettingsWindow(window);
-                    };
-#else
-                    ___m_allSettingsWindows.Add(window);
-                    cM_Item.OnBtnPressCallback += delegate (int id)
-                    {
-                        CM_PageSettings.ToggleAudioTestLoop(false);
-                        __instance.ResetAllInputFields();
-                        A_CM_PageSettings_ResetAllValueHolders.Invoke(__instance);
-                        A_CM_PageSettings_m_currentSubMenuId.Set(__instance, eSettingsSubMenuId.None);
-                        A_CM_PageSettings_ShowSettingsWindow.Invoke(__instance, window);
-                    };
-#endif
+                    mainModSettingsScrollWindow.Setup();
+                    mainModSettingsScrollWindow.SetSize(new Vector2(1020f, 900f));
+                    mainModSettingsScrollWindow.SetVisible(visible: false);
+                    mainModSettingsScrollWindow.SetHeader(title);
 
 #if IL2CPP
                     Il2CppSystem.Collections.Generic.List<iScrollWindowContent> allSWCs = new Il2CppSystem.Collections.Generic.List<iScrollWindowContent>();
 #else
                     List<iScrollWindowContent> allSWCs = new List<iScrollWindowContent>();
 #endif
+
+                    List<TMPro.TextMeshPro> textMeshProToUpdate = new List<TMPro.TextMeshPro>();
+
                     foreach(var feature in FeatureManager.Instance.RegisteredFeatures)
                     {
-                        var go = GameObject.Instantiate(__instance.m_settingsItemPrefab, window.gameObject.transform);
+                        try
+                        {
+                            var settingsItemGameObject = GameObject.Instantiate(__instance.m_settingsItemPrefab, mainModSettingsScrollWindow.gameObject.transform);
 
-                        //go.transform.localPosition = Vector3.zero;
+                            allSWCs.Add(settingsItemGameObject.GetComponentInChildren<iScrollWindowContent>());
 
-                        var iScrollWindowContent = go.GetComponentInChildren<iScrollWindowContent>();
-                        allSWCs.Add(iScrollWindowContent);
+                            var cm_settingsItem = settingsItemGameObject.GetComponentInChildren<CM_SettingsItem>();
 
-                        go.GetComponentInChildren<TMPro.TextMeshPro>()?.SetText(feature.Name);
+                            var titleTextTMP = cm_settingsItem.transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
 
-                        var settingsItem = go.GetComponentInChildren<CM_SettingsItem>();
+
+
+#if IL2CPP
+                            titleTextTMP.m_text = feature.Name;
+                            titleTextTMP.SetText(feature.Name);
+#else
+                            titleTextTMP.SetText(feature.Name);
+#endif
+
+                            if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFour | Utils.RundownFlags.RundownFive))
+                            {
+                                titleTextTMP.gameObject.AddComponent<JankTextMeshProUpdaterOnce>();
+                            }
+
+
+                            CM_SettingsToggleButton cm_SettingsToggleButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);
+
+                            var toggleButton_cm_item = cm_SettingsToggleButton.gameObject.AddComponent<CM_Item>();
+
+
+
+                            Component.Destroy(cm_SettingsToggleButton);
+
+                            var toggleButtonText = toggleButton_cm_item.GetComponentInChildren<TMPro.TextMeshPro>();
+
+                            toggleButton_cm_item.SetCMItemEvents(delegate (int id) {
+                                FeatureManager.ToggleFeature(feature);
+
+                                SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
+                            });
+
+                            SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
+
+                            var collider = toggleButton_cm_item.GetComponent<BoxCollider2D>();
+                            collider.size = new Vector2(550, 50);
+                            collider.offset = new Vector2(250, -25);
+
+                            cm_settingsItem.ForcePopupLayer(true);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            ArchiveLogger.Exception(ex);
+                        }
                         
-
-                        CM_SettingsToggleButton cm_SettingsToggleButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(settingsItem.m_toggleInputPrefab, settingsItem.m_inputAlign);
-
-                        var buttonItem = cm_SettingsToggleButton.gameObject.AddComponent<CM_Item>();
-
-                        Component.Destroy(cm_SettingsToggleButton);
-
-                        var text = buttonItem.GetComponentInChildren<TMPro.TextMeshPro>();
-
-                        SetFeatureItemTextAndColor(feature, buttonItem, text);
-
-                        var collider = buttonItem.GetComponent<BoxCollider2D>();
-                        collider.size = new Vector2(550, 50);
-                        collider.offset = new Vector2(250, -25);
-
-                        buttonItem.SetCMItemEvents(delegate (int id) {
-                            FeatureManager.ToggleFeature(feature);
-
-                            SetFeatureItemTextAndColor(feature, buttonItem, text);
-                        });
-
                     }
 
-                    window.SetContentItems(allSWCs, 5f);
+#if IL2CPP
+                    __instance.m_allSettingsWindows.Add(mainModSettingsScrollWindow);
+#else
+                    ___m_allSettingsWindows.Add(mainModSettingsScrollWindow);
+#endif
+                    mainModSettingsButton.SetCMItemEvents(delegate (int id)
+                    {
+                        CM_PageSettings.ToggleAudioTestLoop(false);
+                        __instance.ResetAllInputFields();
+#if IL2CPP
+                        __instance.ResetAllValueHolders();
+                        __instance.m_currentSubMenuId = eSettingsSubMenuId.None;
+                        __instance.ShowSettingsWindow(mainModSettingsScrollWindow);
+#else
+                        A_CM_PageSettings_ResetAllValueHolders.Invoke(__instance);
+                        A_CM_PageSettings_m_currentSubMenuId.Set(__instance, eSettingsSubMenuId.None);
+                        A_CM_PageSettings_ShowSettingsWindow.Invoke(__instance, mainModSettingsScrollWindow);
+#endif
+                    });
+
+                    mainModSettingsScrollWindow.SetContentItems(allSWCs, 5f);
 
                 }
                 catch(Exception ex)
