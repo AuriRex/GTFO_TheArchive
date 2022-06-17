@@ -54,6 +54,26 @@ namespace TheArchive.Core
                         continue;
                     }
 
+                    if (!nativePatchInfo.HasType)
+                    {
+                        if (ArchivePatcher.TryGetMethodByName(patchContainingType, "Type", out var typeMethod) && typeMethod.ReturnType == typeof(Type))
+                        {
+                            nativePatchInfo.Type = (Type)typeMethod.Invoke(null, new object[0]);
+                            ArchiveLogger.Debug($"Discovered target Type for native Patch \"{patchContainingType.FullName}\" to be \"{nativePatchInfo.Type.FullName}\"");
+                        }
+                        else
+                        {
+                            throw new ArgumentException($"Native Patch \"{patchContainingType.FullName}\" has no static method Type() returning the Type to patch or none set in its Attribute!");
+                        }
+                    }
+
+                    if (ArchivePatcher.TryGetMethodByName(patchContainingType, "ParameterTypes", out var paramTypesMethod))
+                    {
+                        ArchiveLogger.Debug($"Patch \"{patchContainingType.FullName}\" - found ParameterTypes method.");
+                        var parameterTypes = (Type[])paramTypesMethod.Invoke(null, null);
+                        nativePatchInfo.ParameterTypes = parameterTypes;
+                    }
+
 
                     var nPatch = NativePatchInstance.CreatePatch(nativePatchInfo, patchContainingType);
 
