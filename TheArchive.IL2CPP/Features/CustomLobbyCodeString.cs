@@ -9,7 +9,7 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     public class CustomLobbyCodeString : Feature
     {
         public override string Name => "Copy Lobby ID Format";

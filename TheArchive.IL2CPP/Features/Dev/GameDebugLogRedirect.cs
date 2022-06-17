@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheArchive.Features.Dev
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     public class GameDebugLogRedirect : Feature
     {
         public override string Name => "Game Logs Redirect";

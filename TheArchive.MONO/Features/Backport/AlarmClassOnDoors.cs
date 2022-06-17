@@ -8,7 +8,7 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Backport
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     [RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownThree)]
     public class AlarmClassOnDoors : Feature
     {

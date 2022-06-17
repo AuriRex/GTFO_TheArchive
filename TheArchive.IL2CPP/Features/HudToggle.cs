@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace TheArchive.Features
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     public class HudToggle : Feature
     {
         public override string Name => "Hud Toggle";

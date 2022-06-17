@@ -5,7 +5,7 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Features
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     public class RedirectSettings : Feature
     {
         public override string Name => "Redirect Settings";

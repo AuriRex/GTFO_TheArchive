@@ -8,10 +8,10 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.QoL
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     public class ResourcePrioritizationPings : Feature
     {
-        public override string Name => "Prioritize Resources in Player Pings";
+        public override string Name => "Prioritize Resource Pings";
 
         // prioritize resources in ping raycasts
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.RundownFive)]

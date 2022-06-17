@@ -7,7 +7,7 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Features.Backport
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     [RundownConstraint(Utils.RundownFlags.RundownOne, Utils.RundownFlags.RundownFive)]
     public class TerminalKeyMessage : Feature
     {

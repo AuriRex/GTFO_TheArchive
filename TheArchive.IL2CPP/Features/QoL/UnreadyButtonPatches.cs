@@ -6,6 +6,7 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.QoL
 {
+    [EnableFeatureByDefault]
     [RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownFive)]
     internal class UnreadyButtonPatches : Feature
     {

@@ -250,13 +250,7 @@ namespace TheArchive.Core
                 return value;
             }
 
-            var enableAttribute = feature.GetType().GetCustomAttribute<Attributes.EnableFeatureByDefault>();
-            bool shouldEnable = false;
-
-            if(enableAttribute != null)
-            {
-                shouldEnable = enableAttribute.ShouldEnableByDefault;
-            }
+            var shouldEnable = feature.GetType().GetCustomAttribute<Attributes.EnableFeatureByDefault>() != null;
 
             SetFeatureEnabledInConfig(feature, shouldEnable);
             return shouldEnable;

@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace TheArchive.Features
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     public class PlayerInfo : Feature
     {
         public override string Name => "Steam Profile on Name";
@@ -68,12 +68,8 @@ namespace TheArchive.Features
 
                     CM_Item = nameGO.AddComponent<CM_Item>();
                     CM_Item.ID = charIndex + 1; // +1
-                    CM_Item.m_onBtnPress = new UnityEngine.Events.UnityEvent();
-#if IL2CPP
-                    CM_Item.OnBtnPressCallback = (Action<int>)OnNameButtonPressed;
-#else
-                    CM_Item.OnBtnPressCallback += OnNameButtonPressed;
-#endif
+
+                    CM_Item.SetCMItemEvents(OnNameButtonPressed);
                 }
             }
         }
@@ -106,12 +102,8 @@ namespace TheArchive.Features
 
                     CM_Item = headerRootGO.AddComponent<CM_Item>();
                     CM_Item.ID = player.CharacterSlot.index + 1; // +1
-                    CM_Item.m_onBtnPress = new UnityEngine.Events.UnityEvent();
-#if IL2CPP
-                    CM_Item.OnBtnPressCallback = (Action<int>)OnNameButtonPressed;
-#else
-                    CM_Item.OnBtnPressCallback += OnNameButtonPressed;
-#endif
+
+                    CM_Item.SetCMItemEvents(OnNameButtonPressed);
                 }
             }
         }

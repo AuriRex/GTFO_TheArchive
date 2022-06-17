@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace TheArchive.Features
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     public class ModSettings : Feature
     {
         public override string Name => "Mod Settings (this)";

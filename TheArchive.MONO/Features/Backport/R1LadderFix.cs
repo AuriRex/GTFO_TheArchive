@@ -5,7 +5,7 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Backport
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     [RundownConstraint(RundownFlags.RundownOne)]
     public class R1LadderFix : Feature
     {

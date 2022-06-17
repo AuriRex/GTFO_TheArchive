@@ -16,18 +16,10 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     public class RichPresenceCore : Feature
     {
-        public class RichPresenceCoreSettings
-        {
-            public bool EnableDiscordRPC { get; set; } = true;
-        }
-
-        public override string Name => "Rich Presence Core";
-
-        [FeatureConfig]
-        public static RichPresenceCoreSettings Config { get; set; }
+        public override string Name => "Discord Rich Presence";
 
         [FeatureConfig]
         public static RichPresenceSettings DiscordRPCSettings { get; set; }

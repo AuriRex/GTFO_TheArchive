@@ -4,7 +4,7 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Features.QoL
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     [RundownConstraint(Utils.RundownFlags.RundownFour, Utils.RundownFlags.Latest)]
     public class MapToObjectivesSwitchFix : Feature
     {

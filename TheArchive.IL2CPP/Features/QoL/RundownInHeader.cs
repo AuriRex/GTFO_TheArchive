@@ -6,7 +6,7 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.QoL
 {
-    [EnableFeatureByDefault(true)]
+    [EnableFeatureByDefault]
     public class RundownInHeader : Feature
     {
         public override string Name => "Rundown # in Header";
