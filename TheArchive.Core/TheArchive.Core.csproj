@@ -74,6 +74,7 @@
     <Compile Include="Core\Attributes\IsTypeProvider.cs" />
     <Compile Include="Core\Attributes\IsUpdate.cs" />
     <Compile Include="Core\Attributes\RundownConstraint.cs" />
+    <Compile Include="Core\Attributes\SetEnabledStatus.cs" />
     <Compile Include="Core\BuildDB.cs" />
     <Compile Include="Core\DiscordApi\ActivityManager.cs" />
     <Compile Include="Core\DiscordApi\Constants.cs" />

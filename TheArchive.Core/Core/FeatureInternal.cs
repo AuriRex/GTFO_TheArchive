@@ -22,11 +22,12 @@ namespace TheArchive.Core
         private Feature _feature;
         private HarmonyLib.Harmony _harmonyInstance;
 
-        private List<Type> _patchTypes = new List<Type>();
-        private HashSet<FeaturePatchInfo> _patchInfos = new HashSet<FeaturePatchInfo>();
-        private HashSet<PropertyInfo> _settings = new HashSet<PropertyInfo>();
+        private readonly List<Type> _patchTypes = new List<Type>();
+        private readonly HashSet<FeaturePatchInfo> _patchInfos = new HashSet<FeaturePatchInfo>();
+        private readonly HashSet<PropertyInfo> _settings = new HashSet<PropertyInfo>();
+        private PropertyInfo _isEnabledPropertyInfo;
 
-        private static HashSet<string> _usedIdentifiers = new HashSet<string>();
+        private static readonly HashSet<string> _usedIdentifiers = new HashSet<string>();
 
         private FeatureInternal() { }
 
@@ -44,6 +45,9 @@ namespace TheArchive.Core
         {
             _feature = feature;
 
+            var featureType = _feature.GetType();
+
+            ArchiveLogger.Msg(ConsoleColor.Black, "-");
             ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(FeatureInternal)}] Initializing {_feature.Identifier} ...");
 
             if(_usedIdentifiers.Contains(_feature.Identifier))
@@ -51,13 +55,13 @@ namespace TheArchive.Core
                 throw new ArchivePatchDuplicateIDException($"Provided feature id \"{_feature.Identifier}\" has already been registered by {FeatureManager.GetById(_feature.Identifier)}!");
             }
 
-            if(!AnyRundownConstraintMatches(feature.GetType()))
+            if(!AnyRundownConstraintMatches(featureType))
             {
                 InternalDisabled = true;
                 DisabledReason |= InternalDisabledReason.RundownConstraintMismatch;
             }
 
-            if (!AnyBuildConstraintMatches(feature.GetType()))
+            if (!AnyBuildConstraintMatches(featureType))
             {
                 InternalDisabled = true;
                 DisabledReason |= InternalDisabledReason.BuildConstraintMismatch;
@@ -69,7 +73,9 @@ namespace TheArchive.Core
                 return;
             }
 
-            var updateMethod = _feature.GetType().GetMethods()
+            var featureMethods = featureType.GetMethods();
+
+            var updateMethod = featureMethods
                 .FirstOrDefault(mi => (mi.Name == "Update" || mi.GetCustomAttribute<IsUpdate>() != null)
                     && mi.GetParameters().Length == 0
                     && !mi.IsStatic
@@ -83,7 +89,7 @@ namespace TheArchive.Core
                 UpdateDelegate = (Update)updateDelegate;
             }
 
-            var lateUpdateMethod = _feature.GetType().GetMethods()
+            var lateUpdateMethod = featureMethods
                 .FirstOrDefault(mi => (mi.Name == "LateUpdate" || mi.GetCustomAttribute<IsLateUpdate>() != null)
                     && mi.GetParameters().Length == 0
                     && !mi.IsStatic
@@ -97,10 +103,23 @@ namespace TheArchive.Core
                 LateUpdateDelegate = (LateUpdate)lateUpdateDelegate;
             }
 
-            var settingsProps = _feature.GetType().GetProperties()
+            var featureProperties = featureType.GetProperties();
+
+            var settingsProps = featureProperties
                 .Where(pi => pi.GetCustomAttribute<FeatureConfig>() != null);
 
-            foreach(var prop in settingsProps)
+            _isEnabledPropertyInfo = featureProperties
+                .FirstOrDefault(pi => (pi.Name == "IsEnabled" || pi.GetCustomAttribute<SetEnabledStatus>() != null)
+                    && pi.SetMethod != null
+                    && pi.GetMethod.IsStatic
+                    && pi.GetMethod.ReturnType == typeof(bool));
+
+            if(_isEnabledPropertyInfo != null)
+            {
+                ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] Found IsEnabled property \"{_isEnabledPropertyInfo.Name}\" on Feature {_feature.Identifier}.");
+            }
+
+            foreach (var prop in settingsProps)
             {
                 
                 if((!prop.SetMethod?.IsStatic ?? true) || (!prop.GetMethod?.IsStatic ?? true))
@@ -115,7 +134,7 @@ namespace TheArchive.Core
 
             _harmonyInstance = new HarmonyLib.Harmony(_feature.Identifier);
 
-            var potentialPatchTypes = _feature.GetType().GetNestedTypes(ArchivePatcher.AnyBindingFlags).Where(nt => nt.GetCustomAttribute<ArchivePatch>() != null);
+            var potentialPatchTypes = featureType.GetNestedTypes(ArchivePatcher.AnyBindingFlags).Where(nt => nt.GetCustomAttribute<ArchivePatch>() != null);
 
             foreach(var type in potentialPatchTypes)
             {
@@ -130,7 +149,7 @@ namespace TheArchive.Core
                 }
             }
 
-            ArchiveLogger.Notice($"[{nameof(FeatureInternal)}] Discovered {_patchTypes.Count} Patches matching constraints.");
+            ArchiveLogger.Notice($"[{nameof(FeatureInternal)}] Discovered {_patchTypes.Count} Patch{(_patchTypes.Count == 1 ? string.Empty : "es")} matching constraints.");
 
             foreach (var patchType in _patchTypes)
             {
@@ -138,9 +157,11 @@ namespace TheArchive.Core
 
                 try
                 {
+                    var patchTypeMethods = patchType.GetMethods(Utils.AnyBindingFlagss);
+
                     if (!archivePatchInfo.HasType)
                     {
-                        var typeMethod = patchType.GetMethods(Utils.AnyBindingFlagss)
+                        var typeMethod = patchTypeMethods
                             .FirstOrDefault(mi => mi.ReturnType == typeof(Type)
                                 && (mi.Name == "Type" || mi.GetCustomAttribute<IsTypeProvider>() != null)
                                 && AnyRundownConstraintMatches(mi)
@@ -162,7 +183,7 @@ namespace TheArchive.Core
                         }
                     }
 
-                    var parameterTypesMethod = patchType.GetMethods(Utils.AnyBindingFlagss)
+                    var parameterTypesMethod = patchTypeMethods
                             .FirstOrDefault(mi => mi.ReturnType == typeof(Type[])
                                 && (mi.Name == "ParameterTypes" || mi.GetCustomAttribute<IsParameterTypesProvider>() != null)
                                 && AnyRundownConstraintMatches(mi)
@@ -192,12 +213,12 @@ namespace TheArchive.Core
                         throw new ArchivePatchNoOriginalMethodException($"Method with name \"{archivePatchInfo.MethodName}\" couldn't be found in type \"{archivePatchInfo.Type.FullName}\", PatchClass: {patchType.FullName}.");
                     }
 
-                    var prefixMethodInfo = patchType.GetMethods(Utils.AnyBindingFlagss)
+                    var prefixMethodInfo = patchTypeMethods
                             .FirstOrDefault(mi => (mi.Name == "Prefix" || mi.GetCustomAttribute<IsPrefix>() != null)
                                 && AnyRundownConstraintMatches(mi)
                                 && AnyBuildConstraintMatches(mi));
 
-                    var postfixMethodInfo = patchType.GetMethods(Utils.AnyBindingFlagss)
+                    var postfixMethodInfo = patchTypeMethods
                             .FirstOrDefault(mi => (mi.Name == "Postfix" || mi.GetCustomAttribute<IsPostfix>() != null)
                                 && AnyRundownConstraintMatches(mi)
                                 && AnyBuildConstraintMatches(mi));
@@ -211,7 +232,7 @@ namespace TheArchive.Core
 
                     try
                     {
-                        var initMethod = patchType.GetMethods(Utils.AnyBindingFlagss)
+                        var initMethod = patchTypeMethods
                             .FirstOrDefault(mi => mi.IsStatic 
                                 && (mi.Name == "Init" || mi.GetCustomAttribute<IsInitMethod>() != null)
                                 && AnyRundownConstraintMatches(mi)
@@ -220,7 +241,7 @@ namespace TheArchive.Core
                         var initMethodParameters = initMethod?.GetParameters();
                         if (initMethod != null)
                         {
-                            ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] invoking static Init method {initMethod.GetType().Name}.{initMethod.Name} on {_feature.Identifier}");
+                            ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] invoking static Init method {patchType.Name}.{initMethod.Name} on {_feature.Identifier}");
                             if (initMethodParameters.Length == 1 && initMethodParameters[0].ParameterType == typeof(GameBuildInfo))
                             {
                                 initMethod.Invoke(null, new object[] { BuildInfo });
@@ -276,7 +297,7 @@ namespace TheArchive.Core
 
             foreach (var setting in _settings)
             {
-                ArchiveLogger.Info($"[{nameof(FeatureManager)}] Loading config {_feature.Identifier} [{setting.Name}] ({setting.GetMethod.ReturnType.Name}) ...");
+                ArchiveLogger.Info($"[{nameof(FeatureInternal)}] Loading config {_feature.Identifier} [{setting.Name}] ({setting.GetMethod.ReturnType.Name}) ...");
 
                 var configInstance = LocalFiles.LoadFeatureConfig($"{_feature.Identifier}_{setting.Name}", setting.GetMethod.ReturnType);
 
@@ -290,7 +311,7 @@ namespace TheArchive.Core
 
             foreach (var setting in _settings)
             {
-                ArchiveLogger.Info($"[{nameof(FeatureManager)}] Saving config {_feature.Identifier} [{setting.Name}] ({setting.GetMethod.ReturnType.Name}) ...");
+                ArchiveLogger.Info($"[{nameof(FeatureInternal)}] Saving config {_feature.Identifier} [{setting.Name}] ({setting.GetMethod.ReturnType.Name}) ...");
                 
                 var configInstance = setting.GetValue(_feature);
 
@@ -324,6 +345,7 @@ namespace TheArchive.Core
             if (_feature.Enabled) return false;
             ApplyPatches();
             _feature.Enabled = true;
+            _isEnabledPropertyInfo?.SetValue(null, true);
             _feature.OnEnable();
             return true;
         }
@@ -335,6 +357,7 @@ namespace TheArchive.Core
             if (!_feature.Enabled) return false;
             _harmonyInstance.UnpatchSelf();
             _feature.Enabled = false;
+            _isEnabledPropertyInfo?.SetValue(null, false);
             _feature.OnDisable();
             return true;
         }

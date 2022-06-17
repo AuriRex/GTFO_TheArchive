@@ -44,6 +44,8 @@ namespace TheArchive.Features.QoL
         private static bool _hasBeenSetup = false;
         private static eGameStateName _eGameStateName_Lobby;
 
+        public static bool IsEnabled { get; set; }
+
 #if MONO
         private static FieldAccessor<CM_PageLoadout, CM_TimedButton> A_CM_PageLoadout_m_readyButton;
         private static FieldAccessor<CM_PageLoadout, CM_Item> A_CM_PageLoadout_m_changeLoadoutButton;
@@ -176,7 +178,7 @@ namespace TheArchive.Features.QoL
 
         private static void SetButtonActive(int _)
         {
-            _loadoutRandomizerButton?.gameObject?.SetActive(true);
+            _loadoutRandomizerButton?.gameObject?.SetActive(IsEnabled);
         }
 
         public static void SetButtonInactive(int _)
