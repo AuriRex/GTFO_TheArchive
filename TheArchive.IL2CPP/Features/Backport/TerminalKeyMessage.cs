@@ -34,49 +34,31 @@ namespace TheArchive.Features.Backport
 #if IL2CPP
             public static void Postfix(LG_ComputerTerminalCommandInterpreter __instance, string line)
             {
-                try
-                {
-                    if (line.Equals("---------------------------------------------------------------"))
-                    {
-                        var terminal = __instance.m_terminal;
-                        if (_interpreterSet.Contains(__instance.Pointer))
-                        {
-                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 2/2 [{GetKey(terminal)}]");
-                            _interpreterSet.Remove(__instance.Pointer);
-                            __instance.AddOutput($"Welcome to {GetKey(terminal)}, located in {terminal.SpawnNode.m_zone.NavInfo.PrefixLong}_{terminal.SpawnNode.m_zone.NavInfo.Number}", true);
-                        }
-                        else
-                        {
-                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 1/2 [{GetKey(terminal)}]");
-                            _interpreterSet.Add(__instance.Pointer);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ArchiveLogger.Exception(ex);
-                }
-            }
+                var setKey = __instance.Pointer;
+                var terminal = __instance.m_terminal;
 #else
             public static void Postfix(LG_ComputerTerminalCommandInterpreter __instance, ref LG_ComputerTerminal ___m_terminal, string line)
+
             {
+                var setKey = __instance;
+                var terminal = ___m_terminal;
+#endif
+
                 try
                 {
                     if (line.Equals("---------------------------------------------------------------"))
                     {
-
-                        if (_interpreterSet.Contains(__instance))
+                        if (!_interpreterSet.Contains(setKey))
                         {
-                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 2/2 [{GetKey(___m_terminal)}]");
-                            _interpreterSet.Remove(__instance);
-                            __instance.AddOutput($"Welcome to {GetKey(___m_terminal)}, located in {___m_terminal.SpawnNode.m_zone.NavInfo.PrefixLong}_{___m_terminal.SpawnNode.m_zone.NavInfo.Number}", true);
+                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 1/2 [{GetKey(terminal)}]");
+                            _interpreterSet.Add(setKey);
                         }
                         else
                         {
-                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 1/2 [{GetKey(___m_terminal)}]");
-                            _interpreterSet.Add(__instance);
+                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 2/2 [{GetKey(terminal)}]");
+                            _interpreterSet.Remove(setKey);
+                            __instance.AddOutput($"Welcome to <b>{GetKey(terminal)}</b>, located in <b>{terminal.SpawnNode.m_zone.NavInfo.PrefixLong}_{terminal.SpawnNode.m_zone.NavInfo.Number}</b>", true);
                         }
-
                     }
                 }
                 catch (Exception ex)
@@ -84,7 +66,6 @@ namespace TheArchive.Features.Backport
                     ArchiveLogger.Exception(ex);
                 }
             }
-#endif
         }
 
 #if MONO
