@@ -11,7 +11,7 @@ namespace TheArchive.HarmonyPatches.Patches
 {
     public class OtherPatches
     {
-#warning TODO: doesn't work for producing the same voice lines as I'd have hoped it to ...
+        // TODO: doesn't work for producing the same voice lines as I'd have hoped it to ...
         [ArchivePatch(typeof(UnityEngine.Random), nameof(UnityEngine.Random.Range), new Type[] { typeof(float), typeof(float) })]
         internal static class UnityEngine_RandomPatchOne
         {

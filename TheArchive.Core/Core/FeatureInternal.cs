@@ -18,6 +18,7 @@ namespace TheArchive.Core
         internal Update UpdateDelegate { get; private set; }
         internal bool HasLateUpdateMethod => LateUpdateDelegate != null;
         internal LateUpdate LateUpdateDelegate { get; private set; }
+        internal bool HideInModSettings { get; private set; }
 
         private Feature _feature;
         private HarmonyLib.Harmony _harmonyInstance;
@@ -54,6 +55,8 @@ namespace TheArchive.Core
             {
                 throw new ArchivePatchDuplicateIDException($"Provided feature id \"{_feature.Identifier}\" has already been registered by {FeatureManager.GetById(_feature.Identifier)}!");
             }
+
+            HideInModSettings = featureType.GetCustomAttribute<HideInModSettings>() != null;
 
             if(!AnyRundownConstraintMatches(featureType))
             {

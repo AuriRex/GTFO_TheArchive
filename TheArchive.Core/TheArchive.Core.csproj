@@ -66,6 +66,7 @@
     <Compile Include="Core\Attributes\Feature\BuildConstraint.cs" />
     <Compile Include="Core\Attributes\Feature\EnableFeatureByDefault.cs" />
     <Compile Include="Core\Attributes\Feature\FeatureConfig.cs" />
+    <Compile Include="Core\Attributes\Feature\HideInModSettings.cs" />
     <Compile Include="Core\Attributes\Feature\IsInitMethod.cs" />
     <Compile Include="Core\Attributes\Feature\IsLateUpdate.cs" />
     <Compile Include="Core\Attributes\Feature\IsParameterTypesProvider.cs" />

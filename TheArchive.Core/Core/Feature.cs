@@ -9,6 +9,7 @@ namespace TheArchive.Core
     {
         private string _identifier = null;
         public string Identifier => _identifier ??= this.GetType().Name;
+        public bool IsHidden => FeatureInternal.HideInModSettings;
 
         /// <summary>
         /// If the <see cref="Feature"/> is currently enabled.
@@ -67,5 +68,6 @@ namespace TheArchive.Core
         }
 
         internal FeatureInternal FeatureInternal { get; set; }
+        public static bool DevMode => ArchiveMod.Settings.FeatureDevMode;
     }
 }

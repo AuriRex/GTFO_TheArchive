@@ -1,6 +1,7 @@
 ﻿using CellMenu;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
@@ -9,10 +10,12 @@ using UnityEngine;
 
 namespace TheArchive.Features
 {
-    [EnableFeatureByDefault]
+    [EnableFeatureByDefault, HideInModSettings]
     public class ModSettings : Feature
     {
         public override string Name => "Mod Settings (this)";
+
+        public override bool RequiresRestart => true;
 
 #if MONO
         private static readonly FieldAccessor<CM_PageSettings, eSettingsSubMenuId> A_CM_PageSettings_m_currentSubMenuId = FieldAccessor<CM_PageSettings, eSettingsSubMenuId>.GetAccessor("m_currentSubMenuId");
@@ -20,6 +23,8 @@ namespace TheArchive.Features
         private static readonly MethodAccessor<CM_PageSettings> A_CM_PageSettings_ShowSettingsWindow = MethodAccessor<CM_PageSettings>.GetAccessor("ShowSettingsWindow");
 #endif
         private static MethodAccessor<TMPro.TextMeshPro> A_TextMeshPro_ForceMeshUpdate;
+
+        private static bool _restartRequested = false;
 
         public static Color RED = new Color(0.8f, 0.1f, 0.1f, 0.8f);
         public static Color GREEN = new Color(0.1f, 0.8f, 0.1f, 0.8f);
@@ -103,6 +108,18 @@ namespace TheArchive.Features
                     mainModSettingsScrollWindow.SetVisible(visible: false);
                     mainModSettingsScrollWindow.SetHeader(title);
 
+                    TMPro.TextMeshPro scrollWindowHeaderTextTMP = mainModSettingsScrollWindow.GetComponentInChildren<TMPro.TextMeshPro>();
+
+                    var infoText = GameObject.Instantiate(scrollWindowHeaderTextTMP, scrollWindowHeaderTextTMP.transform.parent);
+
+                    infoText.name = "ModSettings_InfoText";
+                    infoText.transform.localPosition += new Vector3(300, 0, 0);
+                    infoText.SetText("");
+                    infoText.enableWordWrapping = false;
+                    infoText.fontSize = 16;
+                    infoText.fontSizeMin = 16;
+
+
 #if IL2CPP
                     Il2CppSystem.Collections.Generic.List<iScrollWindowContent> allSWCs = new Il2CppSystem.Collections.Generic.List<iScrollWindowContent>();
 #else
@@ -111,7 +128,17 @@ namespace TheArchive.Features
 
                     List<TMPro.TextMeshPro> textMeshProToUpdate = new List<TMPro.TextMeshPro>();
 
-                    foreach(var feature in FeatureManager.Instance.RegisteredFeatures)
+                    IEnumerable<Feature> features;
+                    if(Feature.DevMode)
+                    {
+                        features = FeatureManager.Instance.RegisteredFeatures;
+                    }
+                    else
+                    {
+                        features = FeatureManager.Instance.RegisteredFeatures.Where(f => !f.IsHidden);
+                    }
+
+                    foreach(var feature in features)
                     {
                         try
                         {
@@ -123,13 +150,22 @@ namespace TheArchive.Features
 
                             var titleTextTMP = cm_settingsItem.transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
 
-
+                            string featureName;
+                            if(feature.IsHidden)
+                            {
+                                featureName = $"[H] {feature.Name}";
+                                titleTextTMP.color = DISABLED;
+                            }
+                            else
+                            {
+                                featureName = feature.Name;
+                            }
 
 #if IL2CPP
-                            titleTextTMP.m_text = feature.Name;
-                            titleTextTMP.SetText(feature.Name);
+                            titleTextTMP.m_text = featureName;
+                            titleTextTMP.SetText(featureName);
 #else
-                            titleTextTMP.SetText(feature.Name);
+                            titleTextTMP.SetText(featureName);
 #endif
 
                             if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFour | Utils.RundownFlags.RundownFive))
@@ -152,6 +188,12 @@ namespace TheArchive.Features
                                 FeatureManager.ToggleFeature(feature);
 
                                 SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
+
+                                if(feature.RequiresRestart && !_restartRequested)
+                                {
+                                    _restartRequested = true;
+                                    infoText.SetText($"<color=red><b>Restart required for some settings to apply!</b></color>");
+                                }
                             });
 
                             SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
@@ -201,7 +243,7 @@ namespace TheArchive.Features
 
             private static void SetFeatureItemTextAndColor(Feature feature, CM_Item buttonItem, TMPro.TextMeshPro text)
             {
-                bool enabled = feature.AppliesToThisGameBuild ? feature.Enabled : FeatureManager.IsEnabledInConfig(feature);
+                bool enabled = (feature.AppliesToThisGameBuild && !feature.RequiresRestart) ? feature.Enabled : FeatureManager.IsEnabledInConfig(feature);
                 text.SetText(enabled ? "Enabled" : "Disabled");
 
                 SetFeatureItemColor(feature, buttonItem);
@@ -212,15 +254,20 @@ namespace TheArchive.Features
                 if (!feature.AppliesToThisGameBuild)
                 {
                     SharedUtils.ChangeColorCMItem(item, DISABLED);
+                    return;
                 }
-                else if (feature.Enabled)
+
+                Color col;
+
+                if (feature.RequiresRestart)
                 {
-                    SharedUtils.ChangeColorCMItem(item, GREEN);
+                    col = FeatureManager.IsEnabledInConfig(feature) ? GREEN : RED;
+                    SharedUtils.ChangeColorCMItem(item, col);
+                    return;
                 }
-                else
-                {
-                    SharedUtils.ChangeColorCMItem(item, RED);
-                }
+
+                col = feature.Enabled ? GREEN : RED;
+                SharedUtils.ChangeColorCMItem(item, col);
             }
         }
     }

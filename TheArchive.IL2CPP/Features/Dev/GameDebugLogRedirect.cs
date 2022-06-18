@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheArchive.Features.Dev
 {
-    [EnableFeatureByDefault]
+    [EnableFeatureByDefault, HideInModSettings]
     public class GameDebugLogRedirect : Feature
     {
         public override string Name => "Game Logs Redirect";
@@ -16,7 +16,7 @@ namespace TheArchive.Features.Dev
 #if IL2CPP
         [ArchivePatch(typeof(Debug), nameof(Debug.Log), new Type[] { typeof(Il2CppSystem.Object) })]
 #else
-        [ArchivePatch(typeof(Debug), nameof(Debug.LogError), new Type[] { typeof(object) })]
+        [ArchivePatch(typeof(Debug), nameof(Debug.Log), new Type[] { typeof(object) })]
 #endif
         internal static class Debug_LogPatch
         {
@@ -34,7 +34,7 @@ namespace TheArchive.Features.Dev
 #if IL2CPP
         [ArchivePatch(typeof(Debug), nameof(Debug.LogWarning), new Type[] { typeof(Il2CppSystem.Object) })]
 #else
-        [ArchivePatch(typeof(Debug), nameof(Debug.LogError), new Type[] { typeof(object) })]
+        [ArchivePatch(typeof(Debug), nameof(Debug.LogWarning), new Type[] { typeof(object) })]
 #endif
         internal static class Debug_LogWarningPatch
         {

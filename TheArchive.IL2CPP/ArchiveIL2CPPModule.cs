@@ -42,9 +42,6 @@ namespace TheArchive
             CrashReportHandler.SetUserMetadata("Modded", "true");
             CrashReportHandler.enableCaptureExceptions = false;
 
-            if (ArchiveMod.Settings.DisableGameAnalytics)
-                Analytics.enabled = false;
-
             typeof(EnemyDataBlock).RegisterSelf();
             typeof(GameDataBlockBase<>).RegisterSelf();
             typeof(GameDataBlockWrapper<>).RegisterSelf();
@@ -113,14 +110,6 @@ namespace TheArchive
                 FeatureManager.Instance.DEBUG_ENABLE();
             }
 #endif
-
-            if (Input.GetKeyDown(KeyCode.F2) && ArchiveMod.Settings.EnableHideWeapon)
-            {
-                // Toggle First Person Item hidden
-                var localPlayerAgent = Player.PlayerManager.GetLocalPlayerAgent();
-                if (localPlayerAgent != null && localPlayerAgent.FPItemHolder != null)
-                    localPlayerAgent.FPItemHolder.ForceItemHidden = !localPlayerAgent.FPItemHolder.ForceItemHidden;
-            }
         }
 
         public void OnExit()

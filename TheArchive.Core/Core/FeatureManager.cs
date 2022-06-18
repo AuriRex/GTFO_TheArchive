@@ -129,6 +129,8 @@ namespace TheArchive.Core
                 SetEnabledInConfig(feature, true);
             }
 
+            if (feature.RequiresRestart) return;
+
             if (feature.Enabled) return;
 
             if (feature.AppliesToThisGameBuild)
@@ -148,6 +150,8 @@ namespace TheArchive.Core
             {
                 SetEnabledInConfig(feature, false);
             }
+
+            if (feature.RequiresRestart) return;
 
             if (!feature.Enabled) return;
 
@@ -193,8 +197,8 @@ namespace TheArchive.Core
 
         public void ToggleFeatureInstance(Feature feature)
         {
-            bool enabled = feature.AppliesToThisGameBuild ? feature.Enabled : IsEnabledInConfig(feature);
-            if(enabled)
+            bool enabled = (feature.AppliesToThisGameBuild && !feature.RequiresRestart) ? feature.Enabled : IsEnabledInConfig(feature);
+            if (enabled)
             {
                 DisableFeature(feature);
             }

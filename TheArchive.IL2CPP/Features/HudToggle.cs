@@ -7,7 +7,7 @@ namespace TheArchive.Features
     [EnableFeatureByDefault]
     public class HudToggle : Feature
     {
-        public override string Name => "Hud Toggle";
+        public override string Name => "Hud Toggle (F1)";
 
         private static bool _hudIsVisible = true;
 

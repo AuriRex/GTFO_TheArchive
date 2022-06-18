@@ -157,6 +157,9 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\CustomLobbyCodeString.cs">
       <Link>Features\CustomLobbyCodeString.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\AnalyticsBlocker.cs">
+      <Link>Features\Dev\AnalyticsBlocker.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Dev\GameDebugLogRedirect.cs">
       <Link>Features\Dev\GameDebugLogRedirect.cs</Link>
     </Compile>
@@ -168,6 +171,9 @@
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
       <Link>Features\PlayerInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\IntroSkip.cs">
+      <Link>Features\QoL\IntroSkip.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\QoL\LoadoutRandomizer.cs">
       <Link>Features\QoL\LoadoutRandomizer.cs</Link>
@@ -190,6 +196,12 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\RichPresenceCore.cs">
       <Link>Features\RichPresenceCore.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Special\HideFirstPersonItem.cs">
+      <Link>Features\Special\HideFirstPersonItem.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveChatRestrictions.cs">
+      <Link>Features\Special\RemoveChatRestrictions.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\SteamRichPresenceTweaks.cs">
       <Link>Features\SteamRichPresenceTweaks.cs</Link>
     </Compile>
@@ -201,14 +213,10 @@
     <Compile Include="Features\Backport\AlarmClassOnDoors.cs" />
     <Compile Include="Features\Backport\R1LadderFix.cs" />
     <Compile Include="Features\Backport\R1VisualPings.cs" />
-    <Compile Include="HarmonyPatches\Patches\AutoIntroPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\R1SNetRevisionOverridePatch.cs" />
-    <Compile Include="HarmonyPatches\Patches\UnityLoggerPatches.cs" />
+    <Compile Include="Features\Special\R1SNetRevisionOverridePatch.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\QualityOfLifePatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\AnalyticsPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\MonoUtils.cs" />
   </ItemGroup>
