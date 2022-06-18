@@ -321,6 +321,7 @@
     <Compile Include="Features\RedirectSettings.cs" />
     <Compile Include="Features\Special\HideFirstPersonItem.cs" />
     <Compile Include="Features\Special\RemoveChatRestrictions.cs" />
+    <Compile Include="Features\Special\Watermark.cs" />
     <Compile Include="Features\SteamRichPresenceTweaks.cs" />
     <Compile Include="Features\QoL\IntroSkip.cs" />
     <Compile Include="Features\ModSettings.cs" />

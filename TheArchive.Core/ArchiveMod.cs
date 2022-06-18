@@ -13,7 +13,7 @@ using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
-[assembly: MelonInfo(typeof(ArchiveMod), "TheArchive", ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch, "AuriRex", "https://github.com/AuriRex/GTFO_TheArchive")]
+[assembly: MelonInfo(typeof(ArchiveMod), "TheArchive", ArchiveMod.VersionString, "AuriRex", "https://github.com/AuriRex/GTFO_TheArchive")]
 [assembly: MelonGame("10 Chambers Collective", "GTFO")]
 [assembly: MelonColor(ConsoleColor.DarkMagenta)]
 [assembly: MelonOptionalDependencies("System.Runtime.CompilerServices.Unsafe", "UnhollowerBaseLib")]
@@ -39,6 +39,8 @@ namespace TheArchive
                 return _jsonSerializerSettings;
             }
         }
+
+        public const string VersionString = ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch;
 
         public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnitialized;
         public static GameBuildInfo CurrentBuildInfo { get; private set; }

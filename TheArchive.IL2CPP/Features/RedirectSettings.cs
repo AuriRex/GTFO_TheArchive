@@ -11,6 +11,7 @@ namespace TheArchive.Features
     {
         public override string Name => "Redirect Settings";
 
+        public override bool RequiresRestart => true;
 
 #if IL2CPP
         [ArchivePatch(typeof(Il2CppSystem.IO.Path), nameof(Il2CppSystem.IO.Path.Combine), new Type[] { typeof(string), typeof(string) })]
