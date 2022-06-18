@@ -13,7 +13,7 @@ using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
-[assembly: MelonInfo(typeof(ArchiveMod), "TheArchive", "0.1", "AuriRex")]
+[assembly: MelonInfo(typeof(ArchiveMod), "TheArchive", ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch, "AuriRex", "https://github.com/AuriRex/GTFO_TheArchive")]
 [assembly: MelonGame("10 Chambers Collective", "GTFO")]
 [assembly: MelonColor(ConsoleColor.DarkMagenta)]
 [assembly: MelonOptionalDependencies("System.Runtime.CompilerServices.Unsafe", "UnhollowerBaseLib")]

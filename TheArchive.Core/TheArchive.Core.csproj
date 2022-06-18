@@ -136,7 +136,9 @@
       <Link>Resources\LICENSE</Link>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>cd $(ProjectDir)Resources\
@@ -154,4 +156,11 @@ if exist TheArchive.MONO.dll (
 )
 </PreBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\GitInfo.2.2.0\build\GitInfo.targets" Condition="Exists('..\packages\GitInfo.2.2.0\build\GitInfo.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\GitInfo.2.2.0\build\GitInfo.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitInfo.2.2.0\build\GitInfo.targets'))" />
+  </Target>
 </Project>
