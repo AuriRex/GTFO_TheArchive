@@ -12,6 +12,8 @@ namespace TheArchive.Features.QoL
 
         public override string Description => "Prevent a switch to the Objectives Screen whenever the chat is open and the 'o' key is pressed.";
 
+        public override string Group => FeatureGroups.QualityOfLife;
+
         // Prevent a switch to the Objectives Screen whenever the chat is open
         [ArchivePatch(typeof(MainMenuGuiLayer), nameof(MainMenuGuiLayer.ChangePage))]
         internal static class MainMenuGuiLayer_ChangePagePatch

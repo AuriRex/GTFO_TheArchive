@@ -12,6 +12,8 @@ namespace TheArchive.Core
 
         public HashSet<Feature> RegisteredFeatures { get; private set; } = new HashSet<Feature>();
 
+        public Dictionary<string, HashSet<Feature>> GroupedFeatures { get; private set; } = new Dictionary<string, HashSet<Feature>>();
+
         private EnabledFeatures _enabledFeatures { get; set; }
 
         private HashSet<FeatureInternal.Update> _updateMethods = new HashSet<FeatureInternal.Update>();
@@ -258,6 +260,26 @@ namespace TheArchive.Core
 
             SetFeatureEnabledInConfig(feature, shouldEnable);
             return shouldEnable;
+        }
+
+        internal static void AddGroupedFeature(Feature feature)
+        {
+            Instance.AddGroupedFeatureI(feature);
+        }
+
+        private void AddGroupedFeatureI(Feature feature)
+        {
+            if (feature == null || !feature.BelongsToGroup) return;
+
+            if(!GroupedFeatures.TryGetValue(feature.Group, out var featureSet))
+            {
+                GroupedFeatures.Add(feature.Group, new HashSet<Feature>() {
+                    feature
+                });
+                return;
+            }
+
+            featureSet.Add(feature);
         }
     }
 }

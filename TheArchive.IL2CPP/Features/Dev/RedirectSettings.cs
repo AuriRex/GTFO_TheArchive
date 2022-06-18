@@ -4,7 +4,7 @@ using TheArchive.Core;
 using TheArchive.Core.Attributes;
 using TheArchive.Utilities;
 
-namespace TheArchive.Features
+namespace TheArchive.Features.Dev
 {
     [EnableFeatureByDefault, HideInModSettings]
     public class RedirectSettings : Feature
@@ -12,6 +12,8 @@ namespace TheArchive.Features
         public override string Name => "Redirect Settings";
 
         public override bool RequiresRestart => true;
+
+        public override string Group => FeatureGroups.Dev;
 
 #if IL2CPP
         [ArchivePatch(typeof(Il2CppSystem.IO.Path), nameof(Il2CppSystem.IO.Path.Combine), new Type[] { typeof(string), typeof(string) })]

@@ -15,6 +15,8 @@ namespace TheArchive.Features.Backport
 
         public override string Description => "Use the player ping (Middle Mouse Ping) for terminal ping command pings in R1";
 
+        public override string Group => FeatureGroups.Backport;
+
 #if MONO
         private static MethodAccessor<PlayerAgent> A_PlayerAgent_TriggerMarkerPing;
         private static ManualPingTarget CustomTerminalPingQoLInstance = null;

@@ -11,6 +11,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Game Logs Redirect";
 
+        public override string Group => FeatureGroups.Dev;
 
         //Log
 #if IL2CPP

@@ -13,6 +13,8 @@ namespace TheArchive.Features.Backport
 
         public override string Description => "Fix ladder movement so that W is always upwards and S always downwards, no matter where you're looking.";
 
+        public override string Group => FeatureGroups.Backport;
+
 #if MONO
         [ArchivePatch(typeof(LG_Ladder), "GetMoveVec")]
         internal static class LG_Ladder_GetMoveVecPatch

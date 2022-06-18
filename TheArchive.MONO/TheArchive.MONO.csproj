@@ -163,11 +163,14 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\Dev\GameDebugLogRedirect.cs">
       <Link>Features\Dev\GameDebugLogRedirect.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModSettings.cs">
+      <Link>Features\Dev\ModSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\RedirectSettings.cs">
+      <Link>Features\Dev\RedirectSettings.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\HudToggle.cs">
       <Link>Features\HudToggle.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\ModSettings.cs">
-      <Link>Features\ModSettings.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
       <Link>Features\PlayerInfo.cs</Link>
@@ -189,9 +192,6 @@
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\QoL\UnreadyButtonPatches.cs">
       <Link>Features\QoL\UnreadyButtonPatches.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\RedirectSettings.cs">
-      <Link>Features\RedirectSettings.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\RichPresenceCore.cs">
       <Link>Features\RichPresenceCore.cs</Link>

@@ -16,6 +16,8 @@ namespace TheArchive.Features.Backport
 
         public override string Description => "Add alarm classes to security door interaction texts";
 
+        public override string Group => FeatureGroups.Backport;
+
 #if MONO
         [ArchivePatch(typeof(LG_SecurityDoor_Locks), "OnDoorState")]
         internal static class LG_SecurityDoor_Locks_OnDoorStatePatch

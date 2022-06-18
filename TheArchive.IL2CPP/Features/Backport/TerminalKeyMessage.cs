@@ -13,6 +13,8 @@ namespace TheArchive.Features.Backport
     {
         public override string Name => "R6+ Terminal Key / Zone Info";
 
+        public override string Group => FeatureGroups.Backport;
+
 #if IL2CPP
         private static HashSet<IntPtr> _interpreterSet = new HashSet<IntPtr>();
 #else

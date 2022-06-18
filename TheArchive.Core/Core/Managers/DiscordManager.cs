@@ -83,7 +83,7 @@ namespace TheArchive.Core.Managers
 
                 _discordClient.Initialize();
 
-                _discordClient.TryUpdateActivity(_discordClient.BuildActivity(PresenceGameState.Startup, PresenceManager.CurrentStateStartTime));
+                _discordClient.TryUpdateActivity(_discordClient.BuildActivity(PresenceManager.CurrentState, PresenceManager.CurrentStateStartTime));
                 _discordClient.RunCallbacks();
             }
             catch(Discord.ResultException ex)

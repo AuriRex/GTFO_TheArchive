@@ -318,13 +318,13 @@
     <Compile Include="Features\QoL\MapToObjectivesSwitchFix.cs" />
     <Compile Include="Features\QoL\ResourcePrioritizationPings.cs" />
     <Compile Include="Features\QoL\RundownInHeader.cs" />
-    <Compile Include="Features\RedirectSettings.cs" />
+    <Compile Include="Features\Dev\RedirectSettings.cs" />
     <Compile Include="Features\Special\HideFirstPersonItem.cs" />
     <Compile Include="Features\Special\RemoveChatRestrictions.cs" />
     <Compile Include="Features\Special\Watermark.cs" />
     <Compile Include="Features\SteamRichPresenceTweaks.cs" />
     <Compile Include="Features\QoL\IntroSkip.cs" />
-    <Compile Include="Features\ModSettings.cs" />
+    <Compile Include="Features\Dev\ModSettings.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerClientAPIViaPlayFabPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\DropServerPatches.cs" />
     <Compile Include="Features\Backport\MeleeCancelBackport.cs" />

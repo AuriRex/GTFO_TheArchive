@@ -17,6 +17,8 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Loadout Randomizer";
 
+        public override string Group => FeatureGroups.QualityOfLife;
+
         public class LoadoutRandomizerSettings
         {
             public List<InventorySlots> ExcludedSlots { get; set; } = new List<InventorySlots>();

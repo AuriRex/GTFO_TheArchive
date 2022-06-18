@@ -37,6 +37,7 @@ namespace TheArchive.Core
             var fi = new FeatureInternal();
             feature.FeatureInternal = fi;
             fi.Init(feature);
+            fi.AfterInit();
         }
 
         public delegate void Update();
@@ -58,7 +59,7 @@ namespace TheArchive.Core
 
             HideInModSettings = featureType.GetCustomAttribute<HideInModSettings>() != null;
 
-            if(!AnyRundownConstraintMatches(featureType))
+            if (!AnyRundownConstraintMatches(featureType))
             {
                 InternalDisabled = true;
                 DisabledReason |= InternalDisabledReason.RundownConstraintMismatch;
@@ -304,6 +305,15 @@ namespace TheArchive.Core
             else
             {
                 _feature.Enabled = false;
+            }
+        }
+
+
+        private void AfterInit()
+        {
+            if(_feature.BelongsToGroup)
+            {
+                FeatureManager.AddGroupedFeature(_feature);
             }
         }
 

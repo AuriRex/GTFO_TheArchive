@@ -11,6 +11,8 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Skip Intro";
 
+        public override string Group => FeatureGroups.QualityOfLife;
+
         [ArchivePatch(typeof(CM_PageIntro), "Update")]
         internal static class CM_PageIntro_UpdatePatch
         {

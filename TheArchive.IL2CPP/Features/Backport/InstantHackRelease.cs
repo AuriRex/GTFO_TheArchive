@@ -18,6 +18,9 @@ namespace TheArchive.Features.Backport
 
         public override string Description => "Change hacking minigame to be more in line with newest version of the game -> minigame finishes and hack disappears instantly";
 
+        public override string Group => FeatureGroups.Backport;
+
+
         [ArchivePatch(typeof(HackingTool), "UpdateHackSequence")]
         internal static class HackingTool_UpdateHackSequencePatch
         {

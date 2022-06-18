@@ -11,6 +11,8 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "Remove Chat Restrictions";
 
+        public override string Group => FeatureGroups.Special;
+
 #if IL2CPP
         private static PropertyAccessor<PlayerChatManager, UnhollowerBaseLib.Il2CppStructArray<int>> A_PlayerChatManager_m_forbiddenChars;
 #else

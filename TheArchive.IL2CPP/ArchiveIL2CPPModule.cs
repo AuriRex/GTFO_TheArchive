@@ -1,20 +1,17 @@
 ﻿using GameData;
 using Globals;
-using HarmonyLib;
 using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using TheArchive.Core;
+using TheArchive.Core.Attributes;
 using TheArchive.Core.Managers;
 using TheArchive.Managers;
 using TheArchive.Utilities;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.CrashReportHandler;
 
+[assembly: ModDefaultFeatureGroupName("TheArchive")]
 namespace TheArchive
 {
-
     public class ArchiveIL2CPPModule : IArchiveModule
     {
         internal static ArchiveIL2CPPModule instance;

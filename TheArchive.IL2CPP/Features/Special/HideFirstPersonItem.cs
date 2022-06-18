@@ -7,6 +7,8 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "Weapon Model Toggle (F2)";
 
+        public override string Group => FeatureGroups.Special;
+
         public void Update()
         {
             if (Input.GetKeyDown(KeyCode.F2))

@@ -3,13 +3,14 @@ using Globals;
 using System;
 using System.Runtime.CompilerServices;
 using TheArchive.Core;
+using TheArchive.Core.Attributes;
 using TheArchive.Core.Managers;
 using TheArchive.Utilities;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.CrashReportHandler;
 using static TheArchive.Utilities.Utils;
 
+[assembly: ModDefaultFeatureGroupName("TheArchive")]
 namespace TheArchive
 {
     public class ArchiveMONOModule : IArchiveModule

@@ -10,6 +10,8 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "Watermark";
 
+		public override string Group => FeatureGroups.Special;
+
 		public const string ColorHex = "FBF3FF";
 
 #if MONO

@@ -28,15 +28,6 @@ namespace TheArchive.Features
         {
             DiscordRPCSettings = DiscordRPCSettings?.FillDefaultDictValues();
 
-            try
-            {
-                DiscordManager.Enable(DiscordRPCSettings);
-            }
-            catch (Exception ex)
-            {
-                ArchiveLogger.Exception(ex);
-            }
-
             PresenceManager.UpdateGameState(PresenceGameState.Startup, false);
         }
 
@@ -50,6 +41,11 @@ namespace TheArchive.Features
             {
                 ArchiveLogger.Exception(ex);
             }
+        }
+
+        public override void OnDisable()
+        {
+            DiscordManager.Disable();
         }
 
         public void Update()

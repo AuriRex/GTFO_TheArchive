@@ -10,6 +10,7 @@ namespace TheArchive.Features.Dev
     public class AnalyticsBlocker : Feature
     {
         public override string Name => "Block Game Analytics";
+        public override string Group => FeatureGroups.Dev;
 
         public override void OnEnable()
         {

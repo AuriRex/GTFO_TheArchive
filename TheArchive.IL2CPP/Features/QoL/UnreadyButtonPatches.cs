@@ -12,6 +12,8 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Unready Button";
 
+        public override string Group => FeatureGroups.QualityOfLife;
+
         [ArchivePatch(typeof(CM_PageLoadout), "UpdateReadyButton")]
         internal static class CM_PageLoadout_UpdateReadyButtonPatch
         {

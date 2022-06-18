@@ -11,6 +11,8 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "R1 connect to 19087 games";
 
+        public override string Group => FeatureGroups.Special;
+
         public const int kOriginalRevision = 19715;
         public static int RevisionOverride { get; set; } = 19087;
 

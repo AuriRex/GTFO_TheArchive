@@ -13,6 +13,8 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Prioritize Resource Pings";
 
+        public override string Group => FeatureGroups.QualityOfLife;
+
         // prioritize resources in ping raycasts
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.RundownFive)]
         [ArchivePatch(typeof(PlayerAgent), "TriggerMarkerPing")]

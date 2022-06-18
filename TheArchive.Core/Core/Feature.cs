@@ -10,6 +10,7 @@ namespace TheArchive.Core
         private string _identifier = null;
         public string Identifier => _identifier ??= this.GetType().Name;
         public bool IsHidden => FeatureInternal.HideInModSettings;
+        public bool BelongsToGroup => Group != null;
 
         /// <summary>
         /// If the <see cref="Feature"/> is currently enabled.
@@ -31,7 +32,13 @@ namespace TheArchive.Core
         /// A short description about this Feature,<br/> used in Mod Settings
         /// </summary>
         public virtual string Description { get; set; } = string.Empty;
-
+        /// <summary>
+        /// Used to group multiple settings together under one header,<br/>used in Mod Settings
+        /// </summary>
+        public virtual string Group => null;
+        /// <summary>
+        /// If set, prevents calling of <see cref="OnEnable"/> and <see cref="OnDisable"/> methods and only switches the config state of this <see cref="Feature"/>.
+        /// </summary>
         public virtual bool RequiresRestart => false;
 
 

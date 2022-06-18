@@ -11,6 +11,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Rundown # in Header";
 
+        public override string Group => FeatureGroups.QualityOfLife;
 
         // add R4 / R5 to the beginning of the header text ("R4A1: Crytology")
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.Latest)]

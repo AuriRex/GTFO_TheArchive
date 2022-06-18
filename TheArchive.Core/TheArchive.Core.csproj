@@ -74,6 +74,7 @@
     <Compile Include="Core\Attributes\Feature\IsPrefix.cs" />
     <Compile Include="Core\Attributes\Feature\IsTypeProvider.cs" />
     <Compile Include="Core\Attributes\Feature\IsUpdate.cs" />
+    <Compile Include="Core\Attributes\Feature\ModDefaultFeatureGroupName.cs" />
     <Compile Include="Core\Attributes\Feature\RundownConstraint.cs" />
     <Compile Include="Core\Attributes\Feature\SetEnabledStatus.cs" />
     <Compile Include="Core\BuildDB.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Core\DiscordApi\StoreManager.cs" />
     <Compile Include="Core\Exceptions\ArchivePatchExceptions.cs" />
     <Compile Include="Core\Feature.cs" />
+    <Compile Include="Core\FeatureGroups.cs" />
     <Compile Include="Core\FeatureInternal.cs" />
     <Compile Include="Core\FeatureManager.cs" />
     <Compile Include="Core\IArchiveModule.cs" />

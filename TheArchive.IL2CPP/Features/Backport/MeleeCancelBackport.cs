@@ -11,6 +11,8 @@ namespace TheArchive.Features.Backport
     {
         public override string Name => "Modern Melee Cancel";
 
+        public override string Group => FeatureGroups.Backport;
+
         public override void Init()
         {
             
