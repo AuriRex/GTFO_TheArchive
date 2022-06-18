@@ -19,6 +19,8 @@ namespace TheArchive.Core.Attributes
 
         public Type[] ParameterTypes { get; internal set; }
 
+        public PatchMethodType MethodType { get; internal set; } = PatchMethodType.Method;
+
         /// <summary>
         /// Describes what method to patch.
         /// <br/><br/>
@@ -26,7 +28,7 @@ namespace TheArchive.Core.Attributes
         /// </summary>
         /// <param name="methodName"></param>
         /// <param name="parameterTypes"></param>
-        public ArchivePatch(string methodName, Type[] parameterTypes = null) : this(null, methodName, parameterTypes)
+        public ArchivePatch(string methodName, Type[] parameterTypes = null, PatchMethodType patchMethodType = PatchMethodType.Method) : this(null, methodName, parameterTypes, patchMethodType)
         {
 
         }
@@ -37,12 +39,19 @@ namespace TheArchive.Core.Attributes
         /// <param name="type">The type the method is on</param>
         /// <param name="methodName">The method name to patch</param>
         /// <param name="parameterTypes">Method parameters to distinguish between overloads</param>
-        public ArchivePatch(Type type, string methodName, Type[] parameterTypes = null)
+        public ArchivePatch(Type type, string methodName, Type[] parameterTypes = null, PatchMethodType patchMethodType = PatchMethodType.Method)
         {
             Type = type;
             MethodName = methodName;
             ParameterTypes = parameterTypes;
+            MethodType = patchMethodType;
         }
 
+        public enum PatchMethodType
+        {
+            Method,
+            Getter,
+            Setter
+        }
     }
 }

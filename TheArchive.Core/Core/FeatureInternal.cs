@@ -199,18 +199,31 @@ namespace TheArchive.Core
 
                     MethodInfo original;
 
-                    if (archivePatchInfo.ParameterTypes != null)
+                    switch(archivePatchInfo.MethodType)
                     {
-                        original = archivePatchInfo.Type.GetMethod(archivePatchInfo.MethodName, Utils.AnyBindingFlagss, null, archivePatchInfo.ParameterTypes, null);
+                        default:
+                        case ArchivePatch.PatchMethodType.Method:
+                            if (archivePatchInfo.ParameterTypes != null)
+                            {
+                                original = archivePatchInfo.Type.GetMethod(archivePatchInfo.MethodName, Utils.AnyBindingFlagss, null, archivePatchInfo.ParameterTypes, null);
+                            }
+                            else
+                            {
+                                original = archivePatchInfo.Type.GetMethod(archivePatchInfo.MethodName, Utils.AnyBindingFlagss);
+                            }
+                            break;
+                        case ArchivePatch.PatchMethodType.Getter:
+                            original = archivePatchInfo.Type.GetProperty(archivePatchInfo.MethodName, Utils.AnyBindingFlagss)?.GetMethod;
+                            break;
+                        case ArchivePatch.PatchMethodType.Setter:
+                            original = archivePatchInfo.Type.GetProperty(archivePatchInfo.MethodName, Utils.AnyBindingFlagss)?.SetMethod;
+                            break;
                     }
-                    else
-                    {
-                        original = archivePatchInfo.Type.GetMethod(archivePatchInfo.MethodName, Utils.AnyBindingFlagss);
-                    }
+                    
 
                     if (original == null)
                     {
-                        throw new ArchivePatchNoOriginalMethodException($"Method with name \"{archivePatchInfo.MethodName}\" couldn't be found in type \"{archivePatchInfo.Type.FullName}\", PatchClass: {patchType.FullName}.");
+                        throw new ArchivePatchNoOriginalMethodException($"{archivePatchInfo.MethodType} with name \"{archivePatchInfo.MethodName}\" couldn't be found in type \"{archivePatchInfo.Type.FullName}\", PatchClass: {patchType.FullName}.");
                     }
 
                     var prefixMethodInfo = patchTypeMethods

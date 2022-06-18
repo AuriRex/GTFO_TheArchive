@@ -184,6 +184,9 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\QoL\UnreadyButtonPatches.cs">
       <Link>Features\QoL\UnreadyButtonPatches.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\RedirectSettings.cs">
+      <Link>Features\RedirectSettings.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\RichPresenceCore.cs">
       <Link>Features\RichPresenceCore.cs</Link>
     </Compile>
@@ -198,7 +201,6 @@
     <Compile Include="Features\Backport\AlarmClassOnDoors.cs" />
     <Compile Include="Features\Backport\R1LadderFix.cs" />
     <Compile Include="Features\Backport\R1VisualPings.cs" />
-    <Compile Include="HarmonyPatches\AutoPatches\CELLSettingsPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\AutoIntroPatches.cs" />
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gear;
+using System;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
 using TheArchive.Utilities;
@@ -31,6 +32,24 @@ namespace TheArchive.Features
                     default:
                         return true;
                 }
+            }
+        }
+#else
+        [ArchivePatch(typeof(CellSettingsManager), "SettingsPath", patchMethodType: ArchivePatch.PatchMethodType.Getter)]
+        public static class CellSettingsManager_SettingsPathPatch
+        {
+            public static void Postfix(ref string __result)
+            {
+                __result = LocalFiles.SettingsPath;
+            }
+        }
+
+        [ArchivePatch(typeof(GearManager), "FavoritesPath", patchMethodType: ArchivePatch.PatchMethodType.Getter)]
+        public static class GearManager_FavoritesPathPatch
+        {
+            public static void Postfix(ref string __result)
+            {
+                __result = LocalFiles.FavoritesPath;
             }
         }
 #endif
