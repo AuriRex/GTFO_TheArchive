@@ -169,6 +169,9 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\Dev\RedirectSettings.cs">
       <Link>Features\Dev\RedirectSettings.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\DiscordRichPresence.cs">
+      <Link>Features\DiscordRichPresence.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\HudToggle.cs">
       <Link>Features\HudToggle.cs</Link>
     </Compile>

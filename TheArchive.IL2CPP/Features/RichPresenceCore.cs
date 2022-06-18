@@ -16,49 +16,14 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features
 {
-    [EnableFeatureByDefault]
+    [EnableFeatureByDefault, HideInModSettings]
     public class RichPresenceCore : Feature
     {
-        public override string Name => "Discord Rich Presence";
+        public override string Name => "Rich Presence Core";
 
-        [FeatureConfig]
-        public static RichPresenceSettings DiscordRPCSettings { get; set; }
+        public override string Description => "Updates the Presence Game State and provides some values via patches.";
 
-        public override void Init()
-        {
-            DiscordRPCSettings = DiscordRPCSettings?.FillDefaultDictValues();
-
-            PresenceManager.UpdateGameState(PresenceGameState.Startup, false);
-        }
-
-        public override void OnEnable()
-        {
-            try
-            {
-                DiscordManager.Enable(DiscordRPCSettings);
-            }
-            catch (Exception ex)
-            {
-                ArchiveLogger.Exception(ex);
-            }
-        }
-
-        public override void OnDisable()
-        {
-            DiscordManager.Disable();
-        }
-
-        public void Update()
-        {
-            DiscordManager.Update();
-        }
-
-        public override void OnQuit()
-        {
-            DiscordManager.Disable();
-        }
-
-        #region weapons
+#region weapons
         public static string ItemNameForSlot(InventorySlot slot)
         {
             BackpackItem item = null;
@@ -93,9 +58,9 @@ namespace TheArchive.Features
 
         [PresenceFormatProvider(nameof(PresenceManager.EquippedToolID))]
         public static string EquippedToolID => ItemIDForSlot(InventorySlot.GearClass);
-        #endregion weapons
+#endregion weapons
 
-        #region player_values
+#region player_values
         private static PlayerAmmoStorage LocalAmmo => PlayerBackpackManager.LocalBackpack?.AmmoStorage;
 
         private static int GetClip(InventorySlot slot)

@@ -314,6 +314,7 @@
     <Compile Include="Features\CustomLobbyCodeString.cs" />
     <Compile Include="Features\Dev\AnalyticsBlocker.cs" />
     <Compile Include="Features\Dev\GameDebugLogRedirect.cs" />
+    <Compile Include="Features\DiscordRichPresence.cs" />
     <Compile Include="Features\QoL\LoadoutRandomizer.cs" />
     <Compile Include="Features\QoL\MapToObjectivesSwitchFix.cs" />
     <Compile Include="Features\QoL\ResourcePrioritizationPings.cs" />
