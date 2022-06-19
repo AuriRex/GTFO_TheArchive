@@ -41,29 +41,24 @@ namespace TheArchive.Core.Managers
             if (rpcSettings == null) throw new ArgumentNullException($"{nameof(rpcSettings)}");
             _settings = rpcSettings;
 
-            if (!_settings.EnableDiscordRichPresence)
-            {
-                ArchiveLogger.Notice($"[{nameof(DiscordManager)}] Discord Rich Presence disabled, skipping setup for now.");
-                return;
-            }
-
             if(!_hasDiscordDllBeenLoaded)
             {
                 try
                 {
-                    if (!File.Exists("discord_game_sdk.dll"))
+                    var path = Path.Combine(LocalFiles.SaveDirectoryPath, "discord_game_sdk.dll");
+                    if (!File.Exists(path))
                     {
-                        ArchiveLogger.Notice("Extracting discord_game_sdk.dll into game folder ...");
+                        ArchiveLogger.Notice($"Extracting discord_game_sdk.dll into \"{path}\" ...");
                         using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("TheArchive.Resources.discord_game_sdk.dll"))
                         {
-                            using (var file = new FileStream("discord_game_sdk.dll", FileMode.Create, FileAccess.Write))
+                            using (var file = new FileStream(path, FileMode.Create, FileAccess.Write))
                             {
                                 resource.CopyTo(file);
                             }
                         }
                     }
 
-                    LoadLibrary("discord_game_sdk.dll");
+                    LoadLibrary(path);
                 }
                 catch (Exception ex)
                 {
@@ -83,7 +78,15 @@ namespace TheArchive.Core.Managers
 
                 _discordClient.Initialize();
 
-                _discordClient.TryUpdateActivity(_discordClient.BuildActivity(PresenceManager.CurrentState, PresenceManager.CurrentStateStartTime));
+                if (_lastCheckedTime + 5 <= Utils.Time)
+                {
+                    _lastCheckedTime = Utils.Time;
+                    var activity = _discordClient.BuildActivity(PresenceManager.CurrentState, PresenceManager.CurrentStateStartTime);
+                    if (_discordClient.TryUpdateActivity(activity))
+                    {
+                        _lastActivity = activity;
+                    }
+                }
                 _discordClient.RunCallbacks();
             }
             catch(Discord.ResultException ex)
@@ -91,7 +94,11 @@ namespace TheArchive.Core.Managers
                 ArchiveLogger.Warning($"Discord seems to be closed, disabling Rich Presence Features ... ({ex}: {ex.Message})");
                 _discordClient = null;
             }
-
+            catch(Exception ex)
+            {
+                ArchiveLogger.Error($"Exception has been thrown in {nameof(DiscordManager)}. {ex}: {ex.Message}");
+                ArchiveLogger.Exception(ex);
+            }
         }
 
         public static void Disable()
@@ -238,7 +245,7 @@ namespace TheArchive.Core.Managers
                     activity.Party = GetParty();
                 }
 
-                 return activity;
+                return activity;
             }
 
             internal bool TryUpdateActivity(Discord.Activity activity)
@@ -294,10 +301,6 @@ namespace TheArchive.Core.Managers
             {
                 _discordClient?.RunCallbacks();
             }
-
-
-
         }
-
     }
 }

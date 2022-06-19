@@ -6,12 +6,6 @@ namespace TheArchive.Core.Settings
 {
     public class RichPresenceSettings
     {
-        public bool OverrideSteamRichPresenceText { get; set; } = true;
-        public string SteamRPCFormatString { get; set; } = "%Rundown%%Expedition% \"%ExpeditionName%\"";
-        public bool UseFormatStringForCopyLobbyIDButton { get; set; } = true;
-        public string CopyLobbyIDFormatString { get; set; } = "LF%OpenSlots% %Rundown%%Expedition% \"%ExpeditionName%\": `%LobbyID%`";
-        public bool EnableDiscordRichPresence { get; set; } = true;
-
         public bool DEBUG_EnableRichPresenceLogSpam { get; set; } = false;
 
         [JsonIgnore]

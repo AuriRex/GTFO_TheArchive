@@ -74,23 +74,38 @@ namespace TheArchive.Utilities
         }
 
         private static string _savePath = null;
+        /// <summary>
+        /// Default is <c>"GTFO/UserData/"</c>, can be overridden by using <see cref="ArchiveSettings.CustomFileSaveLocation"/>
+        /// </summary>
         public static string SaveDirectoryPath
+        {
+            get
+            {
+                if(string.IsNullOrEmpty(_savePath))
+                {
+                    _savePath = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? MelonUtils.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
+                }
+                return _savePath;
+            }
+        }
+
+        private static string _rundownspecificSavePath = null;
+        public static string RundownSpecificSaveDirectoryPath
         {
             get
             {
                 if (ArchiveMod.CurrentRundown == Utils.RundownID.RundownUnitialized)
                     throw new InvalidOperationException("Only get this after GameData has been initialized!");
 
-                if (string.IsNullOrEmpty(_savePath))
+                if (string.IsNullOrEmpty(_rundownspecificSavePath))
                 {
-                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? MelonUtils.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
-                    _savePath = Path.Combine(path, $"{ArchiveMod.CurrentRundown}_Data/");
+                    _rundownspecificSavePath = Path.Combine(SaveDirectoryPath, $"{ArchiveMod.CurrentRundown}_Data/");
 
-                    if (!Directory.Exists(_savePath))
-                        Directory.CreateDirectory(_savePath);
+                    if (!Directory.Exists(_rundownspecificSavePath))
+                        Directory.CreateDirectory(_rundownspecificSavePath);
                 }
 
-                return _savePath;
+                return _rundownspecificSavePath;
             }
         }
 
@@ -135,7 +150,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_filesPath))
                 {
-                    _filesPath = Path.Combine(SaveDirectoryPath, "Files/");
+                    _filesPath = Path.Combine(RundownSpecificSaveDirectoryPath, "Files/");
                     if (!Directory.Exists(_filesPath))
                         Directory.CreateDirectory(_filesPath);
                 }
@@ -149,7 +164,7 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_settingsPath))
-                    _settingsPath = Path.Combine(SaveDirectoryPath, $"GTFO_Settings.json");
+                    _settingsPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"GTFO_Settings.json");
                 return _settingsPath;
             }
         }
@@ -160,7 +175,7 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_favoritesPath))
-                    _favoritesPath = Path.Combine(SaveDirectoryPath, $"GTFO_Favorites.json");
+                    _favoritesPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"GTFO_Favorites.json");
                 return _favoritesPath;
             }
         }
@@ -171,7 +186,7 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_botFavoritesPath))
-                    _botFavoritesPath = Path.Combine(SaveDirectoryPath, $"GTFO_BotFavorites.json");
+                    _botFavoritesPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"GTFO_BotFavorites.json");
                 return _botFavoritesPath;
             }
         }
@@ -182,7 +197,7 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_boostersPath))
-                    _boostersPath = Path.Combine(SaveDirectoryPath, $"Booster_Data.json");
+                    _boostersPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"Booster_Data.json");
                 return _boostersPath;
             }
         }
@@ -193,7 +208,7 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_vanityItemsPath))
-                    _vanityItemsPath = Path.Combine(SaveDirectoryPath, $"VanityItems_Data.json");
+                    _vanityItemsPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"VanityItems_Data.json");
                 return _vanityItemsPath;
             }
         }
