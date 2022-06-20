@@ -12,7 +12,7 @@ namespace TheArchive.Features
         public class SteamRPCSettings
         {
             public bool DisableSteamRPC { get; set; } = false;
-            public string CustomSteamRPCFormat { get; set; } = "%Rundown%%Expedition%";
+            public string CustomSteamRPCFormat { get; set; } = "%Rundown%%Expedition% \"%ExpeditionName%\"";
         }
 
         public override string Name => "Steam Rich Presence Control";
@@ -35,7 +35,7 @@ namespace TheArchive.Features
 
                 if (type == FriendsDataType.ExpeditionName)
                 {
-                    data = $"{FormatPresenceString(Config.CustomSteamRPCFormat)} \"{data}\"";
+                    data = $"{FormatPresenceString(Config.CustomSteamRPCFormat)}";
                 }
             }
         }
