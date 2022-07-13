@@ -270,6 +270,8 @@ namespace TheArchive.Features.Dev
 
             private static void SetupEntriesForFeature(Feature feature, TMPro.TextMeshPro infoText)
             {
+                if (!Feature.DevMode && feature.IsHidden) return;
+
                 try
                 {
                     var settingsItemGameObject = GameObject.Instantiate(_settingsItemPrefab, _mainScrollWindowTransform);
