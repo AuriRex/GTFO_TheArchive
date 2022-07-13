@@ -4,42 +4,32 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using TheArchive.Models.Progression;
 using TheArchive.Utilities;
 using UnhollowerBaseLib.Attributes;
+using UnhollowerRuntimeLib;
 
 namespace TheArchive.Models
 {
-	[Serializable]
-    public class CustomRundownProgression
+    public class LocalRundownProgression
     {
 
 		[JsonIgnore]
 		public static JsonSerializerSettings Settings = new JsonSerializerSettings()
 		{
 			Formatting = Formatting.Indented,
-			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+			DefaultValueHandling = DefaultValueHandling.Populate,
 			MissingMemberHandling = MissingMemberHandling.Ignore
 		};
 
-		[Obsolete("Just don't")]
-		public static CustomRundownProgression FromBaseGameProgression(RundownProgression baseGameRundownProgression)
-        {
-			var customRundownProgression = new CustomRundownProgression();
-
-			foreach(Il2CppSystem.Collections.Generic.KeyValuePair<string, RundownProgression.Expedition> kvp in baseGameRundownProgression.Expeditions)
-            {
-				customRundownProgression.Expeditions.Add(kvp.Key, Expedition.FromBaseGame(kvp.value));
-            }
-
-			return customRundownProgression;
+		public static LocalRundownProgression FromJSON(string json)
+		{
+			return JsonConvert.DeserializeObject<LocalRundownProgression>(json, Settings);
 		}
 
-		public static CustomRundownProgression FromJSON(string json)
-        {
-			return JsonConvert.DeserializeObject<CustomRundownProgression>(json, Settings);
-        }
 
 		private static RundownProgressionResult rundownProgressionResult = new RundownProgressionResult();
 		public static RundownProgression JSONToRundownProgression(string json)
@@ -51,11 +41,37 @@ namespace TheArchive.Models
 
 		public RundownProgression ToBaseGameProgression()
 		{
+			var rundownProgression = new RundownProgression(ClassInjector.DerivedConstructorPointer<RundownProgression>());
 
-			string json = JsonConvert.SerializeObject(this, Settings);
+			rundownProgression.Expeditions = new Il2CppSystem.Collections.Generic.Dictionary<string, RundownProgression.Expedition>();
 
-			return JSONToRundownProgression(json);
+			if (Expeditions == null) Expeditions = new Dictionary<string, Expedition>();
+
+			foreach (var expKvp in Expeditions)
+            {
+				var expeditionKey = expKvp.Key;
+				var expedition = expKvp.Value;
+				var bgExpedition = new RundownProgression.Expedition(ClassInjector.DerivedConstructorPointer<RundownProgression.Expedition>());
+
+				bgExpedition.AllLayerCompletionCount = expedition.AllLayerCompletionCount;
+				if(ArchiveMod.CurrentBuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFive.ToLatest()))
+                {
+					SetArtifactHeat(bgExpedition, expedition);
+                }
+
+				bgExpedition.Layers = expedition.Layers.ToBaseGameLayers();
+
+				rundownProgression.Expeditions.Add(expeditionKey, bgExpedition);
+			}
+
+			return rundownProgression;
 		}
+
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		public void SetArtifactHeat(RundownProgression.Expedition bgExp, Expedition cExp)
+        {
+			bgExp.ArtifactHeat = cExp.ArtifactHeat;
+        }
 
 
 		public Dictionary<string, Expedition> Expeditions = new Dictionary<string, Expedition>();
@@ -103,61 +119,51 @@ namespace TheArchive.Models
 
 			public static Expedition FromBaseGame(RundownProgression.Expedition baseGameExpedition)
             {
-				var customExpedition = new Expedition();
-
-				customExpedition.AllLayerCompletionCount = baseGameExpedition.AllLayerCompletionCount;
-
-				customExpedition.Layers = LayerSet.FromBaseGame(baseGameExpedition.Layers);
-
-				return customExpedition;
+				return new Expedition
+				{
+					AllLayerCompletionCount = baseGameExpedition.AllLayerCompletionCount,
+					Layers = LayerSet.FromBaseGame(baseGameExpedition.Layers)
+				};
             }
 
-			public RundownProgression.Expedition ToBaseGameExpedition()
+			public RundownProgression.Expedition ToBaseGame()
             {
-				var baseGameExpedition = new RundownProgression.Expedition()
-				{
+				return new RundownProgression.Expedition(ClassInjector.DerivedConstructorPointer<RundownProgression.Expedition>())
+                {
 					AllLayerCompletionCount = this.AllLayerCompletionCount,
 					Layers = this.Layers.ToBaseGameLayers()
 				};
-
-				//baseGameExpedition.AllLayerCompletionCount = this.AllLayerCompletionCount;
-				//baseGameExpedition.Layers = this.Layers.ToBaseGameLayers();
-				//baseGameExpedition.Layers = null;
-
-				return baseGameExpedition;
 			}
 
 			[Serializable]
-			public struct Layer// : IToBaseGameConvertible<RundownProgression.Expedition.Layer, Layer>
+			public class Layer
 			{
 				public LayerProgressionState State;
 
 				public int CompletionCount;
 
-				public static Layer FromBaseGameType(RundownProgression.Expedition.Layer baseGameType)
+				public static Layer FromBaseGame(RundownProgression.Expedition.Layer baseGameType)
                 {
-					var layer = new Layer();
-					layer.State = baseGameType.State;
-					layer.CompletionCount = baseGameType.CompletionCount;
-					ArchiveLogger.Msg(ConsoleColor.Yellow, $"Created New Layer: State: C:{layer.State} - BG:{baseGameType.State}");
-					ArchiveLogger.Msg(ConsoleColor.Yellow, $"^ ^ ^            : CompletionCount: C:{layer.CompletionCount} - BG:{baseGameType.CompletionCount}");
-					return layer;
+					return new Layer()
+					{
+						State = baseGameType.State,
+						CompletionCount = baseGameType.CompletionCount
+					};
                 }
 
-				public RundownProgression.Expedition.Layer ToBaseGameType()
+				public RundownProgression.Expedition.Layer ToBaseGame()
                 {
-					var bgt = new RundownProgression.Expedition.Layer();
-
-					bgt.CompletionCount = this.CompletionCount;
-					bgt.State = this.State;
-
-					return bgt;
+					return new RundownProgression.Expedition.Layer
+					{
+						CompletionCount = this.CompletionCount,
+					    State = this.State
+					};
 				}
             }
 		}
 
 		[Serializable]
-		public struct LayerSet //where TData : struct, IToBaseGameConvertible<RundownProgression.Expedition.Layer, TData>
+		public class LayerSet
 		{
 			public Expedition.Layer Main { get; set; }
 			public Expedition.Layer Secondary { get; set; }
@@ -165,14 +171,12 @@ namespace TheArchive.Models
 
 			public static LayerSet FromBaseGame(DropServer.LayerSet<RundownProgression.Expedition.Layer> baseGameLayers)
 			{
-				var layers = new LayerSet();
-
-
-				layers.Main = Expedition.Layer.FromBaseGameType(baseGameLayers.Main);
-				layers.Secondary = Expedition.Layer.FromBaseGameType(baseGameLayers.Secondary);
-				layers.Third = Expedition.Layer.FromBaseGameType(baseGameLayers.Third);
-
-				return layers;
+				return new LayerSet
+				{
+					Main = Expedition.Layer.FromBaseGame(baseGameLayers.Main),
+					Secondary = Expedition.Layer.FromBaseGame(baseGameLayers.Secondary),
+					Third = Expedition.Layer.FromBaseGame(baseGameLayers.Third)
+				};
 			}
 
             public Expedition.Layer GetLayer(ExpeditionLayers layer)
@@ -206,21 +210,14 @@ namespace TheArchive.Models
 
 			public DropServer.LayerSet<RundownProgression.Expedition.Layer> ToBaseGameLayers()
             {
-				var baseGameLayers = new DropServer.LayerSet<RundownProgression.Expedition.Layer>();
-
-				baseGameLayers.Main = this.Main.ToBaseGameType();
-				baseGameLayers.Secondary = this.Secondary.ToBaseGameType();
-				baseGameLayers.Third = this.Third.ToBaseGameType();
-
-				return baseGameLayers;
+				return new DropServer.LayerSet<RundownProgression.Expedition.Layer>
+				{
+					Main = this.Main.ToBaseGame(),
+					Secondary = this.Secondary.ToBaseGame(),
+					Third = this.Third.ToBaseGame()
+				};
 			}
         }
 
 	}
-
-    /*public interface IToBaseGameConvertible<BGT, CT>
-    {
-		public abstract BGT ToBaseGameType();
-		public abstract CT FromBaseGameType(BGT baseGameType);
-	}*/
 }

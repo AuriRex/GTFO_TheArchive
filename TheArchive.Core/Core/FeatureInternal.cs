@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.Exceptions;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
@@ -19,13 +20,14 @@ namespace TheArchive.Core
         internal bool HasLateUpdateMethod => LateUpdateDelegate != null;
         internal LateUpdate LateUpdateDelegate { get; private set; }
         internal bool HideInModSettings { get; private set; }
+        internal bool HasAdditionalSettings => _settingsHelpers.Count > 0;
 
         private Feature _feature;
         private HarmonyLib.Harmony _harmonyInstance;
 
         private readonly List<Type> _patchTypes = new List<Type>();
         private readonly HashSet<FeaturePatchInfo> _patchInfos = new HashSet<FeaturePatchInfo>();
-        private readonly HashSet<PropertyInfo> _settings = new HashSet<PropertyInfo>();
+        private readonly HashSet<FeatureSettingsHelper> _settingsHelpers = new HashSet<FeatureSettingsHelper>();
         private PropertyInfo _isEnabledPropertyInfo;
 
         private static readonly HashSet<string> _usedIdentifiers = new HashSet<string>();
@@ -132,7 +134,7 @@ namespace TheArchive.Core
                 }
                 else
                 {
-                    _settings.Add(prop);
+                    _settingsHelpers.Add(new FeatureSettingsHelper(_feature, prop));
                 }
             }
 
@@ -321,13 +323,13 @@ namespace TheArchive.Core
         {
             if (InternalDisabled) return;
 
-            foreach (var setting in _settings)
+            foreach (var settingsHelper in _settingsHelpers)
             {
-                ArchiveLogger.Info($"[{nameof(FeatureInternal)}] Loading config {_feature.Identifier} [{setting.Name}] ({setting.GetMethod.ReturnType.Name}) ...");
+                ArchiveLogger.Info($"[{nameof(FeatureInternal)}] Loading config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
 
-                var configInstance = LocalFiles.LoadFeatureConfig($"{_feature.Identifier}_{setting.Name}", setting.GetMethod.ReturnType);
+                var configInstance = LocalFiles.LoadFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
 
-                setting.SetValue(_feature, configInstance);
+                settingsHelper.SetInstance(configInstance);
             }
         }
 
@@ -335,13 +337,13 @@ namespace TheArchive.Core
         {
             if (InternalDisabled) return;
 
-            foreach (var setting in _settings)
+            foreach (var settingsHelper in _settingsHelpers)
             {
-                ArchiveLogger.Info($"[{nameof(FeatureInternal)}] Saving config {_feature.Identifier} [{setting.Name}] ({setting.GetMethod.ReturnType.Name}) ...");
-                
-                var configInstance = setting.GetValue(_feature);
+                ArchiveLogger.Info($"[{nameof(FeatureInternal)}] Saving config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
 
-                LocalFiles.SaveFeatureConfig($"{_feature.Identifier}_{setting.Name}", setting.GetMethod.ReturnType, configInstance);
+                var configInstance = settingsHelper.GetInstance();
+
+                LocalFiles.SaveFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType, configInstance);
             }
         }
 

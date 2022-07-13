@@ -202,6 +202,9 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\Special\HideFirstPersonItem.cs">
       <Link>Features\Special\HideFirstPersonItem.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Special\MuteSpeak.cs">
+      <Link>Features\Special\MuteSpeak.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveChatRestrictions.cs">
       <Link>Features\Special\RemoveChatRestrictions.cs</Link>
     </Compile>
@@ -213,6 +216,9 @@
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Utilities\SharedUtils.cs">
       <Link>Utilities\SharedUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Utilities\SoundEventCache.cs">
+      <Link>Utilities\SoundEventCache.cs</Link>
     </Compile>
     <Compile Include="ArchiveMONOBootstrap.cs" />
     <Compile Include="ArchiveMONOModule.cs" />

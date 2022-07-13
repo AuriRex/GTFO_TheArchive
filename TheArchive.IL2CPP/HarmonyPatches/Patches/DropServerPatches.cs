@@ -16,14 +16,14 @@ namespace TheArchive.HarmonyPatches.Patches
     public class DropServerPatches
     {
 
-        private static CustomRundownProgression _customRundownProgression = null;
-        public static CustomRundownProgression CustomRundownProgression {
+        private static LocalRundownProgression _customRundownProgression = null;
+        public static LocalRundownProgression CustomRundownProgression {
             get
             {
                 if(_customRundownProgression == null)
                 {
                     ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"CoolJSONInput:{LocalFiles.LocalRundownProgressionJSON}");
-                    _customRundownProgression = CustomRundownProgression.FromJSON(LocalFiles.LocalRundownProgressionJSON);
+                    _customRundownProgression = LocalRundownProgression.FromJSON(LocalFiles.LocalRundownProgressionJSON);
                 }
                     
                 return _customRundownProgression;
@@ -62,12 +62,18 @@ namespace TheArchive.HarmonyPatches.Patches
 
 
                 SaveLocalRundownProgression();
-
-                var task = __result = IL2Tasks.Task.FromResult(CustomRundownProgression.ToBaseGameProgression());
-
-                if (callback != null)
+                try
                 {
-                    TaskUtils.ContinueOnCurrentContext<RundownProgression>(task, callback);
+                    var task = __result = IL2Tasks.Task.FromResult(CustomRundownProgression.ToBaseGameProgression());
+
+                    if (callback != null)
+                    {
+                        TaskUtils.ContinueOnCurrentContext<RundownProgression>(task, callback);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    ArchiveLogger.Exception(ex);
                 }
 
                 return false;

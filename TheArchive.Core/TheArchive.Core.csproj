@@ -77,6 +77,8 @@
     <Compile Include="Core\Attributes\Feature\ModDefaultFeatureGroupName.cs" />
     <Compile Include="Core\Attributes\Feature\RundownConstraint.cs" />
     <Compile Include="Core\Attributes\Feature\SetEnabledStatus.cs" />
+    <Compile Include="Core\Attributes\Feature\Settings\FSIgnore.cs" />
+    <Compile Include="Core\Attributes\Feature\Settings\FSSlider.cs" />
     <Compile Include="Core\BuildDB.cs" />
     <Compile Include="Core\DiscordApi\ActivityManager.cs" />
     <Compile Include="Core\DiscordApi\Constants.cs" />
@@ -90,6 +92,8 @@
     <Compile Include="Core\FeatureGroups.cs" />
     <Compile Include="Core\FeatureInternal.cs" />
     <Compile Include="Core\FeatureManager.cs" />
+    <Compile Include="Core\FeatureSetting.cs" />
+    <Compile Include="Core\FeatureSettingsHelper.cs" />
     <Compile Include="Core\IArchiveModule.cs" />
     <Compile Include="Core\ArchivePatcher.cs" />
     <Compile Include="Core\InitSingletonBase.cs" />
@@ -140,6 +144,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\Attributes\Feature\Settings\FSDisplayName.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

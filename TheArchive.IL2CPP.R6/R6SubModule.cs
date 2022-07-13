@@ -23,14 +23,7 @@ namespace TheArchive.IL2CPP.R6
 
         public void OnLateUpdate()
         {
-
-            MuteSpeak.Update();
-
-            if (Input.GetKeyDown(KeyCode.F8))
-            {
-                MuteSpeak.EnableOtherVoiceBinds = !MuteSpeak.EnableOtherVoiceBinds;
-                ArchiveLogger.Notice($"Voice binds enabled: {MuteSpeak.EnableOtherVoiceBinds}");
-            }
+            
         }
 
         public void OnSceneWasLoaded(int buildIndex, string sceneName)

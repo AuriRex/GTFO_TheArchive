@@ -230,6 +230,12 @@ namespace TheArchive.Features.Dev
                 }
             }
 
+            private static CM_ScrollWindow CreateScrollWindow()
+            {
+                // TODO
+                return null;
+            }
+
             private static void CreateSpacer()
             {
                 CreateHeader(string.Empty);
@@ -294,7 +300,7 @@ namespace TheArchive.Features.Dev
                     titleTextTMP.m_text = featureName;
                     titleTextTMP.SetText(featureName);
 #else
-                            titleTextTMP.SetText(featureName);
+                    titleTextTMP.SetText(featureName);
 #endif
 
                     if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFour | Utils.RundownFlags.RundownFive))
@@ -332,6 +338,11 @@ namespace TheArchive.Features.Dev
                     collider.offset = new Vector2(250, -25);
 
                     cm_settingsItem.ForcePopupLayer(true);
+
+                    if(feature.HasAdditionalSettings)
+                    {
+                        // Create SubMenu for additional settings
+                    }
 
                 }
                 catch (Exception ex)

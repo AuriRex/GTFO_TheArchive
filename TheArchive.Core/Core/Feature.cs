@@ -11,6 +11,7 @@ namespace TheArchive.Core
         public string Identifier => _identifier ??= this.GetType().Name;
         public bool IsHidden => FeatureInternal.HideInModSettings;
         public bool BelongsToGroup => Group != null;
+        public bool HasAdditionalSettings => FeatureInternal.HasAdditionalSettings;
 
         /// <summary>
         /// If the <see cref="Feature"/> is currently enabled.
