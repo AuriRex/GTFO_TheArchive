@@ -356,7 +356,7 @@ namespace TheArchive.Core
                 try
                 {
                     ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"[{nameof(FeatureInternal)}] Patching {_feature.Identifier} : {patchInfo.ArchivePatchInfo.Type.FullName}.{patchInfo.ArchivePatchInfo.MethodName}()");
-                    _harmonyInstance.Patch(patchInfo.OriginalMethod, patchInfo.HarmonyRefixMethod, patchInfo.HarmonyPostfixMethod);
+                    _harmonyInstance.Patch(patchInfo.OriginalMethod, patchInfo.HarmonyPrefixMethod, patchInfo.HarmonyPostfixMethod);
                 }
                 catch(Exception ex)
                 {
@@ -407,12 +407,12 @@ namespace TheArchive.Core
         {
             internal ArchivePatch ArchivePatchInfo { get; private set; }
             internal MethodInfo OriginalMethod { get; private set; }
-            internal HarmonyLib.HarmonyMethod HarmonyRefixMethod { get; private set; }
+            internal HarmonyLib.HarmonyMethod HarmonyPrefixMethod { get; private set; }
             internal HarmonyLib.HarmonyMethod HarmonyPostfixMethod { get; private set; }
             internal MethodInfo PrefixPatchMethod { get; private set; }
             internal MethodInfo PostfixPatchMethod { get; private set; }
 
-            public FeaturePatchInfo(MethodInfo original, MethodInfo prefix, MethodInfo postfix, ArchivePatch archivePatch)
+            public FeaturePatchInfo(MethodInfo original, MethodInfo prefix, MethodInfo postfix, ArchivePatch archivePatch, bool wrapTryCatch = true)
             {
                 OriginalMethod = original;
 
@@ -422,9 +422,15 @@ namespace TheArchive.Core
                 ArchivePatchInfo = archivePatch;
 
                 if (prefix != null)
-                    HarmonyRefixMethod = new HarmonyLib.HarmonyMethod(prefix);
+                    HarmonyPrefixMethod = new HarmonyLib.HarmonyMethod(prefix)
+                    {
+                        wrapTryCatch = wrapTryCatch
+                    };
                 if(postfix != null)
-                    HarmonyPostfixMethod = new HarmonyLib.HarmonyMethod(postfix);
+                    HarmonyPostfixMethod = new HarmonyLib.HarmonyMethod(postfix)
+                    {
+                        wrapTryCatch = wrapTryCatch
+                    };
             }
         }
 
