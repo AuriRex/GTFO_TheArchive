@@ -142,6 +142,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\PlayerColorOverride.cs">
+      <Link>Features\Accessibility\PlayerColorOverride.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Backport\InstantHackRelease.cs">
       <Link>Features\Backport\InstantHackRelease.cs</Link>
     </Compile>
@@ -213,6 +216,9 @@
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\SteamRichPresenceTweaks.cs">
       <Link>Features\SteamRichPresenceTweaks.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Utilities\SColorExtensions.cs">
+      <Link>Utilities\SColorExtensions.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Utilities\SharedUtils.cs">
       <Link>Utilities\SharedUtils.cs</Link>

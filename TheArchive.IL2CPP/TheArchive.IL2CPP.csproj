@@ -308,6 +308,7 @@
     </Compile>
     <Compile Include="ArchiveIL2CPPModule.cs" />
     <Compile Include="ColorConverter.cs" />
+    <Compile Include="Features\Accessibility\PlayerColorOverride.cs" />
     <Compile Include="Features\Backport\InstantHackRelease.cs" />
     <Compile Include="Features\Backport\TerminalKeyMessage.cs" />
     <Compile Include="Features\Backport\ThrowablesRunFix.cs" />
@@ -342,6 +343,7 @@
     <Compile Include="Managers\CustomProgressionManager.cs" />
     <Compile Include="Managers\CustomVanityItemDropper.cs" />
     <Compile Include="Managers\CustomVanityItemManager.cs" />
+    <Compile Include="Utilities\SColorExtensions.cs" />
     <Compile Include="Utilities\SoundEventCache.cs" />
     <Compile Include="Models\DataBlocks\CustomVanityItemsGroupDataBlock.cs" />
     <Compile Include="Models\DataBlocks\CustomVanityItemsLayerDropsDataBlock.cs" />

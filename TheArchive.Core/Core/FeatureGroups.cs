@@ -8,6 +8,7 @@ namespace TheArchive.Core
 {
     public static class FeatureGroups
     {
+        public static string Accessibility => "Accessibility";
         public static string Special => "Special";
         public static string Dev => "Developer";
         public static string Backport => "Backport";
