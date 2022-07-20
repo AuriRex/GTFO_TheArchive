@@ -1,6 +1,9 @@
 ﻿using Player;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -15,6 +18,60 @@ namespace TheArchive.Features.Accessibility
 
         [FeatureConfig]
         public static PlayerColorOverrideSettings Settings { get; set; }
+
+#if MONO
+        // R1 build is missing PlayerManager.PlayerAgentsInLevel
+        private FieldAccessor<PlayerManager, List<PlayerAgent>> _PlayerManager_m_playerAgentsInLevelAccessor;
+        public override void Init()
+        {
+            if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownOne))
+            {
+                _PlayerManager_m_playerAgentsInLevelAccessor = FieldAccessor<PlayerManager, List<PlayerAgent>>.GetAccessor("m_playerAgentsInLevel");
+            }
+        }
+#endif
+
+        private static bool _firstTime = true;
+        public override void OnEnable()
+        {
+            if(_firstTime)
+            {
+                _firstTime = false;
+                return;
+            }
+            foreach(PlayerAgent player in GetAllPlayers())
+            {
+                if (player == null) continue;
+                PlayerAgent_SetupPatch.SetupColor(player.Owner, player.Owner.CharacterIndex);
+            }
+        }
+
+        public override void OnDisable()
+        {
+            foreach (PlayerAgent player in GetAllPlayers())
+            {
+                if (player == null) continue;
+                var color = PlayerManager.GetStaticPlayerColor(player.Owner.CharacterIndex);
+                player.Owner.PlayerColor = color;
+            }
+        }
+
+        private IEnumerable<PlayerAgent> GetAllPlayers()
+        {
+#if MONO
+            if(BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownOne))
+            {
+                return _PlayerManager_m_playerAgentsInLevelAccessor.Get(PlayerManager.Current);
+            }
+#endif
+            return GetAllPlayersR2Plus();
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private IEnumerable<PlayerAgent> GetAllPlayersR2Plus()
+        {
+            return PlayerManager.PlayerAgentsInLevel.ToArray();
+        }
 
 #if IL2CPP
         [RundownConstraint(Utils.RundownFlags.RundownSix, Utils.RundownFlags.Latest)]
@@ -31,20 +88,36 @@ namespace TheArchive.Features.Accessibility
         {
             public static void Postfix(PlayerAgent __instance, int characterID)
             {
-                Color col = new Color();
-
-                GetColor(ref col, characterID);
-
-                __instance.Owner.PlayerColor = col;
+                SetupColor(__instance.Owner, characterID);
             }
 
-            public static void GetColor(ref Color col, int playerIndex)
+            public static void SetupColor(SNetwork.SNet_Player player, int characterID)
             {
+                Color col = new Color();
+
+                if (TryGetColor(characterID, ref col))
+                {
+                    player.PlayerColor = col;
+                }
+            }
+
+            public static bool TryGetColor(int playerIndex, ref Color col)
+            {
+                if (Settings.Mode == PlayerColorOverrideSettings.ColorizationMode.LocalOnly)
+                {
+                    if (PlayerManager.GetLocalPlayerAgent().CharacterID == playerIndex)
+                    {
+                        col = Settings.LocalPlayer.ToUnityColor();
+                        return true;
+                    }
+                    return false;
+                }
+
                 if (Settings.Mode == PlayerColorOverrideSettings.ColorizationMode.CharacterAndLocal
                     && PlayerManager.GetLocalPlayerAgent().CharacterID == playerIndex)
                 {
                     col = Settings.LocalPlayer.ToUnityColor();
-                    return;
+                    return true;
                 }
 
                 switch (Settings.Mode)
@@ -72,12 +145,13 @@ namespace TheArchive.Features.Accessibility
                         if(PlayerManager.GetLocalPlayerAgent().CharacterID == playerIndex)
                         {
                             col = Settings.LocalPlayer.ToUnityColor();
-                            return;
+                            break;
                         }
 
                         col = Settings.OtherPlayers.ToUnityColor();
-                        return;
+                        break;
                 }
+                return true;
             }
         }
 
@@ -96,11 +170,13 @@ namespace TheArchive.Features.Accessibility
 
             public enum ColorizationMode
             {
-                /// <summary>Use character as custom color source</summary> 
+                /// <summary>Only set the local players color, uses <seealso cref="LocalPlayer"/> as color source</summary>
+                LocalOnly,
+                /// <summary>Use character values as custom color source</summary> 
                 Character,
-                /// <summary>Use character as custom color source, local player uses <seealso cref="LocalPlayer"/></summary>
+                /// <summary>Use character values as custom color source, local player uses <seealso cref="LocalPlayer"/></summary>
                 CharacterAndLocal,
-                /// <summary>Custom Color <seealso cref="LocalPlayer"/> for local player, all other players use the same color: <seealso cref="OtherPlayers"/></summary>
+                /// <summary>Use <seealso cref="OtherPlayers"/> for other players, local player uses <seealso cref="LocalPlayer"/></summary>
                 OtherAndLocal
             }
         }
