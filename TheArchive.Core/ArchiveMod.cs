@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using TheArchive;
 using TheArchive.Core;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;

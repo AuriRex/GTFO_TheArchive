@@ -8,7 +8,7 @@ using TheArchive.Core.Exceptions;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
 
-namespace TheArchive.Core
+namespace TheArchive.Core.FeaturesAPI
 {
     internal class FeatureInternal
     {
@@ -21,6 +21,7 @@ namespace TheArchive.Core
         internal LateUpdate LateUpdateDelegate { get; private set; }
         internal bool HideInModSettings { get; private set; }
         internal bool HasAdditionalSettings => _settingsHelpers.Count > 0;
+        internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
 
         private Feature _feature;
         private HarmonyLib.Harmony _harmonyInstance;

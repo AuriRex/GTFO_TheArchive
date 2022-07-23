@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using UnityEngine;
 
@@ -154,6 +154,13 @@ namespace TheArchive.Features.Dev
                         foreach(var feature in featureSet)
                         {
                             SetupEntriesForFeature(feature, infoText);
+                            foreach(var settingsHelper in feature.SettingsHelpers)
+                            {
+                                foreach(var setting in settingsHelper.Settings)
+                                {
+                                    CreateHeader(setting.DEBUG_Path);
+                                }
+                            }
                         }
 
                         // Spacer

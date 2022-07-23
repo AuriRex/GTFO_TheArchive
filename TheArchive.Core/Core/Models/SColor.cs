@@ -1,10 +1,8 @@
 ﻿namespace TheArchive.Core.Models
 {
-    public class SColor
+    public struct SColor
     {
         public static readonly SColor WHITE = new SColor();
-
-        public SColor() { }
 
         public SColor(float r, float g, float b, float? a = null)
         {
@@ -16,11 +14,15 @@
             {
                 A = a.Value;
             }
+            else
+            {
+                A = 1f;
+            }
         }
 
-        public float R { get; set; } = 1f;
-        public float G { get; set; } = 1f;
-        public float B { get; set; } = 1f;
-        public float A { get; set; } = 1f;
+        public float R { get; set; }
+        public float G { get; set; }
+        public float B { get; set; }
+        public float A { get; set; }
     }
 }

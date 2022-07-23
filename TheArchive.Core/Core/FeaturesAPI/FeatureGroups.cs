@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheArchive.Core
+namespace TheArchive.Core.FeaturesAPI
 {
     public static class FeatureGroups
     {

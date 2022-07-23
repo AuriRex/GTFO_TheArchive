@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Utilities;
 
-namespace TheArchive.Core
+namespace TheArchive.Core.FeaturesAPI
 {
     public class FeatureSettingsHelper
     {
@@ -27,11 +24,9 @@ namespace TheArchive.Core
             Property = settingsProperty;
             SettingType = settingsProperty?.GetMethod?.ReturnType ?? throw new ArgumentNullException($"Settings Property must implement a get method!");
             DisplayName = settingsProperty.GetCustomAttribute<FSDisplayName>()?.DisplayName;
-
-            PopulateThing(SettingType);
         }
 
-        private void PopulateThing(Type typeToCheck, string path = "")
+        private void PopulateThing(Type typeToCheck, object instance, string path = "")
         {
 #warning TODO
             if (typeToCheck.IsValueType) return;
@@ -52,12 +47,12 @@ namespace TheArchive.Core
 
                 if (!type.IsValueType)
                 {
-                    PopulateThing(type, propPath);
+                    PopulateThing(type, prop.GetValue(instance), propPath);
                     continue;
                 }
                 // Add to dict?
-                Settings.Add(new FeatureSetting(this, prop));
-                ArchiveLogger.Debug($"[{nameof(FeatureSettingsHelper)}] Setting Added: {path}");
+                Settings.Add(new FeatureSetting(this, prop, instance, propPath));
+                ArchiveLogger.Debug($"[{nameof(FeatureSettingsHelper)}] Setting Added: {propPath}");
             }
         }
 
@@ -65,6 +60,8 @@ namespace TheArchive.Core
         {
             Instance = configInstance;
             Property.SetValue(_feature, configInstance);
+            Settings.Clear();
+            PopulateThing(SettingType, Instance, string.Empty);
         }
 
         public object GetInstance()

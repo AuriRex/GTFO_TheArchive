@@ -1,6 +1,7 @@
 ﻿using System;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Core.Settings;

@@ -1,6 +1,7 @@
-﻿using TheArchive.Core.Models;
+﻿using System.Collections.Generic;
+using TheArchive.Core.Models;
 
-namespace TheArchive.Core
+namespace TheArchive.Core.FeaturesAPI
 {
     /// <summary>
     /// An enableable / disableable feature
@@ -12,6 +13,7 @@ namespace TheArchive.Core
         public bool IsHidden => FeatureInternal.HideInModSettings;
         public bool BelongsToGroup => Group != null;
         public bool HasAdditionalSettings => FeatureInternal.HasAdditionalSettings;
+        public IEnumerable<FeatureSettingsHelper> SettingsHelpers => FeatureInternal.Settings;
 
         /// <summary>
         /// If the <see cref="Feature"/> is currently enabled.

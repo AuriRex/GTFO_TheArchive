@@ -1,7 +1,7 @@
 ﻿using CellMenu;
 using SNetwork;
-using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.FeaturesAPI;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.QoL

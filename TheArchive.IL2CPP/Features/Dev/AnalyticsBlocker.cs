@@ -1,7 +1,7 @@
 ﻿using GameEvent;
 using System;
-using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.FeaturesAPI;
 using UnityEngine.Analytics;
 
 namespace TheArchive.Features.Dev

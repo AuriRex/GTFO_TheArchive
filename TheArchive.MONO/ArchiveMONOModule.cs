@@ -4,6 +4,7 @@ using System;
 using System.Runtime.CompilerServices;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
 using TheArchive.Utilities;
 using UnityEngine;

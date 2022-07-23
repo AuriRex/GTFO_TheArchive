@@ -5,7 +5,7 @@ using System.Reflection;
 using TheArchive.Core.Settings;
 using TheArchive.Utilities;
 
-namespace TheArchive.Core
+namespace TheArchive.Core.FeaturesAPI
 {
     public class FeatureManager : InitSingletonBase<FeatureManager>
     {

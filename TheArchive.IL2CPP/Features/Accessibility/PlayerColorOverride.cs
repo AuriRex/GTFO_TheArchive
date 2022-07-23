@@ -1,9 +1,8 @@
 ﻿using Player;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using TheArchive.Core;
 using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature.Settings;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
 using UnityEngine;

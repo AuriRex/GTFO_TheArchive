@@ -1,7 +1,7 @@
 ﻿using SNetwork;
 using System;
-using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.FeaturesAPI;
 using static TheArchive.Utilities.PresenceFormatter;
 
 namespace TheArchive.Features
