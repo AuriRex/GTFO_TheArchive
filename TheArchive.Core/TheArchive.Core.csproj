@@ -92,8 +92,11 @@
     <Compile Include="Core\FeaturesAPI\FeatureGroups.cs" />
     <Compile Include="Core\FeaturesAPI\FeatureInternal.cs" />
     <Compile Include="Core\FeaturesAPI\FeatureManager.cs" />
-    <Compile Include="Core\FeaturesAPI\FeatureSetting.cs" />
+    <Compile Include="Core\FeaturesAPI\Settings\BoolSetting.cs" />
+    <Compile Include="Core\FeaturesAPI\Settings\EnumSetting.cs" />
+    <Compile Include="Core\FeaturesAPI\Settings\FeatureSetting.cs" />
     <Compile Include="Core\FeaturesAPI\FeatureSettingsHelper.cs" />
+    <Compile Include="Core\FeaturesAPI\Settings\StringSetting.cs" />
     <Compile Include="Core\IArchiveModule.cs" />
     <Compile Include="Core\ArchivePatcher.cs" />
     <Compile Include="Core\InitSingletonBase.cs" />

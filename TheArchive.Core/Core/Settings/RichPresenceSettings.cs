@@ -1,14 +1,15 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.Models;
 
 namespace TheArchive.Core.Settings
 {
     public class RichPresenceSettings
     {
-        public bool DEBUG_EnableRichPresenceLogSpam { get; set; } = false;
+        public bool DEBUG_RichPresenceLogSpam { get; set; } = false;
 
-        [JsonIgnore]
+        [JsonIgnore, FSIgnore]
         private static RichPresenceSettings Default => new RichPresenceSettings();
 
         public Dictionary<PresenceGameState, GSActivity> DiscordRPCFormat = new Dictionary<PresenceGameState, GSActivity>()

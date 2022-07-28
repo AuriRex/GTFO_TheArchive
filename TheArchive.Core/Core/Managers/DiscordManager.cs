@@ -157,7 +157,7 @@ namespace TheArchive.Core.Managers
             {
                 _discordClient = new Discord.Discord(_clientId, (UInt64) CreateFlags.NoRequireDiscord);
 
-                _discordClient.SetLogHook(_settings.DEBUG_EnableRichPresenceLogSpam ? LogLevel.Debug : LogLevel.Info, LogHook);
+                _discordClient.SetLogHook(_settings.DEBUG_RichPresenceLogSpam ? LogLevel.Debug : LogLevel.Info, LogHook);
 
                 _activityManager = _discordClient.GetActivityManager();
 #warning todo: replace with command that runs steam:// maybe?
@@ -252,7 +252,7 @@ namespace TheArchive.Core.Managers
             {
                 if (_activityManager == null) return false;
                 
-                if(_settings.DEBUG_EnableRichPresenceLogSpam)
+                if(_settings.DEBUG_RichPresenceLogSpam)
                 {
                     ArchiveLogger.Notice($"[{nameof(DiscordManager)}] Activity updated: Details:{activity.Details} State:{activity.State}");
                     _activityManager.UpdateActivity(activity, ActivityUpdateDebugLog);

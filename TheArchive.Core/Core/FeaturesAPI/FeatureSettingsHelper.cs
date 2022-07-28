@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using TheArchive.Core.Attributes.Feature.Settings;
+using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI
@@ -44,15 +46,38 @@ namespace TheArchive.Core.FeaturesAPI
                 var type = prop?.GetMethod?.ReturnType;
 
                 if (prop?.SetMethod == null) continue;
+                if (prop?.GetCustomAttribute<FSIgnore>() != null) continue;
 
-                if (!type.IsValueType)
+                if (!type.IsValueType && !typeof(IList).IsAssignableFrom(type) && type != typeof(string))
                 {
                     PopulateThing(type, prop.GetValue(instance), propPath);
                     continue;
                 }
                 // Add to dict?
-                Settings.Add(new FeatureSetting(this, prop, instance, propPath));
-                ArchiveLogger.Debug($"[{nameof(FeatureSettingsHelper)}] Setting Added: {propPath}");
+                FeatureSetting setting;
+                switch(type.Name)
+                {
+                    case nameof(Boolean):
+                        setting = new BoolSetting(this, prop, instance, propPath);
+                        break;
+                    case nameof(String):
+                        setting = new StringSetting(this, prop, instance, propPath);
+                        break;
+                    default:
+                        if (type.IsEnum)
+                        {
+                            setting = new EnumSetting(this, prop, instance, propPath);
+                        }
+                        else
+                        {
+                            setting = new FeatureSetting(this, prop, instance, propPath);
+                        }
+                        break;
+                }
+
+                Settings.Add(setting);
+
+                ArchiveLogger.Debug($"[{nameof(FeatureSettingsHelper)}] Setting Added: {propPath} | {setting.GetType().Name}");
             }
         }
 

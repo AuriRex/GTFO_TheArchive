@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using TheArchive.Core.Attributes.Feature.Settings;
 
-namespace TheArchive.Core.FeaturesAPI
+namespace TheArchive.Core.FeaturesAPI.Settings
 {
     public class FeatureSetting
     {
         public FeatureSettingsHelper FeatureSettingsHelper { get; }
         public PropertyInfo Prop { get; }
+        public string DisplayName { get; }
+        public Type Type { get; }
         public string DEBUG_Path { get; }
 
         private readonly object _instance;
@@ -19,6 +18,8 @@ namespace TheArchive.Core.FeaturesAPI
         {
             FeatureSettingsHelper = featureSettingsHelper;
             Prop = prop;
+            Type = prop?.GetMethod?.ReturnType;
+            DisplayName = $"> {prop?.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
             _instance = instance;
             DEBUG_Path = debug_path;
         }
@@ -31,7 +32,8 @@ namespace TheArchive.Core.FeaturesAPI
 
         public virtual object GetValue()
         {
-            return Prop.GetValue(_instance);
+            Utilities.ArchiveLogger.Warning($"Getting value NOW! TN:{Type.FullName} -> PN:{Prop.Name} -> Instance:{_instance}");
+            return Prop.GetValue(_instance, Array.Empty<object>());
         }
     }
 }
