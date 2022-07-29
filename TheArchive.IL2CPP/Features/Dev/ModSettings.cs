@@ -25,6 +25,9 @@ namespace TheArchive.Features.Dev
         private static readonly MethodAccessor<CM_PageSettings> A_CM_PageSettings_ResetAllValueHolders = MethodAccessor<CM_PageSettings>.GetAccessor("ResetAllValueHolders");
         private static readonly MethodAccessor<CM_PageSettings> A_CM_PageSettings_ShowSettingsWindow = MethodAccessor<CM_PageSettings>.GetAccessor("ShowSettingsWindow");
         private static readonly FieldAccessor<CM_SettingsEnumDropdownButton, CM_ScrollWindow> A_CM_SettingsEnumDropdownButton_m_popupWindow = FieldAccessor<CM_SettingsEnumDropdownButton, CM_ScrollWindow>.GetAccessor("m_popupWindow");
+        private static readonly FieldAccessor<CM_SettingsInputField, int> A_CM_SettingsInputField_m_maxLen = FieldAccessor<CM_SettingsInputField, int>.GetAccessor("m_maxLen");
+        private static readonly FieldAccessor<CM_SettingsInputField, iStringInputReceiver> A_CM_SettingsInputField_m_stringReceiver = FieldAccessor<CM_SettingsInputField, iStringInputReceiver>.GetAccessor("m_stringReceiver");
+        //m_stringReceiver
 #endif
         private static MethodAccessor<TMPro.TextMeshPro> A_TextMeshPro_ForceMeshUpdate;
 
@@ -55,14 +58,65 @@ namespace TheArchive.Features.Dev
             }
         }
 
+        public class CustomStringReceiver
+#if MONO
+            : iStringInputReceiver
+        {
+            public CustomStringReceiver(StringSetting setting)
+            {
+                _setting = setting;
+            }
+#else
+            : Il2CppSystem.Object
+        {
+            public CustomStringReceiver(IntPtr ptr) : base(ptr)
+            {
+            }
+
+            public CustomStringReceiver(StringSetting setting) : base(UnhollowerRuntimeLib.ClassInjector.DerivedConstructorPointer<CustomStringReceiver>())
+            {
+                UnhollowerRuntimeLib.ClassInjector.DerivedConstructorBody(this);
+
+                _setting = setting;
+            }
+
+            [UnhollowerBaseLib.Attributes.HideFromIl2Cpp]
+#endif
+            private StringSetting _setting { get; set; }
+            
+            string
+#if MONO
+                iStringInputReceiver.
+#endif
+                GetStringValue(eCellSettingID setting)
+            {
+                ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}] Gotten value of \"{_setting.DEBUG_Path}\"!");
+                return _setting.GetValue().ToString();
+            }
+
+            string
+#if MONO
+                iStringInputReceiver.
+#endif
+                SetStringValue(eCellSettingID setting, string value)
+            {
+                ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}] Set value of \"{_setting.DEBUG_Path}\" to \"{value}\"");
+                _setting.SetValue(value);
+                return value;
+            }
+
+        }
+
 
         public override void Init()
         {
 #if IL2CPP
             UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<JankTextMeshProUpdaterOnce>();
+
+            UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2CppWithInterfaces<CustomStringReceiver>(true, typeof(iStringInputReceiver));
 #endif
 
-            A_TextMeshPro_ForceMeshUpdate = MethodAccessor<TMPro.TextMeshPro>.GetAccessor("ForceMeshUpdate", new Type[0]);
+            A_TextMeshPro_ForceMeshUpdate = MethodAccessor<TMPro.TextMeshPro>.GetAccessor("ForceMeshUpdate", Array.Empty<Type>());
         }
 
         //Setup(MainMenuGuiLayer guiLayer)
@@ -319,9 +373,29 @@ namespace TheArchive.Features.Dev
 
                 CM_SettingsInputField cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
 
+                StringInputSetMaxLength(cm_settingsInputField, setting.MaxInputLength);
+
                 // TODO
+                cm_settingsInputField.m_text.text = setting.GetValue().ToString();
+
+                var receiver = new CustomStringReceiver(setting);
+                
+#if IL2CPP
+                cm_settingsInputField.m_stringReceiver = new iStringInputReceiver(receiver.Pointer);
+#else
+                A_CM_SettingsInputField_m_stringReceiver.Set(cm_settingsInputField, receiver);
+#endif
 
                 cm_settingsItem.ForcePopupLayer(true);
+            }
+
+            private static void StringInputSetMaxLength(CM_SettingsInputField sif, int maxLength)
+            {
+#if MONO
+                A_CM_SettingsInputField_m_maxLen.Set(sif, maxLength);
+#else
+                sif.m_maxLen = maxLength;
+#endif
             }
 
             private static void CreateBoolSetting(BoolSetting setting)
@@ -365,7 +439,6 @@ namespace TheArchive.Features.Dev
 
                 enumButton_cm_item.Setup();
                 enumButton_cm_item.SetCMItemEvents(delegate (int _) {
-                    ArchiveLogger.Msg(ConsoleColor.Magenta, "Enum CM_Item pressed!");
                     CreateAndShowEnumPopup(setting, enumButton_cm_item, cm_settingsEnumDropdownButton);
                 });
 

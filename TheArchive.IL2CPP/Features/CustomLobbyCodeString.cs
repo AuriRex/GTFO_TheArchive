@@ -2,6 +2,7 @@
 using SNetwork;
 using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -18,6 +19,7 @@ namespace TheArchive.Features
 
         public class CustomLobbyCodeStringConfig
         {
+            [FSMaxLength(120)]
             public string Format { get; set; } = DefaultFormat;
         }
         

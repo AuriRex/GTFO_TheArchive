@@ -78,6 +78,7 @@
     <Compile Include="Core\Attributes\Feature\RundownConstraint.cs" />
     <Compile Include="Core\Attributes\Feature\SetEnabledStatus.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSIgnore.cs" />
+    <Compile Include="Core\Attributes\Feature\Settings\FSMaxLength.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSSlider.cs" />
     <Compile Include="Core\BuildDB.cs" />
     <Compile Include="Core\DiscordApi\ActivityManager.cs" />

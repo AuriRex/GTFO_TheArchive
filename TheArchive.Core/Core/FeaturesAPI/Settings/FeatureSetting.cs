@@ -32,7 +32,6 @@ namespace TheArchive.Core.FeaturesAPI.Settings
 
         public virtual object GetValue()
         {
-            Utilities.ArchiveLogger.Warning($"Getting value NOW! TN:{Type.FullName} -> PN:{Prop.Name} -> Instance:{_instance}");
             return Prop.GetValue(_instance, Array.Empty<object>());
         }
     }
