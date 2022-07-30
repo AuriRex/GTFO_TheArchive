@@ -8,6 +8,7 @@ using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using UnityEngine;
+using TheArchive.Core.Models;
 
 namespace TheArchive.Features.Dev
 {
@@ -62,9 +63,10 @@ namespace TheArchive.Features.Dev
 #if MONO
             : iStringInputReceiver
         {
-            public CustomStringReceiver(StringSetting setting)
+            public CustomStringReceiver(Func<string> getFunc, Action<string> setAction)
             {
-                _setting = setting;
+                _getValue = getFunc;
+                _setValue = setAction;
             }
 #else
             : Il2CppSystem.Object
@@ -73,25 +75,25 @@ namespace TheArchive.Features.Dev
             {
             }
 
-            public CustomStringReceiver(StringSetting setting) : base(UnhollowerRuntimeLib.ClassInjector.DerivedConstructorPointer<CustomStringReceiver>())
+            public CustomStringReceiver(Func<string> getFunc, Action<string> setAction) : base(UnhollowerRuntimeLib.ClassInjector.DerivedConstructorPointer<CustomStringReceiver>())
             {
                 UnhollowerRuntimeLib.ClassInjector.DerivedConstructorBody(this);
 
-                _setting = setting;
+                _getValue = getFunc;
+                _setValue = setAction;
             }
-
-            [UnhollowerBaseLib.Attributes.HideFromIl2Cpp]
 #endif
-            private StringSetting _setting { get; set; }
-            
+
+            private Func<string> _getValue;
+            private Action<string> _setValue;
+
             string
 #if MONO
                 iStringInputReceiver.
 #endif
                 GetStringValue(eCellSettingID setting)
             {
-                ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}] Gotten value of \"{_setting.DEBUG_Path}\"!");
-                return _setting.GetValue().ToString();
+                return _getValue?.Invoke() ?? string.Empty;
             }
 
             string
@@ -100,8 +102,7 @@ namespace TheArchive.Features.Dev
 #endif
                 SetStringValue(eCellSettingID setting, string value)
             {
-                ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}] Set value of \"{_setting.DEBUG_Path}\" to \"{value}\"");
-                _setting.SetValue(value);
+                _setValue.Invoke(value);
                 return value;
             }
 
@@ -367,6 +368,53 @@ namespace TheArchive.Features.Dev
                 }
             }
 
+            private static void CreateColorSetting(ColorSetting setting)
+            {
+                CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
+
+                CM_SettingsInputField cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
+
+                StringInputSetMaxLength(cm_settingsInputField, 7);
+
+                var bg_rt = cm_settingsInputField.m_background.GetComponent<RectTransform>();
+                bg_rt.anchoredPosition = new Vector2(-175, 0);
+                bg_rt.localScale = new Vector3(0.19f, 1, 1);
+
+                var colorPreviewGO = GameObject.Instantiate(cm_settingsInputField.m_background.gameObject, cm_settingsInputField.transform, true);
+                colorPreviewGO.transform.SetParent(cm_settingsItem.m_inputAlign);
+                colorPreviewGO.transform.localScale = new Vector3(0.07f, 1, 1);
+                colorPreviewGO.GetComponent<RectTransform>().anchoredPosition = new Vector2(-225, -25);
+                var renderer = colorPreviewGO.GetComponent<SpriteRenderer>();
+
+                var scol = (SColor)setting.GetValue();
+
+                renderer.color = scol.ToUnityColor();
+
+                cm_settingsInputField.m_text.text = scol.ToHexString();
+
+                var receiver = new CustomStringReceiver(new Func<string>(
+                    () => {
+                        ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}({nameof(ColorSetting)})] Gotten value of \"{setting.DEBUG_Path}\"!");
+                        SColor color = (SColor) setting.GetValue();
+                        renderer.color = color.ToUnityColor();
+                        return color.ToHexString();
+                    }),
+                    (val) => {
+                        ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}({nameof(ColorSetting)})] Set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
+                        SColor color = SColorExtensions.FromHexString(val);
+                        setting.SetValue(color);
+                    });
+
+#if IL2CPP
+                cm_settingsInputField.m_stringReceiver = new iStringInputReceiver(receiver.Pointer);
+#else
+                A_CM_SettingsInputField_m_stringReceiver.Set(cm_settingsInputField, receiver);
+#endif
+
+
+                cm_settingsItem.ForcePopupLayer(true);
+            }
+
             private static void CreateStringSetting(StringSetting setting)
             {
                 CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
@@ -375,10 +423,17 @@ namespace TheArchive.Features.Dev
 
                 StringInputSetMaxLength(cm_settingsInputField, setting.MaxInputLength);
 
-                // TODO
                 cm_settingsInputField.m_text.text = setting.GetValue().ToString();
 
-                var receiver = new CustomStringReceiver(setting);
+                var receiver = new CustomStringReceiver(new Func<string>(
+                    () => {
+                        ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}] Gotten value of \"{setting.DEBUG_Path}\"!");
+                        return setting.GetValue().ToString();
+                    }),
+                    (val) => {
+                        ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}] Set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
+                        setting.SetValue(val);
+                    });
                 
 #if IL2CPP
                 cm_settingsInputField.m_stringReceiver = new iStringInputReceiver(receiver.Pointer);
@@ -577,6 +632,9 @@ namespace TheArchive.Features.Dev
                             {
                                 switch(setting)
                                 {
+                                    case ColorSetting cs:
+                                        CreateColorSetting(cs);
+                                        break;
                                     case StringSetting ss:
                                         CreateStringSetting(ss);
                                         break;

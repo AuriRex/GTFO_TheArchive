@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Models;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI
@@ -57,6 +58,9 @@ namespace TheArchive.Core.FeaturesAPI
                 FeatureSetting setting;
                 switch(type.Name)
                 {
+                    case nameof(SColor):
+                        setting = new ColorSetting(this, prop, instance, propPath);
+                        break;
                     case nameof(Boolean):
                         setting = new BoolSetting(this, prop, instance, propPath);
                         break;

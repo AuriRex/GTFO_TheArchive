@@ -29,11 +29,19 @@ namespace TheArchive.Utilities
 
         public static SColor FromHexString(string col)
         {
-            if(ColorUtility.TryParseHtmlString(col, out var color))
+            if(!col.StartsWith("#"))
+                col = $"#{col}";
+
+            if (ColorUtility.TryParseHtmlString(col, out var color))
             {
                 return color.ToSColor();
             }
             return SColor.WHITE;
+        }
+
+        public static string ToHexString(this SColor col)
+        {
+            return $"#{ColorUtility.ToHtmlStringRGB(col.ToUnityColor())}";
         }
     }
 }
