@@ -57,6 +57,17 @@ namespace TheArchive.Features.Dev
 
                 Destroy(this);
             }
+
+#if IL2CPP
+            [UnhollowerBaseLib.Attributes.HideFromIl2Cpp]
+#endif
+            public static void Apply(TMPro.TextMeshPro tmp)
+            {
+                if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFour | Utils.RundownFlags.RundownFive))
+                {
+                    tmp.gameObject.AddComponent<JankTextMeshProUpdaterOnce>();
+                }
+            }
         }
 
         public class CustomStringReceiver
@@ -331,10 +342,7 @@ namespace TheArchive.Features.Dev
                     titleTextTMP.color = ORANGE;
                     cm_settingsItem.ForcePopupLayer(true);
 
-                    if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFour | Utils.RundownFlags.RundownFive))
-                    {
-                        titleTextTMP.gameObject.AddComponent<JankTextMeshProUpdaterOnce>();
-                    }
+                    JankTextMeshProUpdaterOnce.Apply(titleTextTMP);
                 }
                 else
                 {
@@ -362,10 +370,7 @@ namespace TheArchive.Features.Dev
                 titleTextTMP.SetText(titleText);
 #endif
 
-                if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFour | Utils.RundownFlags.RundownFive))
-                {
-                    titleTextTMP.gameObject.AddComponent<JankTextMeshProUpdaterOnce>();
-                }
+                JankTextMeshProUpdaterOnce.Apply(titleTextTMP);
             }
 
             private static void CreateColorSetting(ColorSetting setting)
@@ -392,10 +397,7 @@ namespace TheArchive.Features.Dev
 
                 cm_settingsInputField.m_text.SetText(scol.ToHexString());
 
-                if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFour | Utils.RundownFlags.RundownFive))
-                {
-                    cm_settingsInputField.m_text.gameObject.AddComponent<JankTextMeshProUpdaterOnce>();
-                }
+                JankTextMeshProUpdaterOnce.Apply(cm_settingsInputField.m_text);
 
                 var receiver = new CustomStringReceiver(new Func<string>(
                     () => {
@@ -430,10 +432,7 @@ namespace TheArchive.Features.Dev
 
                 cm_settingsInputField.m_text.SetText(setting.GetValue().ToString());
 
-                if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFour | Utils.RundownFlags.RundownFive))
-                {
-                    cm_settingsInputField.m_text.gameObject.AddComponent<JankTextMeshProUpdaterOnce>();
-                }
+                JankTextMeshProUpdaterOnce.Apply(cm_settingsInputField.m_text);
 
                 var receiver = new CustomStringReceiver(new Func<string>(
                     () => {
