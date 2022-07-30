@@ -390,7 +390,12 @@ namespace TheArchive.Features.Dev
 
                 renderer.color = scol.ToUnityColor();
 
-                cm_settingsInputField.m_text.text = scol.ToHexString();
+                cm_settingsInputField.m_text.SetText(scol.ToHexString());
+
+                if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFour | Utils.RundownFlags.RundownFive))
+                {
+                    cm_settingsInputField.m_text.gameObject.AddComponent<JankTextMeshProUpdaterOnce>();
+                }
 
                 var receiver = new CustomStringReceiver(new Func<string>(
                     () => {
@@ -423,7 +428,12 @@ namespace TheArchive.Features.Dev
 
                 StringInputSetMaxLength(cm_settingsInputField, setting.MaxInputLength);
 
-                cm_settingsInputField.m_text.text = setting.GetValue().ToString();
+                cm_settingsInputField.m_text.SetText(setting.GetValue().ToString());
+
+                if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFour | Utils.RundownFlags.RundownFive))
+                {
+                    cm_settingsInputField.m_text.gameObject.AddComponent<JankTextMeshProUpdaterOnce>();
+                }
 
                 var receiver = new CustomStringReceiver(new Func<string>(
                     () => {
