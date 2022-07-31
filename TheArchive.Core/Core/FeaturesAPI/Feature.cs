@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TheArchive.Core.Models;
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core.FeaturesAPI
 {
@@ -21,6 +22,8 @@ namespace TheArchive.Core.FeaturesAPI
         public bool Enabled { get; internal set; } = false;
 
         public bool AppliesToThisGameBuild => !FeatureInternal.InternalDisabled;
+
+        public RundownFlags AppliesToRundowns => FeatureInternal.Rundowns;
 
         /// <summary>
         /// Information about the current game build.

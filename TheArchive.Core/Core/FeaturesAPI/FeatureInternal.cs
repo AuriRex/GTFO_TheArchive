@@ -22,6 +22,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal bool HideInModSettings { get; private set; }
         internal bool HasAdditionalSettings => _settingsHelpers.Count > 0;
         internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
+        internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
 
         private Feature _feature;
         private HarmonyLib.Harmony _harmonyInstance;
@@ -61,6 +62,11 @@ namespace TheArchive.Core.FeaturesAPI
             }
 
             HideInModSettings = featureType.GetCustomAttribute<HideInModSettings>() != null;
+
+            foreach(var constraint in featureType.GetCustomAttributes<RundownConstraint>())
+            {
+                Rundowns |= constraint.Rundowns;
+            }
 
             if (!AnyRundownConstraintMatches(featureType))
             {

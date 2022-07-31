@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -21,6 +22,7 @@ namespace TheArchive.Features.QoL
 
         public class LoadoutRandomizerSettings
         {
+            [FSDisplayName("Do not randomize")]
             public List<InventorySlots> ExcludedSlots { get; set; } = new List<InventorySlots>();
             public RandomizerMode Mode { get; set; } = RandomizerMode.NoDuplicate;
 

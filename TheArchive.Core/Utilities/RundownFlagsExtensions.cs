@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using static TheArchive.Utilities.Utils;
 
@@ -39,6 +40,43 @@ namespace TheArchive.Utilities
         public static RundownFlags ToLatest(this RundownFlags flags)
         {
             return FlagsFromTo(flags, RundownFlags.Latest);
+        }
+
+        private static IEnumerable<RundownFlags> _allFlagsOrdered = null;
+        // https://stackoverflow.com/a/2344594
+        public static IEnumerable<RundownFlags> AllFlagsOrdered
+        {
+            get
+            {
+                if (_allFlagsOrdered == null)
+                {
+                    _allFlagsOrdered = Enum.GetValues(typeof(RundownFlags))
+                        .Cast<RundownFlags>()
+                        .OrderBy(x => x)
+                        .Skip(1);
+                }
+                return _allFlagsOrdered;
+            }
+        }
+
+        /// <summary>
+        /// Get the lowest flag in the given <paramref name="flags"/>, excluding <see cref="RundownFlags.None"/>
+        /// </summary>
+        /// <param name="flags"></param>
+        /// <returns></returns>
+        public static RundownFlags LowestRundownFlag(this RundownFlags flags)
+        {
+            return AllFlagsOrdered.FirstOrDefault(x => flags.HasFlag(x));
+        }
+
+        /// <summary>
+        /// Get the highest flag in the given <paramref name="flags"/>
+        /// </summary>
+        /// <param name="flags"></param>
+        /// <returns></returns>
+        public static RundownFlags HighestRundownFlag(this RundownFlags flags)
+        {
+            return AllFlagsOrdered.LastOrDefault(x => flags.HasFlag(x));
         }
 
         /// <summary>

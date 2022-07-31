@@ -9,6 +9,7 @@ using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using UnityEngine;
 using TheArchive.Core.Models;
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Dev
 {
@@ -28,7 +29,7 @@ namespace TheArchive.Features.Dev
         private static readonly FieldAccessor<CM_SettingsEnumDropdownButton, CM_ScrollWindow> A_CM_SettingsEnumDropdownButton_m_popupWindow = FieldAccessor<CM_SettingsEnumDropdownButton, CM_ScrollWindow>.GetAccessor("m_popupWindow");
         private static readonly FieldAccessor<CM_SettingsInputField, int> A_CM_SettingsInputField_m_maxLen = FieldAccessor<CM_SettingsInputField, int>.GetAccessor("m_maxLen");
         private static readonly FieldAccessor<CM_SettingsInputField, iStringInputReceiver> A_CM_SettingsInputField_m_stringReceiver = FieldAccessor<CM_SettingsInputField, iStringInputReceiver>.GetAccessor("m_stringReceiver");
-        //m_stringReceiver
+        private static readonly FieldAccessor<TMPro.TMP_Text, float> A_TMP_Text_m_marginWidth = FieldAccessor<TMPro.TMP_Text, float>.GetAccessor("m_marginWidth");
 #endif
         private static MethodAccessor<TMPro.TextMeshPro> A_TextMeshPro_ForceMeshUpdate;
 
@@ -717,7 +718,7 @@ namespace TheArchive.Features.Dev
 
                     if (feature.RequiresRestart)
                     {
-                        featureName = $"<u>{featureName}</u>";
+                        featureName = $"<color=red>[!]</color> {featureName}";
                     }
 
                     CreateSettingsItem(featureName, out var cm_settingsItem, col);
@@ -745,6 +746,37 @@ namespace TheArchive.Features.Dev
                     });
 
                     SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
+
+                    var rundownInfoButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);
+                    var rundownInfoTMP = rundownInfoButton.GetComponentInChildren<TMPro.TextMeshPro>();
+                    UnityEngine.Object.Destroy(rundownInfoButton);
+                    UnityEngine.Object.Destroy(rundownInfoButton.GetComponent<BoxCollider2D>());
+
+
+                    rundownInfoTMP.GetComponent<RectTransform>().sizeDelta = new Vector2(520, 50);
+
+                    if (feature.AppliesToRundowns == RundownFlags.None)
+                    {
+                        rundownInfoTMP.SetText(string.Empty);
+                    }
+                    else
+                    {
+                        Enum.TryParse<RundownID>(feature.AppliesToRundowns.LowestRundownFlag().ToString(), out var lowestId);
+                        Enum.TryParse<RundownID>(feature.AppliesToRundowns.HighestRundownFlag().ToString(), out var highestId);
+
+                        
+                        if(lowestId == highestId)
+                        {
+                            rundownInfoTMP.SetText($"<align=right>R{(int)lowestId}</align>");
+                        }
+                        else
+                        {
+                            rundownInfoTMP.SetText($"<align=right>R{(int)lowestId}-R{(int)highestId}</align>");
+                        }
+                    }
+
+
+                    rundownInfoTMP.color = ORANGE;
 
                     var collider = toggleButton_cm_item.GetComponent<BoxCollider2D>();
                     collider.size = new Vector2(550, 50);
