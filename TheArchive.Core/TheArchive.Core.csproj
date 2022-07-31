@@ -95,6 +95,7 @@
     <Compile Include="Core\FeaturesAPI\FeatureManager.cs" />
     <Compile Include="Core\FeaturesAPI\Settings\BoolSetting.cs" />
     <Compile Include="Core\FeaturesAPI\Settings\ColorSetting.cs" />
+    <Compile Include="Core\FeaturesAPI\Settings\EnumListSetting.cs" />
     <Compile Include="Core\FeaturesAPI\Settings\EnumSetting.cs" />
     <Compile Include="Core\FeaturesAPI\Settings\FeatureSetting.cs" />
     <Compile Include="Core\FeaturesAPI\FeatureSettingsHelper.cs" />

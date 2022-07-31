@@ -68,14 +68,17 @@ namespace TheArchive.Core.FeaturesAPI
                         setting = new StringSetting(this, prop, instance, propPath);
                         break;
                     default:
+                        if(typeof(IList).IsAssignableFrom(type) && type.GenericTypeArguments.Length >  0 && type.GenericTypeArguments[0].IsEnum)
+                        {
+                            setting = new EnumListSetting(this, prop, instance, propPath);
+                            break;
+                        }
                         if (type.IsEnum)
                         {
                             setting = new EnumSetting(this, prop, instance, propPath);
+                            break;
                         }
-                        else
-                        {
-                            setting = new FeatureSetting(this, prop, instance, propPath);
-                        }
+                        setting = new FeatureSetting(this, prop, instance, propPath);
                         break;
                 }
 

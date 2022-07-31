@@ -493,6 +493,122 @@ namespace TheArchive.Features.Dev
                 cm_settingsItem.ForcePopupLayer(true);
             }
 
+            private static void CreateEnumListSetting(EnumListSetting setting)
+            {
+                CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
+
+                CM_SettingsEnumDropdownButton cm_settingsEnumDropdownButton = GOUtil.SpawnChildAndGetComp<CM_SettingsEnumDropdownButton>(cm_settingsItem.m_enumDropdownInputPrefab, cm_settingsItem.m_inputAlign);
+
+                var enumButton_cm_item = cm_settingsEnumDropdownButton.gameObject.AddComponent<CM_Item>();
+
+                enumButton_cm_item.Setup();
+                enumButton_cm_item.SetCMItemEvents(delegate (int _) {
+                    CreateAndShowEnumListPopup(setting, enumButton_cm_item, cm_settingsEnumDropdownButton);
+                });
+
+                SharedUtils.ChangeColorCMItem(enumButton_cm_item, ORANGE);
+                var bg = enumButton_cm_item.gameObject.transform.GetChildWithExactName("Background");
+                if (bg != null)
+                {
+                    UnityEngine.Object.Destroy(bg.gameObject);
+                }
+                enumButton_cm_item.SetText(GetEnumListItemName(setting));
+
+                var collider = enumButton_cm_item.GetComponent<BoxCollider2D>();
+                collider.size = new Vector2(550, 50);
+                collider.offset = new Vector2(250, -25);
+
+                cm_settingsItem.ForcePopupLayer(true);
+
+                cm_settingsEnumDropdownButton.enabled = false;
+                UnityEngine.Object.Destroy(cm_settingsEnumDropdownButton);
+
+#if MONO
+                A_CM_SettingsEnumDropdownButton_m_popupWindow.Set(cm_settingsEnumDropdownButton, _popupWindow);
+#else
+                cm_settingsEnumDropdownButton.m_popupWindow = _popupWindow;
+#endif
+
+            }
+
+            private static void CreateAndShowEnumListPopup(EnumListSetting setting, CM_Item enumButton_cm_item, CM_SettingsEnumDropdownButton cm_settingsEnumDropdownButton)
+            {
+#if MONO
+                List<iScrollWindowContent> list = new List<iScrollWindowContent>();
+#else
+                Il2CppSystem.Collections.Generic.List<iScrollWindowContent> list = new Il2CppSystem.Collections.Generic.List<iScrollWindowContent>();
+#endif
+                var currentValues = setting.CurrentSelectedValues();
+
+                var allCMItems = new List<CM_Item>();
+
+                foreach (var kvp in setting.Map)
+                {
+                    iScrollWindowContent iScrollWindowContent = GOUtil.SpawnChildAndGetComp<iScrollWindowContent>(cm_settingsEnumDropdownButton.m_popupItemPrefab, enumButton_cm_item.transform);
+                    list.Add(iScrollWindowContent);
+                    string enumKey = kvp.Key;
+                    object enumValue = kvp.Value;
+
+                    CM_Item cm_Item = iScrollWindowContent.TryCastTo<CM_Item>();
+
+                    if (cm_Item != null)
+                    {
+                        cm_Item.Setup();
+                        cm_Item.SetText(enumKey);
+                        //cm_Item.SetAnchor(GuiAnchor.TopLeft, true);
+                        cm_Item.SetScaleFactor(1f);
+
+                        cm_Item.name = enumKey;
+
+                        SharedUtils.ChangeColorCMItem(cm_Item, currentValues.Contains(enumValue) ? ORANGE : DISABLED);
+
+                        cm_Item.ForcePopupLayer(true);
+
+                        allCMItems.Add(cm_Item);
+                    }
+                }
+
+                foreach(var cm_Item in allCMItems)
+                {
+                    cm_Item.SetCMItemEvents((_) =>
+                    {
+                        var enumKey = cm_Item.name;
+                        var value = setting.GetEnumValueFor(enumKey);
+                        var enabled = setting.ToggleInList(value);
+
+                        enumButton_cm_item.SetText(GetEnumListItemName(setting));
+                        SharedUtils.ChangeColorCMItem(cm_Item, enabled ? ORANGE : DISABLED);
+                    });
+                }
+
+#if MONO
+                _popupWindow.SetupFromButton(cm_settingsEnumDropdownButton as iCellMenuPopupController, _settingsPageInstance);
+#else
+                _popupWindow.SetupFromButton(cm_settingsEnumDropdownButton.TryCast<iCellMenuPopupController>(), _settingsPageInstance);
+#endif
+                _popupWindow.transform.position = cm_settingsEnumDropdownButton.m_popupWindowAlign.position;
+                _popupWindow.SetContentItems(list, 5f);
+                _popupWindow.SetHeader(setting.DisplayName);
+                _popupWindow.SetVisible(true);
+            }
+
+            private static string GetEnumListItemName(EnumListSetting setting)
+            {
+                var str = string.Join(", ", setting.CurrentSelectedValues());
+
+                if (string.IsNullOrWhiteSpace(str))
+                {
+                    return "[None]";
+                }
+
+                if(str.Length > 36)
+                {
+                    return str.Substring(0, 36) + " ...";
+                }
+
+                return str;
+            }
+
             private static void CreateEnumSetting(EnumSetting setting)
             {
                 CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
@@ -538,24 +654,28 @@ namespace TheArchive.Features.Dev
 #else
                 Il2CppSystem.Collections.Generic.List<iScrollWindowContent> list = new Il2CppSystem.Collections.Generic.List<iScrollWindowContent>();
 #endif
+
+                var currentKey = setting.GetCurrentEnumKey();
+
                 foreach (var kvp in setting.Map)
                 {
                     iScrollWindowContent iScrollWindowContent = GOUtil.SpawnChildAndGetComp<iScrollWindowContent>(cm_settingsEnumDropdownButton.m_popupItemPrefab, enumButton_cm_item.transform);
                     list.Add(iScrollWindowContent);
                     string enumKey = kvp.Key;
-#if MONO
-                    CM_Item cm_Item = iScrollWindowContent as CM_Item;
-#else
-                    CM_Item cm_Item = iScrollWindowContent.TryCast<CM_Item>();
-#endif
+
+                    CM_Item cm_Item = iScrollWindowContent.TryCastTo<CM_Item>();
+
                     if (cm_Item != null)
                     {
                         cm_Item.Setup();
                         cm_Item.SetText(enumKey);
-                        //cm_Item.SetAnchor(GuiAnchor.TopLeft, true);
+
                         cm_Item.SetScaleFactor(1f);
 
+                        SharedUtils.ChangeColorCMItem(cm_Item, currentKey == enumKey ? ORANGE : DISABLED);
+
                         cm_Item.ForcePopupLayer(true);
+
                         cm_Item.SetCMItemEvents((_) => {
                             setting.SetValue(kvp.Value);
 
@@ -641,6 +761,9 @@ namespace TheArchive.Features.Dev
                             {
                                 switch(setting)
                                 {
+                                    case EnumListSetting els:
+                                        CreateEnumListSetting(els);
+                                        break;
                                     case ColorSetting cs:
                                         CreateColorSetting(cs);
                                         break;

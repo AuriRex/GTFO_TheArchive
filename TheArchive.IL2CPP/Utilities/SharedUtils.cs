@@ -285,12 +285,12 @@ namespace TheArchive.Utilities
         }
 
 #if IL2CPP
-        public static T CastTo<T>(this Il2CppSystem.Object value) where T : UnhollowerBaseLib.Il2CppObjectBase
+        public static T CastTo<T>(this UnhollowerBaseLib.Il2CppObjectBase value) where T : UnhollowerBaseLib.Il2CppObjectBase
         {
             return value.Cast<T>();
         }
 
-        public static T TryCastTo<T>(this Il2CppSystem.Object value) where T : UnhollowerBaseLib.Il2CppObjectBase
+        public static T TryCastTo<T>(this UnhollowerBaseLib.Il2CppObjectBase value) where T : UnhollowerBaseLib.Il2CppObjectBase
         {
             return value.TryCast<T>();
         }
