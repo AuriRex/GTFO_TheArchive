@@ -46,6 +46,11 @@ namespace TheArchive.Core.FeaturesAPI
         /// If set, prevents calling of <see cref="OnEnable"/> and <see cref="OnDisable"/> methods and only switches the config state of this <see cref="Feature"/>.
         /// </summary>
         public virtual bool RequiresRestart => false;
+        /// <summary>
+        /// If set, prevents calling of <see cref="OnEnable"/> on startup once.<br/>
+        /// <see cref="OnEnable"/> gets called normally after that.
+        /// </summary>
+        public virtual bool SkipInitialOnEnable => false;
 
 
         /// <summary>

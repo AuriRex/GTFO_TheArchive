@@ -15,6 +15,8 @@ namespace TheArchive.Features.Accessibility
 
         public override string Group => FeatureGroups.Accessibility;
 
+        public override bool SkipInitialOnEnable => true;
+
         [FeatureConfig]
         public static PlayerColorOverrideSettings Settings { get; set; }
 
@@ -30,14 +32,8 @@ namespace TheArchive.Features.Accessibility
         }
 #endif
 
-        private static bool _firstTime = true;
         public override void OnEnable()
         {
-            if(_firstTime)
-            {
-                _firstTime = false;
-                return;
-            }
             foreach(PlayerAgent player in GetAllPlayers())
             {
                 if (player == null) continue;

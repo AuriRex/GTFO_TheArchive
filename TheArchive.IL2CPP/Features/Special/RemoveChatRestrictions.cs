@@ -51,13 +51,7 @@ namespace TheArchive.Features.Special
         {
             if (instance == null) return;
 
-            A_PlayerChatManager_m_forbiddenChars.Set(instance,
-#if IL2CPP
-                        values ?? new UnhollowerBaseLib.Il2CppStructArray<int>(0)
-#else
-                        values ?? new int[0]
-#endif
-                        );
+            A_PlayerChatManager_m_forbiddenChars.Set(instance, values ?? Array.Empty<int>());
         }
 
         // Remove the character restriction in chat, this also results in the user being able to use TMP tags but whatever

@@ -29,20 +29,15 @@ namespace TheArchive.Features
         private static CM_Item _CM_PageLoadout_coppyLobbyIDButton;
         private static CM_Item _CM_PageSettings_coppyLobbyIDButton;
 
+        [SetEnabledStatus]
         private static bool IsEnabled { get; set; }
 
         public override void OnEnable()
         {
-            IsEnabled = true;
             if(_CM_PageLoadout_coppyLobbyIDButton == null)
             {
                 SetupViaInstance(CM_PageLoadout.Current);
             }
-        }
-
-        public override void OnDisable()
-        {
-            IsEnabled = false;
         }
 
         public static void CopyLobbyIdToClipboard(int _)

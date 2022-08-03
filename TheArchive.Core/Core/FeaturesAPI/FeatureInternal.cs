@@ -309,7 +309,7 @@ namespace TheArchive.Core.FeaturesAPI
 
             if (FeatureManager.IsEnabledInConfig(_feature))
             {
-                Enable();
+                Enable(!_feature.SkipInitialOnEnable);
             }
             else
             {
@@ -373,7 +373,7 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        internal bool Enable()
+        internal bool Enable(bool callOnEnable = true)
         {
             if (InternalDisabled) return false;
 
@@ -381,7 +381,8 @@ namespace TheArchive.Core.FeaturesAPI
             ApplyPatches();
             _feature.Enabled = true;
             _isEnabledPropertyInfo?.SetValue(null, true);
-            _feature.OnEnable();
+            if(callOnEnable)
+                _feature.OnEnable();
             return true;
         }
 

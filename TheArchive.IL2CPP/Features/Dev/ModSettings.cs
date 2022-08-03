@@ -721,6 +721,11 @@ namespace TheArchive.Features.Dev
                         featureName = $"<color=red>[!]</color> {featureName}";
                     }
 
+                    if(feature.HasAdditionalSettings)
+                    {
+                        featureName = $"<u>{featureName}</u>";
+                    }
+
                     CreateSettingsItem(featureName, out var cm_settingsItem, col);
 
                     CM_SettingsToggleButton cm_SettingsToggleButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);

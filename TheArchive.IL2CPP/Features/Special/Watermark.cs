@@ -5,34 +5,31 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Features.Special
 {
-    [EnableFeatureByDefault, HideInModSettings]
+    [EnableFeatureByDefault]
     public class Watermark : Feature
     {
-        public override string Name => "Watermark";
+        public override string Name => "Mod Watermark";
 
 		public override string Group => FeatureGroups.Special;
+        public override bool SkipInitialOnEnable => true;
 
-		public const string ColorHex = "FBF3FF";
+        public const string ColorHex = "FBF3FF";
 
 #if MONO
 		private static MethodAccessor<PUI_Watermark> A_PUI_Watermark_UpdateWatermark;
 #endif
-
-		private float _rtss;
 
 		public override void Init()
         {
 #if MONO
 			A_PUI_Watermark_UpdateWatermark = MethodAccessor<PUI_Watermark>.GetAccessor("UpdateWatermark");
 #endif
-			_rtss = UnityEngine.Time.realtimeSinceStartup + 0.1f;
 		}
 
 
         public override void OnEnable()
         {
-			if(_rtss < UnityEngine.Time.realtimeSinceStartup)
-				CallUpdateWatermark();
+			CallUpdateWatermark();
 		}
 
 		public override void OnDisable()
