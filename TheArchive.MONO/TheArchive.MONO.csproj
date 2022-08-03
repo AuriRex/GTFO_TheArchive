@@ -151,6 +151,9 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\Backport\MeleeCancelBackport.cs">
       <Link>Features\Backport\MeleeCancelBackport.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Backport\MineFixBackport.cs">
+      <Link>Features\Backport\MineFixBackport.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Backport\TerminalKeyMessage.cs">
       <Link>Features\Backport\TerminalKeyMessage.cs</Link>
     </Compile>

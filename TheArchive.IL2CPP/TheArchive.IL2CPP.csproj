@@ -310,6 +310,7 @@
     <Compile Include="ColorConverter.cs" />
     <Compile Include="Features\Accessibility\PlayerColorOverride.cs" />
     <Compile Include="Features\Backport\InstantHackRelease.cs" />
+    <Compile Include="Features\Backport\MineFixBackport.cs" />
     <Compile Include="Features\Backport\TerminalKeyMessage.cs" />
     <Compile Include="Features\Backport\ThrowablesRunFix.cs" />
     <Compile Include="Features\CustomLobbyCodeString.cs" />
