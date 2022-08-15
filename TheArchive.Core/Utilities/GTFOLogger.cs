@@ -1,12 +1,13 @@
 ﻿using MelonLoader;
 using System;
 using System.Collections.Generic;
+using TheArchive.Interfaces;
 
 namespace TheArchive.Utilities
 {
     public static class GTFOLogger
     {
-        internal static MelonLogger.Instance Logger { private get; set; }
+        internal static IArchiveLogger Logger { private get; set; }
 
         private static readonly HashSet<string> _ignoreList = new HashSet<string>() {
             "show crosshair",
@@ -18,7 +19,7 @@ namespace TheArchive.Utilities
         public static void Log(string message)
         {
             if (_ignoreList.Contains(message)) return;
-            Logger.Msg(message);
+            Logger.Info(message);
         }
 
         public static void Warn(string message)

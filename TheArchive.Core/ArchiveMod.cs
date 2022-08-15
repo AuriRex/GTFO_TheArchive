@@ -71,9 +71,11 @@ namespace TheArchive
         {
             Instance = this;
 
+            ArchiveLogger.logger = LoaderWrapper.WrapLogger(base.LoggerInstance);
+
             LoadConfig();
 
-            GTFOLogger.Logger = new MelonLogger.Instance("GTFO-Internals", ConsoleColor.DarkGray);
+            GTFOLogger.Logger = LoaderWrapper.CreateLoggerInstance("GTFO-Internals", ConsoleColor.DarkGray);
 
             CurrentRundown = BuildDB.GetCurrentRundownID(LocalFiles.BuildNumber);
             ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"Current game revision determined to be {LocalFiles.BuildNumber}! ({CurrentRundown})");
@@ -86,7 +88,7 @@ namespace TheArchive
 
             FeatureManager.Internal_Init();
 
-            var archiveModule = LoadMainArchiveModule(MelonUtils.IsGameIl2Cpp());
+            var archiveModule = LoadMainArchiveModule(LoaderWrapper.IsGameIL2CPP());
 
             var moduleMainType = archiveModule.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
 

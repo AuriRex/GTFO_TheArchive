@@ -114,6 +114,7 @@
     <Compile Include="Core\Models\PresenceGameState.cs" />
     <Compile Include="Core\Settings\RichPresenceSettings.cs" />
     <Compile Include="Core\SubModuleAttribute.cs" />
+    <Compile Include="Interfaces\IArchiveLogger.cs" />
     <Compile Include="Interfaces\IBaseGameConverter.cs" />
     <Compile Include="Interfaces\IInitAfterDataBlocksReady.cs" />
     <Compile Include="Interfaces\IInitAfterGameDataInitialized.cs" />
@@ -125,6 +126,8 @@
     <Compile Include="Utilities\ArchiveLogger.cs" />
     <Compile Include="Utilities\GTFOLogger.cs" />
     <Compile Include="Utilities\ImplementationManagerExtensions.cs" />
+    <Compile Include="Utilities\LoaderWrapper.cs" />
+    <Compile Include="Utilities\ML_LogWrapper.cs" />
     <Compile Include="Utilities\PresenceFormatter.cs" />
     <Compile Include="Utilities\LocalFiles.cs" />
     <Compile Include="Utilities\RundownFlagsExtensions.cs" />

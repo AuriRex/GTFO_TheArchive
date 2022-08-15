@@ -138,15 +138,9 @@ namespace TheArchive.Utilities
             return default;
         }
 
-        public static object StartCoroutine(System.Collections.IEnumerator routine)
-        {
-            return MelonLoader.MelonCoroutines.Start(routine);
-        }
+        public static object StartCoroutine(System.Collections.IEnumerator routine) => LoaderWrapper.StartCoroutine(routine);
 
-        public static void StopCoroutine(object coroutineToken)
-        {
-            MelonLoader.MelonCoroutines.Stop(coroutineToken);
-        }
+        public static void StopCoroutine(object coroutineToken) => LoaderWrapper.StopCoroutine(coroutineToken);
 
         public static string GetRundownTitle() => GetRundownTitle(ArchiveMod.CurrentRundown);
         public static string GetRundownTitle(RundownID rundown)

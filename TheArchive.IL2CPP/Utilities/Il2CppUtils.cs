@@ -1,5 +1,4 @@
-﻿using MelonLoader;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -43,11 +42,9 @@ namespace TheArchive.Utilities
             yield break;
         }
 
-        public const BindingFlags AnyBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
-
         public static void SetPropertyValue<T, V>(string propertyName, V value, object host = null)
         {
-            typeof(T).GetProperty(propertyName, AnyBindingFlags).SetValue(host, value);
+            typeof(T).GetProperty(propertyName, Utils.AnyBindingFlagss).SetValue(host, value);
         }
 
         public static void CallEvent<T>(string eventPropertyName)

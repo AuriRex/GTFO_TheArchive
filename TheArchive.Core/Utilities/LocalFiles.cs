@@ -1,10 +1,8 @@
-﻿using MelonLoader;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.IO;
 using TheArchive.Core;
 using TheArchive.Core.Managers;
-using TheArchive.Interfaces;
 
 namespace TheArchive.Utilities
 {
@@ -28,7 +26,7 @@ namespace TheArchive.Utilities
 
                         if (_buildNumber <= 0)
                         {
-                            var buildNumFilePath = Path.Combine(MelonUtils.GameDirectory, "revision.txt");
+                            var buildNumFilePath = Path.Combine(LoaderWrapper.GameDirectory, "revision.txt");
 
                             if (!File.Exists(buildNumFilePath))
                             {
@@ -62,7 +60,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_dataBlockDumpPath))
                 {
-                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? MelonUtils.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
+                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? LoaderWrapper.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
 
                     _dataBlockDumpPath = Path.Combine(path, $"DataBlocks/{ArchiveMod.CurrentRundown}_Build_{BuildNumber}/");
                     if (!Directory.Exists(_dataBlockDumpPath))
@@ -83,7 +81,7 @@ namespace TheArchive.Utilities
             {
                 if(string.IsNullOrEmpty(_savePath))
                 {
-                    _savePath = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? MelonUtils.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
+                    _savePath = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? LoaderWrapper.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
                 }
                 return _savePath;
             }
@@ -116,7 +114,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_otherConfigsPath))
                 {
-                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? MelonUtils.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
+                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? LoaderWrapper.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
                     _otherConfigsPath = Path.Combine(path, "OtherConfigs/");
 
                     if (!Directory.Exists(_otherConfigsPath))
@@ -133,7 +131,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_featureConfigsPath))
                 {
-                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? MelonUtils.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
+                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? LoaderWrapper.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
                     _featureConfigsPath = Path.Combine(path, "FeatureSettings/");
 
                     if (!Directory.Exists(_featureConfigsPath))

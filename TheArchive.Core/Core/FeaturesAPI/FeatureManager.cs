@@ -73,6 +73,7 @@ namespace TheArchive.Core.FeaturesAPI
                 {
                     ArchiveLogger.Error($"[{nameof(FeatureManager)}] Update method on {update.Target.GetType().FullName} threw an exception! {ex}: {ex.Message}");
                     ArchiveLogger.Exception(ex);
+                    ArchiveLogger.Warning($"[{nameof(FeatureManager)}] Removing Update method on {update.Target.GetType().FullName}! (Update won't be called anymore!!)");
                     _updateToRemove.Push(update);
                 }
             }
@@ -93,8 +94,9 @@ namespace TheArchive.Core.FeaturesAPI
                 }
                 catch (Exception ex)
                 {
-                    ArchiveLogger.Error($"[{nameof(FeatureManager)}] Update method on {lateUpdate.Target.GetType().FullName} threw an exception! {ex}: {ex.Message}");
+                    ArchiveLogger.Error($"[{nameof(FeatureManager)}] LateUpdate method on {lateUpdate.Target.GetType().FullName} threw an exception! {ex}: {ex.Message}");
                     ArchiveLogger.Exception(ex);
+                    ArchiveLogger.Warning($"[{nameof(FeatureManager)}] Removing LateUpdate method on {lateUpdate.Target.GetType().FullName}! (LateUpdate won't be called anymore!!)");
                     _lateUpdateToRemove.Push(lateUpdate);
                 }
             }
