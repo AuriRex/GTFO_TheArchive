@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
@@ -14,6 +15,8 @@ namespace TheArchive.Features
     public class CustomLobbyCodeString : Feature
     {
         public override string Name => "Copy Lobby ID Format";
+
+        public new static IArchiveLogger FeatureLogger { get; set; }
 
         public const string DefaultFormat = "LF%OpenSlots% %Rundown%%Expedition% \"%ExpeditionName%\": `%LobbyID%`";
 
@@ -46,7 +49,7 @@ namespace TheArchive.Features
             {
                 var formatedLobbyIdVanillaish = PresenceFormatter.FormatPresenceString("%LobbyID%");
                 GUIUtility.systemCopyBuffer = formatedLobbyIdVanillaish;
-                ArchiveLogger.Notice($"Copied lobby id to clipboard: {formatedLobbyIdVanillaish}");
+                FeatureLogger.Notice($"Copied lobby id to clipboard: {formatedLobbyIdVanillaish}");
                 return;
             }
 
@@ -67,7 +70,7 @@ namespace TheArchive.Features
 
             var formatedLobbyId = PresenceFormatter.FormatPresenceString(Config.Format);
             GUIUtility.systemCopyBuffer = formatedLobbyId;
-            ArchiveLogger.Notice($"Copied lobby id to clipboard: {formatedLobbyId}");
+            FeatureLogger.Notice($"Copied lobby id to clipboard: {formatedLobbyId}");
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -91,12 +94,12 @@ namespace TheArchive.Features
 #endif
             if (_CM_PageSettings_coppyLobbyIDButton != null)
             {
-                ArchiveLogger.Info("Hooking CM_PageSettings Copy Lobby ID Button ...");
+                FeatureLogger.Info("Hooking CM_PageSettings Copy Lobby ID Button ...");
                 _CM_PageSettings_coppyLobbyIDButton.RemoveCMItemEvents(keepHover: true).SetCMItemEvents(CopyLobbyIdToClipboard);
             }
             else
             {
-                ArchiveLogger.Warning($"[{nameof(CustomLobbyCodeString)}] copy lobby id button in {nameof(CM_PageSettings)} wasn't found!!!");
+                FeatureLogger.Warning($"[{nameof(CustomLobbyCodeString)}] copy lobby id button in {nameof(CM_PageSettings)} wasn't found!!!");
             }
         }
 
@@ -108,12 +111,12 @@ namespace TheArchive.Features
 
             if (_CM_PageLoadout_coppyLobbyIDButton != null)
             {
-                ArchiveLogger.Info("Hooking CM_PageLoadout Copy Lobby ID Button ...");
+                FeatureLogger.Info("Hooking CM_PageLoadout Copy Lobby ID Button ...");
                 _CM_PageLoadout_coppyLobbyIDButton.RemoveCMItemEvents(keepHover: true).SetCMItemEvents(CopyLobbyIdToClipboard);
             }
             else
             {
-                ArchiveLogger.Warning($"[{nameof(CustomLobbyCodeString)}] copy lobby id button in {nameof(CM_PageLoadout)} wasn't found!!!");
+                FeatureLogger.Warning($"[{nameof(CustomLobbyCodeString)}] copy lobby id button in {nameof(CM_PageLoadout)} wasn't found!!!");
             }
         }
 

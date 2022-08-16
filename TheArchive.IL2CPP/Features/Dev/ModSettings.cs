@@ -10,6 +10,7 @@ using TheArchive.Utilities;
 using UnityEngine;
 using TheArchive.Core.Models;
 using static TheArchive.Utilities.Utils;
+using TheArchive.Interfaces;
 
 namespace TheArchive.Features.Dev
 {
@@ -21,6 +22,8 @@ namespace TheArchive.Features.Dev
         public override bool RequiresRestart => true;
 
         public override string Group => FeatureGroups.Dev;
+
+        public new static IArchiveLogger FeatureLogger { get; set; }
 
 #if MONO
         private static readonly FieldAccessor<CM_PageSettings, eSettingsSubMenuId> A_CM_PageSettings_m_currentSubMenuId = FieldAccessor<CM_PageSettings, eSettingsSubMenuId>.GetAccessor("m_currentSubMenuId");
@@ -300,7 +303,7 @@ namespace TheArchive.Features.Dev
                 }
                 catch (Exception ex)
                 {
-                    ArchiveLogger.Exception(ex);
+                    FeatureLogger.Exception(ex);
                 }
             }
 
@@ -402,13 +405,13 @@ namespace TheArchive.Features.Dev
 
                 var receiver = new CustomStringReceiver(new Func<string>(
                     () => {
-                        ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}({nameof(ColorSetting)})] Gotten value of \"{setting.DEBUG_Path}\"!");
+                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}({nameof(ColorSetting)})] Gotten value of \"{setting.DEBUG_Path}\"!");
                         SColor color = (SColor) setting.GetValue();
                         renderer.color = color.ToUnityColor();
                         return color.ToHexString();
                     }),
                     (val) => {
-                        ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}({nameof(ColorSetting)})] Set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
+                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}({nameof(ColorSetting)})] Set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
                         SColor color = SColorExtensions.FromHexString(val);
                         setting.SetValue(color);
                     });
@@ -431,17 +434,17 @@ namespace TheArchive.Features.Dev
 
                 StringInputSetMaxLength(cm_settingsInputField, setting.MaxInputLength);
 
-                cm_settingsInputField.m_text.SetText(setting.GetValue().ToString());
+                cm_settingsInputField.m_text.SetText(setting.GetValue()?.ToString() ?? string.Empty);
 
                 JankTextMeshProUpdaterOnce.Apply(cm_settingsInputField.m_text);
 
                 var receiver = new CustomStringReceiver(new Func<string>(
                     () => {
-                        ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}] Gotten value of \"{setting.DEBUG_Path}\"!");
-                        return setting.GetValue().ToString();
+                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}] Gotten value of \"{setting.DEBUG_Path}\"!");
+                        return setting.GetValue()?.ToString() ?? string.Empty;
                     }),
                     (val) => {
-                        ArchiveLogger.Debug($"[{nameof(CustomStringReceiver)}] Set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
+                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}] Set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
                         setting.SetValue(val);
                     });
                 
@@ -824,7 +827,7 @@ namespace TheArchive.Features.Dev
                 }
                 catch (Exception ex)
                 {
-                    ArchiveLogger.Exception(ex);
+                    FeatureLogger.Exception(ex);
                 }
             }
 

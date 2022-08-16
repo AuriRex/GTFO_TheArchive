@@ -14,7 +14,7 @@ using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
-[assembly: MelonInfo(typeof(ArchiveMod), "TheArchive", ArchiveMod.VersionString, "AuriRex", "https://github.com/AuriRex/GTFO_TheArchive")]
+[assembly: MelonInfo(typeof(ArchiveMod), ArchiveMod.NAME, ArchiveMod.VersionString, "AuriRex", "https://github.com/AuriRex/GTFO_TheArchive")]
 [assembly: MelonGame("10 Chambers Collective", "GTFO")]
 [assembly: MelonColor(ConsoleColor.DarkMagenta)]
 [assembly: MelonOptionalDependencies("System.Runtime.CompilerServices.Unsafe", "UnhollowerBaseLib")]
@@ -22,6 +22,8 @@ namespace TheArchive
 {
     public class ArchiveMod : MelonMod
     {
+        public const string NAME = "TheArchive";
+        public const string ABBREVIATION = "Ar";
         public static ArchiveSettings Settings { get; private set; } = new ArchiveSettings();
 
         private static JsonSerializerSettings _jsonSerializerSettings = null;
@@ -335,6 +337,8 @@ namespace TheArchive
                     ArchiveLogger.Exception(ex);
                 }
             }
+
+            FeatureManager.Instance.OnDatablocksReady();
 
             DataBlocksReady?.Invoke();
         }

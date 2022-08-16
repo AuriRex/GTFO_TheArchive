@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Backport
@@ -20,6 +21,8 @@ namespace TheArchive.Features.Backport
 #else
         private static HashSet<LG_ComputerTerminalCommandInterpreter> _interpreterSet = new HashSet<LG_ComputerTerminalCommandInterpreter>();
 #endif
+
+        public new static IArchiveLogger FeatureLogger { get; set; }
 
         public override void OnDisable()
         {
@@ -52,12 +55,12 @@ namespace TheArchive.Features.Backport
                     {
                         if (!_interpreterSet.Contains(setKey))
                         {
-                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 1/2 [{GetKey(terminal)}]");
+                            FeatureLogger.Debug($"Key & Zone in Terminal: Step 1/2 [{GetKey(terminal)}]");
                             _interpreterSet.Add(setKey);
                         }
                         else
                         {
-                            ArchiveLogger.Debug($"Key & Zone in Terminal: Step 2/2 [{GetKey(terminal)}]");
+                            FeatureLogger.Debug($"Key & Zone in Terminal: Step 2/2 [{GetKey(terminal)}]");
                             _interpreterSet.Remove(setKey);
                             __instance.AddOutput($"Welcome to <b>{GetKey(terminal)}</b>, located in <b>{terminal.SpawnNode.m_zone.NavInfo.PrefixLong}_{terminal.SpawnNode.m_zone.NavInfo.Number}</b>", true);
                         }

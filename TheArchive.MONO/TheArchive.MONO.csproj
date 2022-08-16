@@ -142,6 +142,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\Nickname.cs">
+      <Link>Features\Accessibility\Nickname.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\PlayerColorOverride.cs">
       <Link>Features\Accessibility\PlayerColorOverride.cs</Link>
     </Compile>

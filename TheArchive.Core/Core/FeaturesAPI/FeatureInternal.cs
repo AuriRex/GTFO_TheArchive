@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.Exceptions;
 using TheArchive.Core.Models;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI
@@ -23,6 +23,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal bool HasAdditionalSettings => _settingsHelpers.Count > 0;
         internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
+        internal IArchiveLogger FeatureLoggerInstance { get; private set; }
 
         private Feature _feature;
         private HarmonyLib.Harmony _harmonyInstance;
@@ -33,6 +34,7 @@ namespace TheArchive.Core.FeaturesAPI
         private PropertyInfo _isEnabledPropertyInfo;
 
         private static readonly HashSet<string> _usedIdentifiers = new HashSet<string>();
+        private static IArchiveLogger _FILogger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureInternal), ConsoleColor.DarkYellow);
 
         private FeatureInternal() { }
 
@@ -51,15 +53,19 @@ namespace TheArchive.Core.FeaturesAPI
         {
             _feature = feature;
 
+            
+
             var featureType = _feature.GetType();
 
-            ArchiveLogger.Msg(ConsoleColor.Black, "-");
-            ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(FeatureInternal)}] Initializing {_feature.Identifier} ...");
+            _FILogger.Msg(ConsoleColor.Black, "-");
+            _FILogger.Msg(ConsoleColor.Green, $"Initializing {_feature.Identifier} ...");
 
-            if(_usedIdentifiers.Contains(_feature.Identifier))
+            if (_usedIdentifiers.Contains(_feature.Identifier))
             {
                 throw new ArchivePatchDuplicateIDException($"Provided feature id \"{_feature.Identifier}\" has already been registered by {FeatureManager.GetById(_feature.Identifier)}!");
             }
+
+            FeatureLoggerInstance = LoaderWrapper.CreateArSubLoggerInstance($"F::{_feature.Identifier}", ConsoleColor.Cyan);
 
             HideInModSettings = featureType.GetCustomAttribute<HideInModSettings>() != null;
 
@@ -82,7 +88,7 @@ namespace TheArchive.Core.FeaturesAPI
 
             if (InternalDisabled)
             {
-                ArchiveLogger.Msg(ConsoleColor.Magenta, $"[{nameof(FeatureInternal)}] Feature \"{_feature.Identifier}\" has been disabled internally! ({DisabledReason})");
+                _FILogger.Msg(ConsoleColor.Magenta, $"Feature \"{_feature.Identifier}\" has been disabled internally! ({DisabledReason})");
                 return;
             }
 
@@ -98,7 +104,7 @@ namespace TheArchive.Core.FeaturesAPI
             var updateDelegate = updateMethod?.CreateDelegate(typeof(Update), _feature);
             if (updateDelegate != null)
             {
-                ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] {nameof(Update)} method found.");
+                _FILogger.Debug($"{nameof(Update)} method found.");
                 UpdateDelegate = (Update)updateDelegate;
             }
 
@@ -112,7 +118,7 @@ namespace TheArchive.Core.FeaturesAPI
             var lateUpdateDelegate = lateUpdateMethod?.CreateDelegate(typeof(LateUpdate), _feature);
             if(lateUpdateDelegate != null)
             {
-                ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] {nameof(LateUpdate)} method found.");
+                _FILogger.Debug($"{nameof(LateUpdate)} method found.");
                 LateUpdateDelegate = (LateUpdate)lateUpdateDelegate;
             }
 
@@ -129,15 +135,29 @@ namespace TheArchive.Core.FeaturesAPI
 
             if(_isEnabledPropertyInfo != null)
             {
-                ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] Found IsEnabled property \"{_isEnabledPropertyInfo.Name}\" on Feature {_feature.Identifier}.");
+                _FILogger.Debug($"Found IsEnabled property \"{_isEnabledPropertyInfo.Name}\" on Feature {_feature.Identifier}.");
             }
+
+            var staticLoggerInstancePropertyInfo = featureProperties
+                .FirstOrDefault(pi => (pi.Name == "FeatureLogger" || pi.GetCustomAttribute<SetStaticLogger>() != null)
+                    && pi.SetMethod != null
+                    && pi.GetMethod != null
+                    && pi.GetMethod.IsStatic
+                    && pi.GetMethod.ReturnType == typeof(IArchiveLogger));
+
+            if(staticLoggerInstancePropertyInfo != null)
+            {
+                _FILogger.Debug($"Found FeatureLogger property \"{staticLoggerInstancePropertyInfo.Name}\" on Feature {_feature.Identifier}. Populating ...");
+                staticLoggerInstancePropertyInfo.SetValue(null, FeatureLoggerInstance);
+            }
+            
 
             foreach (var prop in settingsProps)
             {
                 
                 if((!prop.SetMethod?.IsStatic ?? true) || (!prop.GetMethod?.IsStatic ?? true))
                 {
-                    ArchiveLogger.Warning($"[{nameof(FeatureInternal)}] Feature \"{_feature.Identifier}\" has an invalid property \"{prop.Name}\" with a {nameof(FeatureConfig)} attribute! Make sure it's static with both a get and set method!");
+                    _FILogger.Warning($"Feature \"{_feature.Identifier}\" has an invalid property \"{prop.Name}\" with a {nameof(FeatureConfig)} attribute! Make sure it's static with both a get and set method!");
                 }
                 else
                 {
@@ -158,11 +178,11 @@ namespace TheArchive.Core.FeaturesAPI
                 }
                 else
                 {
-                    ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] {_feature.Identifier}: ignoring {type.FullName} (Rundown | Build not matching.)");
+                    _FILogger.Debug($"{_feature.Identifier}: ignoring {type.FullName} (Rundown | Build not matching.)");
                 }
             }
 
-            ArchiveLogger.Notice($"[{nameof(FeatureInternal)}] Discovered {_patchTypes.Count} Patch{(_patchTypes.Count == 1 ? string.Empty : "es")} matching constraints.");
+            _FILogger.Notice($"Discovered {_patchTypes.Count} Patch{(_patchTypes.Count == 1 ? string.Empty : "es")} matching constraints.");
 
             foreach (var patchType in _patchTypes)
             {
@@ -188,7 +208,7 @@ namespace TheArchive.Core.FeaturesAPI
                             }
 
                             archivePatchInfo.Type = (Type) typeMethod.Invoke(null, new object[0]);
-                            ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] Discovered target Type for Patch \"{patchType.FullName}\" to be \"{archivePatchInfo.Type.FullName}\"");
+                            _FILogger.Debug($"Discovered target Type for Patch \"{patchType.FullName}\" to be \"{archivePatchInfo.Type.FullName}\"");
                         }
                         else
                         {
@@ -267,7 +287,7 @@ namespace TheArchive.Core.FeaturesAPI
                         var initMethodParameters = initMethod?.GetParameters();
                         if (initMethod != null)
                         {
-                            ArchiveLogger.Debug($"[{nameof(FeatureInternal)}] invoking static Init method {patchType.Name}.{initMethod.Name} on {_feature.Identifier}");
+                            _FILogger.Debug($"Invoking static Init method {patchType.Name}.{initMethod.Name} on {_feature.Identifier}");
                             if (initMethodParameters.Length == 1 && initMethodParameters[0].ParameterType == typeof(GameBuildInfo))
                             {
                                 initMethod.Invoke(null, new object[] { BuildInfo });
@@ -280,16 +300,16 @@ namespace TheArchive.Core.FeaturesAPI
                     }
                     catch(Exception ex)
                     {
-                        ArchiveLogger.Error($"[{nameof(FeatureInternal)}] static Init method on {_feature.Identifier} failed! - {ex}: {ex.Message}");
-                        ArchiveLogger.Exception(ex);
+                        _FILogger.Error($"Static Init method on {_feature.Identifier} failed! - {ex}: {ex.Message}");
+                        _FILogger.Exception(ex);
                         InternalyDisableFeature(InternalDisabledReason.PatchInitMethodFailed);
                         return;
                     }
                 }
                 catch(Exception ex)
                 {
-                    ArchiveLogger.Error($"[{nameof(FeatureInternal)}] Patch discovery for \"{archivePatchInfo.Type.FullName}\" failed: {ex}: {ex.Message}");
-                    ArchiveLogger.Exception(ex);
+                    _FILogger.Error($"Patch discovery for \"{archivePatchInfo.Type.FullName}\" failed: {ex}: {ex.Message}");
+                    _FILogger.Exception(ex);
                 }
             }
 
@@ -301,8 +321,8 @@ namespace TheArchive.Core.FeaturesAPI
             }
             catch(Exception ex)
             {
-                ArchiveLogger.Error($"[{nameof(FeatureInternal)}] Main Feature Init method on {_feature.Identifier} failed! - {ex}: {ex.Message}");
-                ArchiveLogger.Exception(ex);
+                _FILogger.Error($"Main Feature Init method on {_feature.Identifier} failed! - {ex}: {ex.Message}");
+                _FILogger.Exception(ex);
                 InternalyDisableFeature(InternalDisabledReason.MainInitMethodFailed);
                 return;
             }
@@ -332,7 +352,7 @@ namespace TheArchive.Core.FeaturesAPI
 
             foreach (var settingsHelper in _settingsHelpers)
             {
-                ArchiveLogger.Info($"[{nameof(FeatureInternal)}] Loading config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
+                _FILogger.Info($"Loading config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
 
                 var configInstance = LocalFiles.LoadFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
 
@@ -346,7 +366,7 @@ namespace TheArchive.Core.FeaturesAPI
 
             foreach (var settingsHelper in _settingsHelpers)
             {
-                ArchiveLogger.Info($"[{nameof(FeatureInternal)}] Saving config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
+                _FILogger.Info($"Saving config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
 
                 var configInstance = settingsHelper.GetInstance();
 
@@ -362,13 +382,13 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 try
                 {
-                    ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"[{nameof(FeatureInternal)}] Patching {_feature.Identifier} : {patchInfo.ArchivePatchInfo.Type.FullName}.{patchInfo.ArchivePatchInfo.MethodName}()");
+                    _FILogger.Msg(ConsoleColor.DarkBlue, $"Patching {_feature.Identifier} : {patchInfo.ArchivePatchInfo.Type.FullName}.{patchInfo.ArchivePatchInfo.MethodName}()");
                     _harmonyInstance.Patch(patchInfo.OriginalMethod, patchInfo.HarmonyPrefixMethod, patchInfo.HarmonyPostfixMethod);
                 }
                 catch(Exception ex)
                 {
-                    ArchiveLogger.Error($"[{nameof(FeatureInternal)}] Patch {patchInfo.ArchivePatchInfo.Type.FullName}.{patchInfo.ArchivePatchInfo.MethodName}() failed! {ex}: {ex.Message}");
-                    ArchiveLogger.Exception(ex);
+                    _FILogger.Error($"Patch {patchInfo.ArchivePatchInfo.Type.FullName}.{patchInfo.ArchivePatchInfo.MethodName}() failed! {ex}: {ex.Message}");
+                    _FILogger.Exception(ex);
                 }
             }
         }
@@ -398,6 +418,19 @@ namespace TheArchive.Core.FeaturesAPI
             return true;
         }
 
+        internal void DatablocksReady()
+        {
+            try
+            {
+                _feature.OnDatablocksReady();
+            }
+            catch (Exception ex)
+            {
+                _FILogger.Error($"Exception thrown during {nameof(Feature.OnDatablocksReady)} in Feature {_feature.Identifier}!");
+                _FILogger.Exception(ex);
+            }
+        }
+
         internal void Quit()
         {
             try
@@ -406,8 +439,8 @@ namespace TheArchive.Core.FeaturesAPI
             }
             catch (Exception ex)
             {
-                ArchiveLogger.Error($"[{nameof(FeatureManager)}] Exception thrown during {nameof(Feature.OnQuit)} in Feature {_feature.Identifier}!");
-                ArchiveLogger.Exception(ex);
+                _FILogger.Error($"Exception thrown during {nameof(Feature.OnQuit)} in Feature {_feature.Identifier}!");
+                _FILogger.Exception(ex);
             }
         }
 

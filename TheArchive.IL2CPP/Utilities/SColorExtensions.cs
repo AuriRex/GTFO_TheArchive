@@ -43,5 +43,15 @@ namespace TheArchive.Utilities
         {
             return $"#{ColorUtility.ToHtmlStringRGB(col.ToUnityColor())}";
         }
+
+        public static string ToShortHexString(this SColor col)
+        {
+            return $"#{ComponentToHex(col.R)}{ComponentToHex(col.G)}{ComponentToHex(col.B)}";
+        }
+
+        public static string ComponentToHex(float component)
+        {
+            return string.Format("{0:X1}", Mathf.Clamp((int)(component * 16f), 0, 16));
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.QoL
@@ -11,6 +12,8 @@ namespace TheArchive.Features.QoL
         public override string Name => "Skip Intro";
 
         public override string Group => FeatureGroups.QualityOfLife;
+
+        public new static IArchiveLogger FeatureLogger { get; set; }
 
         [ArchivePatch(typeof(CM_PageIntro), "Update")]
         internal static class CM_PageIntro_UpdatePatch
@@ -47,7 +50,7 @@ namespace TheArchive.Features.QoL
                     && IsProgressionFileReady()
                     && !_injectPressed)
                 {
-                    ArchiveLogger.Notice("Automatically pressing the Inject button ...");
+                    FeatureLogger.Notice("Automatically pressing the Inject button ...");
                     __instance.EXT_PressInject(-1);
                     _injectPressed = true;
                 }

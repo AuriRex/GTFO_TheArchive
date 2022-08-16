@@ -3,6 +3,7 @@ using SNetwork;
 using System.Collections.Generic;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
 
@@ -12,6 +13,8 @@ namespace TheArchive.Features
     public class PlayerInfo : Feature
     {
         public override string Name => "Steam Profile on Name";
+
+        public new static IArchiveLogger FeatureLogger { get; set; }
 
         public override void OnEnable()
         {
@@ -56,7 +59,7 @@ namespace TheArchive.Features
                 var CM_Item = nameGO.GetComponent<CM_Item>();
                 if (CM_Item == null)
                 {
-                    ArchiveLogger.Debug($"Setting up player name button for index {player.CharacterSlot.index}");
+                    FeatureLogger.Debug($"Setting up player name button for index {player.CharacterSlot.index}");
                     var collider = nameGO.AddComponent<BoxCollider2D>();
                     collider.size = new Vector2(447.2f, 52.8f);
                     collider.offset = new Vector2(160f, 1.6f);
@@ -90,7 +93,7 @@ namespace TheArchive.Features
                 var CM_Item = headerRootGO.GetComponent<CM_Item>();
                 if (CM_Item == null)
                 {
-                    ArchiveLogger.Debug($"Setting up player name button (map) for index {player.CharacterSlot.index}");
+                    FeatureLogger.Debug($"Setting up player name button (map) for index {player.CharacterSlot.index}");
                     var collider = headerRootGO.AddComponent<BoxCollider2D>();
                     collider.size = new Vector2(400f, 40f);
                     collider.offset = new Vector2(-200f, 0f);
@@ -111,11 +114,11 @@ namespace TheArchive.Features
         {
             if (!SharedUtils.TryGetPlayerByCharacterIndex(id - 1, out var player))
             {
-                ArchiveLogger.Debug($"No player found for index {id - 1}.");
+                FeatureLogger.Debug($"No player found for index {id - 1}.");
                 return;
             }
 
-            ArchiveLogger.Info($"Opening Steam profile for player \"{player.NickName}\" ({player.Lookup})");
+            FeatureLogger.Info($"Opening Steam profile for player \"{player.NickName}\" ({player.Lookup})");
             Application.OpenURL($"https://steamcommunity.com/profiles/{player.Lookup}");
         }
     }

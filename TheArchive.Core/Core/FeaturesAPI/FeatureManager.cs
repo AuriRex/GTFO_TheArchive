@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TheArchive.Core.Settings;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI
@@ -22,21 +23,42 @@ namespace TheArchive.Core.FeaturesAPI
         private Stack<FeatureInternal.Update> _updateToRemove = new Stack<FeatureInternal.Update>();
         private Stack<FeatureInternal.LateUpdate> _lateUpdateToRemove = new Stack<FeatureInternal.LateUpdate>();
 
+        private IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureManager), ConsoleColor.DarkYellow);
+
         public event Action<Feature> OnFeatureEnabled;
         public event Action<Feature> OnFeatureDisabled;
 
-        internal FeatureManager()
+        private FeatureManager()
         {
             Feature.BuildInfo = ArchiveMod.CurrentBuildInfo;
             _enabledFeatures = LocalFiles.LoadConfig<EnabledFeatures>();
         }
 
-        public void OnApplicationQuit()
+        public void OnDatablocksReady()
         {
-            ArchiveLogger.Info($"[{nameof(FeatureManager)}] {nameof(OnApplicationQuit)}()");
+            _logger.Debug($"{nameof(OnDatablocksReady)}()");
             try
             {
-                ArchiveLogger.Info($"[{nameof(FeatureManager)}] Saving settings ... ");
+                foreach (var feature in RegisteredFeatures)
+                {
+                    if (feature.FeatureInternal.InternalDisabled) continue;
+
+                    feature.FeatureInternal.DatablocksReady();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Exception thrown in {nameof(OnDatablocksReady)}! {ex}: {ex.Message}");
+                _logger.Exception(ex);
+            }
+        }
+
+        public void OnApplicationQuit()
+        {
+            _logger.Info($"{nameof(OnApplicationQuit)}()");
+            try
+            {
+                _logger.Info($"Saving settings ... ");
 
                 SaveConfig();
 
@@ -45,7 +67,7 @@ namespace TheArchive.Core.FeaturesAPI
                     SaveFeatureConfig(feature);
                 }
 
-                ArchiveLogger.Info($"[{nameof(FeatureManager)}] Unpatching ... ");
+                _logger.Info($"Unpatching ... ");
 
                 foreach (var feature in RegisteredFeatures)
                 {
@@ -56,8 +78,8 @@ namespace TheArchive.Core.FeaturesAPI
             }
             catch(Exception ex)
             {
-                ArchiveLogger.Error($"[{nameof(FeatureManager)}] Exception thrown in {nameof(OnApplicationQuit)}! {ex}: {ex.Message}");
-                ArchiveLogger.Exception(ex);
+                _logger.Error($"Exception thrown in {nameof(OnApplicationQuit)}! {ex}: {ex.Message}");
+                _logger.Exception(ex);
             }
         }
 
@@ -71,9 +93,9 @@ namespace TheArchive.Core.FeaturesAPI
                 }
                 catch(Exception ex)
                 {
-                    ArchiveLogger.Error($"[{nameof(FeatureManager)}] Update method on {update.Target.GetType().FullName} threw an exception! {ex}: {ex.Message}");
-                    ArchiveLogger.Exception(ex);
-                    ArchiveLogger.Warning($"[{nameof(FeatureManager)}] Removing Update method on {update.Target.GetType().FullName}! (Update won't be called anymore!!)");
+                    _logger.Error($"Update method on {update.Target.GetType().FullName} threw an exception! {ex}: {ex.Message}");
+                    _logger.Exception(ex);
+                    _logger.Warning($"Removing Update method on {update.Target.GetType().FullName}! (Update won't be called anymore!!)");
                     _updateToRemove.Push(update);
                 }
             }
@@ -94,9 +116,9 @@ namespace TheArchive.Core.FeaturesAPI
                 }
                 catch (Exception ex)
                 {
-                    ArchiveLogger.Error($"[{nameof(FeatureManager)}] LateUpdate method on {lateUpdate.Target.GetType().FullName} threw an exception! {ex}: {ex.Message}");
-                    ArchiveLogger.Exception(ex);
-                    ArchiveLogger.Warning($"[{nameof(FeatureManager)}] Removing LateUpdate method on {lateUpdate.Target.GetType().FullName}! (LateUpdate won't be called anymore!!)");
+                    _logger.Error($"LateUpdate method on {lateUpdate.Target.GetType().FullName} threw an exception! {ex}: {ex.Message}");
+                    _logger.Exception(ex);
+                    _logger.Warning($"Removing LateUpdate method on {lateUpdate.Target.GetType().FullName}! (LateUpdate won't be called anymore!!)");
                     _lateUpdateToRemove.Push(lateUpdate);
                 }
             }
@@ -138,7 +160,7 @@ namespace TheArchive.Core.FeaturesAPI
             if (feature.Enabled) return;
 
             if (feature.AppliesToThisGameBuild)
-                ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(FeatureManager)}] Enabling {nameof(Feature)} {feature.Identifier} ...");
+                _logger.Msg(ConsoleColor.Green, $"Enabling {nameof(Feature)} {feature.Identifier} ...");
 
             feature.FeatureInternal.Enable();
             if (feature.FeatureInternal.HasUpdateMethod)
@@ -160,7 +182,7 @@ namespace TheArchive.Core.FeaturesAPI
             if (!feature.Enabled) return;
 
             if(feature.AppliesToThisGameBuild)
-                ArchiveLogger.Msg(ConsoleColor.Red, $"[{nameof(FeatureManager)}] Disabling {nameof(Feature)} {feature.Identifier} ...");
+                _logger.Msg(ConsoleColor.Red, $"Disabling {nameof(Feature)} {feature.Identifier} ...");
 
             feature.FeatureInternal.Disable();
             if (feature.FeatureInternal.HasUpdateMethod)
@@ -183,7 +205,6 @@ namespace TheArchive.Core.FeaturesAPI
         internal static void Internal_Init()
         {
             Instance = new FeatureManager();
-            
         }
 
         public void DEBUG_DISABLE()

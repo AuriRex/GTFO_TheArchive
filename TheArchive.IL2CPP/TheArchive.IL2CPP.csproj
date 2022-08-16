@@ -308,6 +308,7 @@
     </Compile>
     <Compile Include="ArchiveIL2CPPModule.cs" />
     <Compile Include="ColorConverter.cs" />
+    <Compile Include="Features\Accessibility\Nickname.cs" />
     <Compile Include="Features\Accessibility\PlayerColorOverride.cs" />
     <Compile Include="Features\Backport\InstantHackRelease.cs" />
     <Compile Include="Features\Backport\MineFixBackport.cs" />
@@ -324,6 +325,7 @@
     <Compile Include="Features\Dev\RedirectSettings.cs" />
     <Compile Include="Features\Special\HideFirstPersonItem.cs" />
     <Compile Include="Features\Special\RemoveChatRestrictions.cs" />
+    <Compile Include="Features\Special\RemoveDownedMessage.cs" />
     <Compile Include="Features\Special\Watermark.cs" />
     <Compile Include="Features\SteamRichPresenceTweaks.cs" />
     <Compile Include="Features\QoL\IntroSkip.cs" />

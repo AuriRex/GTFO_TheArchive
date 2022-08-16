@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TheArchive.Core.Models;
+using TheArchive.Interfaces;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core.FeaturesAPI
@@ -15,6 +16,12 @@ namespace TheArchive.Core.FeaturesAPI
         public bool BelongsToGroup => Group != null;
         public bool HasAdditionalSettings => FeatureInternal.HasAdditionalSettings;
         public IEnumerable<FeatureSettingsHelper> SettingsHelpers => FeatureInternal.Settings;
+
+
+        /// <summary>
+        /// Logging interface for this Feature.
+        /// </summary>
+        public IArchiveLogger FeatureLogger => FeatureInternal.FeatureLoggerInstance;
 
         /// <summary>
         /// If the <see cref="Feature"/> is currently enabled.
@@ -73,6 +80,14 @@ namespace TheArchive.Core.FeaturesAPI
         /// Called every time the feature gets disabled
         /// </summary>
         public virtual void OnDisable()
+        {
+
+        }
+
+        /// <summary>
+        /// Called once after datablocks have been loaded
+        /// </summary>
+        public virtual void OnDatablocksReady()
         {
 
         }

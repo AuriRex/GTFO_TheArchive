@@ -33,6 +33,8 @@ namespace TheArchive.Utilities
             return new ML_LogWrapper(new MelonLogger.Instance(name, col));
         }
 
+        public static IArchiveLogger CreateArSubLoggerInstance(string name, ConsoleColor col = ConsoleColor.White) => CreateLoggerInstance($"{ArchiveMod.ABBREVIATION}::{name}", col);
+
         public static IArchiveLogger WrapLogger(MelonLogger.Instance loggerInstance)
         {
             return new ML_LogWrapper(loggerInstance);

@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
@@ -19,6 +20,8 @@ namespace TheArchive.Features.QoL
         public override string Name => "Loadout Randomizer";
 
         public override string Group => FeatureGroups.QualityOfLife;
+
+        public new static IArchiveLogger FeatureLogger { get; set; }
 
         public class LoadoutRandomizerSettings
         {
@@ -200,7 +203,7 @@ namespace TheArchive.Features.QoL
 
         public static void OnRandomizeLoadoutButtonPressed(int _)
         {
-            ArchiveLogger.Notice("Randomizer Button has been pressed!");
+            FeatureLogger.Notice("Randomizer Button has been pressed!");
             CM_PlayerLobbyBar LocalCM_PlayerLobbyBar = null;
 #if IL2CPP
             LocalCM_PlayerLobbyBar = CM_PageLoadout.Current.m_playerLobbyBars.ToArray()
@@ -212,7 +215,7 @@ namespace TheArchive.Features.QoL
             
             if (LocalCM_PlayerLobbyBar == null)
             {
-                ArchiveLogger.Error($"Couldn't find the local players {nameof(CM_PlayerLobbyBar)}, aborting randomization of loadout!");
+                FeatureLogger.Error($"Couldn't find the local players {nameof(CM_PlayerLobbyBar)}, aborting randomization of loadout!");
                 return;
             }
 
@@ -253,11 +256,11 @@ namespace TheArchive.Features.QoL
 
                 if (gearID == null)
                 {
-                    ArchiveLogger.Error($"Tried to randomize Gear for slot {slot} but received null!");
+                    FeatureLogger.Error($"Tried to randomize Gear for slot {slot} but received null!");
                     continue;
                 }
 
-                ArchiveLogger.Notice($"Picked random gear \"{gearID.PublicGearName}\" for slot {slot}!");
+                FeatureLogger.Notice($"Picked random gear \"{gearID.PublicGearName}\" for slot {slot}!");
 
                 PlayerBackpackManager.ResetLocalAmmoStorage();
                 PlayerBackpackManager.EquipLocalGear(gearID);

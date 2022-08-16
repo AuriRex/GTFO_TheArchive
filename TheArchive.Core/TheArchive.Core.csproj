@@ -77,6 +77,7 @@
     <Compile Include="Core\Attributes\Feature\ModDefaultFeatureGroupName.cs" />
     <Compile Include="Core\Attributes\Feature\RundownConstraint.cs" />
     <Compile Include="Core\Attributes\Feature\SetEnabledStatus.cs" />
+    <Compile Include="Core\Attributes\Feature\SetStaticLogger.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSIgnore.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSMaxLength.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSSlider.cs" />

@@ -5,6 +5,7 @@ using System.Reflection;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI
@@ -18,6 +19,8 @@ namespace TheArchive.Core.FeaturesAPI
         internal Type SettingType { get; private set; }
         internal object Instance { get; set; }
         private readonly Feature _feature;
+
+        private static IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureSettingsHelper), ConsoleColor.DarkYellow);
 
         public HashSet<FeatureSetting> Settings { get; private set; } = new HashSet<FeatureSetting>();
 
@@ -39,7 +42,7 @@ namespace TheArchive.Core.FeaturesAPI
                 path = typeToCheck.FullName;
             }
 
-            ArchiveLogger.Debug($"[{nameof(FeatureSettingsHelper)}] Populate: {path}");
+            _logger.Debug($"Populate: {path}");
 
             foreach (var prop in typeToCheck.GetProperties())
             {
@@ -84,7 +87,7 @@ namespace TheArchive.Core.FeaturesAPI
 
                 Settings.Add(setting);
 
-                ArchiveLogger.Debug($"[{nameof(FeatureSettingsHelper)}] Setting Added: {propPath} | {setting.GetType().Name}");
+                _logger.Debug($"Setting Added: {propPath} | {setting.GetType().Name}");
             }
         }
 
