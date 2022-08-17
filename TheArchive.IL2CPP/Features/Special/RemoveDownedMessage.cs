@@ -8,7 +8,7 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "Remove Downed Message";
 
-#warning TODO: Test!
+        public override string Group => FeatureGroups.Special;
 
         [ArchivePatch(typeof(PLOC_Downed), nameof(PLOC_Downed.Enter))]
         public class PLOC_Downed_Enter_Patch

@@ -1,4 +1,6 @@
-﻿using SNetwork;
+﻿using Player;
+using SNetwork;
+using Steamworks;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
@@ -37,17 +39,26 @@ namespace TheArchive.Features.Accessibility
 
         public override void OnDisable()
         {
-            SNet.LocalPlayer.NickName = string.Empty;
+            ResetNickname();
+        }
+
+        public static void ResetNickname()
+        {
+            if (SNet.LocalPlayer == null) return;
+
+            var data = PlayerManager.GetLocalPlayerAgent()?.Owner?.PlatformData?.TryCastTo<SNet_SteamPlayerData>();
+            if(data != null)
+            {
+                var personaName = SteamFriends.GetFriendPersonaName(data.SteamID);
+                SNet.LocalPlayer.NickName = Utils.StripTMPTagsRegex(personaName);
+            }
         }
 
         public static void SetNickname()
         {
-            if(SNet.LocalPlayer == null)
-            {
-                return;
-            }
+            if(SNet.LocalPlayer == null) return;
 
-            switch(Settings.Mode)
+            switch (Settings.Mode)
             {
                 default:
                 case NicknameMode.Normal:
@@ -74,7 +85,7 @@ namespace TheArchive.Features.Accessibility
                     break;
             }
 
-            SNet.LocalPlayer.NickName = string.Empty;
+            ResetNickname();
         }
 
         public enum NicknameMode

@@ -55,6 +55,11 @@ namespace TheArchive.Utilities
             return (T)array.GetValue(RandomRangeInt(0, array.Length - 1));
         }
 
+        public static string StripTMPTagsRegex(string input)
+        {
+            return Regex.Replace(input, "<.*?>", string.Empty);
+        }
+
         public static T PickRandom<T>(this List<T> list) => list.ToArray().PickRandom();
 
         public static T PickRandomExcept<T>(this T[] array, T except)
