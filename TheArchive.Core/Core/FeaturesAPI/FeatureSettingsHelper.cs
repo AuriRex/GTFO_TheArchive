@@ -18,15 +18,15 @@ namespace TheArchive.Core.FeaturesAPI
         internal string PropertyName => Property?.Name;
         internal Type SettingType { get; private set; }
         internal object Instance { get; set; }
-        private readonly Feature _feature;
+        internal Feature Feature { get; }
 
-        private static IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureSettingsHelper), ConsoleColor.DarkYellow);
+        private static readonly IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureSettingsHelper), ConsoleColor.DarkYellow);
 
         public HashSet<FeatureSetting> Settings { get; private set; } = new HashSet<FeatureSetting>();
 
         internal FeatureSettingsHelper(Feature feature, PropertyInfo settingsProperty)
         {
-            _feature = feature;
+            Feature = feature;
             Property = settingsProperty;
             SettingType = settingsProperty?.GetMethod?.ReturnType ?? throw new ArgumentNullException($"Settings Property must implement a get method!");
             DisplayName = settingsProperty.GetCustomAttribute<FSDisplayName>()?.DisplayName;
@@ -34,7 +34,6 @@ namespace TheArchive.Core.FeaturesAPI
 
         private void PopulateThing(Type typeToCheck, object instance, string path = "")
         {
-#warning TODO
             if (typeToCheck.IsValueType) return;
 
             if (string.IsNullOrWhiteSpace(path))
@@ -91,17 +90,17 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        internal void SetInstance(object configInstance)
+        internal void SetupViaInstance(object configInstance)
         {
             Instance = configInstance;
-            Property.SetValue(_feature, configInstance);
+            Property.SetValue(Feature, configInstance);
             Settings.Clear();
             PopulateThing(SettingType, Instance, string.Empty);
         }
 
         public object GetInstance()
         {
-            return Instance ?? Property.GetValue(_feature);
+            return Instance ?? Property.GetValue(Feature);
         }
     }
 }

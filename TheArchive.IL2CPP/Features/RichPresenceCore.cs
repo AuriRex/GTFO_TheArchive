@@ -19,6 +19,37 @@ namespace TheArchive.Features
 
         public override string Description => "Updates the Presence Game State and provides some values via patches.";
 
+        public void OnGameStateChanged(eGameStateName nextState)
+        {
+            switch (nextState)
+            {
+                case eGameStateName.NoLobby:
+                    PresenceManager.UpdateGameState(PresenceGameState.NoLobby, keepTimer: PresenceManager.CurrentState == PresenceGameState.Startup);
+                    break;
+#if IL2CPP
+                case eGameStateName.ExpeditionAbort:
+#endif
+                case eGameStateName.Lobby:
+                    PresenceManager.UpdateGameState(PresenceGameState.InLobby);
+                    break;
+                case eGameStateName.Generating:
+                    PresenceManager.UpdateGameState(PresenceGameState.Dropping);
+                    break;
+                case eGameStateName.ReadyToStopElevatorRide:
+                    PresenceManager.UpdateGameState(PresenceGameState.LevelGenerationFinished, keepTimer: true);
+                    break;
+                case eGameStateName.InLevel:
+                    PresenceManager.UpdateGameState(PresenceGameState.InLevel, keepTimer: PresenceManager.CurrentState == PresenceGameState.ExpeditionFailed);
+                    break;
+                case eGameStateName.ExpeditionFail:
+                    PresenceManager.UpdateGameState(PresenceGameState.ExpeditionFailed, keepTimer: true);
+                    break;
+                case eGameStateName.ExpeditionSuccess:
+                    PresenceManager.UpdateGameState(PresenceGameState.ExpeditionSuccess, keepTimer: true);
+                    break;
+            }
+        }
+
 #region weapons
         public static string ItemNameForSlot(InventorySlot slot)
         {
@@ -198,42 +229,6 @@ namespace TheArchive.Features
             public static void Postfix(string rundownKey, eRundownTier tier, int expIndex)
             {
                 ExpeditionNumber = expIndex + 1;
-            }
-        }
-
-
-        [ArchivePatch(typeof(GameStateManager), nameof(GameStateManager.ChangeState))]
-        internal static class GameStateManager_Patch
-        {
-            public static void Postfix(eGameStateName nextState)
-            {
-                switch (nextState)
-                {
-                    case eGameStateName.NoLobby:
-                        PresenceManager.UpdateGameState(PresenceGameState.NoLobby, keepTimer: PresenceManager.CurrentState == PresenceGameState.Startup);
-                        break;
-#if IL2CPP
-                    case eGameStateName.ExpeditionAbort:
-#endif
-                    case eGameStateName.Lobby:
-                        PresenceManager.UpdateGameState(PresenceGameState.InLobby);
-                        break;
-                    case eGameStateName.Generating:
-                        PresenceManager.UpdateGameState(PresenceGameState.Dropping);
-                        break;
-                    case eGameStateName.ReadyToStopElevatorRide:
-                        PresenceManager.UpdateGameState(PresenceGameState.LevelGenerationFinished, keepTimer: true);
-                        break;
-                    case eGameStateName.InLevel:
-                        PresenceManager.UpdateGameState(PresenceGameState.InLevel, keepTimer: PresenceManager.CurrentState == PresenceGameState.ExpeditionFailed);
-                        break;
-                    case eGameStateName.ExpeditionFail:
-                        PresenceManager.UpdateGameState(PresenceGameState.ExpeditionFailed, keepTimer: true);
-                        break;
-                    case eGameStateName.ExpeditionSuccess:
-                        PresenceManager.UpdateGameState(PresenceGameState.ExpeditionSuccess, keepTimer: true);
-                        break;
-                }
             }
         }
     }

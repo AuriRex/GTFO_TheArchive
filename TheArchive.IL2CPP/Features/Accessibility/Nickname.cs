@@ -1,9 +1,11 @@
 ﻿using Player;
 using SNetwork;
 using Steamworks;
+using System;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
 
@@ -35,22 +37,45 @@ namespace TheArchive.Features.Accessibility
             SetNickname();
         }
 
-#warning TODO: OnGameState -> apply nickname
-
         public override void OnDisable()
         {
             ResetNickname();
+        }
+
+        public void OnGameStateChanged(eGameStateName state)
+        {
+            if(state == eGameStateName.NoLobby)
+            {
+                FeatureLogger.Notice("State changed, setting nickname");
+                SetNickname();
+            }
+        }
+
+        public override void OnFeatureSettingChanged(FeatureSetting setting)
+        {
+            FeatureLogger.Notice($"Feature Changed: {setting.DEBUG_Path}");
+            SetNickname();
         }
 
         public static void ResetNickname()
         {
             if (SNet.LocalPlayer == null) return;
 
-            var data = PlayerManager.GetLocalPlayerAgent()?.Owner?.PlatformData?.TryCastTo<SNet_SteamPlayerData>();
-            if(data != null)
+            try
             {
-                var personaName = SteamFriends.GetFriendPersonaName(data.SteamID);
-                SNet.LocalPlayer.NickName = Utils.StripTMPTagsRegex(personaName);
+                var data = PlayerManager.GetLocalPlayerAgent()?.Owner?.PlatformData?.TryCastTo<SNet_SteamPlayerData>();
+                if (data != null)
+                {
+                    var personaName = SteamFriends.GetFriendPersonaName(data.SteamID);
+                    SNet.LocalPlayer.NickName = Utils.StripTMPTagsRegex(personaName);
+                }
+            }
+            catch(Exception ex)
+            {
+                if(!ex.Message.Contains("Steamworks"))
+                {
+                    throw ex;
+                }
             }
         }
 

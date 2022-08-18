@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using static TheArchive.Utilities.Utils;
@@ -88,6 +89,25 @@ namespace TheArchive.Core.FeaturesAPI
         /// Called once after datablocks have been loaded
         /// </summary>
         public virtual void OnDatablocksReady()
+        {
+
+        }
+
+        /// <summary>
+        /// Called everytime after a setting has been changed
+        /// </summary>
+        /// <param name="setting">The changed setting</param>
+        public virtual void OnFeatureSettingChanged(FeatureSetting setting)
+        {
+            
+        }
+
+        /// <summary>
+        /// Called everytime the gamestate changes<br/>
+        /// Cast to <c>eGameStateName</c> or define a new instance method <c>OnGameStateChanged(eGameStateName state)</c>
+        /// </summary>
+        /// <param name="state">The state</param>
+        public virtual void OnGameStateChanged(int state)
         {
 
         }

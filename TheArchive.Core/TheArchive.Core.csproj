@@ -67,6 +67,7 @@
     <Compile Include="Core\Attributes\Feature\EnableFeatureByDefault.cs" />
     <Compile Include="Core\Attributes\Feature\FeatureConfig.cs" />
     <Compile Include="Core\Attributes\Feature\HideInModSettings.cs" />
+    <Compile Include="Core\Attributes\Feature\IsGameStateChangedMethod.cs" />
     <Compile Include="Core\Attributes\Feature\IsInitMethod.cs" />
     <Compile Include="Core\Attributes\Feature\IsLateUpdate.cs" />
     <Compile Include="Core\Attributes\Feature\IsParameterTypesProvider.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Core\Attributes\Feature\RundownConstraint.cs" />
     <Compile Include="Core\Attributes\Feature\SetEnabledStatus.cs" />
     <Compile Include="Core\Attributes\Feature\SetStaticLogger.cs" />
+    <Compile Include="Core\Attributes\Feature\Settings\FSIdentifier.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSIgnore.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSMaxLength.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSSlider.cs" />

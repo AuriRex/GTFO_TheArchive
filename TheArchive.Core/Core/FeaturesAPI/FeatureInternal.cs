@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Exceptions;
+using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -32,14 +34,22 @@ namespace TheArchive.Core.FeaturesAPI
         private readonly HashSet<FeaturePatchInfo> _patchInfos = new HashSet<FeaturePatchInfo>();
         private readonly HashSet<FeatureSettingsHelper> _settingsHelpers = new HashSet<FeatureSettingsHelper>();
         private PropertyInfo _isEnabledPropertyInfo;
+        private bool _onGameStateChangedMethodUsesGameEnum = false;
+        private MethodInfo _onGameStateChangedMethodInfo;
 
         private static readonly HashSet<string> _usedIdentifiers = new HashSet<string>();
-        private static IArchiveLogger _FILogger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureInternal), ConsoleColor.DarkYellow);
+        private static readonly IArchiveLogger _FILogger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureInternal), ConsoleColor.DarkYellow);
+
+        private static Type _gameStateType;
 
         private FeatureInternal() { }
 
         internal static void CreateAndAssign(Feature feature)
         {
+            if(_gameStateType == null)
+            {
+                _gameStateType = ImplementationManager.GameTypeByIdentifier("eGameStateName");
+            }
             var fi = new FeatureInternal();
             feature.FeatureInternal = fi;
             fi.Init(feature);
@@ -52,8 +62,6 @@ namespace TheArchive.Core.FeaturesAPI
         internal void Init(Feature feature)
         {
             _feature = feature;
-
-            
 
             var featureType = _feature.GetType();
 
@@ -150,7 +158,20 @@ namespace TheArchive.Core.FeaturesAPI
                 _FILogger.Debug($"Found FeatureLogger property \"{staticLoggerInstancePropertyInfo.Name}\" on Feature {_feature.Identifier}. Populating ...");
                 staticLoggerInstancePropertyInfo.SetValue(null, FeatureLoggerInstance);
             }
-            
+
+            _onGameStateChangedMethodInfo = featureMethods
+                .FirstOrDefault(mi => (mi.Name == nameof(Feature.OnGameStateChanged) || mi.GetCustomAttribute<IsGameStateChangedMethod>() != null)
+                    && !mi.IsStatic
+                    && mi.DeclaringType != typeof(Feature)
+                    && mi.GetParameters().Length == 1
+                    && (mi.GetParameters()[0].ParameterType == _gameStateType || mi.GetParameters()[0].ParameterType == typeof(int)));
+
+            if (_onGameStateChangedMethodInfo != null)
+            {
+                if (_onGameStateChangedMethodInfo.GetParameters()[0].ParameterType == _gameStateType)
+                    _onGameStateChangedMethodUsesGameEnum = true;
+                _FILogger.Debug($"Found {nameof(Feature.OnGameStateChanged)} method \"{_onGameStateChangedMethodInfo.Name}\" on Feature {_feature.Identifier}. (Uses {(_onGameStateChangedMethodUsesGameEnum ? "eGameStateName" : "int")})");
+            }
 
             foreach (var prop in settingsProps)
             {
@@ -337,7 +358,6 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-
         private void AfterInit()
         {
             if(_feature.BelongsToGroup)
@@ -356,7 +376,7 @@ namespace TheArchive.Core.FeaturesAPI
 
                 var configInstance = LocalFiles.LoadFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
 
-                settingsHelper.SetInstance(configInstance);
+                settingsHelper.SetupViaInstance(configInstance);
             }
         }
 
@@ -402,7 +422,17 @@ namespace TheArchive.Core.FeaturesAPI
             _feature.Enabled = true;
             _isEnabledPropertyInfo?.SetValue(null, true);
             if(callOnEnable)
-                _feature.OnEnable();
+            {
+                try
+                {
+                    _feature.OnEnable();
+                }
+                catch(Exception ex)
+                {
+                    _FILogger.Error($"Exception thrown during {nameof(Feature.OnEnable)} in Feature {_feature.Identifier}!");
+                    _FILogger.Exception(ex);
+                }
+            }
             return true;
         }
 
@@ -414,7 +444,15 @@ namespace TheArchive.Core.FeaturesAPI
             _harmonyInstance.UnpatchSelf();
             _feature.Enabled = false;
             _isEnabledPropertyInfo?.SetValue(null, false);
-            _feature.OnDisable();
+            try
+            {
+                _feature.OnDisable();
+            }
+            catch (Exception ex)
+            {
+                _FILogger.Error($"Exception thrown during {nameof(Feature.OnDisable)} in Feature {_feature.Identifier}!");
+                _FILogger.Exception(ex);
+            }
             return true;
         }
 
@@ -427,6 +465,37 @@ namespace TheArchive.Core.FeaturesAPI
             catch (Exception ex)
             {
                 _FILogger.Error($"Exception thrown during {nameof(Feature.OnDatablocksReady)} in Feature {_feature.Identifier}!");
+                _FILogger.Exception(ex);
+            }
+        }
+
+        internal void FeatureSettingChanged(FeatureSetting setting)
+        {
+            try
+            {
+                _feature.OnFeatureSettingChanged(setting);
+            }
+            catch (Exception ex)
+            {
+                _FILogger.Error($"Exception thrown during {nameof(Feature.OnFeatureSettingChanged)} in Feature {_feature.Identifier}!");
+                _FILogger.Exception(ex);
+            }
+        }
+
+        internal void GameStateChanged(int state)
+        {
+            try
+            {
+                object gameState = state;
+                if(_onGameStateChangedMethodUsesGameEnum)
+                {
+                    gameState = Enum.ToObject(_gameStateType, state);
+                }
+                _onGameStateChangedMethodInfo?.Invoke(_feature, new object[] { gameState });
+            }
+            catch (Exception ex)
+            {
+                _FILogger.Error($"Exception thrown during {nameof(Feature.OnGameStateChanged)} in Feature {_feature.Identifier}!");
                 _FILogger.Exception(ex);
             }
         }

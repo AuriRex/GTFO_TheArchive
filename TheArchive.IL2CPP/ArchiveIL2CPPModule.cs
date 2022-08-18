@@ -31,6 +31,14 @@ namespace TheArchive
 
         public CustomBoosterDropper BoosterDropManager { internal get; set; } = null;
 
+        static ArchiveIL2CPPModule()
+        {
+            typeof(EnemyDataBlock).RegisterSelf();
+            typeof(GameDataBlockBase<>).RegisterSelf();
+            typeof(GameDataBlockWrapper<>).RegisterSelf();
+            typeof(eGameStateName).RegisterSelf();
+        }
+
         public void Init()
         {
             instance = this;
@@ -39,10 +47,6 @@ namespace TheArchive
 
             CrashReportHandler.SetUserMetadata("Modded", "true");
             CrashReportHandler.enableCaptureExceptions = false;
-
-            typeof(EnemyDataBlock).RegisterSelf();
-            typeof(GameDataBlockBase<>).RegisterSelf();
-            typeof(GameDataBlockWrapper<>).RegisterSelf();
 
             typeof(Features.RichPresenceCore).RegisterAllPresenceFormatProviders();
 

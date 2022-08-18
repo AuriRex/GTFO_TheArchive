@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -32,9 +33,10 @@ namespace TheArchive.Core.FeaturesAPI
         {
             Feature.BuildInfo = ArchiveMod.CurrentBuildInfo;
             _enabledFeatures = LocalFiles.LoadConfig<EnabledFeatures>();
+            ArchiveMod.Instance.GameStateChanged += OnGameStateChanged;
         }
 
-        public void OnDatablocksReady()
+        internal void OnDatablocksReady()
         {
             _logger.Debug($"{nameof(OnDatablocksReady)}()");
             try
@@ -53,7 +55,7 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        public void OnApplicationQuit()
+        internal void OnApplicationQuit()
         {
             _logger.Info($"{nameof(OnApplicationQuit)}()");
             try
@@ -83,7 +85,7 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        public void OnUpdate()
+        internal void OnUpdate()
         {
             foreach(var update in _updateMethods)
             {
@@ -106,7 +108,7 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        public void OnLateUpdate()
+        internal void OnLateUpdate()
         {
             foreach (var lateUpdate in _lateUpdateMethods)
             {
@@ -126,6 +128,21 @@ namespace TheArchive.Core.FeaturesAPI
             while (_lateUpdateToRemove.Count > 0)
             {
                 _lateUpdateMethods.Remove(_lateUpdateToRemove.Pop());
+            }
+        }
+
+        internal void OnFeatureSettingChanged(FeatureSetting setting)
+        {
+            setting.Helper.Feature.FeatureInternal.FeatureSettingChanged(setting);
+        }
+
+        private void OnGameStateChanged(int state)
+        {
+            foreach(var feature in RegisteredFeatures)
+            {
+                if (!feature.Enabled) continue;
+
+                feature.FeatureInternal.GameStateChanged(state);
             }
         }
 

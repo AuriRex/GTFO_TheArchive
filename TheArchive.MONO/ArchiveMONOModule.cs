@@ -38,16 +38,20 @@ namespace TheArchive
             }
         }
 
+        static ArchiveMONOModule()
+        {
+            typeof(EnemyDataBlock).RegisterSelf();
+            typeof(GameDataBlockBase<>).RegisterSelf();
+            typeof(GameDataBlockWrapper<>).RegisterSelf();
+            typeof(eGameStateName).RegisterSelf();
+        }
+
         public void Init()
         {
             instance = this;
 
             CrashReportHandler.SetUserMetadata("Modded", "true");
             CrashReportHandler.enableCaptureExceptions = false;
-
-            typeof(EnemyDataBlock).RegisterSelf();
-            typeof(GameDataBlockBase<>).RegisterSelf();
-            typeof(GameDataBlockWrapper<>).RegisterSelf();
 
             typeof(Features.RichPresenceCore).RegisterAllPresenceFormatProviders();
 
