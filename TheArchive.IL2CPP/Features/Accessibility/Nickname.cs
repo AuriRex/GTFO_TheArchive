@@ -27,6 +27,11 @@ namespace TheArchive.Features.Accessibility
             public string Nick13 { get; set; }
             [FSMaxLength(5), FSDisplayName("Nick (5) + Color")]
             public string Nick5 { get; set; }
+
+            [FSDisplayName("Allow Other Player Nicknames"), FSIdentifier("AllowNicks")]
+            public bool AllowRemotePlayerNicknames { get; set; } = true;
+            [FSDisplayName("See Other Players Colors"), FSIdentifier("AllowTags")]
+            public bool AllowRemoteTMPTags { get; set; } = true;
         }
 
         [FeatureConfig]
@@ -53,13 +58,25 @@ namespace TheArchive.Features.Accessibility
 
         public override void OnFeatureSettingChanged(FeatureSetting setting)
         {
-            FeatureLogger.Notice($"Feature Changed: {setting.DEBUG_Path}");
-            SetNickname();
+            if(setting.Identifier.StartsWith("Allow"))
+            {
+                foreach(var player in SNet.LobbyPlayers)
+                {
+                    if (player.IsLocal) continue;
+
+                    player.UpdateVisibleName();
+                }
+            }
+            else
+            {
+                SetNickname();
+            }
         }
 
-        public static void ResetNickname()
+        public static void ResetNickname() => ResetNickname(SNet.LocalPlayer);
+        public static void ResetNickname(SNet_Player player)
         {
-            if (SNet.LocalPlayer == null) return;
+            if (player == null) return;
 
             try
             {
@@ -67,7 +84,7 @@ namespace TheArchive.Features.Accessibility
                 if (data != null)
                 {
                     var personaName = SteamFriends.GetFriendPersonaName(data.SteamID);
-                    SNet.LocalPlayer.NickName = Utils.StripTMPTagsRegex(personaName);
+                    player.NickName = Utils.StripTMPTagsRegex(personaName);
                 }
             }
             catch(Exception ex)
@@ -111,6 +128,28 @@ namespace TheArchive.Features.Accessibility
             }
 
             ResetNickname();
+        }
+
+        [ArchivePatch(typeof(SNet_Player), nameof(SNet_Player.UpdateVisibleName))]
+        public static class SNet_Player_UpdateVisibleName_Patch
+        {
+            public static bool Prefix(SNet_Player __instance)
+            {
+                if (__instance.IsLocal) return true;
+
+                if (!Settings.AllowRemotePlayerNicknames)
+                {
+                    ResetNickname(__instance);
+                    return false;
+                }
+
+                if(!Settings.AllowRemoteTMPTags)
+                {
+                    __instance.Profile.nick.data = Utils.StripTMPTagsRegex(__instance.Profile.nick.data);
+                }
+
+                return true;
+            }
         }
 
         public enum NicknameMode
