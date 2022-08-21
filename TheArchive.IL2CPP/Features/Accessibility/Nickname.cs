@@ -23,10 +23,10 @@ namespace TheArchive.Features.Accessibility
             [FSMaxLength(25), FSDisplayName("Nick (25) no Color")]
             public string Nick25 { get; set; }
             public SColor Color { get; set; } = new SColor(0f, 1f, 0.75f);
-            [FSMaxLength(13), FSDisplayName("Nick (13) ++ Color")]
-            public string Nick13 { get; set; }
-            [FSMaxLength(5), FSDisplayName("Nick (5) + Color")]
-            public string Nick5 { get; set; }
+            [FSMaxLength(19), FSDisplayName("Nick (19) ++ Color")]
+            public string Nick19 { get; set; }
+            [FSMaxLength(11), FSDisplayName("Nick (11) + Color")]
+            public string Nick11 { get; set; }
 
             [FSDisplayName("Allow Other Player Nicknames"), FSIdentifier("AllowNicks")]
             public bool AllowRemotePlayerNicknames { get; set; } = true;
@@ -112,16 +112,16 @@ namespace TheArchive.Features.Accessibility
                     
                     break;
                 case NicknameMode.ColorWithOverflow:
-                    if(!string.IsNullOrWhiteSpace(Settings.Nick13))
+                    if(!string.IsNullOrWhiteSpace(Settings.Nick19))
                     {
-                        SNet.LocalPlayer.NickName = $"<color={Settings.Color.ToShortHexString()}>{Settings.Nick13}";
+                        SNet.LocalPlayer.NickName = $"<{Settings.Color.ToShortHexString()}>{Settings.Nick19}";
                         return;
                     }
                     break;
                 case NicknameMode.Color:
-                    if (!string.IsNullOrWhiteSpace(Settings.Nick5))
+                    if (!string.IsNullOrWhiteSpace(Settings.Nick11))
                     {
-                        SNet.LocalPlayer.NickName = $"<color={Settings.Color.ToShortHexString()}>{Settings.Nick5}</color>";
+                        SNet.LocalPlayer.NickName = $"<{Settings.Color.ToShortHexString()}>{Settings.Nick11}</color>";
                         return;
                     }
                     break;
