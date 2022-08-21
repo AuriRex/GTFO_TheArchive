@@ -18,6 +18,8 @@ namespace TheArchive.Utilities
 
         public void Info(string msg) => _logger.Msg(msg);
 
+        public void Fail(string msg) => _logger.Msg(ConsoleColor.Red, msg);
+
         public void Msg(ConsoleColor col, string msg) => _logger.Msg(col, msg);
 
         public void Msg(string msg) => _logger.Msg(msg);
