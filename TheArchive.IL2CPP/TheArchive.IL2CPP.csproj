@@ -251,6 +251,9 @@
       <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.CoreModule.dll</HintPath>
@@ -308,6 +311,7 @@
     </Compile>
     <Compile Include="ArchiveIL2CPPModule.cs" />
     <Compile Include="ColorConverter.cs" />
+    <Compile Include="Features\Accessibility\ChatTweaks.cs" />
     <Compile Include="Features\Accessibility\Nickname.cs" />
     <Compile Include="Features\Accessibility\PlayerColorOverride.cs" />
     <Compile Include="Features\Backport\InstantHackRelease.cs" />
@@ -317,6 +321,7 @@
     <Compile Include="Features\CustomLobbyCodeString.cs" />
     <Compile Include="Features\Dev\AnalyticsBlocker.cs" />
     <Compile Include="Features\Dev\GameDebugLogRedirect.cs" />
+    <Compile Include="Features\Dev\InternalUAudioListenerHelper.cs" />
     <Compile Include="Features\DiscordRichPresence.cs" />
     <Compile Include="Features\QoL\LoadoutRandomizer.cs" />
     <Compile Include="Features\QoL\MapToObjectivesSwitchFix.cs" />

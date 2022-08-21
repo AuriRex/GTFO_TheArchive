@@ -59,6 +59,10 @@ namespace TheArchive.Core.FeaturesAPI
         /// <see cref="OnEnable"/> gets called normally after that.
         /// </summary>
         public virtual bool SkipInitialOnEnable => false;
+        /// <summary>
+        /// If the feature requires a UnityEngine AudioListener Component setup on the LocalPlayer GameObject
+        /// </summary>
+        public virtual bool RequiresUnityAudioListener => false;
 
 
         /// <summary>

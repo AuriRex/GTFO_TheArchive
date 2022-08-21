@@ -64,6 +64,7 @@
     <Compile Include="Core\ArchiveSettings.cs" />
     <Compile Include="Core\Attributes\Feature\ArchivePatch.cs" />
     <Compile Include="Core\Attributes\Feature\BuildConstraint.cs" />
+    <Compile Include="Core\Attributes\Feature\DoNotSaveToConfig.cs" />
     <Compile Include="Core\Attributes\Feature\EnableFeatureByDefault.cs" />
     <Compile Include="Core\Attributes\Feature\FeatureConfig.cs" />
     <Compile Include="Core\Attributes\Feature\HideInModSettings.cs" />

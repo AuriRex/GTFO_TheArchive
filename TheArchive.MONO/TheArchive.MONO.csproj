@@ -98,6 +98,9 @@
       <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
@@ -142,6 +145,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\ChatTweaks.cs">
+      <Link>Features\Accessibility\ChatTweaks.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\Nickname.cs">
       <Link>Features\Accessibility\Nickname.cs</Link>
     </Compile>
@@ -171,6 +177,9 @@
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Dev\GameDebugLogRedirect.cs">
       <Link>Features\Dev\GameDebugLogRedirect.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\InternalUAudioListenerHelper.cs">
+      <Link>Features\Dev\InternalUAudioListenerHelper.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModSettings.cs">
       <Link>Features\Dev\ModSettings.cs</Link>

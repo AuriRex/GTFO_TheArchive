@@ -24,6 +24,19 @@ namespace TheArchive.Core.FeaturesAPI
         private Stack<FeatureInternal.Update> _updateToRemove = new Stack<FeatureInternal.Update>();
         private Stack<FeatureInternal.LateUpdate> _lateUpdateToRemove = new Stack<FeatureInternal.LateUpdate>();
 
+        private Feature _unityAudioListenerHelper;
+        private Feature UnityAudioListenerHelper
+        {
+            get
+            {
+                if(_unityAudioListenerHelper == null)
+                {
+                    _unityAudioListenerHelper = GetById("InternalUAudioListenerHelper");
+                }
+                return _unityAudioListenerHelper;
+            }
+        }
+
         private IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureManager), ConsoleColor.DarkYellow);
 
         public event Action<Feature> OnFeatureEnabled;
@@ -34,6 +47,24 @@ namespace TheArchive.Core.FeaturesAPI
             Feature.BuildInfo = ArchiveMod.CurrentBuildInfo;
             _enabledFeatures = LocalFiles.LoadConfig<EnabledFeatures>();
             ArchiveMod.Instance.GameStateChanged += OnGameStateChanged;
+        }
+
+        public void CheckSpecialFeatures()
+        {
+            var requireAudioListner = RegisteredFeatures.Where(f => f.Enabled && f.RequiresUnityAudioListener);
+            if (requireAudioListner.Count() > 0)
+            {
+                if(UnityAudioListenerHelper != null && !UnityAudioListenerHelper.Enabled)
+                {
+                    _logger.Notice($"Some Features require a UnityEngine AudioListener: [{string.Join("], [", requireAudioListner.Select(f => f.Identifier))}]");
+                    EnableFeature(UnityAudioListenerHelper);
+                }
+            }
+            else
+            {
+                if (UnityAudioListenerHelper != null && UnityAudioListenerHelper.Enabled)
+                    DisableFeature(UnityAudioListenerHelper);
+            }
         }
 
         internal void OnDatablocksReady()
@@ -150,6 +181,7 @@ namespace TheArchive.Core.FeaturesAPI
         {
             Feature feature = (Feature) Activator.CreateInstance(type);
             InitFeature(feature);
+            CheckSpecialFeatures();
         }
 
         private void InitFeature(Feature feature)
@@ -167,6 +199,8 @@ namespace TheArchive.Core.FeaturesAPI
 
         public void EnableFeature(Feature feature, bool setConfig = true)
         {
+            if (feature == null) return;
+
             if (setConfig)
             {
                 SetEnabledInConfig(feature, true);
@@ -189,6 +223,8 @@ namespace TheArchive.Core.FeaturesAPI
 
         public void DisableFeature(Feature feature, bool setConfig = true)
         {
+            if (feature == null) return;
+
             if (setConfig)
             {
                 SetEnabledInConfig(feature, false);
@@ -270,7 +306,9 @@ namespace TheArchive.Core.FeaturesAPI
 
         private void SetFeatureEnabledInConfig(Feature feature, bool value)
         {
-            if(_enabledFeatures.Features.TryGetValue(feature.Identifier, out var currentValue))
+            if (feature.FeatureInternal.DoNotSaveToConfig) return;
+
+            if (_enabledFeatures.Features.TryGetValue(feature.Identifier, out var currentValue))
             {
                 if(currentValue == value)
                 {
@@ -291,7 +329,9 @@ namespace TheArchive.Core.FeaturesAPI
 
         private bool IsFeatureEnabledInConfig(Feature feature)
         {
-            if(_enabledFeatures.Features.TryGetValue(feature.Identifier, out var value))
+            if (feature.FeatureInternal.DoNotSaveToConfig) return false;
+
+            if (_enabledFeatures.Features.TryGetValue(feature.Identifier, out var value))
             {
                 return value;
             }

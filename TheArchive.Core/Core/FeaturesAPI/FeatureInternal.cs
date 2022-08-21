@@ -22,6 +22,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal bool HasLateUpdateMethod => LateUpdateDelegate != null;
         internal LateUpdate LateUpdateDelegate { get; private set; }
         internal bool HideInModSettings { get; private set; }
+        internal bool DoNotSaveToConfig { get; private set; }
         internal bool HasAdditionalSettings => _settingsHelpers.Count > 0;
         internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
@@ -76,8 +77,9 @@ namespace TheArchive.Core.FeaturesAPI
             FeatureLoggerInstance = LoaderWrapper.CreateArSubLoggerInstance($"F::{_feature.Identifier}", ConsoleColor.Cyan);
 
             HideInModSettings = featureType.GetCustomAttribute<HideInModSettings>() != null;
+            DoNotSaveToConfig = featureType.GetCustomAttribute<DoNotSaveToConfig>() != null;
 
-            foreach(var constraint in featureType.GetCustomAttributes<RundownConstraint>())
+            foreach (var constraint in featureType.GetCustomAttributes<RundownConstraint>())
             {
                 Rundowns |= constraint.Rundowns;
             }
@@ -433,6 +435,7 @@ namespace TheArchive.Core.FeaturesAPI
                     _FILogger.Exception(ex);
                 }
             }
+            FeatureManager.Instance.CheckSpecialFeatures();
             return true;
         }
 
@@ -453,6 +456,7 @@ namespace TheArchive.Core.FeaturesAPI
                 _FILogger.Error($"Exception thrown during {nameof(Feature.OnDisable)} in Feature {_feature.Identifier}!");
                 _FILogger.Exception(ex);
             }
+            FeatureManager.Instance.CheckSpecialFeatures();
             return true;
         }
 
