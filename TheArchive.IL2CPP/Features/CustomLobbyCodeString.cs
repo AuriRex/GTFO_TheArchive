@@ -33,7 +33,7 @@ namespace TheArchive.Features
         private static CM_Item _CM_PageSettings_coppyLobbyIDButton;
 
         [SetEnabledStatus]
-        private static bool IsEnabled { get; set; }
+        public static bool IsEnabled { get; set; }
 
         public override void OnEnable()
         {
