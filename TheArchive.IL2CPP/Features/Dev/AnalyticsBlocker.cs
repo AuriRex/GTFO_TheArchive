@@ -25,7 +25,7 @@ namespace TheArchive.Features.Dev
         [ArchivePatch(typeof(AnalyticsManager), "OnGameEvent", new Type[] { typeof(GameEventData) })]
         internal static class AnalyticsManager_OnGameEventPatch
         {
-            public static bool Prefix() => false;
+            public static bool Prefix() => ArchivePatch.SKIP_OG;
         }
     }
 }

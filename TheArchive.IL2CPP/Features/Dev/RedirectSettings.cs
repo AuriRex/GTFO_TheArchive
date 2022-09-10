@@ -25,15 +25,15 @@ namespace TheArchive.Features.Dev
                 {
                     case "GTFO_Settings.txt":
                         __result = LocalFiles.SettingsPath;
-                        return false;
+                        return ArchivePatch.SKIP_OG;
                     case "GTFO_Favorites.txt":
                         __result = LocalFiles.FavoritesPath;
-                        return false;
+                        return ArchivePatch.SKIP_OG;
                     case "GTFO_BotFavorites.txt":
                         __result = LocalFiles.BotFavoritesPath;
-                        return false;
+                        return ArchivePatch.SKIP_OG;
                     default:
-                        return true;
+                        return ArchivePatch.RUN_OG;
                 }
             }
         }

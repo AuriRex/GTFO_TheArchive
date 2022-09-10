@@ -135,12 +135,12 @@ namespace TheArchive.Features.Accessibility
         {
             public static bool Prefix(SNet_Player __instance)
             {
-                if (__instance.IsLocal) return true;
+                if (__instance.IsLocal) return ArchivePatch.RUN_OG;
 
                 if (!Settings.AllowRemotePlayerNicknames)
                 {
                     ResetNickname(__instance);
-                    return false;
+                    return ArchivePatch.SKIP_OG;
                 }
 
                 if(!Settings.AllowRemoteTMPTags)
@@ -148,7 +148,7 @@ namespace TheArchive.Features.Accessibility
                     __instance.Profile.nick.data = Utils.StripTMPTagsRegex(__instance.Profile.nick.data);
                 }
 
-                return true;
+                return ArchivePatch.RUN_OG;
             }
         }
 

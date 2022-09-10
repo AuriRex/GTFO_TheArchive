@@ -23,7 +23,7 @@ namespace TheArchive.Features.Backport
             {
                 __result = Vector3.ClampMagnitude(Vector3.up * axisVertical, 1f);
 
-                return false;
+                return ArchivePatch.SKIP_OG;
             }
         }
 #endif

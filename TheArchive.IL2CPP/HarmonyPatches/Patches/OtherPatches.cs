@@ -11,44 +11,6 @@ namespace TheArchive.HarmonyPatches.Patches
 {
     public class OtherPatches
     {
-        // TODO: doesn't work for producing the same voice lines as I'd have hoped it to ...
-        [ArchivePatch(typeof(UnityEngine.Random), nameof(UnityEngine.Random.Range), new Type[] { typeof(float), typeof(float) })]
-        internal static class UnityEngine_RandomPatchOne
-        {
-            public static uint SetSeed { get; set; } = 0;
-            public static void Postfix(ref float __result)
-            {
-                if(SetSeed != 0)
-                {
-                    __result = SetSeed;
-
-                    ArchiveLogger.Notice($"RNG Seed set to: {(uint) __result}");
-                    SetSeed = 0;
-                }
-            }
-        }
-
-        // Fix for Maul and Gavel having the same Checksum for SOME reason ...
-        [ArchivePatch(typeof(GearIDRange), "GetChecksum")]
-        internal static class GearIDRange_GetChecksumPatch
-        {
-            public static bool Prefix(GearIDRange __instance, ref uint __result)
-            {
-                if (__instance.m_checksum == 0U)
-                {
-                    ChecksumGenerator_32 checksumGenerator_ = new ChecksumGenerator_32();
-                    for (int i = 0; i < __instance.m_comps.Length; i++)
-                    {
-                        checksumGenerator_.Insert((uint) __instance.m_comps[i]);
-                    }
-                    checksumGenerator_.Insert("name", __instance.PublicGearName);
-
-                    __instance.m_checksum = checksumGenerator_.Checksum;
-                }
-                __result = __instance.m_checksum;
-                return true;
-            }
-        }
 
         //Packet debug stuff >.>
         /*[ArchivePatch(typeof(SNet_Replicator), nameof(SNet_Replicator.AddPacket), Utils.RundownFlags.RundownSix)]

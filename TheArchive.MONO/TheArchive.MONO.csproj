@@ -181,6 +181,9 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\Dev\InternalUAudioListenerHelper.cs">
       <Link>Features\Dev\InternalUAudioListenerHelper.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\MaulGavelChecksumPatch.cs">
+      <Link>Features\Dev\MaulGavelChecksumPatch.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModSettings.cs">
       <Link>Features\Dev\ModSettings.cs</Link>
     </Compile>
@@ -229,6 +232,9 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveDownedMessage.cs">
       <Link>Features\Special\RemoveDownedMessage.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Special\UnityRandomOverrider.cs">
+      <Link>Features\Special\UnityRandomOverrider.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Special\Watermark.cs">
       <Link>Features\Special\Watermark.cs</Link>
     </Compile>
@@ -249,8 +255,8 @@
     <Compile Include="Features\Backport\AlarmClassOnDoors.cs" />
     <Compile Include="Features\Backport\R1LadderFix.cs" />
     <Compile Include="Features\Backport\R1VisualPings.cs" />
+    <Compile Include="Features\Dev\DramaManagerNoDebugLog.cs" />
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
-    <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="Features\Special\R1SNetRevisionOverridePatch.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

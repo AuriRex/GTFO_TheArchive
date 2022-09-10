@@ -5,6 +5,17 @@ namespace TheArchive.Core.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public class ArchivePatch : Attribute
     {
+        /// <summary>
+        /// Used on Prefix patches as a more readable substitute for plain <c>return false</c>.<br/>
+        /// The original method the patch is targeting is NOT going to run.
+        /// </summary>
+        public const bool SKIP_OG = false;
+        /// <summary>
+        /// Used on Prefix patches as a more readable substitute for plain <c>return true</c>.<br/>
+        /// The original method the patch is targeting IS going to run.
+        /// </summary>
+        public const bool RUN_OG = true;
+
         public bool HasType
         {
             get

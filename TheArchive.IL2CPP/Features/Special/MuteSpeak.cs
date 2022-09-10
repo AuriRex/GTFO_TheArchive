@@ -1,7 +1,6 @@
 ﻿using Player;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.HarmonyPatches.Patches;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
@@ -45,11 +44,9 @@ namespace TheArchive.Features.Special
                 ArchiveLogger.Notice($"Voice binds enabled: {EnableOtherVoiceBinds}");
             }
 
-            if (StatePatches.LocalPlayerIsInTerminal) return;
             if (PlayerChatManager.InChatMode) return;
-            if (!PlayerManager.TryGetLocalPlayerAgent(out var lpa) || lpa == null) return;
-
-            _localPlayerAgent = lpa;
+            if (SharedUtils.LocalPlayerIsInTerminal) return;
+            if (!PlayerManager.TryGetLocalPlayerAgent(out _localPlayerAgent) || _localPlayerAgent == null) return;
 
             if (Input.GetKey(KeyCode.RightControl))
             {

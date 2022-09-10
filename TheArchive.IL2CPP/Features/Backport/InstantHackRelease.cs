@@ -46,7 +46,7 @@ namespace TheArchive.Features.Backport
                                 LG_LevelInteractionManager.WantToSetHackableStatus(__instance.m_currentHackable, _hStatus_Success, __instance.Owner);
                             }
                             __instance.m_state = HackSequenceState.Done;
-                            return false;
+                            return ArchivePatch.SKIP_OG;
                         case HackSequenceState.Done:
                             if (__instance.m_stateTimer < 0f)
                             {
@@ -59,14 +59,14 @@ namespace TheArchive.Features.Backport
                             {
                                 __instance.m_stateTimer -= Clock.Delta;
                             }
-                            return false;
+                            return ArchivePatch.SKIP_OG;
                     }
                 }
                 catch (Exception ex)
                 {
                     ArchiveLogger.Exception(ex);
                 }
-                return true;
+                return ArchivePatch.RUN_OG;
             }
 #else
             public static bool Prefix(ref HackingTool __instance, ref HackSequenceState ___m_state, ref iHackable ___m_currentHackable, ref float ___m_stateTimer, ref iHackingMinigame ___m_activeMinigame, ref GameObject ___m_holoSourceGFX)
@@ -85,7 +85,7 @@ namespace TheArchive.Features.Backport
                                 LG_LevelInteractionManager.WantToSetHackableStatus(___m_currentHackable, _hStatus_Success, __instance.Owner);
                             }
                             ___m_state = HackSequenceState.Done;
-                            return false;
+                            return ArchivePatch.SKIP_OG;
                         case HackSequenceState.Done:
                             if (___m_stateTimer < 0f)
                             {
@@ -98,14 +98,14 @@ namespace TheArchive.Features.Backport
                             {
                                 ___m_stateTimer -= Clock.Delta;
                             }
-                            return false;
+                            return ArchivePatch.SKIP_OG;
                     }
                 }
                 catch (Exception ex)
                 {
                     ArchiveLogger.Exception(ex);
                 }
-                return true;
+                return ArchivePatch.RUN_OG;
             }
 #endif
         }

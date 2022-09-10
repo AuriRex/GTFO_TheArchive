@@ -13,26 +13,9 @@ namespace TheArchive.Features.Backport
 
         public override string Group => FeatureGroups.Backport;
 
-        public override void Init()
-        {
-            
-        }
-
-        public override void OnDisable()
-        {
-            
-        }
-
-        public override void OnEnable()
-        {
-            
-        }
-
-        private static eMeleeWeaponState _state_idle = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.Idle));
-        private static eMeleeWeaponState _state_none = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.None));
-        private static eMeleeWeaponState _state_push = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.Push));
-
-        private static eMeleeWeaponState _lastState = eMeleeWeaponState.None;
+        private static readonly eMeleeWeaponState _state_idle = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.Idle));
+        private static readonly eMeleeWeaponState _state_none = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.None));
+        private static readonly eMeleeWeaponState _state_push = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.Push));
 
         [RundownConstraint(Utils.RundownFlags.RundownOne, Utils.RundownFlags.RundownFive)]
         [ArchivePatch(typeof(MeleeWeaponFirstPerson), nameof(MeleeWeaponFirstPerson.ChangeState))]
@@ -56,19 +39,21 @@ namespace TheArchive.Features.Backport
                     if (__instance.CurrentStateName == _state_idle
                         || __instance.CurrentStateName == _state_none)
                     {
-                        return true;
+                        return ArchivePatch.RUN_OG;
                     }
 
                     __instance.ChangeState(_state_idle);
                     _A_PlayAnim.Invoke(__instance, __instance.CurrentState.m_data.m_animHash, 0f, 0.5f);
-                    return false;
+                    return ArchivePatch.SKIP_OG;
                 }
 
-                return true;
+                return ArchivePatch.RUN_OG;
             }
 #endif
 
 #if MONO
+            private static eMeleeWeaponState _lastState = eMeleeWeaponState.None;
+
             // kinda janky but it works
             [IsPrefix, RundownConstraint(Utils.RundownFlags.RundownOne, Utils.RundownFlags.RundownThree)]
             public static bool PrefixOld(MeleeWeaponFirstPerson __instance, eMeleeWeaponState newState)
@@ -80,18 +65,18 @@ namespace TheArchive.Features.Backport
                         || _lastState == _state_push)
                     {
                         _lastState = __instance.CurrentStateName;
-                        return true;
+                        return ArchivePatch.RUN_OG;
                     }
 
                     __instance.ChangeState(_state_idle);
                     var m_data = _A_FI_m_data.Get(__instance.CurrentState);
                     _A_PlayAnim.Invoke(__instance, m_data.m_animHash, 0f, 0.5f);
                     _lastState = _state_idle;
-                    return false;
+                    return ArchivePatch.SKIP_OG;
                 }
 
                 _lastState = __instance.CurrentStateName;
-                return true;
+                return ArchivePatch.RUN_OG;
             }
 #endif
         }

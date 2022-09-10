@@ -28,10 +28,10 @@ namespace TheArchive.Features.QoL
             {
                 if (pageEnum == eCM_MenuPage_CMP_OBJECTIVES && PlayerChatManager.InChatMode)
                 {
-                    return false;
+                    return ArchivePatch.SKIP_OG;
                 }
 
-                return true;
+                return ArchivePatch.RUN_OG;
             }
         }
     }

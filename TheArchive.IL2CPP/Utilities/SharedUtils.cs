@@ -264,6 +264,18 @@ namespace TheArchive.Utilities
             return false;
         }
 
+        private static readonly eFocusState eFocusState_ComputerTerminal = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.ComputerTerminal));
+        private static readonly eFocusState eFocusState_Map = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.Map));
+        private static readonly eFocusState eFocusState_Dead = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.Dead));
+        private static readonly eFocusState eFocusState_InElevator = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.InElevator));
+        private static readonly eFocusState eFocusState_Hacking = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.Hacking));
+
+        public static bool LocalPlayerIsInTerminal => FocusStateManager.CurrentState == eFocusState_ComputerTerminal;
+        public static bool LocalPlayerIsInMap => FocusStateManager.CurrentState == eFocusState_Map;
+        public static bool LocalPlayerIsDead => FocusStateManager.CurrentState == eFocusState_Dead;
+        public static bool LocalPlayerIsInElevator => FocusStateManager.CurrentState == eFocusState_InElevator;
+        public static bool LocalPlayerIsHacking => FocusStateManager.CurrentState == eFocusState_Hacking;
+
         public static eGameStateName GetGameState() => (eGameStateName) ArchiveMod.CurrentGameState;
 
         public static void RegisterOnGameStateChangedEvent(Action<eGameStateName> onGameStateChanged)

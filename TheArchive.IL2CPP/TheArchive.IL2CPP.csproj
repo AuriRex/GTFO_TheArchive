@@ -306,6 +306,9 @@
     <Compile Include="..\TheArchive.MONO\Features\Backport\R1VisualPings.cs">
       <Link>Features\Backport\R1VisualPings.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.MONO\Features\Dev\DramaManagerNoDebugLog.cs">
+      <Link>Features\Dev\DramaManagerNoDebugLog.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.MONO\Features\Special\R1SNetRevisionOverridePatch.cs">
       <Link>Features\Special\R1SNetRevisionOverridePatch.cs</Link>
     </Compile>
@@ -322,6 +325,7 @@
     <Compile Include="Features\Dev\AnalyticsBlocker.cs" />
     <Compile Include="Features\Dev\GameDebugLogRedirect.cs" />
     <Compile Include="Features\Dev\InternalUAudioListenerHelper.cs" />
+    <Compile Include="Features\Dev\MaulGavelChecksumPatch.cs" />
     <Compile Include="Features\DiscordRichPresence.cs" />
     <Compile Include="Features\QoL\LoadoutRandomizer.cs" />
     <Compile Include="Features\QoL\MapToObjectivesSwitchFix.cs" />
@@ -331,6 +335,7 @@
     <Compile Include="Features\Special\HideFirstPersonItem.cs" />
     <Compile Include="Features\Special\RemoveChatRestrictions.cs" />
     <Compile Include="Features\Special\RemoveDownedMessage.cs" />
+    <Compile Include="Features\Special\UnityRandomOverrider.cs" />
     <Compile Include="Features\Special\Watermark.cs" />
     <Compile Include="Features\SteamRichPresenceTweaks.cs" />
     <Compile Include="Features\QoL\IntroSkip.cs" />
@@ -343,7 +348,6 @@
     <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="Features\HudToggle.cs" />
     <Compile Include="Features\RichPresenceCore.cs" />
-    <Compile Include="HarmonyPatches\Patches\StatePatches.cs" />
     <Compile Include="ArchiveIL2CPPBootstrap.cs" />
     <Compile Include="Features\QoL\UnreadyButtonPatches.cs" />
     <Compile Include="Managers\CustomBoosterDropper.cs" />
