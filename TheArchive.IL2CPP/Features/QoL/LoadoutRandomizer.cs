@@ -78,21 +78,31 @@ namespace TheArchive.Features.QoL
 
         public override void OnEnable()
         {
-            SharedUtils.RegisterOnGameStateChangedEvent(OnGameStateChanged);
             if (!_hasBeenSetup)
             {
                 SetupViaInstance(CM_PageLoadout.Current);
             }
             if (SharedUtils.GetGameState() == _eGameStateName_Lobby)
             {
-                SetButtonActive(0);
+                SetButtonActive();
             }
         }
 
         public override void OnDisable()
         {
-            SharedUtils.UnregisterOnGameStateChangedEvent(OnGameStateChanged);
             _loadoutRandomizerButton?.gameObject?.SetActive(false);
+        }
+
+        public void OnGameStateChanged(eGameStateName state)
+        {
+            if (state == _eGameStateName_Lobby)
+            {
+                SetButtonActive();
+            }
+            else
+            {
+                SetButtonInactive();
+            }
         }
 
         [ArchivePatch(typeof(CM_PageLoadout), nameof(CM_PageLoadout.Setup))]
@@ -166,29 +176,17 @@ namespace TheArchive.Features.QoL
 
             SharedUtils.ChangeColorTimedExpeditionButton(_loadoutRandomizerButton, new Color(1, 1, 1, 0.5f));
 
-            SetButtonActive(0);
+            SetButtonActive();
 
             return _loadoutRandomizerButton;
         }
 
-        private static void OnGameStateChanged(eGameStateName state)
-        {
-            if (state == _eGameStateName_Lobby)
-            {
-                SetButtonActive(0);
-            }
-            else
-            {
-                SetButtonInactive(0);
-            }
-        }
-
-        private static void SetButtonActive(int _)
+        private static void SetButtonActive(int _ = 0)
         {
             _loadoutRandomizerButton?.gameObject?.SetActive(IsEnabled);
         }
 
-        public static void SetButtonInactive(int _)
+        public static void SetButtonInactive(int _ = 0)
         {
             _loadoutRandomizerButton?.gameObject?.SetActive(false);
         }
