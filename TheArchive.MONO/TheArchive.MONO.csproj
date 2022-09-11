@@ -226,6 +226,9 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\Special\MuteSpeak.cs">
       <Link>Features\Special\MuteSpeak.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Special\ProcessPriority.cs">
+      <Link>Features\Special\ProcessPriority.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveChatRestrictions.cs">
       <Link>Features\Special\RemoveChatRestrictions.cs</Link>
     </Compile>
