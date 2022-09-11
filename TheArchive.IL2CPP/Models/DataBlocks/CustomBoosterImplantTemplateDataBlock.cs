@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using TheArchive.Core.Managers;
 using UnityEngine;
-using static TheArchive.Models.Boosters.CustomBoosterImplant;
+using static TheArchive.Models.Boosters.LocalBoosterImplant;
 
 namespace TheArchive.Models.DataBlocks
 {

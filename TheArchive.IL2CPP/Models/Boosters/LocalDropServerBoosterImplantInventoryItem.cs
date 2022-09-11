@@ -3,29 +3,29 @@ using TheArchive.Core.Managers;
 
 namespace TheArchive.Models.Boosters
 {
-    public class CustomDropServerBoosterImplantInventoryItem : CustomBoosterImplant
+    public class LocalDropServerBoosterImplantInventoryItem : LocalBoosterImplant
     {
         [JsonConstructor]
-        public CustomDropServerBoosterImplantInventoryItem() : base()
+        public LocalDropServerBoosterImplantInventoryItem() : base()
         {
 
         }
 
-        public CustomDropServerBoosterImplantInventoryItem(uint templateId, uint instanceId, int uses, Effect[] effects, uint[] conditions) : base(templateId, instanceId, uses, effects, conditions)
+        public LocalDropServerBoosterImplantInventoryItem(uint templateId, uint instanceId, int uses, Effect[] effects, uint[] conditions) : base(templateId, instanceId, uses, effects, conditions)
         {
 
         }
 
         public object ToBaseGame() => ToBaseGame(this);
 
-        public static object ToBaseGame(CustomDropServerBoosterImplantInventoryItem custom)
+        public static object ToBaseGame(LocalDropServerBoosterImplantInventoryItem custom)
         {
             return ImplementationManager.ToBaseGameConverter(custom);
         }
 
-        public static CustomDropServerBoosterImplantInventoryItem FromBaseGame(object baseGame)
+        public static LocalDropServerBoosterImplantInventoryItem FromBaseGame(object baseGame)
         {
-            return ImplementationManager.FromBaseGameConverter<CustomDropServerBoosterImplantInventoryItem>(baseGame);
+            return ImplementationManager.FromBaseGameConverter<LocalDropServerBoosterImplantInventoryItem>(baseGame);
         }
 
         public uint Flags { get; set; } = 0;

@@ -6,7 +6,7 @@ using TheArchive.Interfaces;
 
 namespace TheArchive.Managers
 {
-    public class CustomProgressionManager : InitSingletonBase<CustomProgressionManager>, IInitAfterGameDataInitialized
+    public class LocalProgressionManager : InitSingletonBase<LocalProgressionManager>, IInitAfterGameDataInitialized
     {
 #warning TODO: Artifact Heat for R5
         public static Action<string> Logger = null;
@@ -116,7 +116,7 @@ namespace TheArchive.Managers
 
             public static void MergeIntoLocalRundownProgression()
             {
-                MergeIntoLocalRundownProgression(CustomProgressionManager.Instance.CurrentActiveSession);
+                MergeIntoLocalRundownProgression(LocalProgressionManager.Instance.CurrentActiveSession);
             }
 
             public static void MergeIntoLocalRundownProgression(ExpeditionSession expeditionSession)

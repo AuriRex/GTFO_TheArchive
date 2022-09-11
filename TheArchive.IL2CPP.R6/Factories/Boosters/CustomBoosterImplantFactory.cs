@@ -6,15 +6,15 @@ using UnhollowerRuntimeLib;
 
 namespace TheArchive.IL2CPP.R6.Factories
 {
-    public class CustomBoosterImplantFactory : IBaseGameConverter<CustomBoosterImplant>
+    public class CustomBoosterImplantFactory : IBaseGameConverter<LocalBoosterImplant>
     {
-        public CustomBoosterImplant FromBaseGame(object baseGame, CustomBoosterImplant existingCBI = null)
+        public LocalBoosterImplant FromBaseGame(object baseGame, LocalBoosterImplant existingCBI = null)
         {
             var implant = (BoosterImplantBase) baseGame;
 
-            CustomBoosterImplant.Effect[] effects = new CustomBoosterImplant.Effect[implant.Effects.Length];
+            LocalBoosterImplant.Effect[] effects = new LocalBoosterImplant.Effect[implant.Effects.Length];
 
-            var customImplant = existingCBI ?? new CustomBoosterImplant();
+            var customImplant = existingCBI ?? new LocalBoosterImplant();
 
             customImplant.TemplateId = implant.TemplateId;
             customImplant.InstanceId = implant.Id;
@@ -27,9 +27,9 @@ namespace TheArchive.IL2CPP.R6.Factories
 
         public Type GetBaseGameType() => typeof(BoosterImplantBase);
 
-        public Type GetCustomType() => typeof(CustomBoosterImplant);
+        public Type GetCustomType() => typeof(LocalBoosterImplant);
 
-        public object ToBaseGame(CustomBoosterImplant customImplant, object existingBaseGameImplant = null)
+        public object ToBaseGame(LocalBoosterImplant customImplant, object existingBaseGameImplant = null)
         {
             var implant = (BoosterImplantBase) existingBaseGameImplant ?? new BoosterImplantBase(ClassInjector.DerivedConstructorPointer<BoosterImplantBase>());
 

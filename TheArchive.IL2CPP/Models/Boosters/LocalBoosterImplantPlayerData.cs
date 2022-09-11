@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Core.Managers;
 using TheArchive.Utilities;
-using static TheArchive.Models.Boosters.CustomBoosterImplant;
+using static TheArchive.Models.Boosters.LocalBoosterImplant;
 
 namespace TheArchive.Models.Boosters
 {
-    public class CustomBoosterImplantPlayerData
+    public class LocalBoosterImplantPlayerData
     {
         public static int CurrencyNewBoosterCost { get; set; } = 1000;
         public static float CurrencyGainMultiplier { get; set; } = 1f;
@@ -30,13 +30,13 @@ namespace TheArchive.Models.Boosters
         /// </summary>
         public uint[] New { get; set; } = new uint[0];
 
-        public CustomBoosterImplantPlayerData() { }
+        public LocalBoosterImplantPlayerData() { }
 
         /// <summary>
         /// Acknowledge the amount of boosters missed
         /// </summary>
         /// <param name="acknowledgeMissed"></param>
-        public void AcknowledgeMissedBoostersWithIds(CustomBoosterTransaction.CustomMissed acknowledgeMissed)
+        public void AcknowledgeMissedBoostersWithIds(LocalBoosterTransaction.CustomMissed acknowledgeMissed)
         {
             Basic.MissedAck = acknowledgeMissed.Basic;
             Advanced.MissedAck = acknowledgeMissed.Advanced;
@@ -121,7 +121,7 @@ namespace TheArchive.Models.Boosters
         /// </summary>
         /// <param name="newBooster"></param>
         /// <returns>true if the Booster has been added</returns>
-        public bool TryAddBooster(CustomDropServerBoosterImplantInventoryItem newBooster)
+        public bool TryAddBooster(LocalDropServerBoosterImplantInventoryItem newBooster)
         {
             if(!GetCategory(newBooster.Category).TryAddBooster(newBooster))
                 return false;
@@ -182,14 +182,14 @@ namespace TheArchive.Models.Boosters
 
         public object ToBaseGame() => ToBaseGame(this);
 
-        public static object ToBaseGame(CustomBoosterImplantPlayerData customData)
+        public static object ToBaseGame(LocalBoosterImplantPlayerData customData)
         {
             return ImplementationManager.ToBaseGameConverter(customData);
         }
 
-        public static CustomBoosterImplantPlayerData FromBaseGame(object BoosterImplantPlayerData)
+        public static LocalBoosterImplantPlayerData FromBaseGame(object BoosterImplantPlayerData)
         {
-            return ImplementationManager.FromBaseGameConverter<CustomBoosterImplantPlayerData>(BoosterImplantPlayerData);
+            return ImplementationManager.FromBaseGameConverter<LocalBoosterImplantPlayerData>(BoosterImplantPlayerData);
         }
 
         public class CustomCategory
@@ -214,7 +214,7 @@ namespace TheArchive.Models.Boosters
             /// <summary> Number of missed boosters that have been acknowledged by the player (displays missed boosters popup ingame if unequal with <see cref="Missed"/>) </summary>
             public int MissedAck { get; set; } = 0;
 
-            public CustomDropServerBoosterImplantInventoryItem[] Inventory { get; set; } = new CustomDropServerBoosterImplantInventoryItem[0];
+            public LocalDropServerBoosterImplantInventoryItem[] Inventory { get; set; } = new LocalDropServerBoosterImplantInventoryItem[0];
 
             public CustomCategory() { }
 
@@ -230,7 +230,7 @@ namespace TheArchive.Models.Boosters
             public bool InventoryIsFull => Inventory.Length >= MaxBoostersInCategoryInventory;
 
             [JsonIgnore]
-            public bool HasEnoughCurrencyForDrop => Currency >= CustomBoosterImplantPlayerData.CurrencyNewBoosterCost;
+            public bool HasEnoughCurrencyForDrop => Currency >= LocalBoosterImplantPlayerData.CurrencyNewBoosterCost;
 
 
             public uint[] GetUsedIds()
@@ -248,11 +248,11 @@ namespace TheArchive.Models.Boosters
             /// </summary>
             /// <param name="newBooster"></param>
             /// <returns>true if the booster has been added</returns>
-            public bool TryAddBooster(CustomDropServerBoosterImplantInventoryItem newBooster)
+            public bool TryAddBooster(LocalDropServerBoosterImplantInventoryItem newBooster)
             {
                 if (InventoryIsFull) return false;
 
-                var newInventory = new CustomDropServerBoosterImplantInventoryItem[Inventory.Length + 1];
+                var newInventory = new LocalDropServerBoosterImplantInventoryItem[Inventory.Length + 1];
 
                 for (int i = 0; i < Inventory.Length; i++)
                 {
@@ -268,7 +268,7 @@ namespace TheArchive.Models.Boosters
 
             internal void ConsumeOrDropBoostersWithIds(uint[] boostersToBeConsumed)
             {
-                var newInventory = new List<CustomDropServerBoosterImplantInventoryItem>();
+                var newInventory = new List<LocalDropServerBoosterImplantInventoryItem>();
 
                 foreach(var item in Inventory)
                 {
@@ -288,7 +288,7 @@ namespace TheArchive.Models.Boosters
 
             internal void DropBoostersWithIds(uint[] boostersToBeDropped)
             {
-                var newInventory = new List<CustomDropServerBoosterImplantInventoryItem>();
+                var newInventory = new List<LocalDropServerBoosterImplantInventoryItem>();
 
                 foreach (var item in Inventory)
                 {

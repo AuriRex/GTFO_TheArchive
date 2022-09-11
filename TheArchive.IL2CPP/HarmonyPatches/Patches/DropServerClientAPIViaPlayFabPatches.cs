@@ -65,7 +65,7 @@ namespace TheArchive.HarmonyPatches.Patches
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(GetBoosterImplantPlayerDataRequest)}: EntityToken:{request.EntityToken}, MaxBackendTemplateId:{request.MaxBackendTemplateId}");
 
-                var bipd = (DropServer.BoosterImplants.BoosterImplantPlayerData) CustomBoosterManager.Instance.GetBoosterImplantPlayerData(request.MaxBackendTemplateId);
+                var bipd = (DropServer.BoosterImplants.BoosterImplantPlayerData) LocalBoosterManager.Instance.GetBoosterImplantPlayerData(request.MaxBackendTemplateId);
 
                 var result = new GetBoosterImplantPlayerDataResult();
 
@@ -97,7 +97,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
                 var result = new UpdateBoosterImplantPlayerDataResult();
 
-                var value = (DropServer.BoosterImplants.BoosterImplantPlayerData) CustomBoosterManager.Instance.UpdateBoosterImplantPlayerData(request.Transaction);
+                var value = (DropServer.BoosterImplants.BoosterImplantPlayerData) LocalBoosterManager.Instance.UpdateBoosterImplantPlayerData(request.Transaction);
                 Il2CppUtils.SetFieldUnsafe(result, value, nameof(UpdateBoosterImplantPlayerDataResult.Data));
 
                 __result = IL2Tasks.Task.FromResult(result);
@@ -121,7 +121,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
                 var result = new ConsumeBoostersResult();
 
-                CustomBoosterManager.Instance.ConsumeBoosters(request.SessionBlob);
+                LocalBoosterManager.Instance.ConsumeBoosters(request.SessionBlob);
 
                 result.SessionBlob = request.SessionBlob;
 
@@ -146,16 +146,16 @@ namespace TheArchive.HarmonyPatches.Patches
 
                 if (request.Success)
                 {
-                    CustomProgressionManager.Instance.CompleteCurrentActiveExpedition();
+                    LocalProgressionManager.Instance.CompleteCurrentActiveExpedition();
 
-                    CustomProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
+                    LocalProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
                 }
 
                 //request.BoosterCurrency
                 // Add ^ those values to the Currency of the respective category
                 var result = new EndSessionResult();
 
-                CustomBoosterManager.Instance.EndSession(request.BoosterCurrency, request.Success, request.SessionBlob, request.MaxBackendBoosterTemplateId, request.BuildRev);
+                LocalBoosterManager.Instance.EndSession(request.BoosterCurrency, request.Success, request.SessionBlob, request.MaxBackendBoosterTemplateId, request.BuildRev);
 
                 __result = IL2Tasks.Task.FromResult(result);
                 return false;
@@ -181,7 +181,7 @@ namespace TheArchive.HarmonyPatches.Patches
                     StartBoostersSession(request);
                 }
 
-                CustomProgressionManager.Instance.StartNewExpeditionSession(request.Rundown, request.Expedition, request.SessionId);
+                LocalProgressionManager.Instance.StartNewExpeditionSession(request.Rundown, request.Expedition, request.SessionId);
 
                 var ns = new NewSessionResult();
 
@@ -193,7 +193,7 @@ namespace TheArchive.HarmonyPatches.Patches
             [MethodImpl(MethodImplOptions.NoInlining)]
             public static void StartBoostersSession(NewSessionRequest request)
             {
-                CustomBoosterManager.Instance.StartSession(request.BoosterIds.ToArray(), request.SessionId);
+                LocalBoosterManager.Instance.StartSession(request.BoosterIds.ToArray(), request.SessionId);
             }
         }
 
@@ -208,7 +208,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
                 Enum.TryParse(request.Layer, out DropServer.ExpeditionLayers expeditionLayer);
 
-                CustomProgressionManager.Instance.SetLayeredDifficultyObjectiveState(expeditionLayer, layerProgressionState);
+                LocalProgressionManager.Instance.SetLayeredDifficultyObjectiveState(expeditionLayer, layerProgressionState);
 
                 __result = IL2Tasks.Task.FromResult<LayerProgressionResult>(new LayerProgressionResult());
 

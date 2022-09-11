@@ -7,11 +7,11 @@ using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
 using TheArchive.Models.DataBlocks;
 using TheArchive.Utilities;
-using static TheArchive.Models.Boosters.CustomBoosterImplant;
+using static TheArchive.Models.Boosters.LocalBoosterImplant;
 
 namespace TheArchive.Managers
 {
-    public class CustomBoosterDropper : InitSingletonBase<CustomBoosterDropper>, IInitAfterDataBlocksReady, IInitCondition
+    public class LocalBoosterDropper : InitSingletonBase<LocalBoosterDropper>, IInitAfterDataBlocksReady, IInitCondition
     {
         private static bool _hasBeenSetup = false;
 
@@ -31,10 +31,10 @@ namespace TheArchive.Managers
         {
             if(_hasBeenSetup)
             {
-                ArchiveLogger.Info($"{nameof(CustomBoosterDropper)} already setup, skipping ...");
+                ArchiveLogger.Info($"{nameof(LocalBoosterDropper)} already setup, skipping ...");
                 return;
             }
-            ArchiveLogger.Info($"Setting up {nameof(CustomBoosterDropper)} ...");
+            ArchiveLogger.Info($"Setting up {nameof(LocalBoosterDropper)} ...");
 
             var templates = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantTemplateDataBlock>();
 
@@ -45,14 +45,14 @@ namespace TheArchive.Managers
             Effects = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantEffectDataBlock>();
             Conditions = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantConditionDataBlock>();
 
-            ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(CustomBoosterDropper)}.{nameof(Init)}() complete, retrieved {MutedTemplates.Length} Muted, {BoldTemplates.Length} Bold and {AgrressiveTemplates.Length} Agrressive Templates as well as {Effects?.Length} Effects and {Conditions?.Length} Conditions.");
+            ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(LocalBoosterDropper)}.{nameof(Init)}() complete, retrieved {MutedTemplates.Length} Muted, {BoldTemplates.Length} Bold and {AgrressiveTemplates.Length} Agrressive Templates as well as {Effects?.Length} Effects and {Conditions?.Length} Conditions.");
             Instance = this;
             _hasBeenSetup = true;
         }
 
         public static int BOOSTER_DROP_MAX_REROLL_COUNT { get; internal set; } = 25;
 
-        public CustomDropServerBoosterImplantInventoryItem GenerateBooster(A_BoosterImplantCategory category, uint[] usedIds)
+        public LocalDropServerBoosterImplantInventoryItem GenerateBooster(A_BoosterImplantCategory category, uint[] usedIds)
         {
             CustomBoosterImplantTemplateDataBlock template;
             float weight = 1f;
@@ -97,12 +97,12 @@ namespace TheArchive.Managers
             }
 
             var conditionIds = new List<uint>();
-            var effects = new List<CustomBoosterImplant.Effect>();
+            var effects = new List<LocalBoosterImplant.Effect>();
 
             // Add set effects
             foreach (var fx in template.Effects)
             {
-                effects.Add(new CustomBoosterImplant.Effect
+                effects.Add(new LocalBoosterImplant.Effect
                 {
                     Id = fx.BoosterImplantEffect,
                     Value = UnityEngine.Random.Range(fx.MinValue, fx.MaxValue)
@@ -115,7 +115,7 @@ namespace TheArchive.Managers
                 if (randomEffectList == null || randomEffectList.Count < 1) continue;
                 var fx = randomEffectList[UnityEngine.Random.Range(0, randomEffectList.Count)];
 
-                effects.Add(new CustomBoosterImplant.Effect
+                effects.Add(new LocalBoosterImplant.Effect
                 {
                     Id = fx.BoosterImplantEffect,
                     Value = UnityEngine.Random.Range(fx.MinValue, fx.MaxValue)
@@ -136,9 +136,9 @@ namespace TheArchive.Managers
 
             var instanceId = GenerateInstanceId(usedIds);
 
-            var value = new CustomDropServerBoosterImplantInventoryItem(template.PersistentID, instanceId, maxUses, effects.ToArray(), conditionIds.ToArray());
+            var value = new LocalDropServerBoosterImplantInventoryItem(template.PersistentID, instanceId, maxUses, effects.ToArray(), conditionIds.ToArray());
 
-            value.Category = (CustomBoosterImplant.A_BoosterImplantCategory) category;
+            value.Category = (LocalBoosterImplant.A_BoosterImplantCategory) category;
 
 #pragma warning disable CS0618 // Type or member is obsolete
             value.Template = template;
@@ -180,7 +180,7 @@ namespace TheArchive.Managers
             }
         }
 
-        public void GenerateAndAddBooster(ref CustomBoosterImplantPlayerData data, A_BoosterImplantCategory category)
+        public void GenerateAndAddBooster(ref LocalBoosterImplantPlayerData data, A_BoosterImplantCategory category)
         {
             var newBooster = GenerateBooster(category, data.GetUsedIds());
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
 using UnhollowerRuntimeLib;
-using static TheArchive.Models.Boosters.CustomBoosterImplantPlayerData;
+using static TheArchive.Models.Boosters.LocalBoosterImplantPlayerData;
 
 namespace TheArchive.IL2CPP.R5.Factories
 {
@@ -20,10 +20,10 @@ namespace TheArchive.IL2CPP.R5.Factories
             customCat.Missed = cat.Missed;
             customCat.MissedAck = cat.MissedAck;
 
-            var customItems = new List<CustomDropServerBoosterImplantInventoryItem>();
+            var customItems = new List<LocalDropServerBoosterImplantInventoryItem>();
             foreach(var item in cat.Inventory)
             {
-                customItems.Add(CustomDropServerBoosterImplantInventoryItem.FromBaseGame(item));
+                customItems.Add(LocalDropServerBoosterImplantInventoryItem.FromBaseGame(item));
             }
             customCat.Inventory = customItems.ToArray();
 

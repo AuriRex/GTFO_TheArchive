@@ -5,7 +5,7 @@ using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
 using TheArchive.Models.DataBlocks;
 using TheArchive.Utilities;
-using static TheArchive.Models.Boosters.CustomBoosterImplant;
+using static TheArchive.Models.Boosters.LocalBoosterImplant;
 
 namespace TheArchive.IL2CPP.R5.Factories.DataBlocks
 {

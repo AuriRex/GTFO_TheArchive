@@ -4,23 +4,23 @@ using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
 using TheArchive.Utilities;
 using UnhollowerRuntimeLib;
-using static TheArchive.Models.Boosters.CustomBoosterImplant;
+using static TheArchive.Models.Boosters.LocalBoosterImplant;
 
 namespace TheArchive.IL2CPP.R6.Factories
 {
-    public class CustomBoosterImplantPlayerDataFactory : IBaseGameConverter<CustomBoosterImplantPlayerData>
+    public class CustomBoosterImplantPlayerDataFactory : IBaseGameConverter<LocalBoosterImplantPlayerData>
     {
-        public CustomBoosterImplantPlayerData FromBaseGame(object baseGame, CustomBoosterImplantPlayerData existingCBIP = null)
+        public LocalBoosterImplantPlayerData FromBaseGame(object baseGame, LocalBoosterImplantPlayerData existingCBIP = null)
         {
             var data = (BoosterImplantPlayerData) baseGame;
 
-            var customData = existingCBIP ?? new CustomBoosterImplantPlayerData();
+            var customData = existingCBIP ?? new LocalBoosterImplantPlayerData();
 
-            customData.Basic = CustomBoosterImplantPlayerData.CustomCategory.FromBaseGame(data.Basic);
+            customData.Basic = LocalBoosterImplantPlayerData.CustomCategory.FromBaseGame(data.Basic);
             customData.Basic.CategoryType = A_BoosterImplantCategory.Muted;
-            customData.Advanced = CustomBoosterImplantPlayerData.CustomCategory.FromBaseGame(data.Advanced);
+            customData.Advanced = LocalBoosterImplantPlayerData.CustomCategory.FromBaseGame(data.Advanced);
             customData.Advanced.CategoryType = A_BoosterImplantCategory.Bold;
-            customData.Specialized = CustomBoosterImplantPlayerData.CustomCategory.FromBaseGame(data.Specialized);
+            customData.Specialized = LocalBoosterImplantPlayerData.CustomCategory.FromBaseGame(data.Specialized);
             customData.Specialized.CategoryType = A_BoosterImplantCategory.Aggressive;
 
             customData.New = new uint[data.New.Count];
@@ -34,9 +34,9 @@ namespace TheArchive.IL2CPP.R6.Factories
 
         public Type GetBaseGameType() => typeof(BoosterImplantPlayerData);
 
-        public Type GetCustomType() => typeof(CustomBoosterImplantPlayerData);
+        public Type GetCustomType() => typeof(LocalBoosterImplantPlayerData);
 
-        public object ToBaseGame(CustomBoosterImplantPlayerData customBoosterImplantPlayerData, object existingBaseGame = null)
+        public object ToBaseGame(LocalBoosterImplantPlayerData customBoosterImplantPlayerData, object existingBaseGame = null)
         {
             var bipd = (BoosterImplantPlayerData) existingBaseGame ?? new BoosterImplantPlayerData(ClassInjector.DerivedConstructorPointer<BoosterImplantPlayerData>());
 

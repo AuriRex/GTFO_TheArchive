@@ -29,7 +29,7 @@ namespace TheArchive
         [SubModule(Utils.RundownFlags.RundownSix, Utils.RundownFlags.Latest)]
         public static string R6SubModule => "TheArchive.Resources.TheArchive.IL2CPP.R6.dll";
 
-        public CustomBoosterDropper BoosterDropManager { internal get; set; } = null;
+        public LocalBoosterDropper BoosterDropManager { internal get; set; } = null;
 
         static ArchiveIL2CPPModule()
         {
@@ -50,7 +50,7 @@ namespace TheArchive
 
             typeof(Features.RichPresenceCore).RegisterAllPresenceFormatProviders();
 
-            CustomProgressionManager.Logger = (string msg) => {
+            LocalProgressionManager.Logger = (string msg) => {
                 ArchiveLogger.Msg(ConsoleColor.Magenta, msg);
             };
 

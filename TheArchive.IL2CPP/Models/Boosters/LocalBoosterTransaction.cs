@@ -2,7 +2,7 @@
 
 namespace TheArchive.Models.Boosters
 {
-    public class CustomBoosterTransaction
+    public class LocalBoosterTransaction
     {
         public uint MaxBackendTemplateId { get; set; }
         public uint[] AcknowledgeIds { get; set; }
@@ -12,14 +12,14 @@ namespace TheArchive.Models.Boosters
 
         public object ToBaseGame() => ToBaseGame(this);
 
-        public static object ToBaseGame(CustomBoosterTransaction customTrans)
+        public static object ToBaseGame(LocalBoosterTransaction customTrans)
         {
             return ImplementationManager.ToBaseGameConverter(customTrans);
         }
 
-        public static CustomBoosterTransaction FromBaseGame(object baseGameTrans)
+        public static LocalBoosterTransaction FromBaseGame(object baseGameTrans)
         {
-            return ImplementationManager.FromBaseGameConverter<CustomBoosterTransaction>(baseGameTrans);
+            return ImplementationManager.FromBaseGameConverter<LocalBoosterTransaction>(baseGameTrans);
         }
 
         public class CustomMissed

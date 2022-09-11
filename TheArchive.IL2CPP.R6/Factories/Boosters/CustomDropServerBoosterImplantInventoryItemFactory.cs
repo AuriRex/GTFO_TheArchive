@@ -6,15 +6,15 @@ using UnhollowerRuntimeLib;
 
 namespace TheArchive.IL2CPP.R6.Factories
 {
-    public class CustomDropServerBoosterImplantInventoryItemFactory : IBaseGameConverter<CustomDropServerBoosterImplantInventoryItem>
+    public class CustomDropServerBoosterImplantInventoryItemFactory : IBaseGameConverter<LocalDropServerBoosterImplantInventoryItem>
     {
-        public CustomDropServerBoosterImplantInventoryItem FromBaseGame(object baseGame, CustomDropServerBoosterImplantInventoryItem existingCBII = null)
+        public LocalDropServerBoosterImplantInventoryItem FromBaseGame(object baseGame, LocalDropServerBoosterImplantInventoryItem existingCBII = null)
         {
             var boosterImplantInventoryItem = (DropServer.BoosterImplants.BoosterImplantInventoryItem) baseGame;
 
-            var customInventoryItem = existingCBII ?? new CustomDropServerBoosterImplantInventoryItem();
+            var customInventoryItem = existingCBII ?? new LocalDropServerBoosterImplantInventoryItem();
 
-            customInventoryItem = (CustomDropServerBoosterImplantInventoryItem) ImplementationManager.FromBaseGameConverter<CustomBoosterImplant>(baseGame, customInventoryItem);
+            customInventoryItem = (LocalDropServerBoosterImplantInventoryItem) ImplementationManager.FromBaseGameConverter<LocalBoosterImplant>(baseGame, customInventoryItem);
 
             customInventoryItem.Flags = boosterImplantInventoryItem.Flags;
 
@@ -23,13 +23,13 @@ namespace TheArchive.IL2CPP.R6.Factories
 
         public Type GetBaseGameType() => typeof(DropServer.BoosterImplants.BoosterImplantInventoryItem);
 
-        public Type GetCustomType() => typeof(CustomDropServerBoosterImplantInventoryItem);
+        public Type GetCustomType() => typeof(LocalDropServerBoosterImplantInventoryItem);
 
-        public object ToBaseGame(CustomDropServerBoosterImplantInventoryItem customItem, object existingBaseGameItem = null)
+        public object ToBaseGame(LocalDropServerBoosterImplantInventoryItem customItem, object existingBaseGameItem = null)
         {
             var baseGameItem = new DropServer.BoosterImplants.BoosterImplantInventoryItem(ClassInjector.DerivedConstructorPointer<DropServer.BoosterImplants.BoosterImplantInventoryItem>());
 
-            baseGameItem = (DropServer.BoosterImplants.BoosterImplantInventoryItem) ImplementationManager.ToBaseGameConverter<CustomBoosterImplant>(customItem, baseGameItem);
+            baseGameItem = (DropServer.BoosterImplants.BoosterImplantInventoryItem) ImplementationManager.ToBaseGameConverter<LocalBoosterImplant>(customItem, baseGameItem);
 
             baseGameItem.Flags = customItem.Flags;
 

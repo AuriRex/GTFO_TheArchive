@@ -4,15 +4,15 @@ using TheArchive.Models.DataBlocks;
 
 namespace TheArchive.Models.Boosters
 {
-    public class CustomBoosterImplant
+    public class LocalBoosterImplant
     {
-        public CustomBoosterImplant()
+        public LocalBoosterImplant()
         {
 
         }
 
         // DropServer variant constructor
-        public CustomBoosterImplant(uint templateId, uint instanceId, int uses, Effect[] effects, uint[] conditions)
+        public LocalBoosterImplant(uint templateId, uint instanceId, int uses, Effect[] effects, uint[] conditions)
         {
             TemplateId = templateId;
             InstanceId = instanceId;

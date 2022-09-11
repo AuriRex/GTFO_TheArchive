@@ -108,7 +108,6 @@ namespace TheArchive.Models
 			}
 		}
 
-        [Serializable]
 		public class Expedition
 		{
 			public int AllLayerCompletionCount;
@@ -135,7 +134,6 @@ namespace TheArchive.Models
 				};
 			}
 
-			[Serializable]
 			public class Layer
 			{
 				public LayerProgressionState State;
@@ -162,7 +160,6 @@ namespace TheArchive.Models
             }
 		}
 
-		[Serializable]
 		public class LayerSet
 		{
 			public Expedition.Layer Main { get; set; }

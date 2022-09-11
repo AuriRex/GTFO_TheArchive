@@ -2,7 +2,7 @@
 using System;
 using TheArchive.Interfaces;
 using UnhollowerRuntimeLib;
-using static TheArchive.Models.Boosters.CustomBoosterTransaction;
+using static TheArchive.Models.Boosters.LocalBoosterTransaction;
 
 namespace TheArchive.IL2CPP.R6.Factories
 {

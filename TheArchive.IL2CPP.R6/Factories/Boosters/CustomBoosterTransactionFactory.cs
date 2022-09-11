@@ -6,29 +6,29 @@ using UnhollowerRuntimeLib;
 
 namespace TheArchive.IL2CPP.R6.Factories
 {
-    public class CustomBoosterTransactionFactory : IBaseGameConverter<CustomBoosterTransaction>
+    public class CustomBoosterTransactionFactory : IBaseGameConverter<LocalBoosterTransaction>
     {
-        public CustomBoosterTransaction FromBaseGame(object baseGame, CustomBoosterTransaction existingCBT = null)
+        public LocalBoosterTransaction FromBaseGame(object baseGame, LocalBoosterTransaction existingCBT = null)
         {
             var boosterTrans = (BoosterImplantTransaction) baseGame;
 
-            var customTrans = existingCBT ?? new CustomBoosterTransaction();
+            var customTrans = existingCBT ?? new LocalBoosterTransaction();
 
             customTrans.AcknowledgeIds = boosterTrans.AcknowledgeIds;
             customTrans.DropIds = boosterTrans.DropIds;
             customTrans.MaxBackendTemplateId = boosterTrans.MaxBackendTemplateId;
             customTrans.TouchIds = boosterTrans.TouchIds;
 
-            customTrans.AcknowledgeMissed = CustomBoosterTransaction.CustomMissed.FromBaseGame(boosterTrans.AcknowledgeMissed);
+            customTrans.AcknowledgeMissed = LocalBoosterTransaction.CustomMissed.FromBaseGame(boosterTrans.AcknowledgeMissed);
 
             return customTrans;
         }
 
         public Type GetBaseGameType() => typeof(BoosterImplantTransaction);
 
-        public Type GetCustomType() => typeof(CustomBoosterTransaction);
+        public Type GetCustomType() => typeof(LocalBoosterTransaction);
 
-        public object ToBaseGame(CustomBoosterTransaction customTrans, object existingBaseGame = null)
+        public object ToBaseGame(LocalBoosterTransaction customTrans, object existingBaseGame = null)
         {
             var boosterTrans = (BoosterImplantTransaction) existingBaseGame ?? new BoosterImplantTransaction(ClassInjector.DerivedConstructorPointer<BoosterImplantTransaction>());
 
