@@ -21,9 +21,9 @@ namespace TheArchive.IL2CPP.R5.ArchivePatches
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(ExpeditionSuccessRequest)}: Request:{request}");
 
-                CustomProgressionManager.Instance.CompleteCurrentActiveExpedition();
+                LocalProgressionManager.Instance.CompleteCurrentActiveExpedition();
 
-                CustomProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
+                LocalProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
 
 
                 var result = new ExpeditionSuccessResult();
@@ -42,7 +42,7 @@ namespace TheArchive.IL2CPP.R5.ArchivePatches
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(GetBoosterImplantPlayerDataRequest)}: EntityToken:{request.EntityToken}, MaxBackendTemplateId:{request.MaxBackendTemplateId}");
 
-                var bipd = (DropServer.BoosterImplantPlayerData) CustomBoosterManager.Instance.GetBoosterImplantPlayerData(request.MaxBackendTemplateId);
+                var bipd = (DropServer.BoosterImplantPlayerData) LocalBoosterManager.Instance.GetBoosterImplantPlayerData(request.MaxBackendTemplateId);
 
                 var result = new GetBoosterImplantPlayerDataResult();
 
@@ -71,7 +71,7 @@ namespace TheArchive.IL2CPP.R5.ArchivePatches
 
                 var result = new UpdateBoosterImplantPlayerDataResult();
 
-                var value = (DropServer.BoosterImplantPlayerData) CustomBoosterManager.Instance.UpdateBoosterImplantPlayerData(request.Transaction);
+                var value = (DropServer.BoosterImplantPlayerData) LocalBoosterManager.Instance.UpdateBoosterImplantPlayerData(request.Transaction);
                 Utilities.Il2CppUtils.SetFieldUnsafe(result, value, nameof(UpdateBoosterImplantPlayerDataResult.Data));
 
                 __result = IL2Tasks.Task.FromResult(result);
@@ -94,16 +94,16 @@ namespace TheArchive.IL2CPP.R5.ArchivePatches
 
                 if (request.Success)
                 {
-                    CustomProgressionManager.Instance.CompleteCurrentActiveExpedition();
+                    LocalProgressionManager.Instance.CompleteCurrentActiveExpedition();
 
-                    CustomProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
+                    LocalProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
                 }
 
                 //request.BoosterCurrency
                 // Add ^ those values to the Currency of the respective category
                 var result = new EndSessionResult();
 
-                CustomBoosterManager.Instance.EndSession(request.BoosterCurrency, request.Success, request.SessionBlob, request.MaxBackendBoosterTemplateId, request.BuildRev);
+                LocalBoosterManager.Instance.EndSession(request.BoosterCurrency, request.Success, request.SessionBlob, request.MaxBackendBoosterTemplateId, request.BuildRev);
 
                 __result = IL2Tasks.Task.FromResult(result);
                 return false;

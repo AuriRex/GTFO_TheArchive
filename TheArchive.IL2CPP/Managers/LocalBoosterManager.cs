@@ -54,7 +54,7 @@ namespace TheArchive.Managers
         }
 
 
-        public CustomBoosterDropper BoosterDropper => CustomBoosterDropper.Instance;
+        public LocalBoosterDropper BoosterDropper => LocalBoosterDropper.Instance;
 
         public bool InitCondition()
         {

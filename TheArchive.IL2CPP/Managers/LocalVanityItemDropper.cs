@@ -11,7 +11,7 @@ using static TheArchive.Utilities.Il2CppUtils;
 
 namespace TheArchive.Managers
 {
-    public class CustomVanityItemDropper : InitSingletonBase<CustomVanityItemDropper>, IInitAfterDataBlocksReady, IInitCondition
+    public class LocalVanityItemDropper : InitSingletonBase<LocalVanityItemDropper>, IInitAfterDataBlocksReady, IInitCondition
     {
 
         public CustomVanityItemsGroupDataBlock[] ItemGroups { get; private set; }
@@ -30,7 +30,7 @@ namespace TheArchive.Managers
             ItemTemplates = ImplementationManager.GetAllCustomDataBlocksFor<CustomVanityItemsTemplateDataBlock>();
             ItemDropData = ImplementationManager.GetAllCustomDataBlocksFor<CustomVanityItemsLayerDropsDataBlock>();
 
-            ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(CustomVanityItemDropper)}.{nameof(Init)}() complete, retrieved {ItemTemplates.Length} Templates, {ItemGroups.Length} Groups and {ItemDropData.Length} Layer Drops. Layer Drops:");
+            ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(LocalVanityItemDropper)}.{nameof(Init)}() complete, retrieved {ItemTemplates.Length} Templates, {ItemGroups.Length} Groups and {ItemDropData.Length} Layer Drops. Layer Drops:");
             foreach(var dd in ItemDropData)
             {
                 ArchiveLogger.Info($" > {dd.Name}: #Drops: {dd.LayerDrops?.Count ?? 0}, Enabled: {dd.InternalEnabled}");

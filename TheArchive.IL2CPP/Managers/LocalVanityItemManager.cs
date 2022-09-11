@@ -9,7 +9,7 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Managers
 {
-    public class CustomVanityItemManager : InitSingletonBase<CustomVanityItemManager>, IInitAfterDataBlocksReady, IInitCondition
+    public class LocalVanityItemManager : InitSingletonBase<LocalVanityItemManager>, IInitAfterDataBlocksReady, IInitCondition
     {
 
         private LocalVanityItemStorage _localVanityItemStorage;
@@ -23,7 +23,6 @@ namespace TheArchive.Managers
                     try
                     {
                         _localVanityItemStorage = LoadFromLocalFile();
-                        
                     }
                     catch (FileNotFoundException)
                     {
@@ -40,7 +39,7 @@ namespace TheArchive.Managers
             }
         }
 
-        private CustomVanityItemDropper Dropper => CustomVanityItemDropper.Instance;
+        private LocalVanityItemDropper Dropper => LocalVanityItemDropper.Instance;
 
         public bool InitCondition()
         {

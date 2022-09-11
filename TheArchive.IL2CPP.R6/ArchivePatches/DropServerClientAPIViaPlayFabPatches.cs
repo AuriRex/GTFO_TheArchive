@@ -24,8 +24,8 @@ namespace TheArchive.IL2CPP.R6.ArchivePatches
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(GetInventoryPlayerDataRequest)}: EntityToken:{request.EntityToken}, MaxBackendTemplateId:{request.MaxBackendTemplateId}");
 
-                var bipd = (DropServer.BoosterImplants.BoosterImplantPlayerData) CustomBoosterManager.Instance.GetBoosterImplantPlayerData(request.MaxBackendTemplateId);
-                var vipd = (VanityItemPlayerData) CustomVanityItemManager.Instance.GetVanityItemPlayerData();
+                var bipd = (DropServer.BoosterImplants.BoosterImplantPlayerData) LocalBoosterManager.Instance.GetBoosterImplantPlayerData(request.MaxBackendTemplateId);
+                var vipd = (VanityItemPlayerData) LocalVanityItemManager.Instance.GetVanityItemPlayerData();
 
                 var result = new GetInventoryPlayerDataResult();
 
@@ -45,7 +45,7 @@ namespace TheArchive.IL2CPP.R6.ArchivePatches
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(GetInventoryPlayerDataRequest)}: EntityToken:{request.EntityToken}, MaxBackendTemplateId:{request.BuildRev}");
 
-                var vipd = (VanityItemPlayerData) CustomVanityItemManager.Instance.ProcessTransaction(request.Transaction);
+                var vipd = (VanityItemPlayerData) LocalVanityItemManager.Instance.ProcessTransaction(request.Transaction);
 
                 var result = new UpdateVanityItemPlayerDataResult();
 
