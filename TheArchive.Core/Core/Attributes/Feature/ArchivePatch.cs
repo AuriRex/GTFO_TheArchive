@@ -3,6 +3,9 @@
 namespace TheArchive.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
+    /// <summary>
+    /// A custom wrapper for Harmony patches used by the FeaturesAPI
+    /// </summary>
     public class ArchivePatch : Attribute
     {
         /// <summary>
@@ -37,8 +40,9 @@ namespace TheArchive.Core.Attributes
         /// <br/><br/>
         /// Type must be provided via a method marked with the <see cref="IsTypeProvider"/> Attribute inside of your type!
         /// </summary>
-        /// <param name="methodName"></param>
-        /// <param name="parameterTypes"></param>
+        /// <param name="methodName">The method name to patch</param>
+        /// <param name="parameterTypes">Method parameters to distinguish between overloads</param>
+        /// <param name="patchMethodType">Method type</param>
         public ArchivePatch(string methodName, Type[] parameterTypes = null, PatchMethodType patchMethodType = PatchMethodType.Method) : this(null, methodName, parameterTypes, patchMethodType)
         {
 
@@ -50,6 +54,7 @@ namespace TheArchive.Core.Attributes
         /// <param name="type">The type the method is on</param>
         /// <param name="methodName">The method name to patch</param>
         /// <param name="parameterTypes">Method parameters to distinguish between overloads</param>
+        /// <param name="patchMethodType">Method type</param>
         public ArchivePatch(Type type, string methodName, Type[] parameterTypes = null, PatchMethodType patchMethodType = PatchMethodType.Method)
         {
             Type = type;

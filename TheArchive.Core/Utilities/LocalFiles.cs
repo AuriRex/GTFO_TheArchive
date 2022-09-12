@@ -211,6 +211,17 @@ namespace TheArchive.Utilities
             }
         }
 
+        private static string _progressionPath = null;
+        public static string LocalProgressionPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_progressionPath))
+                    _progressionPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"RundownProgression_Data.json");
+                return _progressionPath;
+            }
+        }
+
         public static void SaveToFilesDir(string filename, string jsonOrSomething)
         {
 
@@ -234,10 +245,12 @@ namespace TheArchive.Utilities
         }
 
         private static string _localRundownProgressionJSON = string.Empty;
+        [Obsolete]
         public static string LocalRundownProgressionJSON { get => _localRundownProgressionJSON; }
 
         public const string kRundownProgressionFileName = "RundownProgression_primary.json";
 
+        [Obsolete]
         public static void LoadRundownFourAndUpLocalRundownProgressionIfNecessary()
         {
             if (string.IsNullOrEmpty(_localRundownProgressionJSON))
@@ -246,6 +259,7 @@ namespace TheArchive.Utilities
             }
         }
 
+        [Obsolete]
         public static void SaveRundownFourAndUpLocalRundownProgression(string json)
         {
             SaveToFilesDir(kRundownProgressionFileName, json);

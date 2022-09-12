@@ -50,7 +50,7 @@ namespace TheArchive
 
             typeof(Features.RichPresenceCore).RegisterAllPresenceFormatProviders();
 
-            LocalProgressionManager.Logger = (string msg) => {
+            OldLocalProgressionManager.Logger = (string msg) => {
                 ArchiveLogger.Msg(ConsoleColor.Magenta, msg);
             };
 

@@ -146,9 +146,9 @@ namespace TheArchive.HarmonyPatches.Patches
 
                 if (request.Success)
                 {
-                    LocalProgressionManager.Instance.CompleteCurrentActiveExpedition();
+                    OldLocalProgressionManager.Instance.CompleteCurrentActiveExpedition();
 
-                    LocalProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
+                    OldLocalProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
                 }
 
                 //request.BoosterCurrency
@@ -181,7 +181,7 @@ namespace TheArchive.HarmonyPatches.Patches
                     StartBoostersSession(request);
                 }
 
-                LocalProgressionManager.Instance.StartNewExpeditionSession(request.Rundown, request.Expedition, request.SessionId);
+                OldLocalProgressionManager.Instance.StartNewExpeditionSession(request.Rundown, request.Expedition, request.SessionId);
 
                 var ns = new NewSessionResult();
 
@@ -208,7 +208,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
                 Enum.TryParse(request.Layer, out DropServer.ExpeditionLayers expeditionLayer);
 
-                LocalProgressionManager.Instance.SetLayeredDifficultyObjectiveState(expeditionLayer, layerProgressionState);
+                OldLocalProgressionManager.Instance.SetLayeredDifficultyObjectiveState(expeditionLayer, layerProgressionState);
 
                 __result = IL2Tasks.Task.FromResult<LayerProgressionResult>(new LayerProgressionResult());
 

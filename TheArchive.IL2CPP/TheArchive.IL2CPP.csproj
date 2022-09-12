@@ -327,6 +327,7 @@
     <Compile Include="Features\Dev\InternalUAudioListenerHelper.cs" />
     <Compile Include="Features\Dev\MaulGavelChecksumPatch.cs" />
     <Compile Include="Features\DiscordRichPresence.cs" />
+    <Compile Include="Features\LocalProgression\CheckPointManagerPatch.cs" />
     <Compile Include="Features\QoL\LoadoutRandomizer.cs" />
     <Compile Include="Features\QoL\MapToObjectivesSwitchFix.cs" />
     <Compile Include="Features\QoL\ResourcePrioritizationPings.cs" />
@@ -354,6 +355,7 @@
     <Compile Include="Managers\LocalBoosterDropper.cs" />
     <Compile Include="Managers\LocalBoosterManager.cs" />
     <Compile Include="Managers\LocalProgressionManager.cs" />
+    <Compile Include="Managers\OldLocalProgressionManager.cs" />
     <Compile Include="Managers\LocalVanityItemDropper.cs" />
     <Compile Include="Managers\LocalVanityItemManager.cs" />
     <Compile Include="Utilities\SColorExtensions.cs" />
@@ -399,7 +401,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Features\LocalProgression\" />
     <Folder Include="Interfaces\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

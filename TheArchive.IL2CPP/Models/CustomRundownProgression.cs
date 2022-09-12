@@ -12,6 +12,7 @@ using UnhollowerBaseLib.Attributes;
 namespace TheArchive.Models
 {
 	[Serializable]
+	[Obsolete]
     public class CustomRundownProgression
     {
 

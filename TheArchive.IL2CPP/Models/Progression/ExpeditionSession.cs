@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
 namespace TheArchive.Models.Progression
@@ -7,27 +8,37 @@ namespace TheArchive.Models.Progression
     public class ExpeditionSession
     {
         private ExpeditionSessionData SavedData { get; set; } = null;
-        public ExpeditionSessionData CurrentData { get; private set; } = new ExpeditionSessionData();
+        public ExpeditionSessionData CurrentData { get; private set; } = null;
         public bool HasCheckpointBeenUsed { get; private set; } = false;
         public bool ExpeditionSurvived { get; private set; } = false;
         public DateTimeOffset StartTime { get; private set; }
         public DateTimeOffset EndTime { get; private set; }
 
+        private readonly IArchiveLogger _logger;
+        public string RundownId { get; private set; } = string.Empty;
+        public string ExpeditionId { get; private set; } = string.Empty;
         public string SessionId { get; private set; } = string.Empty;
 
-        private ExpeditionSession(string sessionId)
+        public HashSet<Layers> DiscoveredLayers { get; private set; } = new HashSet<Layers>();
+
+        private ExpeditionSession(string rundownId, string expeditionId, string sessionId, IArchiveLogger logger)
         {
+            RundownId = rundownId;
+            ExpeditionId = expeditionId;
             SessionId = sessionId;
+            _logger = logger;
             StartTime = DateTimeOffset.UtcNow;
+
+            CurrentData = new ExpeditionSessionData(logger);
 
             SetLayer(Layers.Main, LayerState.Entered);
         }
 
-        public static ExpeditionSession InitNewSession(string sessionId)
+        public static ExpeditionSession InitNewSession(string rundownId, string expeditionId, string sessionId, IArchiveLogger logger)
         {
-            var session = new ExpeditionSession(sessionId);
+            var session = new ExpeditionSession(rundownId, expeditionId, sessionId, logger);
 
-            ArchiveLogger.Info($"[{nameof(ExpeditionSession)}] New expedition session started! ({sessionId})");
+            logger.Info($"[{nameof(ExpeditionSession)}] New expedition session started! (R:{rundownId}, E:{expeditionId}, S:{sessionId})");
             
             return session;
         }
@@ -50,7 +61,7 @@ namespace TheArchive.Models.Progression
         {
             EndTime = DateTimeOffset.UtcNow;
 
-            ArchiveLogger.Info($"[{nameof(ExpeditionSession)}] Expedition session has ended! ({SessionId}){(success ? " Expedition Successful!" : string.Empty)}");
+            _logger.Info($"[{nameof(ExpeditionSession)}] Expedition session has ended! (R:{RundownId}, E:{ExpeditionId}, S:{SessionId}){(success ? " Expedition Successful!" : string.Empty)}");
 
             if (!success) return;
 
@@ -60,11 +71,14 @@ namespace TheArchive.Models.Progression
 
         public void SetLayer(Layers layer, LayerState state)
         {
+            if(state != LayerState.Undiscovered)
+                DiscoveredLayers.Add(layer);
             CurrentData.SetOnlyIncreaseLayerState(layer, state);
         }
 
         public void DiscoverLayer(Layers layer)
         {
+            DiscoveredLayers.Add(layer);
             CurrentData.SetOnlyIncreaseLayerState(layer, LayerState.Discovered);
         }
 
@@ -82,6 +96,13 @@ namespace TheArchive.Models.Progression
         {
             public Dictionary<Layers, LayerState> LayerStates { get; private set; } = new Dictionary<Layers, LayerState>();
 
+            private readonly IArchiveLogger _logger;
+
+            public ExpeditionSessionData(IArchiveLogger logger)
+            {
+                _logger = logger;
+            }
+
             public void SetOnlyIncreaseLayerState(Layers layer, LayerState state)
             {
                 if (LayerStates.TryGetValue(layer, out var currentState))
@@ -89,13 +110,13 @@ namespace TheArchive.Models.Progression
                     if((int)currentState < (int)state)
                     {
                         LayerStates.Remove(layer);
-                        ArchiveLogger.Debug($"[{nameof(ExpeditionSessionData)}] Set layer {layer} from {currentState} to {state}");
+                        _logger.Debug($"[{nameof(ExpeditionSessionData)}] Set layer {layer} from {currentState} to {state}");
                         LayerStates.Add(layer, state);
                     }
                     return;
                 }
 
-                ArchiveLogger.Debug($"[{nameof(ExpeditionSessionData)}] Set layer {layer} to {state}");
+                _logger.Debug($"[{nameof(ExpeditionSessionData)}] Set layer {layer} to {state}");
                 LayerStates.Add(layer, state);
             }
 
@@ -104,18 +125,18 @@ namespace TheArchive.Models.Progression
                 if(LayerStates.TryGetValue(layer, out var currentState))
                 {
                     LayerStates.Remove(layer);
-                    ArchiveLogger.Debug($"[{nameof(ExpeditionSessionData)}] Set layer {layer} from {currentState} to {state}");
+                    _logger.Debug($"[{nameof(ExpeditionSessionData)}] Set layer {layer} from {currentState} to {state}");
                 }
                 else
                 {
-                    ArchiveLogger.Debug($"[{nameof(ExpeditionSessionData)}] Set layer {layer} to {state}");
+                    _logger.Debug($"[{nameof(ExpeditionSessionData)}] Set layer {layer} to {state}");
                 }
                 LayerStates.Add(layer, state);
             }
 
             public ExpeditionSessionData Clone()
             {
-                var newExpSD = new ExpeditionSessionData();
+                var newExpSD = new ExpeditionSessionData(_logger);
 
                 foreach(var kvp in LayerStates)
                 {

@@ -25,19 +25,16 @@ namespace TheArchive.Models
 			MissingMemberHandling = MissingMemberHandling.Ignore
 		};
 
+		public static float ARTIFACT_HEAT_MIN { get; set; } = 0.2f;
+		public static float ARTIFACT_HEAT_UNCOMPLETED_MIN { get; set; } = 0.5f;
+
+		public Dictionary<string, Expedition> Expeditions = new Dictionary<string, Expedition>();
+
+		[Obsolete]
 		public static LocalRundownProgression FromJSON(string json)
 		{
 			return JsonConvert.DeserializeObject<LocalRundownProgression>(json, Settings);
 		}
-
-
-		private static RundownProgressionResult rundownProgressionResult = new RundownProgressionResult();
-		public static RundownProgression JSONToRundownProgression(string json)
-		{
-			rundownProgressionResult.EscapedRundownProgression = json;
-			return rundownProgressionResult.GetRundownProgression();
-		}
-
 
 		public RundownProgression ToBaseGameProgression()
 		{
@@ -68,13 +65,10 @@ namespace TheArchive.Models
 		}
 
 		[MethodImpl(MethodImplOptions.NoInlining)]
-		public void SetArtifactHeat(RundownProgression.Expedition bgExp, Expedition cExp)
+		private void SetArtifactHeat(RundownProgression.Expedition bgExp, Expedition cExp)
         {
 			bgExp.ArtifactHeat = cExp.ArtifactHeat;
         }
-
-
-		public Dictionary<string, Expedition> Expeditions = new Dictionary<string, Expedition>();
 
 		public Expedition GetOrAdd(Dictionary<string, Expedition> dict, string keyName)
         {
@@ -91,7 +85,6 @@ namespace TheArchive.Models
 		{
 			if(Expeditions == null)
             {
-				ArchiveLogger.Warning($"[{nameof(CustomRundownProgression)}] Expeditions dictionary was null for some reason ...");
 				Expeditions = new Dictionary<string, Expedition>();
             }
 			Expedition orCreate = GetOrAdd(Expeditions, expeditionName);

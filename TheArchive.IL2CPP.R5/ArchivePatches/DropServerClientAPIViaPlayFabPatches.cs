@@ -21,9 +21,9 @@ namespace TheArchive.IL2CPP.R5.ArchivePatches
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(ExpeditionSuccessRequest)}: Request:{request}");
 
-                LocalProgressionManager.Instance.CompleteCurrentActiveExpedition();
+                OldLocalProgressionManager.Instance.CompleteCurrentActiveExpedition();
 
-                LocalProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
+                OldLocalProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
 
 
                 var result = new ExpeditionSuccessResult();
@@ -94,9 +94,9 @@ namespace TheArchive.IL2CPP.R5.ArchivePatches
 
                 if (request.Success)
                 {
-                    LocalProgressionManager.Instance.CompleteCurrentActiveExpedition();
+                    OldLocalProgressionManager.Instance.CompleteCurrentActiveExpedition();
 
-                    LocalProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
+                    OldLocalProgressionManager.ProgressionMerger.MergeIntoLocalRundownProgression();
                 }
 
                 //request.BoosterCurrency

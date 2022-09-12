@@ -125,6 +125,7 @@
     <Compile Include="Interfaces\IInitCondition.cs" />
     <Compile Include="Interfaces\IInitializable.cs" />
     <Compile Include="Interfaces\IInitImmediately.cs" />
+    <Compile Include="Interfaces\IInjectLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Accessors.cs" />
     <Compile Include="Utilities\ArchiveLogger.cs" />

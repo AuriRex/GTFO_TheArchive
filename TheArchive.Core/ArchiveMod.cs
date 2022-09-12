@@ -385,6 +385,13 @@ namespace TheArchive
                 init = conditional.InitCondition();
             }
 
+            if (typeof(IInjectLogger).IsAssignableFrom(type))
+            {
+                var injectLoggerable = (IInjectLogger)instance;
+
+                injectLoggerable.Logger = LoaderWrapper.CreateArSubLoggerInstance(type.Name, ConsoleColor.Green);
+            }
+
             if (init)
             {
                 //ArchiveLogger.Info($"Initializing instance of type \"{type.FullName}\", Interfaces:[{string.Join(",", type.GetInterfaces().Select(x => x.FullName))}]");
