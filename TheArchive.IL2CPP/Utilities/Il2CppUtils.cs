@@ -10,7 +10,8 @@ namespace TheArchive.Utilities
 {
     public static class Il2CppUtils
     {
-        public static List<T> ToSystemList<T>(this Il2CppSystem.Collections.Generic.List<T> il2List)
+        [Obsolete]
+        public static List<T> ToSystemListOld<T>(this Il2CppSystem.Collections.Generic.List<T> il2List)
         {
             var list = new List<T>();
 

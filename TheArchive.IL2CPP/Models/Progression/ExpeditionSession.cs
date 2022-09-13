@@ -63,10 +63,13 @@ namespace TheArchive.Models.Progression
 
             _logger.Info($"[{nameof(ExpeditionSession)}] Expedition session has ended! (R:{RundownId}, E:{ExpeditionId}, S:{SessionId}){(success ? " Expedition Successful!" : string.Empty)}");
 
-            if (!success) return;
+            if (success)
+            {
+                ExpeditionSurvived = true;
+                SetLayer(Layers.Main, LayerState.Completed);
+            }
 
-            ExpeditionSurvived = true;
-            SetLayer(Layers.Main, LayerState.Completed);
+            _logger.Info($"[{nameof(ExpeditionSession)}] Data: {CurrentData}");
         }
 
         public void SetLayer(Layers layer, LayerState state)
@@ -132,6 +135,18 @@ namespace TheArchive.Models.Progression
                     _logger.Debug($"[{nameof(ExpeditionSessionData)}] Set layer {layer} to {state}");
                 }
                 LayerStates.Add(layer, state);
+            }
+
+            public override string ToString()
+            {
+                string ret = string.Empty;
+
+                foreach(var kvp in LayerStates)
+                {
+                    ret += $"{kvp.Key}: {kvp.Value}, ";
+                }
+
+                return ret.Substring(0, ret.Length-2);
             }
 
             public ExpeditionSessionData Clone()

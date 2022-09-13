@@ -58,13 +58,10 @@ namespace TheArchive.HarmonyPatches.Patches
             public static bool Prefix(ref IL2Tasks.Task<RundownProgression> __result, string rundownName, CancellationToken cancellationToken, [Optional] Il2CppSystem.Action<Il2CppSystem.Threading.Tasks.Task<RundownProgression>> callback)
             {
                 ArchiveLogger.Msg(ConsoleColor.Magenta, "Getting new RundownProgression (from local files)");
-                LocalFiles.LoadRundownFourAndUpLocalRundownProgressionIfNecessary();
 
-
-                SaveLocalRundownProgression();
                 try
                 {
-                    var task = __result = IL2Tasks.Task.FromResult(CustomRundownProgression.ToBaseGameProgression());
+                    var task = __result = IL2Tasks.Task.FromResult(Managers.LocalProgressionManager.CustomRundownProgression.ToBaseGameProgression());
 
                     if (callback != null)
                     {

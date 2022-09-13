@@ -21,6 +21,22 @@ namespace TheArchive.Utilities
         public static FieldAccessor<CM_Item, Color[]> A_CM_Item_m_textColorOver = FieldAccessor<CM_Item, Color[]>.GetAccessor("m_textColorOver");
 #endif
 
+#if IL2CPP
+        public static List<T> ToSystemList<T>(this Il2CppSystem.Collections.Generic.List<T> il2List)
+        {
+            var list = new List<T>();
+
+            foreach (var item in il2List)
+            {
+                list.Add(item);
+            }
+
+            return list;
+        }
+#else
+        public static List<T> ToSystemList<T>(this System.Collections.Generic.List<T> list) => list;
+#endif
+
         public static void ChangeColorTimedExpeditionButton(CM_TimedButton button, Color col) => ChangeColorOnAllChildren(button.transform, col, new string[] { "ProgressFill" });
 
         public static void ChangeColorCMItem(CM_Item item, Color idleColor, Color? hoverColor = null)

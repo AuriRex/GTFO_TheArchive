@@ -55,22 +55,22 @@ namespace TheArchive.Managers
                 return;
             }
 
-            CurrentActiveSession.SetLayer(layer, state);
+            CurrentActiveSession?.SetLayer(layer, state);
         }
 
         public void SaveAtCheckpoint()
         {
-            CurrentActiveSession.OnCheckpointSave();
+            CurrentActiveSession?.OnCheckpointSave();
         }
 
         public void ReloadFromCheckpoint()
         {
-            CurrentActiveSession.OnCheckpointReset();
+            CurrentActiveSession?.OnCheckpointReset();
         }
 
         public void EndCurrentExpeditionSession(bool success)
         {
-            CurrentActiveSession.OnExpeditionCompleted(success);
+            CurrentActiveSession?.OnExpeditionCompleted(success);
         }
 
         public static void SaveToProgressionFile(LocalRundownProgression data)

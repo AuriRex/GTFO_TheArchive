@@ -13,5 +13,6 @@ namespace TheArchive.Core.FeaturesAPI
         public static string Dev => "Developer";
         public static string Backport => "Backport";
         public static string QualityOfLife => "Quality of Life";
+        public static string LocalProgression => "Local Progression";
     }
 }

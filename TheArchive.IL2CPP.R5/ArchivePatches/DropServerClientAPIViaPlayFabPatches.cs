@@ -14,7 +14,7 @@ namespace TheArchive.IL2CPP.R5.ArchivePatches
     {
         // Does not appear to be called in R5 anymore, removed in R6
         //public unsafe Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request, [Optional] RequestContext context)
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.ExpeditionSuccessAsync), RundownFlags.RundownFour | RundownFlags.RundownFive)]
+        /*[ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.ExpeditionSuccessAsync), RundownFlags.RundownFour | RundownFlags.RundownFive)]
         public static class DropServerClientAPI_ExpeditionSuccessAsyncPatch
         {
             public static bool Prefix(ExpeditionSuccessRequest request, ref IL2Tasks.Task<ExpeditionSuccessResult> __result)
@@ -32,7 +32,7 @@ namespace TheArchive.IL2CPP.R5.ArchivePatches
 
                 return false;
             }
-        }
+        }*/
 
         // public unsafe Task<GetBoosterImplantPlayerDataResult> GetBoosterImplantPlayerDataAsync(GetBoosterImplantPlayerDataRequest request)
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetBoosterImplantPlayerDataAsync), RundownFlags.RundownFive, RundownFlags.Latest)]

@@ -26,7 +26,58 @@ namespace TheArchive.Core
         }
 
         public static Type[] GetAllTypesWithPatchAttribute(Assembly assembly = null) => GetAllTypesWithPatchAttribute(typeof(ArchivePatch), assembly);
-        public static Type[] GetAllTypesWithPatchAttribute(Type patchAttribute, Assembly assembly = null) => (assembly ?? Assembly.GetExecutingAssembly()).GetTypes().Where(x => x.GetCustomAttribute(patchAttribute) != null).ToArray();
+        public static Type[] GetAllTypesWithPatchAttribute(Type patchAttribute, Assembly assembly = null)
+        {
+            assembly = assembly ?? Assembly.GetExecutingAssembly();
+
+            Type[] types = new Type[0];
+
+            try
+            {
+                types = assembly.GetTypes();
+            }
+            catch (System.Reflection.ReflectionTypeLoadException tle)
+            {
+                ArchiveLogger.Error("The bad TM happened:");
+                ArchiveLogger.Exception(tle);
+                ArchiveLogger.Warning($"{tle.Types?.Length} Types loaded.");
+                ArchiveLogger.Notice("Exceptions:");
+                foreach (var expt in tle.LoaderExceptions)
+                {
+                    ArchiveLogger.Error(expt.Message);
+                }
+            }
+
+            HashSet<Type> typeSet = new HashSet<Type>();
+
+            foreach (var type in types)
+            {
+                try
+                {
+                    if (type.GetCustomAttribute(patchAttribute) != null)
+                        typeSet.Add(type);
+                }
+                catch (System.Reflection.ReflectionTypeLoadException tle)
+                {
+                    ArchiveLogger.Error("The bad TM happened:");
+                    ArchiveLogger.Exception(tle);
+                    ArchiveLogger.Warning($"{tle.Types?.Length} Types loaded.");
+                    ArchiveLogger.Notice("Exceptions:");
+                    foreach (var expt in tle.LoaderExceptions)
+                    {
+                        ArchiveLogger.Error(expt.Message);
+                    }
+                }
+                catch(TypeLoadException tle)
+                {
+                    ArchiveLogger.Error($"The Type \"{tle.TypeName}\" has caused an {nameof(TypeLoadException)}!");
+                    ArchiveLogger.Exception(tle);
+                    
+                }
+            }
+
+            return typeSet.ToArray();
+        }
 
         public static bool TryGetMethodByName(Type type, string name, out MethodInfo methodInfo)
         {

@@ -169,7 +169,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
         // ---------------------------------------------------------------
 
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.NewSessionAsync))]
+        /*[ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.NewSessionAsync))]
         public static class DropServerClientAPI_NewSessionAsyncPatch
         {
             public static bool Prefix(NewSessionRequest request, ref IL2Tasks.Task<NewSessionResult> __result)
@@ -282,6 +282,6 @@ namespace TheArchive.HarmonyPatches.Patches
 
                 return false;
             }
-        }
+        }*/
     }
 }

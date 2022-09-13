@@ -327,7 +327,7 @@
     <Compile Include="Features\Dev\InternalUAudioListenerHelper.cs" />
     <Compile Include="Features\Dev\MaulGavelChecksumPatch.cs" />
     <Compile Include="Features\DiscordRichPresence.cs" />
-    <Compile Include="Features\LocalProgression\CheckPointManagerPatch.cs" />
+    <Compile Include="Features\LocalProgression\LocalProgressionCore.cs" />
     <Compile Include="Features\QoL\LoadoutRandomizer.cs" />
     <Compile Include="Features\QoL\MapToObjectivesSwitchFix.cs" />
     <Compile Include="Features\QoL\ResourcePrioritizationPings.cs" />
