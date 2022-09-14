@@ -124,7 +124,7 @@ namespace TheArchive.Managers
 
                 DropServer.ExpeditionLayerMask layerMask = expeditionSession.GetCompletedLayersMask();
 
-                DropServerPatches.CustomRundownProgression.UpdateExpeditionCompletion(expeditionSession.ExpeditionId, layerMask, layerMask == DropServer.ExpeditionLayerMask.All);
+                //DropServerPatches.CustomRundownProgression.UpdateExpeditionCompletion(expeditionSession.ExpeditionId, layerMask, layerMask == DropServer.ExpeditionLayerMask.All);
 
                 Logger?.Invoke($"Expedition Data merged: {DropServerPatches.CustomRundownProgression}, Completed expeditions: {DropServerPatches.CustomRundownProgression.Expeditions.Count}");
 

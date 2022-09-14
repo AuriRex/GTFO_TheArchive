@@ -71,6 +71,8 @@ namespace TheArchive.Managers
         public void EndCurrentExpeditionSession(bool success)
         {
             CurrentActiveSession?.OnExpeditionCompleted(success);
+
+            CustomRundownProgression.AddSessionResults(CurrentActiveSession);
         }
 
         public static void SaveToProgressionFile(LocalRundownProgression data)

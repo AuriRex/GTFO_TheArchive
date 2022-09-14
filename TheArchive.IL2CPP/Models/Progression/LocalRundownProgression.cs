@@ -3,18 +3,14 @@ using DropServer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using TheArchive.Models.Progression;
 using TheArchive.Utilities;
-using UnhollowerBaseLib.Attributes;
 using UnhollowerRuntimeLib;
 
 namespace TheArchive.Models
 {
-    public class LocalRundownProgression
+	public class LocalRundownProgression
     {
 
 		[JsonIgnore]
@@ -30,10 +26,32 @@ namespace TheArchive.Models
 
 		public Dictionary<string, Expedition> Expeditions = new Dictionary<string, Expedition>();
 
-		[Obsolete]
-		public static LocalRundownProgression FromJSON(string json)
+		public void AddSessionResults(ExpeditionSession session)
 		{
-			return JsonConvert.DeserializeObject<LocalRundownProgression>(json, Settings);
+			if (session == null) return;
+
+			if (Expeditions == null) Expeditions = new Dictionary<string, Expedition>();
+
+			Expedition expeditionEntry = GetOrAdd(Expeditions, session.ExpeditionId);
+
+			foreach (var stateKvp in session.CurrentData.LayerStates)
+            {
+				Layers layer = stateKvp.Key;
+				LayerState state = stateKvp.Value;
+
+
+				Expedition.Layer expeditionLayer = expeditionEntry.Layers.GetOrAddLayer(layer);
+				expeditionLayer.IncreaseStateAndCompletion(state);
+				expeditionEntry.Layers.SetLayer(layer, expeditionLayer);
+			}
+
+			if (session.PrisonerEfficiencyCompleted)
+			{
+				expeditionEntry.AllLayerCompletionCount++;
+			}
+
+			// Artifact Heat stuffs
+#warning TODO: Artifact Heat stuffs
 		}
 
 		public RundownProgression ToBaseGameProgression()
@@ -81,31 +99,11 @@ namespace TheArchive.Models
 			return exp;
 		}
 
-		public void UpdateExpeditionCompletion(string expeditionName, ExpeditionLayerMask layerMask, bool allLayersCompleted)
-		{
-			if(Expeditions == null)
-            {
-				Expeditions = new Dictionary<string, Expedition>();
-            }
-			Expedition orCreate = GetOrAdd(Expeditions, expeditionName);
-			foreach (ExpeditionLayers layer in RundownProgression.LayersFromMask(layerMask))
-			{
-				Expedition.Layer layer2 = orCreate.Layers.GetLayer(layer);
-				layer2.State = LayerProgressionState.Completed;
-				layer2.CompletionCount++;
-				orCreate.Layers.SetLayer(layer, layer2);
-			}
-			if (allLayersCompleted)
-			{
-				orCreate.AllLayerCompletionCount++;
-			}
-		}
-
 		public class Expedition
 		{
-			public int AllLayerCompletionCount;
+			public int AllLayerCompletionCount = 0;
 
-			public LayerSet Layers;
+			public LayerSet Layers = new LayerSet();
 
 			public float ArtifactHeat = 1f;
 
@@ -121,23 +119,35 @@ namespace TheArchive.Models
 			public RundownProgression.Expedition ToBaseGame()
             {
 				return new RundownProgression.Expedition(ClassInjector.DerivedConstructorPointer<RundownProgression.Expedition>())
-                {
+				{
 					AllLayerCompletionCount = this.AllLayerCompletionCount,
-					Layers = this.Layers.ToBaseGameLayers()
+					Layers = this.Layers?.ToBaseGameLayers() ?? new LayerSet<RundownProgression.Expedition.Layer>()
 				};
 			}
 
 			public class Layer
 			{
-				public LayerProgressionState State;
+				public LayerState State = LayerState.Undiscovered;
 
-				public int CompletionCount;
+				public int CompletionCount = 0;
+
+				public void IncreaseStateAndCompletion(LayerState newState)
+                {
+					if ((int)State < (int)newState)
+                    {
+						State = newState;
+                    }
+					if (newState == LayerState.Completed)
+                    {
+						CompletionCount++;
+					}
+				}
 
 				public static Layer FromBaseGame(RundownProgression.Expedition.Layer baseGameType)
                 {
 					return new Layer()
 					{
-						State = baseGameType.State,
+						State = baseGameType.State.ToCustom(),
 						CompletionCount = baseGameType.CompletionCount
 					};
                 }
@@ -147,7 +157,7 @@ namespace TheArchive.Models
 					return new RundownProgression.Expedition.Layer
 					{
 						CompletionCount = this.CompletionCount,
-					    State = this.State
+					    State = this.State.ToBasegame()
 					};
 				}
             }
@@ -169,28 +179,29 @@ namespace TheArchive.Models
 				};
 			}
 
-            public Expedition.Layer GetLayer(ExpeditionLayers layer)
+            public Expedition.Layer GetOrAddLayer(Layers layer)
             {
-				return layer switch
+				var expeditionLayer = layer switch
 				{
-					ExpeditionLayers.Main => Main,
-					ExpeditionLayers.Secondary => Secondary,
-					ExpeditionLayers.Third => Third,
+					Layers.Main => Main,
+					Layers.Secondary => Secondary,
+					Layers.Third => Third,
 					_ => throw new Exception($"Unknown layer enum {layer}"),
 				};
+				return expeditionLayer ?? new Expedition.Layer();
 			}
 
-			public void SetLayer(ExpeditionLayers layer, Expedition.Layer data)
+			public void SetLayer(Layers layer, Expedition.Layer data)
             {
 				switch (layer)
 				{
-					case ExpeditionLayers.Main:
+					case Layers.Main:
 						Main = data;
 						break;
-					case ExpeditionLayers.Secondary:
+					case Layers.Secondary:
 						Secondary = data;
 						break;
-					case ExpeditionLayers.Third:
+					case Layers.Third:
 						Third = data;
 						break;
 					default:
@@ -202,9 +213,9 @@ namespace TheArchive.Models
             {
 				return new DropServer.LayerSet<RundownProgression.Expedition.Layer>
 				{
-					Main = this.Main.ToBaseGame(),
-					Secondary = this.Secondary.ToBaseGame(),
-					Third = this.Third.ToBaseGame()
+					Main = this.Main?.ToBaseGame() ?? new RundownProgression.Expedition.Layer(),
+					Secondary = this.Secondary?.ToBaseGame() ?? new RundownProgression.Expedition.Layer(),
+					Third = this.Third?.ToBaseGame() ?? new RundownProgression.Expedition.Layer()
 				};
 			}
         }

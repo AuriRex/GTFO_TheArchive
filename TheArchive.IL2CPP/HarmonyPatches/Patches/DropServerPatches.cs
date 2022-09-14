@@ -23,7 +23,7 @@ namespace TheArchive.HarmonyPatches.Patches
                 if(_customRundownProgression == null)
                 {
                     ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"CoolJSONInput:{LocalFiles.LocalRundownProgressionJSON}");
-                    _customRundownProgression = LocalRundownProgression.FromJSON(LocalFiles.LocalRundownProgressionJSON);
+                    //_customRundownProgression = LocalRundownProgression.FromJSON(LocalFiles.LocalRundownProgressionJSON);
                 }
                     
                 return _customRundownProgression;
@@ -39,7 +39,7 @@ namespace TheArchive.HarmonyPatches.Patches
             ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"Saved Rundown Progression to disk!");
         }
 
-        [ArchivePatch(typeof(DropServerManager), nameof(DropServerManager.Setup))]
+        /*[ArchivePatch(typeof(DropServerManager), nameof(DropServerManager.Setup))]
         public static class DropServerManager_SetupPatch
         {
             public static void Postfix(ref DropServerManager __instance)
@@ -49,10 +49,10 @@ namespace TheArchive.HarmonyPatches.Patches
                 dstds.ClientApiEndPoint = "https://localhost/api";
                 __instance.ApplyTitleDataSettings(dstds);
             }
-        }
+        }*/
 
         //public unsafe Task<RundownProgression> GetRundownProgressionAsync(string rundownName, CancellationToken cancellationToken, [Optional] Il2CppSystem.Action<Task<RundownProgression>> callback)
-        [ArchivePatch(typeof(DropServerManager), nameof(DropServerManager.GetRundownProgressionAsync))]
+        /*[ArchivePatch(typeof(DropServerManager), nameof(DropServerManager.GetRundownProgressionAsync))]
         public static class DropServerManager_GetRundownProgressionAsyncPatch
         {
             public static bool Prefix(ref IL2Tasks.Task<RundownProgression> __result, string rundownName, CancellationToken cancellationToken, [Optional] Il2CppSystem.Action<Il2CppSystem.Threading.Tasks.Task<RundownProgression>> callback)
@@ -75,7 +75,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
                 return false;
             }
-        }
+        }*/
 
         /*[HarmonyPatch(typeof(DropServerManager), nameof(DropServerManager.PostSetup))]*/
     }

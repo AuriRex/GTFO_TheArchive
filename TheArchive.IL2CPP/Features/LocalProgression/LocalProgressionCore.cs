@@ -12,8 +12,10 @@ using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 #if MONO
 using IL2Tasks = System.Threading.Tasks;
+using IL2System = System;
 #else
 using IL2Tasks = Il2CppSystem.Threading.Tasks;
+using IL2System = Il2CppSystem;
 #endif
 
 namespace TheArchive.Features.LocalProgression
@@ -24,6 +26,8 @@ namespace TheArchive.Features.LocalProgression
         public override string Name => "Local Progression Core";
 
         public override string Group => FeatureGroups.LocalProgression;
+
+        public override bool RequiresRestart => true;
 
         public new static IArchiveLogger FeatureLogger { get; set; }
 
@@ -72,6 +76,51 @@ namespace TheArchive.Features.LocalProgression
         // (no changes)
 #endregion comments
 
+#region DropServerManager
+        [RundownConstraint(RundownFlags.RundownFour, RundownFlags.Latest)]
+        [ArchivePatch(nameof(DropServerManager.Setup))]
+        public static class DropServerManager_Setup_Patch
+        {
+            public static Type Type() => typeof(DropServerManager);
+
+            public static void Postfix(ref DropServerManager __instance)
+            {
+                FeatureLogger.Msg(ConsoleColor.Magenta, $"Setting {nameof(DropServerManager)}s TitleDataSettings to localhost.");
+                var dstds = new DropServerManager.DropServerTitleDataSettings();
+                dstds.ClientApiEndPoint = "https://localhost/api";
+                __instance.ApplyTitleDataSettings(dstds);
+            }
+        }
+
+        [RundownConstraint(RundownFlags.RundownFour, RundownFlags.Latest)]
+        [ArchivePatch(nameof(DropServerManager.GetRundownProgressionAsync))]
+        public static class DropServerManager_GetRundownProgressionAsync_Patch
+        {
+            public static Type Type() => typeof(DropServerManager);
+
+            public static bool Prefix(ref IL2Tasks.Task<RundownProgression> __result, string rundownName, IL2System.Threading.CancellationToken cancellationToken, IL2System.Action<IL2Tasks.Task<RundownProgression>> callback)
+            {
+                FeatureLogger.Msg(ConsoleColor.Magenta, "Getting RundownProgression from local files ...");
+
+                try
+                {
+                    var task = __result = IL2Tasks.Task.FromResult(LocalProgressionManager.CustomRundownProgression.ToBaseGameProgression());
+
+                    if (callback != null)
+                    {
+                        TenCC.Utils.TaskUtils.ContinueOnCurrentContext<RundownProgression>(task, callback);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ArchiveLogger.Exception(ex);
+                }
+
+                return ArchivePatch.SKIP_OG;
+            }
+        }
+#endregion DropServerManager
+
         // Does not appear to be called in R5 anymore, removed in R6
         //public unsafe Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request, [Optional] RequestContext context)
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.RundownFive)]
@@ -90,7 +139,7 @@ namespace TheArchive.Features.LocalProgression
 
             public static bool Prefix(object request, ref object __result)
             {
-                FeatureLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested ExpeditionSuccessRequest: Request:{request}");
+                FeatureLogger.Msg(ConsoleColor.DarkCyan, $"requested ExpeditionSuccessRequest: Request:{request}");
                 try
                 {
                     LocalProgressionManager.Instance.EndCurrentExpeditionSession(true);
@@ -115,7 +164,7 @@ namespace TheArchive.Features.LocalProgression
 
             public static bool Prefix(NewSessionRequest request, ref IL2Tasks.Task<NewSessionResult> __result)
             {
-                FeatureLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(NewSessionRequest)}: Expedition:{request.Expedition}, Rundown:{request.Rundown}, SessionId:{request.SessionId}");
+                FeatureLogger.Msg(ConsoleColor.DarkCyan, $"requested {nameof(NewSessionRequest)}: Expedition:{request.Expedition}, Rundown:{request.Rundown}, SessionId:{request.SessionId}");
 
                 if (BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownFive.ToLatest()))
                 {
@@ -144,7 +193,7 @@ namespace TheArchive.Features.LocalProgression
 
             public static bool Prefix(LayerProgressionRequest request, ref IL2Tasks.Task<LayerProgressionResult> __result)
             {
-                FeatureLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(LayerProgressionRequest)}: Layer:{request.Layer} ,LayerProgressionState:{request.LayerProgressionState}");
+                FeatureLogger.Msg(ConsoleColor.DarkCyan, $"requested {nameof(LayerProgressionRequest)}: Layer:{request.Layer} ,LayerProgressionState:{request.LayerProgressionState}");
 
                 LocalProgressionManager.Instance.IncreaseLayerProgression(request.Layer, request.LayerProgressionState);
 
@@ -162,7 +211,7 @@ namespace TheArchive.Features.LocalProgression
 
             public static bool Prefix(RundownProgressionRequest request, ref IL2Tasks.Task<RundownProgressionResult> __result)
             {
-                FeatureLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(RundownProgressionRequest)}: Rundown:{request.Rundown}");
+                FeatureLogger.Msg(ConsoleColor.DarkCyan, $"requested {nameof(RundownProgressionRequest)}: Rundown:{request.Rundown}");
 
                 __result = IL2Tasks.Task.FromResult(new RundownProgressionResult());
 
@@ -176,7 +225,7 @@ namespace TheArchive.Features.LocalProgression
         {
             public static bool Prefix(ClearRundownProgressionRequest request, ref IL2Tasks.Task<ClearRundownProgressionResult> __result)
             {
-                ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(ClearRundownProgressionRequest)}: Rundown:{request.Rundown}");
+                ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"requested {nameof(ClearRundownProgressionRequest)}: Rundown:{request.Rundown}");
 
                 __result = IL2Tasks.Task.FromResult(new ClearRundownProgressionResult());
 
@@ -190,7 +239,7 @@ namespace TheArchive.Features.LocalProgression
         {
             public static bool Prefix(IsTesterRequest request, ref IL2Tasks.Task<IsTesterResult> __result)
             {
-                ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(IsTesterRequest)} (this should not happen I think?): SteamId:{request.SteamId}");
+                ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"requested {nameof(IsTesterRequest)} (this should not happen I think?): SteamId:{request.SteamId}");
 
                 var result = new IsTesterResult();
 
@@ -208,7 +257,7 @@ namespace TheArchive.Features.LocalProgression
         {
             public static bool Prefix(AddRequest request, ref IL2Tasks.Task<AddResult> __result)
             {
-                ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(AddRequest)}: X:{request.X}, Y:{request.Y}, Sum={(request.X + request.Y)}");
+                ArchiveLogger.Msg(ConsoleColor.DarkCyan, $"requested {nameof(AddRequest)}: X:{request.X}, Y:{request.Y}, Sum={(request.X + request.Y)}");
 
                 var result = new AddResult();
 

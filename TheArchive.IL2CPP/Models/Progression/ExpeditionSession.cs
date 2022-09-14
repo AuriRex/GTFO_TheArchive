@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TheArchive.Interfaces;
-using TheArchive.Utilities;
 
 namespace TheArchive.Models.Progression
 {
@@ -20,6 +20,15 @@ namespace TheArchive.Models.Progression
         public string SessionId { get; private set; } = string.Empty;
 
         public HashSet<Layers> DiscoveredLayers { get; private set; } = new HashSet<Layers>();
+        public bool PrisonerEfficiencyCompleted
+        {
+            get
+            {
+                // PrisonerEfficiency => All 3 objectives (Main, Extreme, Overload) have been completed
+                return CurrentData.LayerStates.Count() == 3
+                    && CurrentData.LayerStates.All(x => x.Value == LayerState.Completed);
+            }
+        }
 
         private ExpeditionSession(string rundownId, string expeditionId, string sessionId, IArchiveLogger logger)
         {
