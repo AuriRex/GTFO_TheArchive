@@ -40,7 +40,6 @@ namespace TheArchive.Features.Backport
                 {
                     if(__instance.m_state == _HackSequenceState_DoneWait)
                     {
-                        FeatureLogger.Notice($"Hack in state: {__instance.m_state}");
                         __instance.m_activeMinigame.EndGame();
                         __instance.m_holoSourceGFX.SetActive(value: false);
                         __instance.Sound.SafePost(EVENTS.BUTTONGENERICBLIPTHREE);
@@ -54,7 +53,6 @@ namespace TheArchive.Features.Backport
                     }
                     if (__instance.m_state == _HackSequenceState_Done)
                     {
-                        FeatureLogger.Notice($"Hack in state: {__instance.m_state}");
                         if (__instance.m_stateTimer < 0f)
                         {
                             A_HackingTool_ClearScreen.Invoke(__instance);
