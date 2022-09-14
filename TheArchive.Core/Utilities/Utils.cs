@@ -139,7 +139,7 @@ namespace TheArchive.Utilities
             {
                 return value;
             }
-
+            ArchiveLogger.Warning($"{nameof(GetEnumFromName)} couldn't resolve enum \"{name}\" from type \"{typeof(T).FullName}\"!");
             return default;
         }
 

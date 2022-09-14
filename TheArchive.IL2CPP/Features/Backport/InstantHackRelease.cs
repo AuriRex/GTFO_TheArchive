@@ -3,6 +3,7 @@ using LevelGeneration;
 using System;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
 using static HackingTool;
@@ -20,6 +21,7 @@ namespace TheArchive.Features.Backport
 
         public override string Group => FeatureGroups.Backport;
 
+        public new static IArchiveLogger FeatureLogger { get; set; }
 
         [ArchivePatch(typeof(HackingTool), "UpdateHackSequence")]
         internal static class HackingTool_UpdateHackSequencePatch
@@ -29,37 +31,42 @@ namespace TheArchive.Features.Backport
 
             private static eHackableStatus _hStatus_Success = GetEnumFromName<eHackableStatus>(nameof(eHackableStatus.Success));
 
+            private static HackSequenceState _HackSequenceState_DoneWait = Utils.GetEnumFromName<HackSequenceState>(nameof(HackSequenceState.DoneWait));
+            private static HackSequenceState _HackSequenceState_Done = Utils.GetEnumFromName<HackSequenceState>(nameof(HackSequenceState.Done));
 #if IL2CPP
-            public static bool Prefix(ref HackingTool __instance)
+            public static bool Prefix(HackingTool __instance)
             {
                 try
                 {
-                    switch (__instance.m_state)
+                    if(__instance.m_state == _HackSequenceState_DoneWait)
                     {
-                        case HackSequenceState.DoneWait:
-                            __instance.m_activeMinigame.EndGame();
-                            __instance.m_holoSourceGFX.SetActive(value: false);
-                            __instance.Sound.Post(EVENTS.BUTTONGENERICBLIPTHREE);
-                            __instance.m_stateTimer = 1f;
-                            if (__instance.m_currentHackable != null)
-                            {
-                                LG_LevelInteractionManager.WantToSetHackableStatus(__instance.m_currentHackable, _hStatus_Success, __instance.Owner);
-                            }
-                            __instance.m_state = HackSequenceState.Done;
-                            return ArchivePatch.SKIP_OG;
-                        case HackSequenceState.Done:
-                            if (__instance.m_stateTimer < 0f)
-                            {
-                                A_HackingTool_ClearScreen.Invoke(__instance);
-                                A_HackingTool_OnStopHacking.Invoke(__instance);
-                                __instance.Sound.Post(EVENTS.BUTTONGENERICSEQUENCEFINISHED);
-                                __instance.m_state = HackSequenceState.Idle;
-                            }
-                            else
-                            {
-                                __instance.m_stateTimer -= Clock.Delta;
-                            }
-                            return ArchivePatch.SKIP_OG;
+                        FeatureLogger.Notice($"Hack in state: {__instance.m_state}");
+                        __instance.m_activeMinigame.EndGame();
+                        __instance.m_holoSourceGFX.SetActive(value: false);
+                        __instance.Sound.SafePost(EVENTS.BUTTONGENERICBLIPTHREE);
+                        __instance.m_stateTimer = 1f;
+                        if (__instance.m_currentHackable != null)
+                        {
+                            LG_LevelInteractionManager.WantToSetHackableStatus(__instance.m_currentHackable, _hStatus_Success, __instance.Owner);
+                        }
+                        __instance.m_state = _HackSequenceState_Done;
+                        return ArchivePatch.SKIP_OG;
+                    }
+                    if (__instance.m_state == _HackSequenceState_Done)
+                    {
+                        FeatureLogger.Notice($"Hack in state: {__instance.m_state}");
+                        if (__instance.m_stateTimer < 0f)
+                        {
+                            A_HackingTool_ClearScreen.Invoke(__instance);
+                            A_HackingTool_OnStopHacking.Invoke(__instance);
+                            __instance.Sound.SafePost(EVENTS.BUTTONGENERICSEQUENCEFINISHED);
+                            __instance.m_state = HackSequenceState.Idle;
+                        }
+                        else
+                        {
+                            __instance.m_stateTimer -= Clock.Delta;
+                        }
+                        return ArchivePatch.SKIP_OG;
                     }
                 }
                 catch (Exception ex)

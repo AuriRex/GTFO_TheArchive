@@ -280,6 +280,23 @@ namespace TheArchive.Utilities
             return false;
         }
 
+        private static readonly MethodAccessor<CellSoundPlayer> A_CellSoundPlayer_Post_sub_R5 = MethodAccessor<CellSoundPlayer>.GetAccessor("Post", new Type[] { typeof(uint) });
+
+        public static void SafePost(this CellSoundPlayer player, uint eventId)
+        {
+            if (ArchiveMod.CurrentRundown.IsIncludedIn(Utils.RundownFlags.RundownSix.ToLatest()))
+            {
+                SafePostR6Plus(player, eventId);
+                return;
+            }
+            A_CellSoundPlayer_Post_sub_R5.Invoke(player, eventId);
+        }
+
+        private static void SafePostR6Plus(CellSoundPlayer player, uint eventId)
+        {
+            player.Post(eventId);
+        }
+
         private static readonly eFocusState eFocusState_ComputerTerminal = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.ComputerTerminal));
         private static readonly eFocusState eFocusState_Map = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.Map));
         private static readonly eFocusState eFocusState_Dead = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.Dead));
