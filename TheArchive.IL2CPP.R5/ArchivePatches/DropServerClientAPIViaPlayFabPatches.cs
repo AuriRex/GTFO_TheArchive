@@ -35,7 +35,7 @@ namespace TheArchive.IL2CPP.R5.ArchivePatches
         }*/
 
         // public unsafe Task<GetBoosterImplantPlayerDataResult> GetBoosterImplantPlayerDataAsync(GetBoosterImplantPlayerDataRequest request)
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetBoosterImplantPlayerDataAsync), RundownFlags.RundownFive, RundownFlags.Latest)]
+        /*[ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetBoosterImplantPlayerDataAsync), RundownFlags.RundownFive, RundownFlags.Latest)]
         public static class DropServerClientAPI_GetBoosterImplantPlayerDataAsyncPatch
         {
             public static bool Prefix(GetBoosterImplantPlayerDataRequest request, ref IL2Tasks.Task<GetBoosterImplantPlayerDataResult> __result)
@@ -115,6 +115,6 @@ namespace TheArchive.IL2CPP.R5.ArchivePatches
 
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> received {nameof(EndSessionResult)}");
             }
-        }
+        }*/
     }
 }

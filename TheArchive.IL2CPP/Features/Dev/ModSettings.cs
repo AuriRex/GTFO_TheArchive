@@ -209,6 +209,7 @@ namespace TheArchive.Features.Dev
                     infoText.enableWordWrapping = false;
                     infoText.fontSize = 16;
                     infoText.fontSizeMin = 16;
+                    JankTextMeshProUpdaterOnce.Apply(infoText);
 
 
                     var odereredGroups = FeatureManager.Instance.GroupedFeatures.OrderBy(kvp => kvp.Key);
@@ -230,7 +231,6 @@ namespace TheArchive.Features.Dev
                         foreach(var feature in featureSet)
                         {
                             SetupEntriesForFeature(feature, infoText);
-
                         }
 
                         // Spacer
@@ -724,8 +724,9 @@ namespace TheArchive.Features.Dev
                         featureName = $"<color=red>[!]</color> {featureName}";
                     }
 
-                    if(feature.HasAdditionalSettings)
+                    if(feature.PlaceSettingsInSubMenu)
                     {
+#warning TODO: Implement Mod Settings sub menus.
                         featureName = $"<u>{featureName}</u>";
                     }
 
@@ -741,22 +742,31 @@ namespace TheArchive.Features.Dev
 
                     var toggleButtonText = toggleButton_cm_item.GetComponentInChildren<TMPro.TextMeshPro>();
 
-                    toggleButton_cm_item.SetCMItemEvents(delegate (int id) {
-                        FeatureManager.ToggleFeature(feature);
+                    if (feature.IsAutomated)
+                    {
+                        toggleButton_cm_item.SetCMItemEvents(delegate (int id) { });
+                    }
+                    else
+                    {
+                        toggleButton_cm_item.SetCMItemEvents(delegate (int id) {
+                            FeatureManager.ToggleFeature(feature);
 
-                        SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
+                            SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
 
-                        if (feature.RequiresRestart && !_restartRequested)
-                        {
-                            _restartRequested = true;
-                            infoText.SetText($"<color=red><b>Restart required for some settings to apply!</b></color>");
-                        }
-                    });
+                            if (feature.RequiresRestart && !_restartRequested)
+                            {
+                                _restartRequested = true;
+                                infoText.SetText($"<color=red><b>Restart required for some settings to apply!</b></color>");
+                            }
+                        });
+                    }
+                    
 
                     SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
 
                     var rundownInfoButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);
                     var rundownInfoTMP = rundownInfoButton.GetComponentInChildren<TMPro.TextMeshPro>();
+                    JankTextMeshProUpdaterOnce.Apply(rundownInfoTMP);
                     UnityEngine.Object.Destroy(rundownInfoButton);
                     UnityEngine.Object.Destroy(rundownInfoButton.GetComponent<BoxCollider2D>());
 
@@ -833,6 +843,12 @@ namespace TheArchive.Features.Dev
 
             private static void SetFeatureItemTextAndColor(Feature feature, CM_Item buttonItem, TMPro.TextMeshPro text)
             {
+                if(feature.IsAutomated)
+                {
+                    text.SetText("Automated");
+                    SharedUtils.ChangeColorCMItem(buttonItem, DISABLED);
+                    return;
+                }
                 bool enabled = (feature.AppliesToThisGameBuild && !feature.RequiresRestart) ? feature.Enabled : FeatureManager.IsEnabledInConfig(feature);
                 text.SetText(enabled ? "Enabled" : "Disabled");
 

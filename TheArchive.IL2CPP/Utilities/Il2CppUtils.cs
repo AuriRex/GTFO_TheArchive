@@ -25,13 +25,32 @@ namespace TheArchive.Utilities
 
         public static IntPtr GetFieldPointer<T>(string fieldName)
         {
-            return (IntPtr) typeof(T).GetField($"NativeFieldInfoPtr_{fieldName}", HarmonyLib.AccessTools.all).GetValue(null);
+            return (IntPtr) typeof(T).GetField($"NativeFieldInfoPtr_{fieldName}", Utils.AnyBindingFlagss).GetValue(null);
+        }
+
+        public static IntPtr GetFieldPointer(Type type, string fieldName)
+        {
+            return (IntPtr)type.GetField($"NativeFieldInfoPtr_{fieldName}", Utils.AnyBindingFlagss).GetValue(null);
         }
 
         public unsafe static void SetFieldUnsafe<T, TValue>(T instance, TValue value, string fieldName) where T : UnhollowerBaseLib.Il2CppObjectBase where TValue : UnhollowerBaseLib.Il2CppObjectBase
         {
             IntPtr fieldOffset = GetFieldPointer<T>(fieldName);
+            
             System.Runtime.CompilerServices.Unsafe.CopyBlock((void*) ((long) UnhollowerBaseLib.IL2CPP.Il2CppObjectBaseToPtrNotNull(instance) + (long) (int) UnhollowerBaseLib.IL2CPP.il2cpp_field_get_offset(fieldOffset)), (void*) UnhollowerBaseLib.IL2CPP.il2cpp_object_unbox(UnhollowerBaseLib.IL2CPP.Il2CppObjectBaseToPtr(value)), (uint) UnhollowerBaseLib.IL2CPP.il2cpp_class_value_size(Il2CppClassPointerStore<TValue>.NativeClassPtr, ref *(uint*) null));
+        }
+
+        public unsafe static void SetFieldUnsafe(object instance, object value, string fieldName) => SetFieldUnsafe((Il2CppObjectBase) instance, (Il2CppObjectBase) value, fieldName);
+        public unsafe static void SetFieldUnsafe(Il2CppObjectBase instance, Il2CppObjectBase value, string fieldName)
+        {
+            var instanceType = instance.GetType();
+            var classPointerStoreType = typeof(Il2CppClassPointerStore<>).MakeGenericType(instanceType);
+
+            IntPtr fieldOffset = GetFieldPointer(instanceType, fieldName);
+
+            IntPtr nativeClassPtr = (IntPtr) classPointerStoreType.GetField(nameof(Il2CppClassPointerStore<bool>.NativeClassPtr), Utils.AnyBindingFlagss).GetValue(null);
+
+            System.Runtime.CompilerServices.Unsafe.CopyBlock((void*)((long)UnhollowerBaseLib.IL2CPP.Il2CppObjectBaseToPtrNotNull(instance) + (long)(int)UnhollowerBaseLib.IL2CPP.il2cpp_field_get_offset(fieldOffset)), (void*)UnhollowerBaseLib.IL2CPP.il2cpp_object_unbox(UnhollowerBaseLib.IL2CPP.Il2CppObjectBaseToPtr(value)), (uint)UnhollowerBaseLib.IL2CPP.il2cpp_class_value_size(nativeClassPtr, ref *(uint*)null));
         }
 
         public static IEnumerator DoAfter(float time, Action action)

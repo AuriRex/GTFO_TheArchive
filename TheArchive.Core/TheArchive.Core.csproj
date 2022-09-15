@@ -63,6 +63,7 @@
     <Compile Include="Core\ArchiveNativePatcher.cs" />
     <Compile Include="Core\ArchiveSettings.cs" />
     <Compile Include="Core\Attributes\Feature\ArchivePatch.cs" />
+    <Compile Include="Core\Attributes\Feature\AutomatedFeature.cs" />
     <Compile Include="Core\Attributes\Feature\BuildConstraint.cs" />
     <Compile Include="Core\Attributes\Feature\DoNotSaveToConfig.cs" />
     <Compile Include="Core\Attributes\Feature\EnableFeatureByDefault.cs" />

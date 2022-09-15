@@ -11,8 +11,9 @@ using static TheArchive.Utilities.Il2CppUtils;
 
 namespace TheArchive.Managers
 {
-    public class LocalVanityItemDropper : InitSingletonBase<LocalVanityItemDropper>, IInitAfterDataBlocksReady, IInitCondition
+    public class LocalVanityItemDropper : InitSingletonBase<LocalVanityItemDropper>, IInitAfterDataBlocksReady, IInitCondition, IInjectLogger
     {
+        public IArchiveLogger Logger { get; set; }
 
         public CustomVanityItemsGroupDataBlock[] ItemGroups { get; private set; }
         public CustomVanityItemsTemplateDataBlock[] ItemTemplates { get; private set; }
@@ -30,10 +31,10 @@ namespace TheArchive.Managers
             ItemTemplates = ImplementationManager.GetAllCustomDataBlocksFor<CustomVanityItemsTemplateDataBlock>();
             ItemDropData = ImplementationManager.GetAllCustomDataBlocksFor<CustomVanityItemsLayerDropsDataBlock>();
 
-            ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(LocalVanityItemDropper)}.{nameof(Init)}() complete, retrieved {ItemTemplates.Length} Templates, {ItemGroups.Length} Groups and {ItemDropData.Length} Layer Drops. Layer Drops:");
+            Logger.Msg(ConsoleColor.Magenta, $"{nameof(LocalVanityItemDropper)}.{nameof(Init)}() complete, retrieved {ItemTemplates.Length} Templates, {ItemGroups.Length} Groups and {ItemDropData.Length} Layer Drops. Layer Drops:");
             foreach(var dd in ItemDropData)
             {
-                ArchiveLogger.Info($" > {dd.Name}: #Drops: {dd.LayerDrops?.Count ?? 0}, Enabled: {dd.InternalEnabled}");
+                Logger.Info($" > {dd.Name}: #Drops: {dd.LayerDrops?.Count ?? 0}, Enabled: {dd.InternalEnabled}");
             }
 
             Instance = this;
@@ -58,17 +59,17 @@ namespace TheArchive.Managers
         {
             if(TryGetGroup(groupID, out var itemGroup) && !itemGroup.HasAllOwned(playerData))
             {
-                ArchiveLogger.Msg(ConsoleColor.Magenta, $"Attempting drop of 1 Vanity Item from group \"{itemGroup.Name}\"");
+                Logger.Msg(ConsoleColor.Magenta, $"Attempting drop of 1 Vanity Item from group \"{itemGroup.Name}\"");
 
                 if(!itemGroup.GetNonOwned(playerData).TryPickRandom(out var itemId))
                 {
-                    ArchiveLogger.Info($"All items in group already in local player inventory, not dropping!");
+                    Logger.Info($"All items in group already in local player inventory, not dropping!");
                     return;
                 }
 
                 if(!TryGetTemplate(itemId, out var template))
                 {
-                    ArchiveLogger.Warning($"Template with ID {itemId} wasn't found!");
+                    Logger.Warning($"Template with ID {itemId} wasn't found!");
                 }
 
                 var item = new LocalVanityItemStorage.LocalVanityItem
@@ -78,7 +79,7 @@ namespace TheArchive.Managers
                 };
 
                 playerData.Items.Add(item);
-                ArchiveLogger.Info($"Dropped Vanity Item \"{template?.PublicName ?? $"ID:{itemId}"}\"!");
+                Logger.Info($"Dropped Vanity Item \"{template?.PublicName ?? $"ID:{itemId}"}\"!");
             }
         }
 
@@ -99,7 +100,7 @@ namespace TheArchive.Managers
 
         internal void DropFirstTimePlayingItems(LocalVanityItemStorage playerData)
         {
-            ArchiveLogger.Warning("Dropping initial Vanity Items ...");
+            Logger.Warning("Dropping initial Vanity Items ...");
             DropRandomFromGroup(3, playerData, true);
             DropRandomFromGroup(4, playerData, true);
             DropRandomFromGroup(5, playerData, true);

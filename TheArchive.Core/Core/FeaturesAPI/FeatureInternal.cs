@@ -23,6 +23,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal LateUpdate LateUpdateDelegate { get; private set; }
         internal bool HideInModSettings { get; private set; }
         internal bool DoNotSaveToConfig { get; private set; }
+        internal bool AutomatedFeature { get; private set; }
         internal bool HasAdditionalSettings => _settingsHelpers.Count > 0;
         internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
@@ -78,6 +79,7 @@ namespace TheArchive.Core.FeaturesAPI
 
             HideInModSettings = featureType.GetCustomAttribute<HideInModSettings>() != null;
             DoNotSaveToConfig = featureType.GetCustomAttribute<DoNotSaveToConfig>() != null;
+            AutomatedFeature = featureType.GetCustomAttribute<AutomatedFeature>() != null;
 
             foreach (var constraint in featureType.GetCustomAttributes<RundownConstraint>())
             {

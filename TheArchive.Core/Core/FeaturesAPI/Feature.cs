@@ -18,9 +18,14 @@ namespace TheArchive.Core.FeaturesAPI
         public bool HasAdditionalSettings => FeatureInternal.HasAdditionalSettings;
         public IEnumerable<FeatureSettingsHelper> SettingsHelpers => FeatureInternal.Settings;
 
+        /// <summary>
+        /// True if this <see cref="Feature"/> is controled via code<br/>
+        /// (button disabled in Mod Settings!)
+        /// </summary>
+        public bool IsAutomated => FeatureInternal.AutomatedFeature;
 
         /// <summary>
-        /// Logging interface for this Feature.
+        /// Logging interface for this <see cref="Feature"/>
         /// </summary>
         public IArchiveLogger FeatureLogger => FeatureInternal.FeatureLoggerInstance;
 
@@ -39,31 +44,43 @@ namespace TheArchive.Core.FeaturesAPI
         public static GameBuildInfo BuildInfo { get; internal set; }
 
         /// <summary>
-        /// The Features Name,<br/> used in Mod Settings
+        /// The <see cref="Feature"/>s Name<br/>
+        /// used in Mod Settings
         /// </summary>
         public abstract string Name { get; }
+
         /// <summary>
-        /// A short description about this Feature,<br/> used in Mod Settings
+        /// A text describing this <see cref="Feature"/><br/>
+        /// used in Mod Settings
         /// </summary>
         public virtual string Description { get; set; } = string.Empty;
+
         /// <summary>
-        /// Used to group multiple settings together under one header,<br/>used in Mod Settings
+        /// Used to group multiple settings together under one header<br/>
+        /// used in Mod Settings
         /// </summary>
         public virtual string Group => null;
+
         /// <summary>
         /// If set, prevents calling of <see cref="OnEnable"/> and <see cref="OnDisable"/> methods and only switches the config state of this <see cref="Feature"/>.
         /// </summary>
         public virtual bool RequiresRestart => false;
+
         /// <summary>
         /// If set, prevents calling of <see cref="OnEnable"/> on startup once.<br/>
         /// <see cref="OnEnable"/> gets called normally after that.
         /// </summary>
         public virtual bool SkipInitialOnEnable => false;
+
         /// <summary>
-        /// If the feature requires a UnityEngine AudioListener Component setup on the LocalPlayer GameObject
+        /// If the <see cref="Feature"/> requires a UnityEngine AudioListener Component setup on the LocalPlayer GameObject
         /// </summary>
         public virtual bool RequiresUnityAudioListener => false;
 
+        /// <summary>
+        /// If this <see cref="Feature"/>s settings should be put into a sub menu inside of the Mod Settings menu
+        /// </summary>
+        public virtual bool PlaceSettingsInSubMenu => false;
 
         /// <summary>
         /// Called once upon application start

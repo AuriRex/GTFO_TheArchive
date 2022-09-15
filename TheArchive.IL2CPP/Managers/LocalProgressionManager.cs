@@ -12,6 +12,7 @@ namespace TheArchive.Managers
     public class LocalProgressionManager : InitSingletonBase<LocalProgressionManager>, IInitAfterGameDataInitialized, IInjectLogger
     {
         public ExpeditionSession CurrentActiveSession { get; private set; }
+
         public IArchiveLogger Logger { get; set; }
 
         private static LocalRundownProgression _customRundownProgression = null;
@@ -37,7 +38,6 @@ namespace TheArchive.Managers
 
         public void Init()
         {
-            Instance = this;
             Logger.Msg(ConsoleColor.Magenta, "New Progression Manager has inited!");
         }
 
@@ -73,6 +73,8 @@ namespace TheArchive.Managers
             CurrentActiveSession?.OnExpeditionCompleted(success);
 
             CustomRundownProgression.AddSessionResults(CurrentActiveSession);
+
+            SaveToProgressionFile(CustomRundownProgression);
         }
 
         public static void SaveToProgressionFile(LocalRundownProgression data)

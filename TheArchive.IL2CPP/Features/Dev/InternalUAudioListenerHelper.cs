@@ -10,6 +10,7 @@ namespace TheArchive.Features.Dev
 {
     [HideInModSettings]
     [DoNotSaveToConfig]
+    [AutomatedFeature]
     internal class InternalUAudioListenerHelper : Feature
     {
         public override string Name => nameof(InternalUAudioListenerHelper);

@@ -11,9 +11,11 @@ using static TheArchive.Models.Boosters.LocalBoosterImplant;
 
 namespace TheArchive.Managers
 {
-    public class LocalBoosterDropper : InitSingletonBase<LocalBoosterDropper>, IInitAfterDataBlocksReady, IInitCondition
+    public class LocalBoosterDropper : InitSingletonBase<LocalBoosterDropper>, IInitAfterDataBlocksReady, IInitCondition, IInjectLogger
     {
         private static bool _hasBeenSetup = false;
+
+        public IArchiveLogger Logger { get; set; }
 
         public CustomBoosterImplantTemplateDataBlock[] MutedTemplates { get; private set; }
         public CustomBoosterImplantTemplateDataBlock[] BoldTemplates { get; private set; }
@@ -31,10 +33,11 @@ namespace TheArchive.Managers
         {
             if(_hasBeenSetup)
             {
-                ArchiveLogger.Info($"{nameof(LocalBoosterDropper)} already setup, skipping ...");
+                Logger.Info($"{nameof(LocalBoosterDropper)} already setup, skipping ...");
                 return;
             }
-            ArchiveLogger.Info($"Setting up {nameof(LocalBoosterDropper)} ...");
+
+            Logger.Info($"Setting up {nameof(LocalBoosterDropper)} ...");
 
             var templates = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantTemplateDataBlock>();
 
@@ -45,8 +48,8 @@ namespace TheArchive.Managers
             Effects = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantEffectDataBlock>();
             Conditions = ImplementationManager.GetAllCustomDataBlocksFor<CustomBoosterImplantConditionDataBlock>();
 
-            ArchiveLogger.Msg(ConsoleColor.Magenta, $"{nameof(LocalBoosterDropper)}.{nameof(Init)}() complete, retrieved {MutedTemplates.Length} Muted, {BoldTemplates.Length} Bold and {AgrressiveTemplates.Length} Agrressive Templates as well as {Effects?.Length} Effects and {Conditions?.Length} Conditions.");
-            Instance = this;
+            Logger.Msg(ConsoleColor.Magenta, $"{nameof(LocalBoosterDropper)}.{nameof(Init)}() complete, retrieved {MutedTemplates.Length} Muted, {BoldTemplates.Length} Bold and {AgrressiveTemplates.Length} Agrressive Templates as well as {Effects?.Length} Effects and {Conditions?.Length} Conditions.");
+
             _hasBeenSetup = true;
         }
 
@@ -157,9 +160,8 @@ namespace TheArchive.Managers
             {
 
             }
-            
 
-            ArchiveLogger.Msg(ConsoleColor.Magenta, $"Generated booster: {template.PublicName} - {effectDB?.PublicShortName} {conditionDB?.PublicShortName} ({effectDB?.PublicName} when {conditionDB?.PublicName})");
+            Logger.Msg(ConsoleColor.Magenta, $"Generated booster: {template.PublicName} - {effectDB?.PublicShortName} {conditionDB?.PublicShortName} ({effectDB?.PublicName} when {conditionDB?.PublicName})");
 
             return value;
         }
@@ -186,7 +188,7 @@ namespace TheArchive.Managers
 
             if(!data.TryAddBooster(newBooster))
             {
-                ArchiveLogger.Msg($"Did not add Booster as the inventory for category {category} is full! (This message should not appear!)");
+                Logger.Info($"Did not add Booster as the inventory for category {category} is full! (This message should not appear!)");
             }
         }
     }

@@ -10,8 +10,9 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Managers
 {
-    public class LocalBoosterManager : InitSingletonBase<LocalBoosterManager>, IInitAfterGameDataInitialized, IInitCondition
+    public class LocalBoosterManager : InitSingletonBase<LocalBoosterManager>, IInitAfterGameDataInitialized, IInitCondition, IInjectLogger
     {
+        public IArchiveLogger Logger { get; set; }
 
         public static bool DoConsumeBoosters { get; set; } = true;
 
@@ -63,7 +64,7 @@ namespace TheArchive.Managers
 
         public void Init()
         {
-            Instance = this;
+
         }
 
         internal void SaveBoostersToDisk()
@@ -133,12 +134,12 @@ namespace TheArchive.Managers
 
                     if (cat.InventoryIsFull)
                     {
-                        ArchiveLogger.Warning($"Inventory full, missed 1 {cat.CategoryType} booster.");
+                        Logger.Warning($"Inventory full, missed 1 {cat.CategoryType} booster.");
                         cat.Missed++;
                         continue;
                     }
 
-                    ArchiveLogger.Notice($"Generating 1 {cat.CategoryType} booster ... [CurrencyRemaining:{cat.Currency}]");
+                    Logger.Notice($"Generating 1 {cat.CategoryType} booster ... [CurrencyRemaining:{cat.Currency}]");
                     BoosterDropper.GenerateAndAddBooster(ref _customBoosterImplantPlayerData, cat.CategoryType);
                 }
                 
@@ -157,14 +158,14 @@ namespace TheArchive.Managers
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-            ArchiveLogger.Msg(ConsoleColor.DarkRed, $"Saving boosters to disk at: {LocalFiles.BoostersPath}");
+            Instance.Logger.Msg(ConsoleColor.DarkRed, $"Saving boosters to disk at: {LocalFiles.BoostersPath}");
             var json = JsonConvert.SerializeObject(data, Formatting.Indented);
             File.WriteAllText(LocalFiles.BoostersPath, json);
         }
 
         public static LocalBoosterImplantPlayerData LoadFromBoosterFile()
         {
-            ArchiveLogger.Msg(ConsoleColor.Green, $"Loading boosters from disk at: {LocalFiles.BoostersPath}");
+            Instance.Logger.Msg(ConsoleColor.Green, $"Loading boosters from disk at: {LocalFiles.BoostersPath}");
             if (!File.Exists(LocalFiles.BoostersPath))
                 throw new FileNotFoundException();
             var json = File.ReadAllText(LocalFiles.BoostersPath);

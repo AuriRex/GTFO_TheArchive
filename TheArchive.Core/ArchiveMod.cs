@@ -77,6 +77,9 @@ namespace TheArchive
 
             LoadConfig();
 
+            HarmonyLib.Tools.Logger.ChannelFilter |= HarmonyLib.Tools.Logger.LogChannel.Error;
+            HarmonyLib.Tools.Logger.MessageReceived += (handler, eventArgs) => ArchiveLogger.Error(eventArgs.Message);
+
             GTFOLogger.Logger = LoaderWrapper.CreateLoggerInstance("GTFO-Internals", ConsoleColor.DarkGray);
 
             CurrentRundown = BuildDB.GetCurrentRundownID(LocalFiles.BuildNumber);
@@ -378,11 +381,10 @@ namespace TheArchive
 
             bool init = true;
 
-            if (typeof(IInitCondition).IsAssignableFrom(type))
+            var initSingletonbase_Type = typeof(InitSingletonBase<>).MakeGenericType(type);
+            if (initSingletonbase_Type.IsAssignableFrom(type))
             {
-                var conditional = (IInitCondition)instance;
-
-                init = conditional.InitCondition();
+                initSingletonbase_Type.GetProperty(nameof(InitSingletonBase<String>.Instance), AnyBindingFlagss).SetValue(null, instance);
             }
 
             if (typeof(IInjectLogger).IsAssignableFrom(type))
@@ -392,14 +394,25 @@ namespace TheArchive
                 injectLoggerable.Logger = LoaderWrapper.CreateArSubLoggerInstance(type.Name, ConsoleColor.Green);
             }
 
+            if (typeof(IInitCondition).IsAssignableFrom(type))
+            {
+                var conditional = (IInitCondition)instance;
+
+                init = conditional.InitCondition();
+            }
+
             if (init)
             {
-                //ArchiveLogger.Info($"Initializing instance of type \"{type.FullName}\", Interfaces:[{string.Join(",", type.GetInterfaces().Select(x => x.FullName))}]");
-                instance.Init();
-            }
-            else
-            {
-                //ArchiveLogger.Info($"NOT Initializing instance of type \"{type.FullName}\", Interfaces:[{string.Join(",", type.GetInterfaces().Select(x => x.FullName))}], {nameof(IInitCondition.InitCondition)} returned false");
+                try
+                {
+                    instance.Init();
+                    initSingletonbase_Type.GetProperty(nameof(InitSingletonBase<String>.HasBeenInitialized), AnyBindingFlagss).SetValue(null, true);
+                }
+                catch(Exception ex)
+                {
+                    ArchiveLogger.Error($"{nameof(IInitializable.Init)} method on Type \"{type.FullName}\" failed!");
+                    ArchiveLogger.Exception(ex);
+                }
             }
         }
 

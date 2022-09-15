@@ -7,6 +7,7 @@ namespace TheArchive.Core.Settings
 {
     public class RichPresenceSettings
     {
+        [FSIgnore]
         public bool DEBUG_RichPresenceLogSpam { get; set; } = false;
 
         [JsonIgnore, FSIgnore]

@@ -9,8 +9,9 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Managers
 {
-    public class LocalVanityItemManager : InitSingletonBase<LocalVanityItemManager>, IInitAfterDataBlocksReady, IInitCondition
+    public class LocalVanityItemManager : InitSingletonBase<LocalVanityItemManager>, IInitAfterDataBlocksReady, IInitCondition, IInjectLogger
     {
+        public IArchiveLogger Logger { get; set; }
 
         private LocalVanityItemStorage _localVanityItemStorage;
         public LocalVanityItemStorage LocalVanityItemPlayerData
@@ -96,14 +97,14 @@ namespace TheArchive.Managers
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-            ArchiveLogger.Msg(ConsoleColor.DarkRed, $"Saving VanityItems to disk at: {LocalFiles.VanityItemsPath}");
+            Instance.Logger.Msg(ConsoleColor.DarkRed, $"Saving VanityItems to disk at: {LocalFiles.VanityItemsPath}");
             var json = JsonConvert.SerializeObject(data, Formatting.Indented);
             File.WriteAllText(LocalFiles.VanityItemsPath, json);
         }
 
         public static LocalVanityItemStorage LoadFromLocalFile()
         {
-            ArchiveLogger.Msg(ConsoleColor.Green, $"Loading VanityItems from disk at: {LocalFiles.VanityItemsPath}");
+            Instance.Logger.Msg(ConsoleColor.Green, $"Loading VanityItems from disk at: {LocalFiles.VanityItemsPath}");
             if (!File.Exists(LocalFiles.VanityItemsPath))
                 throw new FileNotFoundException();
             var json = File.ReadAllText(LocalFiles.VanityItemsPath);
