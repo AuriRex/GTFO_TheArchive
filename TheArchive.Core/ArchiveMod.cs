@@ -307,8 +307,7 @@ namespace TheArchive
                 }
             }
 
-            /*var rundown = Utils.IntToRundownEnum((int) rundownId);
-            ApplyPatches(rundown);*/
+            FeatureManager.Instance.OnGameDataInitialized();
 
             GameDataInitialized?.Invoke(CurrentRundown);
         }

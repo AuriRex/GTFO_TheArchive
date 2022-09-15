@@ -422,7 +422,9 @@ namespace TheArchive.Core.FeaturesAPI
             if (InternalDisabled) return false;
 
             if (_feature.Enabled) return false;
+
             ApplyPatches();
+
             _feature.Enabled = true;
             _isEnabledPropertyInfo?.SetValue(null, true);
             if(callOnEnable)
@@ -462,8 +464,29 @@ namespace TheArchive.Core.FeaturesAPI
             return true;
         }
 
+        internal void GameDataInitialized()
+        {
+            if (InternalDisabled) return;
+
+            if (!_feature.Enabled) return;
+
+            try
+            {
+                _feature.OnGameDataInitialized();
+            }
+            catch (Exception ex)
+            {
+                _FILogger.Error($"Exception thrown during {nameof(Feature.OnGameDataInitialized)} in Feature {_feature.Identifier}!");
+                _FILogger.Exception(ex);
+            }
+        }
+
         internal void DatablocksReady()
         {
+            if (InternalDisabled) return;
+
+            if (!_feature.Enabled) return;
+
             try
             {
                 _feature.OnDatablocksReady();
@@ -490,6 +513,10 @@ namespace TheArchive.Core.FeaturesAPI
 
         internal void GameStateChanged(int state)
         {
+            if (InternalDisabled) return;
+
+            if (!_feature.Enabled) return;
+
             try
             {
                 object gameState = state;

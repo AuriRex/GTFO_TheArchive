@@ -24,7 +24,7 @@ namespace TheArchive.HarmonyPatches.Patches
         // Will never be called because it's private and it's caller is patched
         /*[ArchivePatch(typeof(PlayFabManager), "RefreshGlobalTitleData")]*/
 
-        [ArchivePatch(typeof(PlayFabManager), "TryGetRundownTimerData")]
+        /*[ArchivePatch(typeof(PlayFabManager), "TryGetRundownTimerData")]
         internal static class TryGetRundownTimerDataPatch
         {
             public static bool Prefix(ref bool __result, out RundownTimerData data)
@@ -96,7 +96,7 @@ namespace TheArchive.HarmonyPatches.Patches
         [ArchivePatch(typeof(PlayFabManager), nameof(PlayFabManager.OnGetAuthSessionTicketResponse))]
         internal class OnGetAuthSessionTicketResponsePatch
         {
-            public static bool Prefix(/*PlayFabManager __instance*/)
+            public static bool Prefix(*//*PlayFabManager __instance*//*)
             {
                 ArchiveLogger.Msg(ConsoleColor.Yellow, "Reading Playfab files ... ");
                 ReadAllFilesFromDisk();
@@ -272,7 +272,7 @@ namespace TheArchive.HarmonyPatches.Patches
         [ArchivePatch(typeof(PlayFabManager), "RefreshLocalPlayerTitleData")]
         internal class RefreshLocalPlayerTitleDataPatch
         {
-            public static bool Prefix(Il2CppSystem.Action OnSuccess, PlayFabManager __instance/*, ref Dictionary<string, string> ___m_localPlayerData*/)
+            public static bool Prefix(Il2CppSystem.Action OnSuccess, PlayFabManager __instance*//*, ref Dictionary<string, string> ___m_localPlayerData*//*)
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkYellow, "Canceled RefreshLocalPlayerTitleData");
 
@@ -307,7 +307,7 @@ namespace TheArchive.HarmonyPatches.Patches
 
                 return false;
             }
-        }
+        }*/
 
     }
 }

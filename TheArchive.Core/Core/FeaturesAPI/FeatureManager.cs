@@ -49,21 +49,20 @@ namespace TheArchive.Core.FeaturesAPI
             ArchiveMod.Instance.GameStateChanged += OnGameStateChanged;
         }
 
-        public void CheckSpecialFeatures()
+        internal void OnGameDataInitialized()
         {
-            var requireAudioListner = RegisteredFeatures.Where(f => f.Enabled && f.RequiresUnityAudioListener);
-            if (requireAudioListner.Count() > 0)
+            _logger.Debug($"{nameof(OnGameDataInitialized)}()");
+            try
             {
-                if(UnityAudioListenerHelper != null && !UnityAudioListenerHelper.Enabled)
+                foreach (var feature in RegisteredFeatures)
                 {
-                    _logger.Notice($"Some Features require a UnityEngine AudioListener: [{string.Join("], [", requireAudioListner.Select(f => f.Identifier))}]");
-                    EnableFeature(UnityAudioListenerHelper);
+                    feature.FeatureInternal.GameDataInitialized();
                 }
             }
-            else
+            catch (Exception ex)
             {
-                if (UnityAudioListenerHelper != null && UnityAudioListenerHelper.Enabled)
-                    DisableFeature(UnityAudioListenerHelper);
+                _logger.Error($"Exception thrown in {nameof(OnGameDataInitialized)}! {ex}: {ex.Message}");
+                _logger.Exception(ex);
             }
         }
 
@@ -74,8 +73,6 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 foreach (var feature in RegisteredFeatures)
                 {
-                    if (feature.FeatureInternal.InternalDisabled) continue;
-
                     feature.FeatureInternal.DatablocksReady();
                 }
             }
@@ -210,8 +207,9 @@ namespace TheArchive.Core.FeaturesAPI
 
             if (feature.Enabled) return;
 
-            if (feature.AppliesToThisGameBuild)
-                _logger.Msg(ConsoleColor.Green, $"Enabling {nameof(Feature)} {feature.Identifier} ...");
+            if (!feature.AppliesToThisGameBuild) return;
+
+            _logger.Msg(ConsoleColor.Green, $"Enabling {(feature.IsAutomated ? "automated " : String.Empty)}{nameof(Feature)} {feature.Identifier} ...");
 
             feature.FeatureInternal.Enable();
             if (feature.FeatureInternal.HasUpdateMethod)
@@ -243,6 +241,46 @@ namespace TheArchive.Core.FeaturesAPI
             if (feature.FeatureInternal.HasLateUpdateMethod)
                 _lateUpdateMethods.Remove(feature.FeatureInternal.LateUpdateDelegate);
             OnFeatureDisabled?.Invoke(feature);
+        }
+
+        public void CheckSpecialFeatures()
+        {
+            var requireAudioListner = RegisteredFeatures.Where(f => f.Enabled && f.RequiresUnityAudioListener);
+            if (requireAudioListner.Count() > 0)
+            {
+                if (UnityAudioListenerHelper != null && !UnityAudioListenerHelper.Enabled)
+                {
+                    _logger.Notice($"Some Features require a UnityEngine AudioListener: [{string.Join("], [", requireAudioListner.Select(f => f.Identifier))}]");
+                    EnableFeature(UnityAudioListenerHelper);
+                }
+            }
+            else
+            {
+                if (UnityAudioListenerHelper != null && UnityAudioListenerHelper.Enabled)
+                    DisableFeature(UnityAudioListenerHelper);
+            }
+        }
+
+        public static void EnableAutomatedFeature(Type type)
+        {
+            var feature = Instance.RegisteredFeatures.FirstOrDefault(x => x.GetType() == type);
+
+            if (feature == null) return;
+
+            if (!feature.IsAutomated) return;
+
+            Instance.EnableFeature(feature, false);
+        }
+
+        public static void DisableAutomatedFeature(Type type)
+        {
+            var feature = Instance.RegisteredFeatures.FirstOrDefault(x => x.GetType() == type);
+
+            if (feature == null) return;
+
+            if (!feature.IsAutomated) return;
+
+            Instance.DisableFeature(feature, false);
         }
 
         internal static Feature GetById(string featureIdentifier)

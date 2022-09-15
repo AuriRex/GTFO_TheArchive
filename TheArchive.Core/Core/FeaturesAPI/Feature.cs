@@ -107,6 +107,14 @@ namespace TheArchive.Core.FeaturesAPI
         }
 
         /// <summary>
+        /// Called once after the game data has initialized
+        /// </summary>
+        public virtual void OnGameDataInitialized()
+        {
+
+        }
+
+        /// <summary>
         /// Called once after datablocks have been loaded
         /// </summary>
         public virtual void OnDatablocksReady()

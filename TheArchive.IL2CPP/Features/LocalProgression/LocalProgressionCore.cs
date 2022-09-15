@@ -31,7 +31,12 @@ namespace TheArchive.Features.LocalProgression
 
         public new static IArchiveLogger FeatureLogger { get; set; }
 
-#region comments
+        public override void OnGameDataInitialized()
+        {
+            FeatureManager.EnableAutomatedFeature(typeof(PlayFabManagerPatches));
+        }
+
+        #region comments
         // Rundown 4
         // + public Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request, [Optional] RequestContext context)
         // + public Task<LayerProgressionResult> LayerProgressionAsync(LayerProgressionRequest request, [Optional] RequestContext context)
@@ -74,9 +79,9 @@ namespace TheArchive.Features.LocalProgression
 
         // Rundown 7
         // (no changes)
-#endregion comments
+        #endregion comments
 
-#region DropServerManager
+        #region DropServerManager
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.Latest)]
         [ArchivePatch(nameof(DropServerManager.Setup))]
         public static class DropServerManager_Setup_Patch
