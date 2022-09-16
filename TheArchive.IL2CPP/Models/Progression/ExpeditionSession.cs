@@ -19,6 +19,8 @@ namespace TheArchive.Models.Progression
         public string ExpeditionId { get; private set; } = string.Empty;
         public string SessionId { get; private set; } = string.Empty;
 
+        public int ArtifactsCollected { get; set; } = 0;
+
         public HashSet<Layers> DiscoveredLayers { get; private set; } = new HashSet<Layers>();
         public bool PrisonerEfficiencyCompleted
         {

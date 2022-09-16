@@ -1,6 +1,5 @@
 ﻿
 using DropServer;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -10,17 +9,8 @@ using UnhollowerRuntimeLib;
 
 namespace TheArchive.Models
 {
-	public class LocalRundownProgression
+    public class LocalRundownProgression
     {
-
-		[JsonIgnore]
-		public static JsonSerializerSettings Settings = new JsonSerializerSettings()
-		{
-			Formatting = Formatting.Indented,
-			DefaultValueHandling = DefaultValueHandling.Populate,
-			MissingMemberHandling = MissingMemberHandling.Ignore
-		};
-
 		public static float ARTIFACT_HEAT_MIN { get; set; } = 0.2f;
 		public static float ARTIFACT_HEAT_UNCOMPLETED_MIN { get; set; } = 0.5f;
 
@@ -50,8 +40,27 @@ namespace TheArchive.Models
 				expeditionEntry.AllLayerCompletionCount++;
 			}
 
-			// Artifact Heat stuffs
-#warning TODO: Artifact Heat stuffs
+			// Much love to RandomKenny <3
+			// https://www.youtube.com/watch?v=H00bStiiiFk
+			if (session.ArtifactsCollected > 0)
+            {
+				var minimumHeatValue = expeditionEntry.HasBeenCompletedBefore() ? ARTIFACT_HEAT_MIN : ARTIFACT_HEAT_UNCOMPLETED_MIN;
+
+				var newHeat = Math.Max(minimumHeatValue, expeditionEntry.ArtifactHeat - (session.ArtifactsCollected * 1.5f / 100));
+
+				expeditionEntry.ArtifactHeat = newHeat;
+
+				foreach (var otherExpedition in Expeditions.Values)
+                {
+					if (otherExpedition == expeditionEntry) continue;
+					if (otherExpedition == null) continue;
+					if (otherExpedition.ArtifactHeat >= 1f) continue;
+
+					var otherHeatNew = otherExpedition.ArtifactHeat + (session.ArtifactsCollected * 0.5f / 100);
+					
+					otherExpedition.ArtifactHeat = Math.Min(1f, otherHeatNew);
+				}
+            }
 		}
 
 		public RundownProgression ToBaseGameProgression()
@@ -106,6 +115,8 @@ namespace TheArchive.Models
 			public LayerSet Layers = new LayerSet();
 
 			public float ArtifactHeat = 1f;
+
+			public bool HasBeenCompletedBefore() => (Layers?.Main?.CompletionCount ?? 0) > 0;
 
 			public static Expedition FromBaseGame(RundownProgression.Expedition baseGameExpedition)
             {

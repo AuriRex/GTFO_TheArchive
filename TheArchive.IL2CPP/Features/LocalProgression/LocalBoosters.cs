@@ -1,4 +1,5 @@
-﻿using DropServer;
+﻿using BoosterImplants;
+using DropServer;
 using System;
 using System.Reflection;
 using TheArchive.Core.Attributes;
@@ -23,6 +24,16 @@ namespace TheArchive.Features.LocalProgression
         public static new IArchiveLogger FeatureLogger { get; set; }
 
 #if IL2CPP
+        [ArchivePatch(nameof(ArtifactInventory.OnStateChange))]
+        public static class ArtifactInventory_OnStateChange_Patch
+        {
+            public static Type Type() => typeof(ArtifactInventory);
+            public static void Postfix(ArtifactInventory __instance)
+            {
+                LocalProgressionManager.Instance.ArtifactCountUpdated(__instance.CommonCount + __instance.RareCount + __instance.UncommonCount);
+            }
+        }
+
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetBoosterImplantPlayerDataAsync))]
         public static class DropServerClientAPI_GetBoosterImplantPlayerDataAsync_Patch
         {

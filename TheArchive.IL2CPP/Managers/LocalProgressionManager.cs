@@ -68,6 +68,12 @@ namespace TheArchive.Managers
             CurrentActiveSession?.OnCheckpointReset();
         }
 
+        public void ArtifactCountUpdated(int count)
+        {
+            CurrentActiveSession.ArtifactsCollected = count;
+            Logger.Info($"current Artifact count: {count}");
+        }
+
         public void EndCurrentExpeditionSession(bool success)
         {
             CurrentActiveSession?.OnExpeditionCompleted(success);
