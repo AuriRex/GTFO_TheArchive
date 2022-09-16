@@ -2,6 +2,7 @@
 using DropServer;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using TheArchive.Models.Progression;
 using TheArchive.Utilities;
@@ -16,21 +17,27 @@ namespace TheArchive.Models
 
 		public Dictionary<string, Expedition> Expeditions = new Dictionary<string, Expedition>();
 
-		public void AddSessionResults(ExpeditionSession session)
+		public bool AddSessionResults(ExpeditionSession session, out ExpeditionCompletionData completionData)
 		{
-			if (session == null) return;
+			if (session == null)
+            {
+				completionData = default;
+				return false;
+			}
 
 			if (Expeditions == null) Expeditions = new Dictionary<string, Expedition>();
 
 			Expedition expeditionEntry = GetOrAdd(Expeditions, session.ExpeditionId);
+
+			bool isFirstTimeCompletion = !expeditionEntry.HasBeenCompletedBefore();
 
 			foreach (var stateKvp in session.CurrentData.LayerStates)
             {
 				Layers layer = stateKvp.Key;
 				LayerState state = stateKvp.Value;
 
-
 				Expedition.Layer expeditionLayer = expeditionEntry.Layers.GetOrAddLayer(layer);
+
 				expeditionLayer.IncreaseStateAndCompletion(state);
 				expeditionEntry.Layers.SetLayer(layer, expeditionLayer);
 			}
@@ -40,15 +47,17 @@ namespace TheArchive.Models
 				expeditionEntry.AllLayerCompletionCount++;
 			}
 
+			var previousHeat = expeditionEntry.ArtifactHeat;
+
 			// Much love to RandomKenny <3
 			// https://www.youtube.com/watch?v=H00bStiiiFk
 			if (session.ArtifactsCollected > 0)
             {
-				var minimumHeatValue = expeditionEntry.HasBeenCompletedBefore() ? ARTIFACT_HEAT_MIN : ARTIFACT_HEAT_UNCOMPLETED_MIN;
+				var minimumHeatValue = isFirstTimeCompletion ? ARTIFACT_HEAT_MIN : ARTIFACT_HEAT_UNCOMPLETED_MIN;
 
-				var newHeat = Math.Max(minimumHeatValue, expeditionEntry.ArtifactHeat - (session.ArtifactsCollected * 1.5f / 100));
+				var newHeat = expeditionEntry.ArtifactHeat - (session.ArtifactsCollected * 1.5f / 100); 
 
-				expeditionEntry.ArtifactHeat = newHeat;
+				expeditionEntry.ArtifactHeat = Math.Max(minimumHeatValue, newHeat);
 
 				foreach (var otherExpedition in Expeditions.Values)
                 {
@@ -61,6 +70,15 @@ namespace TheArchive.Models
 					otherExpedition.ArtifactHeat = Math.Min(1f, otherHeatNew);
 				}
             }
+
+			completionData = new ExpeditionCompletionData
+			{
+				PreArtifactHeat = previousHeat,
+				NewArtifactHeat = expeditionEntry.ArtifactHeat,
+				WasFirstTimeCompletion = isFirstTimeCompletion,
+				RawSessionData = session,
+			};
+			return true;
 		}
 
 		public RundownProgression ToBaseGameProgression()

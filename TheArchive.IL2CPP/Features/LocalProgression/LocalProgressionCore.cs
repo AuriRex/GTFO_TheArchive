@@ -36,6 +36,15 @@ namespace TheArchive.Features.LocalProgression
             FeatureManager.EnableAutomatedFeature(typeof(PlayFabManagerPatches));
         }
 
+        [ArchivePatch(typeof(GS_InLevel), nameof(GS_InLevel.Enter))]
+        public class GS_InLevel_Enter_Patch
+        {
+            public static void Postfix()
+            {
+                LocalProgressionManager.Instance.OnLevelEntered();
+            }
+        }
+
         #region comments
         // Rundown 4
         // + public Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request, [Optional] RequestContext context)
@@ -127,7 +136,6 @@ namespace TheArchive.Features.LocalProgression
 #endregion DropServerManager
 
         // Does not appear to be called in R5 anymore, removed in R6
-        //public unsafe Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request, [Optional] RequestContext context)
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.RundownFive)]
         [ArchivePatch("ExpeditionSuccessAsync")]
         public static class DropServerClientAPI_ExpeditionSuccessAsync_Patch
@@ -282,7 +290,7 @@ namespace TheArchive.Features.LocalProgression
             public static Type Type() => typeof(CheckpointManager);
             public static void Prefix()
             {
-                FeatureLogger.Notice($"Saving checkpoint.");
+                LocalProgressionManager.Instance.SaveAtCheckpoint();
             }
         }
 
@@ -293,7 +301,7 @@ namespace TheArchive.Features.LocalProgression
             public static Type Type() => typeof(CheckpointManager);
             public static void Prefix()
             {
-                FeatureLogger.Notice($"Reloading checkpoint.");
+                LocalProgressionManager.Instance.ReloadFromCheckpoint();
             }
         }
 #endregion checkpoint

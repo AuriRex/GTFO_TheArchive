@@ -11,6 +11,7 @@ namespace TheArchive.Models.Progression
         public ExpeditionSessionData CurrentData { get; private set; } = null;
         public bool HasCheckpointBeenUsed { get; private set; } = false;
         public bool ExpeditionSurvived { get; private set; } = false;
+        public DateTimeOffset DropTime { get; private set; }
         public DateTimeOffset StartTime { get; private set; }
         public DateTimeOffset EndTime { get; private set; }
 
@@ -19,9 +20,8 @@ namespace TheArchive.Models.Progression
         public string ExpeditionId { get; private set; } = string.Empty;
         public string SessionId { get; private set; } = string.Empty;
 
-        public int ArtifactsCollected { get; set; } = 0;
+        public int ArtifactsCollected { get; internal set; } = 0;
 
-        public HashSet<Layers> DiscoveredLayers { get; private set; } = new HashSet<Layers>();
         public bool PrisonerEfficiencyCompleted
         {
             get
@@ -38,14 +38,14 @@ namespace TheArchive.Models.Progression
             ExpeditionId = expeditionId;
             SessionId = sessionId;
             _logger = logger;
-            StartTime = DateTimeOffset.UtcNow;
+            DropTime = DateTimeOffset.UtcNow;
 
             CurrentData = new ExpeditionSessionData(logger);
 
             SetLayer(Layers.Main, LayerState.Entered);
         }
 
-        public static ExpeditionSession InitNewSession(string rundownId, string expeditionId, string sessionId, IArchiveLogger logger)
+        internal static ExpeditionSession InitNewSession(string rundownId, string expeditionId, string sessionId, IArchiveLogger logger)
         {
             var session = new ExpeditionSession(rundownId, expeditionId, sessionId, logger);
 
@@ -54,21 +54,30 @@ namespace TheArchive.Models.Progression
             return session;
         }
 
-        public void OnCheckpointSave()
+        internal void OnLevelEntered()
         {
+            StartTime = DateTimeOffset.UtcNow;
+        }
+
+        internal void OnCheckpointSave()
+        {
+            _logger.Info($"Saving current {nameof(ExpeditionSessionData)} at checkpoint.");
             SavedData = CurrentData.Clone();
         }
 
-        public void OnCheckpointReset()
+        internal void OnCheckpointReset()
         {
+            if (!HasCheckpointBeenUsed)
+                _logger.Notice("Checkpoint has been used!");
             HasCheckpointBeenUsed = true;
             if(SavedData != null)
             {
+                _logger.Info($"Resetting previous {nameof(ExpeditionSessionData)} from checkpoint.");
                 CurrentData = SavedData.Clone();
             }
         }
 
-        public void OnExpeditionCompleted(bool success)
+        internal void OnExpeditionCompleted(bool success)
         {
             EndTime = DateTimeOffset.UtcNow;
 
@@ -83,27 +92,16 @@ namespace TheArchive.Models.Progression
             _logger.Info($"[{nameof(ExpeditionSession)}] Data: {CurrentData}");
         }
 
-        public void SetLayer(Layers layer, LayerState state)
+        internal void SetLayer(Layers layer, LayerState state)
         {
-            if(state != LayerState.Undiscovered)
-                DiscoveredLayers.Add(layer);
             CurrentData.SetOnlyIncreaseLayerState(layer, state);
         }
 
-        public void DiscoverLayer(Layers layer)
+        public bool HasLayerBeenCompleted(Layers layer)
         {
-            DiscoveredLayers.Add(layer);
-            CurrentData.SetOnlyIncreaseLayerState(layer, LayerState.Discovered);
-        }
+            if (!CurrentData.LayerStates.TryGetValue(layer, out var state)) return false;
 
-        public void EnterLayer(Layers layer)
-        {
-            CurrentData.SetOnlyIncreaseLayerState(layer, LayerState.Entered);
-        }
-
-        public void CompleteLayer(Layers layer)
-        {
-            CurrentData.SetOnlyIncreaseLayerState(layer, LayerState.Completed);
+            return state == LayerState.Completed;
         }
 
         public class ExpeditionSessionData
@@ -112,12 +110,12 @@ namespace TheArchive.Models.Progression
 
             private readonly IArchiveLogger _logger;
 
-            public ExpeditionSessionData(IArchiveLogger logger)
+            internal ExpeditionSessionData(IArchiveLogger logger)
             {
                 _logger = logger;
             }
 
-            public void SetOnlyIncreaseLayerState(Layers layer, LayerState state)
+            internal void SetOnlyIncreaseLayerState(Layers layer, LayerState state)
             {
                 if (LayerStates.TryGetValue(layer, out var currentState))
                 {
@@ -134,7 +132,7 @@ namespace TheArchive.Models.Progression
                 LayerStates.Add(layer, state);
             }
 
-            public void SetLayerState(Layers layer, LayerState state)
+            internal void SetLayerState(Layers layer, LayerState state)
             {
                 if(LayerStates.TryGetValue(layer, out var currentState))
                 {

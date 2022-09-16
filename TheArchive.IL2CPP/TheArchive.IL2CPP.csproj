@@ -360,6 +360,7 @@
     <Compile Include="Managers\OldLocalProgressionManager.cs" />
     <Compile Include="Managers\LocalVanityItemDropper.cs" />
     <Compile Include="Managers\LocalVanityItemManager.cs" />
+    <Compile Include="Models\Progression\ExpeditionCompletionData.cs" />
     <Compile Include="Utilities\SColorExtensions.cs" />
     <Compile Include="Utilities\SoundEventCache.cs" />
     <Compile Include="Models\DataBlocks\CustomVanityItemsGroupDataBlock.cs" />

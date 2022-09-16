@@ -15,6 +15,8 @@ namespace TheArchive.Managers
 
         public IArchiveLogger Logger { get; set; }
 
+        public static event Action<ExpeditionCompletionData> OnExpeditionCompleted;
+
         private static LocalRundownProgression _customRundownProgression = null;
         public static LocalRundownProgression CustomRundownProgression
         {
@@ -46,6 +48,11 @@ namespace TheArchive.Managers
             CurrentActiveSession = ExpeditionSession.InitNewSession(rundownId, expeditionId, sessionId, Logger);
         }
 
+        public void OnLevelEntered()
+        {
+            CurrentActiveSession?.OnLevelEntered();
+        }
+
         public void IncreaseLayerProgression(string strLayer, string strState)
         {
             if(!Enum.TryParse<Layers>(strLayer, out var layer)
@@ -70,6 +77,7 @@ namespace TheArchive.Managers
 
         public void ArtifactCountUpdated(int count)
         {
+            if (CurrentActiveSession == null) return;
             CurrentActiveSession.ArtifactsCollected = count;
             Logger.Info($"current Artifact count: {count}");
         }
@@ -78,9 +86,18 @@ namespace TheArchive.Managers
         {
             CurrentActiveSession?.OnExpeditionCompleted(success);
 
-            CustomRundownProgression.AddSessionResults(CurrentActiveSession);
+            var hasCompletionData = CustomRundownProgression.AddSessionResults(CurrentActiveSession, out var completionData);
+
+            CurrentActiveSession = null;
 
             SaveToProgressionFile(CustomRundownProgression);
+
+            if (hasCompletionData)
+            {
+                Logger.Notice($"Expedition time: {completionData.RawSessionData.EndTime - completionData.RawSessionData.StartTime}");
+
+                OnExpeditionCompleted?.Invoke(completionData);
+            }
         }
 
         public static void SaveToProgressionFile(LocalRundownProgression data)
