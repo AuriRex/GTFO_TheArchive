@@ -4,7 +4,7 @@ using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.Features.QoL
+namespace TheArchive.Features.Special
 {
     [EnableFeatureByDefault]
     public class RundownInHeader : Feature

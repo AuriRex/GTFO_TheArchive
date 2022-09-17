@@ -335,7 +335,7 @@
     <Compile Include="Features\QoL\LoadoutRandomizer.cs" />
     <Compile Include="Features\QoL\MapToObjectivesSwitchFix.cs" />
     <Compile Include="Features\QoL\ResourcePrioritizationPings.cs" />
-    <Compile Include="Features\QoL\RundownInHeader.cs" />
+    <Compile Include="Features\Special\RundownInHeader.cs" />
     <Compile Include="Features\Dev\RedirectSettings.cs" />
     <Compile Include="Features\Special\HideFirstPersonItem.cs" />
     <Compile Include="Features\Special\ProcessPriority.cs" />
@@ -345,7 +345,7 @@
     <Compile Include="Features\Special\UnityRandomOverrider.cs" />
     <Compile Include="Features\Special\Watermark.cs" />
     <Compile Include="Features\SteamRichPresenceTweaks.cs" />
-    <Compile Include="Features\QoL\IntroSkip.cs" />
+    <Compile Include="Features\Special\IntroSkip.cs" />
     <Compile Include="Features\Dev\ModSettings.cs" />
     <Compile Include="Features\Backport\MeleeCancelBackport.cs" />
     <Compile Include="Features\PlayerInfo.cs" />

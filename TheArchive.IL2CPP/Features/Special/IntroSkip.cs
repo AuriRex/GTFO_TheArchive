@@ -1,11 +1,10 @@
 ﻿using CellMenu;
-using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
-namespace TheArchive.Features.QoL
+namespace TheArchive.Features.Special
 {
     public class IntroSkip : Feature
     {

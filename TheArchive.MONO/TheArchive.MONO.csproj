@@ -215,9 +215,6 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
       <Link>Features\PlayerInfo.cs</Link>
     </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\IntroSkip.cs">
-      <Link>Features\QoL\IntroSkip.cs</Link>
-    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\QoL\LoadoutRandomizer.cs">
       <Link>Features\QoL\LoadoutRandomizer.cs</Link>
     </Compile>
@@ -227,9 +224,6 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\QoL\ResourcePrioritizationPings.cs">
       <Link>Features\QoL\ResourcePrioritizationPings.cs</Link>
     </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\RundownInHeader.cs">
-      <Link>Features\QoL\RundownInHeader.cs</Link>
-    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\QoL\UnreadyButtonPatches.cs">
       <Link>Features\QoL\UnreadyButtonPatches.cs</Link>
     </Compile>
@@ -238,6 +232,9 @@
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Special\HideFirstPersonItem.cs">
       <Link>Features\Special\HideFirstPersonItem.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Special\IntroSkip.cs">
+      <Link>Features\Special\IntroSkip.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Special\MuteSpeak.cs">
       <Link>Features\Special\MuteSpeak.cs</Link>
@@ -250,6 +247,9 @@
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveDownedMessage.cs">
       <Link>Features\Special\RemoveDownedMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Special\RundownInHeader.cs">
+      <Link>Features\Special\RundownInHeader.cs</Link>
     </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\Special\UnityRandomOverrider.cs">
       <Link>Features\Special\UnityRandomOverrider.cs</Link>
