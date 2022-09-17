@@ -257,6 +257,9 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\Special\Watermark.cs">
       <Link>Features\Special\Watermark.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\Special\WeaponShootForward.cs">
+      <Link>Features\Special\WeaponShootForward.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\SteamRichPresenceTweaks.cs">
       <Link>Features\SteamRichPresenceTweaks.cs</Link>
     </Compile>

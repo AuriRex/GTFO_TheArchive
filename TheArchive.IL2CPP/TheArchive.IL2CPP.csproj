@@ -341,6 +341,7 @@
     <Compile Include="Features\Special\ProcessPriority.cs" />
     <Compile Include="Features\Special\RemoveChatRestrictions.cs" />
     <Compile Include="Features\Special\RemoveDownedMessage.cs" />
+    <Compile Include="Features\Special\WeaponShootForward.cs" />
     <Compile Include="Features\Special\UnityRandomOverrider.cs" />
     <Compile Include="Features\Special\Watermark.cs" />
     <Compile Include="Features\SteamRichPresenceTweaks.cs" />
