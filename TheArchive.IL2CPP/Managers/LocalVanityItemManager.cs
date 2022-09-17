@@ -2,10 +2,11 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Linq;
 using TheArchive.Core;
 using TheArchive.Interfaces;
-using TheArchive.Models;
 using TheArchive.Models.Progression;
+using TheArchive.Models.Vanity;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -23,14 +24,7 @@ namespace TheArchive.Managers
                 if (_localVanityItemStorage == null)
                 {
                     // Load from disk
-                    try
-                    {
-                        _localVanityItemStorage = LoadFromLocalFile();
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        _localVanityItemStorage = new LocalVanityItemStorage();
-                    }
+                    _localVanityItemStorage = LoadFromLocalFile();
 
                     if (_localVanityItemStorage.Items.Count == 0)
                     {
@@ -41,6 +35,9 @@ namespace TheArchive.Managers
                 return _localVanityItemStorage;
             }
         }
+
+        private LocalVanityAcquiredLayerDrops _acquiredLayerDrops;
+        public LocalVanityAcquiredLayerDrops AlreadyAcquiredLayerDrops => _acquiredLayerDrops ??= LoadAcquiredLayerDrops();
 
         private LocalVanityItemDropper Dropper => LocalVanityItemDropper.Instance;
 
@@ -55,6 +52,60 @@ namespace TheArchive.Managers
         }
 
         public void OnExpeditionCompleted(ExpeditionCompletionData data)
+        {
+            CheckFirstTimeExpeditionCompletion(data);
+            CheckTotalUniqueCompletionsRequirementMet();
+        }
+
+        public void CheckTotalUniqueCompletionsRequirementMet()
+        {
+            try
+            {
+                VanityItemsLayerDropsDataBlock vilddb = VanityItemsLayerDropsDataBlock.GetBlock(
+                    VanityItemsLayerDropsDataBlock.GetAllBlocks()
+                        .Where(x => x.internalEnabled)
+                        .Select(x => x.persistentID)
+                        .Max()
+                    );
+
+                bool anyDropped = false;
+
+                foreach (var layerDropData in vilddb.LayerDrops)
+                {
+                    var layer = layerDropData.Layer.ToCustom();
+                    var count = layerDropData.Count;
+                    var isAll = layerDropData.IsAll;
+
+                    string key = $"{vilddb.name}:{layer}_{count}_{isAll}";
+
+                    if (LocalProgressionManager.LocalRundownProgression.GetUniqueExpeditionLayersStateCount(layer) >= count)
+                    {
+                        if (!AlreadyAcquiredLayerDrops.HasBeenClaimed(key))
+                        {
+                            Logger.Notice($"Dropping layer milestone reached rewards for \"{key}\" ...");
+                            foreach (var group in layerDropData.Groups)
+                            {
+                                anyDropped |= Dropper.DropRandomFromGroup(group, LocalVanityItemPlayerData);
+                            }
+
+                            AlreadyAcquiredLayerDrops.Claim(key);
+                        }
+                    }
+                }
+
+                if (anyDropped)
+                {
+                    SaveAcquiredLayerDrops(AlreadyAcquiredLayerDrops);
+                }
+            }
+            catch(Exception ex)
+            {
+                Logger.Error("Checking for unique layer drops completion rewards failed!");
+                Logger.Exception(ex);
+            }
+        }
+
+        public void CheckFirstTimeExpeditionCompletion(ExpeditionCompletionData data)
         {
             if (!data.WasFirstTimeCompletion) return;
             try
@@ -74,7 +125,7 @@ namespace TheArchive.Managers
 
                 var tier = Utils.GetEnumFromName<eRundownTier>($"Tier{tierCharacter}");
 
-                OnExpeditionFirstTimeCompletion(rddb.GetExpeditionData(tier, expeditionIndex));
+                DropFirstTimeCompletionRewards(rddb.GetExpeditionData(tier, expeditionIndex));
             }
             catch(Exception ex)
             {
@@ -83,12 +134,15 @@ namespace TheArchive.Managers
             }
         }
 
-        public void OnExpeditionFirstTimeCompletion(GameData.ExpeditionInTierData expeditionData)
+        public void DropFirstTimeCompletionRewards(GameData.ExpeditionInTierData expeditionData)
         {
-            Logger.Debug("Dropping first time completion drops (if any) ...");
-            foreach(var group in expeditionData.VanityItemsDropData.Groups)
+            if(expeditionData.VanityItemsDropData.Groups.Count > 0)
             {
-                Dropper.DropRandomFromGroup(group, LocalVanityItemPlayerData);
+                Logger.Notice("Dropping first time completion rewards ...");
+                foreach (var group in expeditionData.VanityItemsDropData.Groups)
+                {
+                    Dropper.DropRandomFromGroup(group, LocalVanityItemPlayerData);
+                }
             }
         }
 
@@ -138,10 +192,29 @@ namespace TheArchive.Managers
         {
             Instance.Logger.Msg(ConsoleColor.Green, $"Loading VanityItems from disk at: {LocalFiles.VanityItemsPath}");
             if (!File.Exists(LocalFiles.VanityItemsPath))
-                throw new FileNotFoundException();
+                return new LocalVanityItemStorage();
             var json = File.ReadAllText(LocalFiles.VanityItemsPath);
 
             return JsonConvert.DeserializeObject<LocalVanityItemStorage>(json);
+        }
+
+        public static void SaveAcquiredLayerDrops(LocalVanityAcquiredLayerDrops data)
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+            Instance.Logger.Fail($"Saving LocalVanityAcquiredLayerDrops to disk at: {LocalFiles.VanityItemsLayerDropsPath}");
+            var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+            File.WriteAllText(LocalFiles.VanityItemsLayerDropsPath, json);
+        }
+
+        public static LocalVanityAcquiredLayerDrops LoadAcquiredLayerDrops()
+        {
+            Instance.Logger.Success($"Loading LocalVanityAcquiredLayerDrops from disk at: {LocalFiles.VanityItemsLayerDropsPath}");
+            if (!File.Exists(LocalFiles.VanityItemsLayerDropsPath))
+                return new LocalVanityAcquiredLayerDrops();
+            var json = File.ReadAllText(LocalFiles.VanityItemsLayerDropsPath);
+
+            return JsonConvert.DeserializeObject<LocalVanityAcquiredLayerDrops>(json);
         }
     }
 }

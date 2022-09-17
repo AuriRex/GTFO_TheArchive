@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnhollowerRuntimeLib;
 
-namespace TheArchive.Models
+namespace TheArchive.Models.Vanity
 {
     public class LocalVanityItemStorage
     {
@@ -47,14 +47,14 @@ namespace TheArchive.Models
 
             vipd.Items = new UnhollowerBaseLib.Il2CppReferenceArray<DropServer.VanityItems.VanityItem>(customData.Items.Count);
 
-            for(int i = 0; i < customData.Items.Count; i++)
+            for (int i = 0; i < customData.Items.Count; i++)
             {
                 var current = customData.Items[i];
 
                 var item = new DropServer.VanityItems.VanityItem()
                 {
                     ItemId = current.ItemID,
-                    Flags = (InventoryItemFlags) current.Flags
+                    Flags = (InventoryItemFlags)current.Flags
                 };
 
                 vipd.Items[i] = item;
@@ -69,11 +69,12 @@ namespace TheArchive.Models
 
             var items = new List<LocalVanityItem>();
 
-            foreach(var item in ((VanityItemPlayerData) VanityItemPlayerData).Items)
+            foreach (var item in ((VanityItemPlayerData)VanityItemPlayerData).Items)
             {
-                items.Add(new LocalVanityItem() {
+                items.Add(new LocalVanityItem()
+                {
                     ItemID = item.ItemId,
-                    Flags = (VanityItemFlags) item.Flags
+                    Flags = (VanityItemFlags)item.Flags
                 });
             }
 

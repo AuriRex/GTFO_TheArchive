@@ -345,8 +345,6 @@
     <Compile Include="Features\SteamRichPresenceTweaks.cs" />
     <Compile Include="Features\QoL\IntroSkip.cs" />
     <Compile Include="Features\Dev\ModSettings.cs" />
-    <Compile Include="HarmonyPatches\Patches\DropServerClientAPIViaPlayFabPatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\DropServerPatches.cs" />
     <Compile Include="Features\Backport\MeleeCancelBackport.cs" />
     <Compile Include="Features\PlayerInfo.cs" />
     <Compile Include="HarmonyPatches\Patches\PlayfabMatchmakingManagerPatches.cs" />
@@ -358,9 +356,9 @@
     <Compile Include="Managers\LocalBoosterDropper.cs" />
     <Compile Include="Managers\LocalBoosterManager.cs" />
     <Compile Include="Managers\LocalProgressionManager.cs" />
-    <Compile Include="Managers\OldLocalProgressionManager.cs" />
     <Compile Include="Managers\LocalVanityItemDropper.cs" />
     <Compile Include="Managers\LocalVanityItemManager.cs" />
+    <Compile Include="Models\Vanity\LocalVanityAcquiredLayerDrops.cs" />
     <Compile Include="Models\Progression\ExpeditionCompletionData.cs" />
     <Compile Include="Utilities\SColorExtensions.cs" />
     <Compile Include="Utilities\SoundEventCache.cs" />
@@ -378,13 +376,11 @@
     <Compile Include="Models\Boosters\LocalBoosterImplantPlayerData.cs" />
     <Compile Include="Models\Boosters\LocalDropServerBoosterImplantInventoryItem.cs" />
     <Compile Include="Models\Boosters\LocalBoosterTransaction.cs" />
-    <Compile Include="Models\CustomRundownProgression.cs" />
-    <Compile Include="HarmonyPatches\Patches\PlayFabManagerPatches.cs" />
     <Compile Include="Models\DataBlocks\CustomBoosterImplantConditionDataBlock.cs" />
     <Compile Include="Models\DataBlocks\CustomBoosterImplantEffectDataBlock.cs" />
     <Compile Include="Models\DataBlocks\CustomBoosterImplantTemplateDataBlock.cs" />
     <Compile Include="Models\DataBlocks\CustomGameDataBlockBase.cs" />
-    <Compile Include="Models\LocalVanityItemStorage.cs" />
+    <Compile Include="Models\Vanity\LocalVanityItemStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Il2CppUtils.cs" />
     <Compile Include="Utilities\SharedUtils.cs" />

@@ -3,11 +3,10 @@ using System.Linq;
 using TheArchive.Core;
 using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
-using TheArchive.Models;
 using TheArchive.Models.DataBlocks;
+using TheArchive.Models.Vanity;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
-using static TheArchive.Utilities.Il2CppUtils;
 
 namespace TheArchive.Managers
 {
@@ -53,7 +52,14 @@ namespace TheArchive.Managers
             return false;
         }
 
-        public void DropRandomFromGroup(uint groupID, LocalVanityItemStorage playerData, bool silentDrop = false)
+        /// <summary>
+        /// Drop (Add) an item from group with id <paramref name="groupID"/> into the players inventory <paramref name="playerData"/>
+        /// </summary>
+        /// <param name="groupID">The group to pick from</param>
+        /// <param name="playerData">The players inventory data</param>
+        /// <param name="silentDrop">If the game should announce that something new dropped</param>
+        /// <returns>True if anything dropped</returns>
+        public bool DropRandomFromGroup(uint groupID, LocalVanityItemStorage playerData, bool silentDrop = false)
         {
             if(TryGetGroup(groupID, out var itemGroup) && !itemGroup.HasAllOwned(playerData))
             {
@@ -62,7 +68,7 @@ namespace TheArchive.Managers
                 if(!itemGroup.GetNonOwned(playerData).TryPickRandom(out var itemId))
                 {
                     Logger.Info($"All items in group already in local player inventory, not dropping!");
-                    return;
+                    return false;
                 }
 
                 if(!TryGetTemplate(itemId, out var template))
@@ -78,7 +84,9 @@ namespace TheArchive.Managers
 
                 playerData.Items.Add(item);
                 Logger.Info($"Dropped Vanity Item \"{template?.PublicName ?? $"ID:{itemId}"}\"!");
+                return true;
             }
+            return false;
         }
 
         public bool TryGetTemplate(uint persistentID, out CustomVanityItemsTemplateDataBlock template)

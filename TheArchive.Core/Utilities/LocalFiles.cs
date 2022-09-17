@@ -211,6 +211,17 @@ namespace TheArchive.Utilities
             }
         }
 
+        private static string _vanityItemsLayerDropsPath = null;
+        public static string VanityItemsLayerDropsPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_vanityItemsLayerDropsPath))
+                    _vanityItemsLayerDropsPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"VanityItemsLayerDrops_Data.json");
+                return _vanityItemsLayerDropsPath;
+            }
+        }
+
         private static string _progressionPath = null;
         public static string LocalProgressionPath
         {

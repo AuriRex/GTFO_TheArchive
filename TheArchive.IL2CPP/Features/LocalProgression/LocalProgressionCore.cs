@@ -118,7 +118,7 @@ namespace TheArchive.Features.LocalProgression
 
                 try
                 {
-                    var task = __result = IL2Tasks.Task.FromResult(LocalProgressionManager.CustomRundownProgression.ToBaseGameProgression());
+                    var task = __result = IL2Tasks.Task.FromResult(LocalProgressionManager.LocalRundownProgression.ToBaseGameProgression());
 
                     if (callback != null)
                     {

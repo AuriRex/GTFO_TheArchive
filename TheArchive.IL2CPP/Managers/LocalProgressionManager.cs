@@ -17,26 +17,8 @@ namespace TheArchive.Managers
 
         public static event Action<ExpeditionCompletionData> OnExpeditionCompleted;
 
-        private static LocalRundownProgression _customRundownProgression = null;
-        public static LocalRundownProgression CustomRundownProgression
-        {
-            get
-            {
-                if (_customRundownProgression == null)
-                {
-                    try
-                    {
-                        _customRundownProgression = LoadFromProgressionFile();
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        _customRundownProgression = new LocalRundownProgression();
-                    }
-                }
-
-                return _customRundownProgression;
-            }
-        }
+        private static LocalRundownProgression _localRundownProgression = null;
+        public static LocalRundownProgression LocalRundownProgression => _localRundownProgression ??= LoadFromProgressionFile();
 
         public void Init()
         {
@@ -86,11 +68,11 @@ namespace TheArchive.Managers
         {
             CurrentActiveSession?.OnExpeditionCompleted(success);
 
-            var hasCompletionData = CustomRundownProgression.AddSessionResults(CurrentActiveSession, out var completionData);
+            var hasCompletionData = LocalRundownProgression.AddSessionResults(CurrentActiveSession, out var completionData);
 
             CurrentActiveSession = null;
 
-            SaveToProgressionFile(CustomRundownProgression);
+            SaveToProgressionFile(LocalRundownProgression);
 
             if (hasCompletionData)
             {
@@ -113,7 +95,7 @@ namespace TheArchive.Managers
         {
             Instance.Logger.Msg(ConsoleColor.Green, $"Loading progression from disk at: {LocalFiles.LocalProgressionPath}");
             if (!File.Exists(LocalFiles.LocalProgressionPath))
-                throw new FileNotFoundException();
+                return new LocalRundownProgression();
             var json = File.ReadAllText(LocalFiles.LocalProgressionPath);
 
             return JsonConvert.DeserializeObject<LocalRundownProgression>(json);

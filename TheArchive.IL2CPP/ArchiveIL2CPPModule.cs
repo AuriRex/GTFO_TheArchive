@@ -50,10 +50,6 @@ namespace TheArchive
 
             typeof(Features.RichPresenceCore).RegisterAllPresenceFormatProviders();
 
-            OldLocalProgressionManager.Logger = (string msg) => {
-                ArchiveLogger.Msg(ConsoleColor.Magenta, msg);
-            };
-
             Core.GameDataInitialized += OnGameDataInitialized;
             Core.DataBlocksReady += OnDataBlocksReady;
             Core.GameStateChanged += (eGameStateName_state) => OnGameStateChanged?.Invoke((eGameStateName) eGameStateName_state);

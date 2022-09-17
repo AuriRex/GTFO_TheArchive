@@ -17,7 +17,19 @@ namespace TheArchive.Models
 
 		public Dictionary<string, Expedition> Expeditions = new Dictionary<string, Expedition>();
 
-		public bool AddSessionResults(ExpeditionSession session, out ExpeditionCompletionData completionData)
+		/// <summary>
+		/// Get the count of how many total unique expedition <see cref="Layers"/> <paramref name="layer"/> are currently in <see cref="LayerState"/> <paramref name="state"/><br/>
+		/// For example: how many unique <see cref="Layers.Main"/> objectives have been <see cref="LayerState.Completed"/>
+		/// </summary>
+		/// <param name="layer">The layer to check</param>
+		/// <param name="state">The state that should compared against</param>
+		/// <returns></returns>
+		public int GetUniqueExpeditionLayersStateCount(Layers layer = Layers.Main, LayerState state = LayerState.Completed)
+        {
+			return Expeditions.Count(x => x.Value?.Layers?.GetLayer(layer)?.State == state);
+		}
+
+		internal bool AddSessionResults(ExpeditionSession session, out ExpeditionCompletionData completionData)
 		{
 			if (session == null)
             {
@@ -39,7 +51,6 @@ namespace TheArchive.Models
 				Expedition.Layer expeditionLayer = expeditionEntry.Layers.GetOrAddLayer(layer);
 
 				expeditionLayer.IncreaseStateAndCompletion(state);
-				expeditionEntry.Layers.SetLayer(layer, expeditionLayer);
 			}
 
 			if (session.PrisonerEfficiencyCompleted)
@@ -210,14 +221,24 @@ namespace TheArchive.Models
 
             public Expedition.Layer GetOrAddLayer(Layers layer)
             {
-				var expeditionLayer = layer switch
+				var expeditionLayer = GetLayer(layer);
+				if(expeditionLayer == null)
+                {
+					expeditionLayer = new Expedition.Layer();
+					SetLayer(layer, expeditionLayer);
+				}
+				return expeditionLayer;
+			}
+
+			public Expedition.Layer GetLayer(Layers layer)
+            {
+				return layer switch
 				{
 					Layers.Main => Main,
 					Layers.Secondary => Secondary,
 					Layers.Third => Third,
 					_ => throw new Exception($"Unknown layer enum {layer}"),
 				};
-				return expeditionLayer ?? new Expedition.Layer();
 			}
 
 			public void SetLayer(Layers layer, Expedition.Layer data)

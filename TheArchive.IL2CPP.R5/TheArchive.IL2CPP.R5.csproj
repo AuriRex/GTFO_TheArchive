@@ -67,7 +67,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArchivePatches\DropServerClientAPIViaPlayFabPatches.cs" />
     <Compile Include="Factories\Boosters\CustomBoosterImplantFactory.cs" />
     <Compile Include="Factories\Boosters\CustomBoosterImplantPlayerDataFactory.cs" />
     <Compile Include="Factories\Boosters\CustomBoosterImplantPlayerData.CustomCategoryFactory.cs" />

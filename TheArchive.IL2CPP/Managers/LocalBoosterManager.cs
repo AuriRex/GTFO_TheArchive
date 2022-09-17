@@ -16,27 +16,8 @@ namespace TheArchive.Managers
 
         public static bool DoConsumeBoosters { get; set; } = true;
 
-        private static LocalBoosterImplantPlayerData _customBoosterImplantPlayerData = null;
-        public static LocalBoosterImplantPlayerData CustomBoosterImplantPlayerData
-        {
-            get
-            {
-                if(_customBoosterImplantPlayerData == null)
-                {
-                    // Load from disk
-                    try
-                    {
-                        _customBoosterImplantPlayerData = LoadFromBoosterFile();
-                    }
-                    catch(FileNotFoundException)
-                    {
-                        _customBoosterImplantPlayerData = new LocalBoosterImplantPlayerData();
-                    }
-                }
-
-                return _customBoosterImplantPlayerData;
-            }
-        }
+        private static LocalBoosterImplantPlayerData _localBoosterImplantPlayerData = null;
+        public static LocalBoosterImplantPlayerData LocalBoosterImplantPlayerData => _localBoosterImplantPlayerData ??= LoadFromBoosterFile();
 
         private readonly static uint[] _noBoosterIds = new uint[0];
         private static uint[] _boostersToBeConsumed = null;
@@ -69,7 +50,7 @@ namespace TheArchive.Managers
 
         internal void SaveBoostersToDisk()
         {
-            SaveToBoosterFile(CustomBoosterImplantPlayerData);
+            SaveToBoosterFile(LocalBoosterImplantPlayerData);
         }
 
         public object UpdateBoosterImplantPlayerData(object transaction)
@@ -82,25 +63,25 @@ namespace TheArchive.Managers
         public object UpdateBoosterImplantPlayerData(LocalBoosterTransaction transaction) // returns basegame BoosterImplantPlayerData
         {
             if (transaction.DropIds != null)
-                CustomBoosterImplantPlayerData.DropBoostersWithIds(transaction.DropIds.ToArray());
+                LocalBoosterImplantPlayerData.DropBoostersWithIds(transaction.DropIds.ToArray());
 
             if (transaction.TouchIds != null)
-                CustomBoosterImplantPlayerData.SetBoostersTouchedWithIds(transaction.TouchIds.ToArray());
+                LocalBoosterImplantPlayerData.SetBoostersTouchedWithIds(transaction.TouchIds.ToArray());
 
             if (transaction.AcknowledgeIds != null)
-                CustomBoosterImplantPlayerData.AcknowledgeBoostersWithIds(transaction.AcknowledgeIds.ToArray());
+                LocalBoosterImplantPlayerData.AcknowledgeBoostersWithIds(transaction.AcknowledgeIds.ToArray());
 
             if (transaction.AcknowledgeMissed != null)
-                CustomBoosterImplantPlayerData.AcknowledgeMissedBoostersWithIds(transaction.AcknowledgeMissed);
+                LocalBoosterImplantPlayerData.AcknowledgeMissedBoostersWithIds(transaction.AcknowledgeMissed);
 
             SaveBoostersToDisk();
-            return CustomBoosterImplantPlayerData.ToBaseGame();
+            return LocalBoosterImplantPlayerData.ToBaseGame();
         }
 
         public object GetBoosterImplantPlayerData(uint maxBackendTemplateId) // returns basegame BoosterImplantPlayerData
         {
             SaveBoostersToDisk();
-            return CustomBoosterImplantPlayerData.ToBaseGame();
+            return LocalBoosterImplantPlayerData.ToBaseGame();
         }
 
         public void ConsumeBoosters(string sessionBlob)
@@ -109,7 +90,7 @@ namespace TheArchive.Managers
             {
                 // remove boosters from the file & save
 
-                CustomBoosterImplantPlayerData.ConsumeBoostersWithIds(BoostersToBeConsumed);
+                LocalBoosterImplantPlayerData.ConsumeBoostersWithIds(BoostersToBeConsumed);
 
                 SaveBoostersToDisk();
             }
@@ -120,11 +101,11 @@ namespace TheArchive.Managers
 
         public void EndSession(EndSessionRequest.PerBoosterCategoryInt boosterCurrency, bool success, string sessionBlob, uint maxBackendBoosterTemplateId, int buildRev)
         {
-            CustomBoosterImplantPlayerData.AddCurrency(boosterCurrency);
+            LocalBoosterImplantPlayerData.AddCurrency(boosterCurrency);
 
             // Test if currency exceeds 1000, remove that amount and generate & add a new randomly created booster
             // or add 1 to the Missed Counter if inventory is full (10 items max)
-            var cats = CustomBoosterImplantPlayerData.GetCategoriesWhereCurrencyCostHasBeenReached();
+            var cats = LocalBoosterImplantPlayerData.GetCategoriesWhereCurrencyCostHasBeenReached();
 
             foreach(var cat in cats)
             {
@@ -140,7 +121,7 @@ namespace TheArchive.Managers
                     }
 
                     Logger.Notice($"Generating 1 {cat.CategoryType} booster ... [CurrencyRemaining:{cat.Currency}]");
-                    BoosterDropper.GenerateAndAddBooster(ref _customBoosterImplantPlayerData, cat.CategoryType);
+                    BoosterDropper.GenerateAndAddBooster(ref _localBoosterImplantPlayerData, cat.CategoryType);
                 }
                 
             }
@@ -167,7 +148,7 @@ namespace TheArchive.Managers
         {
             Instance.Logger.Msg(ConsoleColor.Green, $"Loading boosters from disk at: {LocalFiles.BoostersPath}");
             if (!File.Exists(LocalFiles.BoostersPath))
-                throw new FileNotFoundException();
+                return new LocalBoosterImplantPlayerData();
             var json = File.ReadAllText(LocalFiles.BoostersPath);
 
             return JsonConvert.DeserializeObject<LocalBoosterImplantPlayerData>(json);
