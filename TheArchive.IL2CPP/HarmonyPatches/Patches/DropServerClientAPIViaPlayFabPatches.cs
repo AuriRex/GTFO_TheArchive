@@ -57,7 +57,7 @@ namespace TheArchive.HarmonyPatches.Patches
         // ----------------------------------------
 
         // public unsafe Task<GetBoosterImplantPlayerDataResult> GetBoosterImplantPlayerDataAsync(GetBoosterImplantPlayerDataRequest request)
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetBoosterImplantPlayerDataAsync), RundownFlags.RundownSix, RundownFlags.Latest)]
+        /*[ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetBoosterImplantPlayerDataAsync), RundownFlags.RundownSix, RundownFlags.Latest)]
         public static class DropServerClientAPI_GetBoosterImplantPlayerDataAsyncPatch
         {
             // R5 version has been moved into submodule.
@@ -109,10 +109,10 @@ namespace TheArchive.HarmonyPatches.Patches
                 var result = __result.Result;
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> received {nameof(UpdateBoosterImplantPlayerDataResult)}: Data:{result.Data}");
             }
-        }
+        }*/
 
         // public unsafe Task<ConsumeBoostersResult> ConsumeBoostersAsync(ConsumeBoostersRequest request)
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.ConsumeBoostersAsync), RundownFlags.RundownFive, RundownFlags.Latest)]
+        /*[ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.ConsumeBoostersAsync), RundownFlags.RundownFive, RundownFlags.Latest)]
         public static class DropServerClientAPI_ConsumeBoostersAsyncPatch
         {
             public static bool Prefix(ConsumeBoostersRequest request, ref IL2Tasks.Task<ConsumeBoostersResult> __result)
@@ -134,10 +134,10 @@ namespace TheArchive.HarmonyPatches.Patches
                 var result = __result.Result;
                 ArchiveLogger.Msg(ConsoleColor.DarkRed, $"{nameof(DropServerClientAPIViaPlayFab)} -> received {nameof(ConsumeBoostersResult)}: SessionBlob:{result.SessionBlob}");
             }
-        }
+        }*/
 
         // public unsafe Task<EndSessionResult> EndSessionAsync(EndSessionRequest request)
-        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.EndSessionAsync), RundownFlags.RundownSix, RundownFlags.Latest)]
+        /*[ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.EndSessionAsync), RundownFlags.RundownSix, RundownFlags.Latest)]
         public static class DropServerClientAPI_EndSessionAsyncPatch
         {
             public static bool Prefix(EndSessionRequest request, ref IL2Tasks.Task<EndSessionResult> __result)
@@ -165,7 +165,7 @@ namespace TheArchive.HarmonyPatches.Patches
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> received {nameof(EndSessionResult)}");
             }
-        }
+        }*/
 
         // ---------------------------------------------------------------
 

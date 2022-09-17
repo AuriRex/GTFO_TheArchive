@@ -88,6 +88,24 @@ namespace TheArchive.Features.LocalProgression
             }
         }
 
+        [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.ConsumeBoostersAsync))]
+        public static class DropServerClientAPI_ConsumeBoostersAsyncPatch
+        {
+            public static bool Prefix(ConsumeBoostersRequest request, ref IL2Tasks.Task<ConsumeBoostersResult> __result)
+            {
+                FeatureLogger.Msg(ConsoleColor.Red, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(ConsumeBoostersRequest)}: EntityToken:{request.EntityToken}, SessionBlob:{request.SessionBlob}");
+
+                var result = new ConsumeBoostersResult();
+
+                LocalBoosterManager.Instance.ConsumeBoosters(request.SessionBlob);
+
+                result.SessionBlob = request.SessionBlob;
+
+                __result = IL2Tasks.Task.FromResult(result);
+                return false;
+            }
+        }
+
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.EndSessionAsync))]
         public static class DropServerClientAPI_EndSessionAsync_Patch
         {

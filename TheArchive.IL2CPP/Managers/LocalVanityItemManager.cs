@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using GameData;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using TheArchive.Core;
 using TheArchive.Interfaces;
 using TheArchive.Models;
+using TheArchive.Models.Progression;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -49,11 +51,41 @@ namespace TheArchive.Managers
 
         public void Init()
         {
-            Instance = this;
+            LocalProgressionManager.OnExpeditionCompleted += OnExpeditionCompleted;
+        }
+
+        public void OnExpeditionCompleted(ExpeditionCompletionData data)
+        {
+            if (!data.WasFirstTimeCompletion) return;
+            try
+            {
+                if (!uint.TryParse(data.RundownId.Replace("Local_", string.Empty), out var rundownId))
+                {
+                    Logger.Error($"[{nameof(OnExpeditionCompleted)}] Could not parse \"{data.RundownId}\"!");
+                    return;
+                }
+
+                RundownDataBlock rddb = RundownDataBlock.GetBlock(rundownId);
+
+                char tierCharacter = data.ExpeditionId[0];
+                int.TryParse(data.ExpeditionId[1].ToString(), out var expeditionIndex);
+
+                expeditionIndex--;
+
+                var tier = Utils.GetEnumFromName<eRundownTier>($"Tier{tierCharacter}");
+
+                OnExpeditionFirstTimeCompletion(rddb.GetExpeditionData(tier, expeditionIndex));
+            }
+            catch(Exception ex)
+            {
+                Logger.Error("Something went wrong:");
+                Logger.Exception(ex);
+            }
         }
 
         public void OnExpeditionFirstTimeCompletion(GameData.ExpeditionInTierData expeditionData)
         {
+            Logger.Debug("Dropping first time completion drops (if any) ...");
             foreach(var group in expeditionData.VanityItemsDropData.Groups)
             {
                 Dropper.DropRandomFromGroup(group, LocalVanityItemPlayerData);

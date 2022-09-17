@@ -36,8 +36,6 @@ namespace TheArchive.Managers
             {
                 Logger.Info($" > {dd.Name}: #Drops: {dd.LayerDrops?.Count ?? 0}, Enabled: {dd.InternalEnabled}");
             }
-
-            Instance = this;
         }
 
         public bool TryGetGroup(uint persistentID, out CustomVanityItemsGroupDataBlock itemGroup)
