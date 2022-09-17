@@ -1,4 +1,4 @@
-﻿using DropServer;
+﻿
 using System;
 using System.Linq;
 using System.Reflection;
@@ -7,90 +7,90 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
-using TheArchive.Managers;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
+using TheArchive.Core.Attributes.Feature.Settings;
 #if MONO
 using IL2Tasks = System.Threading.Tasks;
 using IL2System = System;
 #else
+using TheArchive.Managers;
+using DropServer;
 using IL2Tasks = Il2CppSystem.Threading.Tasks;
 using IL2System = Il2CppSystem;
 #endif
 
 namespace TheArchive.Features.LocalProgression
 {
-    [EnableFeatureByDefault]
+    [HideInModSettings]
+    [DoNotSaveToConfig]
+    [AutomatedFeature]
     internal class LocalProgressionCore : Feature
     {
         public override string Name => "Local Progression Core";
 
         public override string Group => FeatureGroups.LocalProgression;
 
-        public override bool RequiresRestart => true;
-
         public new static IArchiveLogger FeatureLogger { get; set; }
 
-        public override void OnGameDataInitialized()
-        {
-            FeatureManager.EnableAutomatedFeature(typeof(PlayFabManagerPatches));
-        }
 
         [ArchivePatch(typeof(GS_InLevel), nameof(GS_InLevel.Enter))]
         public class GS_InLevel_Enter_Patch
         {
             public static void Postfix()
             {
+#if IL2CPP
                 LocalProgressionManager.Instance.OnLevelEntered();
+#endif
             }
         }
 
-        #region comments
-        // Rundown 4
-        // + public Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request, [Optional] RequestContext context)
-        // + public Task<LayerProgressionResult> LayerProgressionAsync(LayerProgressionRequest request, [Optional] RequestContext context)
-        // + public Task<NewSessionResult> NewSessionAsync(NewSessionRequest request, [Optional] RequestContext context)
-        // + public Task<ClearRundownProgressionResult> ClearRundownProgressionAsync(ClearRundownProgressionRequest request, [Optional] RequestContext context)
-        // + public Task<RundownProgressionResult> RundownProgressionAsync(RundownProgressionRequest request, [Optional] RequestContext context)
-        // + public Task<IsTesterResult> IsTesterAsync(IsTesterRequest request, [Optional] RequestContext context)
-        // + public Task<AddResult> AddAsync(AddRequest request, [Optional] RequestContext context)
+#region comments
+// Rundown 4
+// + public Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request, [Optional] RequestContext context)
+// + public Task<LayerProgressionResult> LayerProgressionAsync(LayerProgressionRequest request, [Optional] RequestContext context)
+// + public Task<NewSessionResult> NewSessionAsync(NewSessionRequest request, [Optional] RequestContext context)
+// + public Task<ClearRundownProgressionResult> ClearRundownProgressionAsync(ClearRundownProgressionRequest request, [Optional] RequestContext context)
+// + public Task<RundownProgressionResult> RundownProgressionAsync(RundownProgressionRequest request, [Optional] RequestContext context)
+// + public Task<IsTesterResult> IsTesterAsync(IsTesterRequest request, [Optional] RequestContext context)
+// + public Task<AddResult> AddAsync(AddRequest request, [Optional] RequestContext context)
 
-        // Rundown 5
-        //   public unsafe Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request)
-        //   public unsafe Task<LayerProgressionResult> LayerProgressionAsync(LayerProgressionRequest request)
-        //   public unsafe Task<NewSessionResult> NewSessionAsync(NewSessionRequest request)
-        //   public unsafe Task<ClearRundownProgressionResult> ClearRundownProgressionAsync(ClearRundownProgressionRequest request)
-        //   public unsafe Task<RundownProgressionResult> RundownProgressionAsync(RundownProgressionRequest request)
-        //   public unsafe Task<IsTesterResult> IsTesterAsync(IsTesterRequest request)
-        //   public unsafe Task<AddResult> AddAsync(AddRequest request)
-        // + public unsafe Task<DebugBoosterImplantResult> DebugBoosterImplantAsync(DebugBoosterImplantRequest request)
-        // + public unsafe Task<GetBoosterImplantPlayerDataResult> GetBoosterImplantPlayerDataAsync(GetBoosterImplantPlayerDataRequest request)
-        // + public unsafe Task<UpdateBoosterImplantPlayerDataResult> UpdateBoosterImplantPlayerDataAsync(UpdateBoosterImplantPlayerDataRequest request)
-        // + public unsafe Task<ConsumeBoostersResult> ConsumeBoostersAsync(ConsumeBoostersRequest request)
-        // + public unsafe Task<EndSessionResult> EndSessionAsync(EndSessionRequest request)
+// Rundown 5
+//   public unsafe Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request)
+//   public unsafe Task<LayerProgressionResult> LayerProgressionAsync(LayerProgressionRequest request)
+//   public unsafe Task<NewSessionResult> NewSessionAsync(NewSessionRequest request)
+//   public unsafe Task<ClearRundownProgressionResult> ClearRundownProgressionAsync(ClearRundownProgressionRequest request)
+//   public unsafe Task<RundownProgressionResult> RundownProgressionAsync(RundownProgressionRequest request)
+//   public unsafe Task<IsTesterResult> IsTesterAsync(IsTesterRequest request)
+//   public unsafe Task<AddResult> AddAsync(AddRequest request)
+// + public unsafe Task<DebugBoosterImplantResult> DebugBoosterImplantAsync(DebugBoosterImplantRequest request)
+// + public unsafe Task<GetBoosterImplantPlayerDataResult> GetBoosterImplantPlayerDataAsync(GetBoosterImplantPlayerDataRequest request)
+// + public unsafe Task<UpdateBoosterImplantPlayerDataResult> UpdateBoosterImplantPlayerDataAsync(UpdateBoosterImplantPlayerDataRequest request)
+// + public unsafe Task<ConsumeBoostersResult> ConsumeBoostersAsync(ConsumeBoostersRequest request)
+// + public unsafe Task<EndSessionResult> EndSessionAsync(EndSessionRequest request)
 
-        // Rundown 6
-        // - public Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request, [Optional] RequestContext context)
-        //   public Task<LayerProgressionResult> LayerProgressionAsync(LayerProgressionRequest request)
-        //   public Task<NewSessionResult> NewSessionAsync(NewSessionRequest request)
-        //   public Task<ClearRundownProgressionResult> ClearRundownProgressionAsync(ClearRundownProgressionRequest request)
-        //   public Task<RundownProgressionResult> RundownProgressionAsync(RundownProgressionRequest request)
-        //   public Task<IsTesterResult> IsTesterAsync(IsTesterRequest request)
-        //   public Task<AddResult> AddAsync(AddRequest request)
-        //   public Task<DebugBoosterImplantResult> DebugBoosterImplantAsync(DebugBoosterImplantRequest request)
-        //   public Task<GetBoosterImplantPlayerDataResult> GetBoosterImplantPlayerDataAsync(GetBoosterImplantPlayerDataRequest request)
-        //   public Task<UpdateBoosterImplantPlayerDataResult> UpdateBoosterImplantPlayerDataAsync(UpdateBoosterImplantPlayerDataRequest request)
-        //   public Task<ConsumeBoostersResult> ConsumeBoostersAsync(ConsumeBoostersRequest request)
-        //   public Task<EndSessionResult> EndSessionAsync(EndSessionRequest request)
-        // + public Task<GetInventoryPlayerDataResult> GetInventoryPlayerDataAsync(GetInventoryPlayerDataRequest request)
-        // + public Task<UpdateVanityItemPlayerDataResult> UpdateVanityItemPlayerDataAsync(UpdateVanityItemPlayerDataRequest request)
-        // + public Task<DebugVanityItemResult> DebugVanityItemAsync(DebugVanityItemRequest request)
+// Rundown 6
+// - public Task<ExpeditionSuccessResult> ExpeditionSuccessAsync(ExpeditionSuccessRequest request, [Optional] RequestContext context)
+//   public Task<LayerProgressionResult> LayerProgressionAsync(LayerProgressionRequest request)
+//   public Task<NewSessionResult> NewSessionAsync(NewSessionRequest request)
+//   public Task<ClearRundownProgressionResult> ClearRundownProgressionAsync(ClearRundownProgressionRequest request)
+//   public Task<RundownProgressionResult> RundownProgressionAsync(RundownProgressionRequest request)
+//   public Task<IsTesterResult> IsTesterAsync(IsTesterRequest request)
+//   public Task<AddResult> AddAsync(AddRequest request)
+//   public Task<DebugBoosterImplantResult> DebugBoosterImplantAsync(DebugBoosterImplantRequest request)
+//   public Task<GetBoosterImplantPlayerDataResult> GetBoosterImplantPlayerDataAsync(GetBoosterImplantPlayerDataRequest request)
+//   public Task<UpdateBoosterImplantPlayerDataResult> UpdateBoosterImplantPlayerDataAsync(UpdateBoosterImplantPlayerDataRequest request)
+//   public Task<ConsumeBoostersResult> ConsumeBoostersAsync(ConsumeBoostersRequest request)
+//   public Task<EndSessionResult> EndSessionAsync(EndSessionRequest request)
+// + public Task<GetInventoryPlayerDataResult> GetInventoryPlayerDataAsync(GetInventoryPlayerDataRequest request)
+// + public Task<UpdateVanityItemPlayerDataResult> UpdateVanityItemPlayerDataAsync(UpdateVanityItemPlayerDataRequest request)
+// + public Task<DebugVanityItemResult> DebugVanityItemAsync(DebugVanityItemRequest request)
 
-        // Rundown 7
-        // (no changes)
-        #endregion comments
-
-        #region DropServerManager
+// Rundown 7
+// (no changes)
+#endregion comments
+#if IL2CPP
+#region DropServerManager
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.Latest)]
         [ArchivePatch(nameof(DropServerManager.Setup))]
         public static class DropServerManager_Setup_Patch
@@ -136,7 +136,7 @@ namespace TheArchive.Features.LocalProgression
 #endregion DropServerManager
 
         // Does not appear to be called in R5 anymore, removed in R6
-        [RundownConstraint(RundownFlags.RundownFour, RundownFlags.RundownFive)]
+        [RundownConstraint(RundownFlags.RundownFour)]
         [ArchivePatch("ExpeditionSuccessAsync")]
         public static class DropServerClientAPI_ExpeditionSuccessAsync_Patch
         {
@@ -305,5 +305,6 @@ namespace TheArchive.Features.LocalProgression
             }
         }
 #endregion checkpoint
+#endif
     }
 }

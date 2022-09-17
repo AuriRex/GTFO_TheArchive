@@ -10,6 +10,7 @@
     <RootNamespace>TheArchive</RootNamespace>
     <AssemblyName>TheArchive.MONO</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <LangVersion>8.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -196,6 +197,21 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\HudToggle.cs">
       <Link>Features\HudToggle.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalBoosters.cs">
+      <Link>Features\LocalProgression\LocalBoosters.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalProgressionController.cs">
+      <Link>Features\LocalProgression\LocalProgressionController.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalProgressionCore.cs">
+      <Link>Features\LocalProgression\LocalProgressionCore.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalVanity.cs">
+      <Link>Features\LocalProgression\LocalVanity.cs</Link>
+    </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\PlayFabManagerPatches.cs">
+      <Link>Features\LocalProgression\PlayFabManagerPatches.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
       <Link>Features\PlayerInfo.cs</Link>
     </Compile>
@@ -261,7 +277,6 @@
     <Compile Include="Features\Dev\DramaManagerNoDebugLog.cs" />
     <Compile Include="HarmonyPatches\Patches\LegacyLevelBuilder.cs" />
     <Compile Include="Features\Special\R1SNetRevisionOverridePatch.cs" />
-    <Compile Include="HarmonyPatches\Patches\PlayFabPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\MonoUtils.cs" />
   </ItemGroup>
@@ -271,6 +286,9 @@
       <Name>TheArchive.Core</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Managers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

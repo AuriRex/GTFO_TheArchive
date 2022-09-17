@@ -381,6 +381,8 @@ namespace TheArchive.Features.Dev
             {
                 CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
 
+                CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
+
                 CM_SettingsInputField cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
 
                 StringInputSetMaxLength(cm_settingsInputField, 7);
@@ -430,6 +432,8 @@ namespace TheArchive.Features.Dev
             {
                 CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
 
+                CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
+
                 CM_SettingsInputField cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
 
                 StringInputSetMaxLength(cm_settingsInputField, setting.MaxInputLength);
@@ -470,6 +474,8 @@ namespace TheArchive.Features.Dev
             {
                 CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
 
+                CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
+
                 CM_SettingsToggleButton cm_SettingsToggleButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);
 
                 var toggleButton_cm_item = cm_SettingsToggleButton.gameObject.AddComponent<CM_Item>();
@@ -500,6 +506,8 @@ namespace TheArchive.Features.Dev
             private static void CreateEnumListSetting(EnumListSetting setting)
             {
                 CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
+
+                CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
                 CM_SettingsEnumDropdownButton cm_settingsEnumDropdownButton = GOUtil.SpawnChildAndGetComp<CM_SettingsEnumDropdownButton>(cm_settingsItem.m_enumDropdownInputPrefab, cm_settingsItem.m_inputAlign);
 
@@ -616,6 +624,8 @@ namespace TheArchive.Features.Dev
             private static void CreateEnumSetting(EnumSetting setting)
             {
                 CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
+
+                CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
                 CM_SettingsEnumDropdownButton cm_settingsEnumDropdownButton = GOUtil.SpawnChildAndGetComp<CM_SettingsEnumDropdownButton>(cm_settingsItem.m_enumDropdownInputPrefab, cm_settingsItem.m_inputAlign);
 
@@ -742,7 +752,12 @@ namespace TheArchive.Features.Dev
 
                     var toggleButtonText = toggleButton_cm_item.GetComponentInChildren<TMPro.TextMeshPro>();
 
-                    if (feature.IsAutomated)
+                    if(feature.DisableModSettingsButton)
+                    {
+                        toggleButton_cm_item.gameObject.SetActive(false);
+                    }
+
+                    if (feature.IsAutomated || feature.DisableModSettingsButton)
                     {
                         toggleButton_cm_item.SetCMItemEvents(delegate (int id) { });
                     }
@@ -764,37 +779,7 @@ namespace TheArchive.Features.Dev
 
                     SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
 
-                    var rundownInfoButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);
-                    var rundownInfoTMP = rundownInfoButton.GetComponentInChildren<TMPro.TextMeshPro>();
-                    JankTextMeshProUpdaterOnce.Apply(rundownInfoTMP);
-                    UnityEngine.Object.Destroy(rundownInfoButton);
-                    UnityEngine.Object.Destroy(rundownInfoButton.GetComponent<BoxCollider2D>());
-
-
-                    rundownInfoTMP.GetComponent<RectTransform>().sizeDelta = new Vector2(520, 50);
-
-                    if (feature.AppliesToRundowns == RundownFlags.None)
-                    {
-                        rundownInfoTMP.SetText(string.Empty);
-                    }
-                    else
-                    {
-                        Enum.TryParse<RundownID>(feature.AppliesToRundowns.LowestRundownFlag().ToString(), out var lowestId);
-                        Enum.TryParse<RundownID>(feature.AppliesToRundowns.HighestRundownFlag().ToString(), out var highestId);
-
-                        
-                        if(lowestId == highestId)
-                        {
-                            rundownInfoTMP.SetText($"<align=right>R{(int)lowestId}</align>");
-                        }
-                        else
-                        {
-                            rundownInfoTMP.SetText($"<align=right>R{(int)lowestId}-R{(int)highestId}</align>");
-                        }
-                    }
-
-
-                    rundownInfoTMP.color = ORANGE;
+                    CreateRundownInfoTextForItem(cm_settingsItem, feature.AppliesToRundowns);
 
                     var collider = toggleButton_cm_item.GetComponent<BoxCollider2D>();
                     collider.size = new Vector2(550, 50);
@@ -839,6 +824,40 @@ namespace TheArchive.Features.Dev
                 {
                     FeatureLogger.Exception(ex);
                 }
+            }
+
+            public static void CreateRundownInfoTextForItem(CM_SettingsItem cm_settingsItem, RundownFlags rundowns)
+            {
+                var rundownInfoButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);
+                var rundownInfoTMP = rundownInfoButton.GetComponentInChildren<TMPro.TextMeshPro>();
+                JankTextMeshProUpdaterOnce.Apply(rundownInfoTMP);
+                UnityEngine.Object.Destroy(rundownInfoButton);
+                UnityEngine.Object.Destroy(rundownInfoButton.GetComponent<BoxCollider2D>());
+
+
+                rundownInfoTMP.GetComponent<RectTransform>().sizeDelta = new Vector2(520, 50);
+
+                if (rundowns == RundownFlags.None)
+                {
+                    rundownInfoTMP.SetText(string.Empty);
+                }
+                else
+                {
+                    Enum.TryParse<RundownID>(rundowns.LowestRundownFlag().ToString(), out var lowestId);
+                    Enum.TryParse<RundownID>(rundowns.HighestRundownFlag().ToString(), out var highestId);
+
+
+                    if (lowestId == highestId)
+                    {
+                        rundownInfoTMP.SetText($"<align=right>R{(int)lowestId}</align>");
+                    }
+                    else
+                    {
+                        rundownInfoTMP.SetText($"<align=right>R{(int)lowestId}-R{(int)highestId}</align>");
+                    }
+                }
+
+                rundownInfoTMP.color = ORANGE;
             }
 
             private static void SetFeatureItemTextAndColor(Feature feature, CM_Item buttonItem, TMPro.TextMeshPro text)

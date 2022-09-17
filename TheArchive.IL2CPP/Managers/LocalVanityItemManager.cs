@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using TheArchive.Core;
 using TheArchive.Interfaces;
 using TheArchive.Models.Progression;
@@ -16,6 +17,7 @@ namespace TheArchive.Managers
     {
         public IArchiveLogger Logger { get; set; }
 
+        private uint _vanityItemLayerDropDataBlockPersistentID = 0;
         private LocalVanityItemStorage _localVanityItemStorage;
         public LocalVanityItemStorage LocalVanityItemPlayerData
         {
@@ -61,12 +63,12 @@ namespace TheArchive.Managers
         {
             try
             {
-                VanityItemsLayerDropsDataBlock vilddb = VanityItemsLayerDropsDataBlock.GetBlock(
-                    VanityItemsLayerDropsDataBlock.GetAllBlocks()
-                        .Where(x => x.internalEnabled)
-                        .Select(x => x.persistentID)
-                        .Max()
-                    );
+                if(_vanityItemLayerDropDataBlockPersistentID == 0)
+                {
+                    _vanityItemLayerDropDataBlockPersistentID = RundownDataBlock.GetBlock((uint)ArchiveMod.CurrentRundown.GetIntValue()).VanityItemLayerDropDataBlock;
+                }
+
+                VanityItemsLayerDropsDataBlock vilddb = VanityItemsLayerDropsDataBlock.GetBlock(_vanityItemLayerDropDataBlockPersistentID);
 
                 bool anyDropped = false;
 

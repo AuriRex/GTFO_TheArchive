@@ -328,6 +328,7 @@
     <Compile Include="Features\Dev\MaulGavelChecksumPatch.cs" />
     <Compile Include="Features\DiscordRichPresence.cs" />
     <Compile Include="Features\LocalProgression\LocalBoosters.cs" />
+    <Compile Include="Features\LocalProgression\LocalProgressionController.cs" />
     <Compile Include="Features\LocalProgression\LocalProgressionCore.cs" />
     <Compile Include="Features\LocalProgression\LocalVanity.cs" />
     <Compile Include="Features\LocalProgression\PlayFabManagerPatches.cs" />

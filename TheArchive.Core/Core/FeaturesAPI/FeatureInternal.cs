@@ -24,6 +24,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal bool HideInModSettings { get; private set; }
         internal bool DoNotSaveToConfig { get; private set; }
         internal bool AutomatedFeature { get; private set; }
+        internal bool DisableModSettingsButton { get; private set; }
         internal bool HasAdditionalSettings => _settingsHelpers.Count > 0;
         internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
@@ -80,6 +81,7 @@ namespace TheArchive.Core.FeaturesAPI
             HideInModSettings = featureType.GetCustomAttribute<HideInModSettings>() != null;
             DoNotSaveToConfig = featureType.GetCustomAttribute<DoNotSaveToConfig>() != null;
             AutomatedFeature = featureType.GetCustomAttribute<AutomatedFeature>() != null;
+            DisableModSettingsButton = featureType.GetCustomAttribute<DisallowInGameToggle>() != null;
 
             foreach (var constraint in featureType.GetCustomAttributes<RundownConstraint>())
             {

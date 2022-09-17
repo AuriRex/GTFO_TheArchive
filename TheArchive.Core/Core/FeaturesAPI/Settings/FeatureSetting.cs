@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using TheArchive.Core.Attributes.Feature.Settings;
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core.FeaturesAPI.Settings
 {
@@ -8,6 +9,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
     {
         public FeatureSettingsHelper Helper { get; }
         public PropertyInfo Prop { get; }
+        public RundownFlags RundownHint { get; }
         public string DisplayName { get; }
         public string Identifier { get; }
         public Type Type { get; }
@@ -22,6 +24,8 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             Type = prop?.GetMethod?.ReturnType;
             DisplayName = $"> {prop?.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
             Identifier = prop?.GetCustomAttribute<FSIdentifier>()?.Identifier ?? ($"{prop.PropertyType.FullName}_{prop.Name}");
+            RundownHint = prop?.GetCustomAttribute<FSRundownHint>()?.Rundowns ?? RundownFlags.None;
+
             _instance = instance;
             DEBUG_Path = debug_path;
         }

@@ -25,6 +25,11 @@ namespace TheArchive.Core.FeaturesAPI
         public bool IsAutomated => FeatureInternal.AutomatedFeature;
 
         /// <summary>
+        /// Does what it says it does
+        /// </summary>
+        public bool DisableModSettingsButton => FeatureInternal.DisableModSettingsButton;
+
+        /// <summary>
         /// Logging interface for this <see cref="Feature"/>
         /// </summary>
         public IArchiveLogger FeatureLogger => FeatureInternal.FeatureLoggerInstance;

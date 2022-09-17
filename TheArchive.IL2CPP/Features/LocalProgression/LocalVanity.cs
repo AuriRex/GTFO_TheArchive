@@ -1,25 +1,28 @@
-﻿using DropServer;
-using DropServer.VanityItems;
-using System;
+﻿using System;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Managers;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
+#if IL2CPP
+using DropServer;
+using DropServer.VanityItems;
+using TheArchive.Managers;
 using IL2Tasks = Il2CppSystem.Threading.Tasks;
+#endif
 
 namespace TheArchive.Features.LocalProgression
 {
     [RundownConstraint(RundownFlags.RundownSix, RundownFlags.Latest)]
-    [EnableFeatureByDefault]
+    [HideInModSettings]
+    [DoNotSaveToConfig]
+    [AutomatedFeature]
     public class LocalVanity : Feature
     {
         public override string Name => "Local Vanity";
 
         public override string Group => FeatureGroups.LocalProgression;
 
-        public override bool RequiresRestart => true;
-
+#if IL2CPP
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetInventoryPlayerDataAsync))]
         public static class DropServerClientAPI_GetInventoryPlayerDataAsyncPatch
         {
@@ -57,5 +60,6 @@ namespace TheArchive.Features.LocalProgression
                 return ArchivePatch.SKIP_OG;
             }
         }
+#endif
     }
 }

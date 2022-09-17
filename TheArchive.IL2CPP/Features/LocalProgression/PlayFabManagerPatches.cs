@@ -3,6 +3,8 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using TheArchive.Interfaces;
+using System.IO;
+using System.Collections.Generic;
 #if MONO
 using IL2Tasks = System.Threading.Tasks;
 using IL2System = System;
@@ -12,6 +14,7 @@ using IL2Tasks = Il2CppSystem.Threading.Tasks;
 using IL2System = Il2CppSystem;
 using Il2ColGen = Il2CppSystem.Collections.Generic;
 #endif
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.LocalProgression
 {
@@ -26,6 +29,82 @@ namespace TheArchive.Features.LocalProgression
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 
+#if MONO
+        public override void OnEnable()
+        {
+            ReadAllFilesFromDisk();
+        }
+
+        private static Dictionary<string, string> _playerEntityData = new Dictionary<string, string>();
+
+        public static void ReadAllFilesFromDisk()
+        {
+            _playerEntityData.Clear();
+            foreach (string file in Directory.EnumerateFiles(LocalFiles.FilesDirectoryPath, "*"))
+            {
+                ArchiveLogger.Msg(ConsoleColor.Green, $"Reading playerEntityData file: {file}");
+                string contents = File.ReadAllText(file);
+                string fileName = Path.GetFileName(file);
+
+                _playerEntityData.Add(fileName, contents);
+            }
+        }
+
+        [ArchivePatch(typeof(PlayFabManager), "TryGetPlayerEntityFileValue")]
+        internal static class PlayFabManager_TryGetPlayerEntityFileValuePatch
+        {
+            public static bool Prefix(string fileName, out string value, ref bool __result)
+            {
+                __result = _playerEntityData.TryGetValue(fileName, out value);
+
+                FeatureLogger.Msg(ConsoleColor.Green, $"Getting {fileName} from playerEntityData.");
+
+                return ArchivePatch.SKIP_OG;
+            }
+        }
+
+        [ArchivePatch(typeof(PlayFabManager), "SetPlayerEntityFileValue")]
+        internal static class PlayFabManager_SetPlayerEntityFileValuePatch
+        {
+            public static bool Prefix(string fileName, string value)
+            {
+                FeatureLogger.Msg(ConsoleColor.Green, $"Adding {fileName} to playerEntityData.");
+                if (_playerEntityData.ContainsKey(fileName))
+                {
+                    _playerEntityData[fileName] = value;
+                    return ArchivePatch.SKIP_OG;
+                }
+
+                _playerEntityData.Add(fileName, value);
+                return ArchivePatch.SKIP_OG;
+            }
+        }
+
+
+        [ArchivePatch(typeof(PlayFabManager), "DoUploadPlayerEntityFile")]
+        internal class PlayFabManager_DoUploadPlayerEntityFilePatch
+        {
+            // This is where the game usually uploads your Progression to the PlayFab servers.
+            public static bool Prefix(string fileName)
+            {
+                if (PlayFabManager.TryGetPlayerEntityFileValue(fileName, out string value))
+                    LocalFiles.SaveToFilesDir(fileName, value);
+
+                MonoUtils.CallEvent<PlayFabManager>(nameof(PlayFabManager.OnFileUploadSuccess), null, fileName);
+
+                return ArchivePatch.SKIP_OG;
+            }
+        }
+
+        [RundownConstraint(RundownFlags.RundownTwo, RundownFlags.RundownFour)]
+        [ArchivePatch(typeof(PlayfabMatchmakingManager), nameof(PlayfabMatchmakingManager.CancelAllTicketsForLocalPlayer))]
+        internal class PlayfabMatchmakingManager_CancelAllTicketsForLocalPlayer_Patch
+        {
+            public static bool Prefix() => ArchivePatch.SKIP_OG;
+        }
+#endif
+
+        [RundownConstraint(RundownFlags.RundownTwo, RundownFlags.Latest)]
         [ArchivePatch(typeof(PlayFabManager), "TryGetRundownTimerData")]
         internal static class PlayFabManager_TryGetRundownTimerData_Patch
         {
@@ -66,53 +145,80 @@ namespace TheArchive.Features.LocalProgression
             }
         }
 
-        [ArchivePatch(typeof(PlayFabManager), nameof(PlayFabManager.OnGetAuthSessionTicketResponse))]
+        [ArchivePatch(typeof(PlayFabManager), "OnGetAuthSessionTicketResponse")]
         internal class PlayFabManager_OnGetAuthSessionTicketResponse_Patch
         {
+            public static string PLAYFAB_ID = "idk_lol";
+
+            private static string _entityId = null;
+            public static string EntityID => _entityId ??= "Player_" + new System.Random().Next(int.MinValue, int.MaxValue);
+
+            private static string _entityToken = null;
+            public static string EntityToken => _entityToken ??= "EntityToken_" + new System.Random().Next(int.MinValue, int.MaxValue);
+
+#if IL2CPP
             public static bool Prefix()
             {
                 FeatureLogger.Notice("Tricking the game into thinking we're logged in ...");
 
                 PlayFabManager.Current.m_globalTitleDataLoaded = true;
                 PlayFabManager.Current.m_playerDataLoaded = true;
-                PlayFabManager.Current.m_entityId = "steamplayer_" + new System.Random().Next(int.MinValue, int.MaxValue);
+                PlayFabManager.Current.m_entityId = EntityID;
                 PlayFabManager.Current.m_entityType = "Player";
-                PlayFabManager.Current.m_entityToken = "bogus_token_" + new System.Random().Next(int.MinValue, int.MaxValue);
+                PlayFabManager.Current.m_entityToken = EntityToken;
                 PlayFabManager.Current.m_entityLoggedIn = true;
 
 
-                PlayFabManager.PlayFabId = "pId_gczasftzasftqasgsahgjachjhcajh";
+                PlayFabManager.PlayFabId = PLAYFAB_ID;
 
                 PlayFabManager.LoggedInDateTime = new IL2System.DateTime();
                 PlayFabManager.LoggedInSeconds = Clock.Time;
 
-                try
-                {
-                    Il2CppUtils.CallEvent<PlayFabManager>("OnLoginSuccess");
-                    Il2CppUtils.CallEvent<PlayFabManager>("OnTitleDataUpdated");
-                }
-                catch (Exception ex)
-                {
-                    ArchiveLogger.Error(ex.Message);
-                    ArchiveLogger.Error(ex.StackTrace);
-                }
+                Il2CppUtils.CallEvent<PlayFabManager>("OnLoginSuccess");
+                Il2CppUtils.CallEvent<PlayFabManager>("OnTitleDataUpdated");
 
                 return ArchivePatch.SKIP_OG;
             }
+#else
+            [IsPrefix]
+            public static bool PrefixMono(ref bool ___m_globalTitleDataLoaded, ref bool ___m_playerDataLoaded, ref bool ___m_loggedIn, ref string ___m_entityId, ref string ___m_entityType)
+            {
+                FeatureLogger.Notice("Tricking the game into thinking we're logged in ...");
+
+                ___m_globalTitleDataLoaded = true;
+                ___m_playerDataLoaded = true;
+                ___m_loggedIn = true;
+                ___m_entityId = EntityID;
+                ___m_entityType = "Player";
+
+                PlayFabManager.PlayFabId = PLAYFAB_ID;
+                PlayFabManager.PlayerEntityFilesLoaded = true;
+
+                PlayFabManager.LoggedInDateTime = new IL2System.DateTime();
+                PlayFabManager.LoggedInSeconds = Clock.Time;
+
+                MonoUtils.CallEvent<PlayFabManager>(nameof(PlayFabManager.OnAllPlayerEntityFilesLoaded));
+                MonoUtils.CallEvent<PlayFabManager>(nameof(PlayFabManager.OnLoginSuccess));
+
+                return ArchivePatch.SKIP_OG;
+            }
+#endif
         }
 
-        [ArchivePatch(typeof(PlayFabManager), nameof(PlayFabManager.GetEntityTokenAsync))]
+        [RundownConstraint(RundownFlags.RundownFour, RundownFlags.Latest)]
+        [ArchivePatch(typeof(PlayFabManager), "GetEntityTokenAsync")]
         internal class PlayFabManager_GetEntityTokenAsync_Patch
         {
             public static bool Prefix(ref IL2Tasks.Task<string> __result)
             {
-                __result = IL2Tasks.Task.FromResult<string>(PlayFabManager.Current.m_entityToken);
+                __result = IL2Tasks.Task.FromResult<string>(PlayFabManager_OnGetAuthSessionTicketResponse_Patch.EntityToken);
 
                 return ArchivePatch.SKIP_OG;
             }
         }
 
-        [ArchivePatch(typeof(PlayFabManager), nameof(PlayFabManager.RefreshGlobalTitleDataForKeys))]
+        [RundownConstraint(RundownFlags.RundownFour, RundownFlags.Latest)]
+        [ArchivePatch(typeof(PlayFabManager), "RefreshGlobalTitleDataForKeys")]
         internal class PlayFabManager__RefreshGlobalTitleDataForKeys_Patch
         {
             public static bool Prefix(Il2ColGen.List<string> keys, IL2System.Action OnSuccess)
@@ -155,7 +261,7 @@ namespace TheArchive.Features.LocalProgression
                 {
                     foreach (Il2ColGen.KeyValuePair<string, string> kvp in keys)
                     {
-                        FeatureLogger.Msg(ConsoleColor.DarkYellow, $"AddToOrUpdateLocalPlayerTitleData(OverloadMethod): Key:{kvp?.Key} - Value:{kvp?.Value}");
+                        FeatureLogger.Msg(ConsoleColor.DarkYellow, $"AddToOrUpdateLocalPlayerTitleData(OverloadMethod): Key:{kvp.Key} - Value:{kvp.Value}");
                     }
                 }
 

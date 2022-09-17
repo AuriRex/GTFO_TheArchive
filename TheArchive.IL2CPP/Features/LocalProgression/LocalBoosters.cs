@@ -1,25 +1,27 @@
-﻿using BoosterImplants;
-using DropServer;
-using System;
+﻿using System;
 using System.Reflection;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
-using TheArchive.Managers;
 using static TheArchive.Utilities.Utils;
+#if IL2CPP
+using TheArchive.Managers;
+using BoosterImplants;
+using DropServer;
 using IL2Tasks = Il2CppSystem.Threading.Tasks;
+#endif
 
 namespace TheArchive.Features.LocalProgression
 {
-    [EnableFeatureByDefault]
     [RundownConstraint(RundownFlags.RundownFive, RundownFlags.Latest)]
+    [HideInModSettings]
+    [DoNotSaveToConfig]
+    [AutomatedFeature]
     public class LocalBoosters : Feature
     {
         public override string Name => "Local Boosters";
 
         public override string Group => FeatureGroups.LocalProgression;
-
-        public override bool RequiresRestart => true;
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 
