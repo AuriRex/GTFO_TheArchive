@@ -1,4 +1,5 @@
 ﻿using CellMenu;
+using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
