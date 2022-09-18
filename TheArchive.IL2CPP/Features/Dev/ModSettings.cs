@@ -47,30 +47,32 @@ namespace TheArchive.Features.Dev
         public class JankTextMeshProUpdaterOnce : MonoBehaviour
         {
 #if IL2CPP
-            public JankTextMeshProUpdaterOnce(IntPtr ptr) : base(ptr)
-            {
-
-            }
+            public JankTextMeshProUpdaterOnce(IntPtr ptr) : base(ptr) { }
 #endif
-
             public void Awake()
             {
-                TMPro.TextMeshPro textMesh = this.GetComponent<TMPro.TextMeshPro>();
+                UpdateMesh(this.GetComponent<TMPro.TextMeshPro>());
+                Destroy(this);
+            }
+
+            public static void UpdateMesh(TMPro.TextMeshPro textMesh)
+            {
+                if (!BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownFour | RundownFlags.RundownFive)) return;
+                if (textMesh == null) return;
 
                 A_TextMeshPro_ForceMeshUpdate.Invoke(textMesh);
-
-                Destroy(this);
             }
 
 #if IL2CPP
             [UnhollowerBaseLib.Attributes.HideFromIl2Cpp]
 #endif
-            public static void Apply(TMPro.TextMeshPro tmp)
+            public static JankTextMeshProUpdaterOnce Apply(TMPro.TextMeshPro tmp)
             {
-                if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownFour | Utils.RundownFlags.RundownFive))
+                if (BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownFour | RundownFlags.RundownFive))
                 {
-                    tmp.gameObject.AddComponent<JankTextMeshProUpdaterOnce>();
+                    return tmp.gameObject.AddComponent<JankTextMeshProUpdaterOnce>();
                 }
+                return null;
             }
         }
 
@@ -206,10 +208,12 @@ namespace TheArchive.Features.Dev
                     infoText.name = "ModSettings_InfoText";
                     infoText.transform.localPosition += new Vector3(300, 0, 0);
                     infoText.SetText("");
+                    infoText.text = "";
                     infoText.enableWordWrapping = false;
                     infoText.fontSize = 16;
                     infoText.fontSizeMin = 16;
-                    JankTextMeshProUpdaterOnce.Apply(infoText);
+
+                    JankTextMeshProUpdaterOnce.UpdateMesh(infoText);
 
 
                     var odereredGroups = FeatureManager.Instance.GroupedFeatures.OrderBy(kvp => kvp.Key);
@@ -771,7 +775,10 @@ namespace TheArchive.Features.Dev
                             if (feature.RequiresRestart && !_restartRequested)
                             {
                                 _restartRequested = true;
+
                                 infoText.SetText($"<color=red><b>Restart required for some settings to apply!</b></color>");
+
+                                JankTextMeshProUpdaterOnce.UpdateMesh(infoText);
                             }
                         });
                     }
@@ -872,6 +879,8 @@ namespace TheArchive.Features.Dev
                 text.SetText(enabled ? "Enabled" : "Disabled");
 
                 SetFeatureItemColor(feature, buttonItem);
+
+                JankTextMeshProUpdaterOnce.UpdateMesh(text);
             }
 
             private static void SetFeatureItemColor(Feature feature, CM_Item item)
