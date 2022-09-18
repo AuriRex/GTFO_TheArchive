@@ -2,6 +2,8 @@
 
 A [MelonLoader](https://github.com/LavaGang/MelonLoader) based [GTFO](https://gtfothegame.com/) mod that's aiming to preserve older versions by keeping them playable even once the servers are gone forever **by handling all playfab requests locally** and saving things like **progression/level completions**, **boosters** and **vanity items** onto your storage device of choice.
 
+Compatible with many different GTFO builds, tested on all of the latest patches for each rundown.
+
 # Features
 
 ## Local Rundown Progression
@@ -13,10 +15,14 @@ The implementation should be as close to the original game whenever a specific (
 An in-game mod settings menu for easy feature customization.  
 Most Features are toggleable mid game and some even have extra options to mess with!
 
+![Mod Settings](https://user-images.githubusercontent.com/37329066/190881761-1c0550c3-2d2e-4e74-9904-d0f439b96f24.png)
+
 ## Discord Rich presence
 
 Fully customizable Discord Rich Presence system to show others what you're up to.  
 (currently only configurable through the config file)
+
+![Rich Presence](https://user-images.githubusercontent.com/37329066/190882400-4be7c531-f863-4c3b-a703-34020f579aad.png)
 
 ---
 
