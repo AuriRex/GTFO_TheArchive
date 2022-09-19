@@ -194,7 +194,7 @@ namespace TheArchive.Core.FeaturesAPI
 
             _harmonyInstance = new HarmonyLib.Harmony(_feature.Identifier);
 
-            var potentialPatchTypes = featureType.GetNestedTypes(ArchivePatcher.AnyBindingFlags).Where(nt => nt.GetCustomAttribute<ArchivePatch>() != null);
+            var potentialPatchTypes = featureType.GetNestedTypes(Utils.AnyBindingFlagss).Where(nt => nt.GetCustomAttribute<ArchivePatch>() != null);
 
             foreach(var type in potentialPatchTypes)
             {

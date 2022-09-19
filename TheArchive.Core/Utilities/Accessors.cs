@@ -11,7 +11,7 @@ namespace TheArchive.Utilities
     public abstract class AccessorBase
     {
         public static object[] NoParams { get; private set; } = Array.Empty<object>();
-        public static BindingFlags AnyBindingFlags => Core.ArchivePatcher.AnyBindingFlags;
+        public static BindingFlags AnyBindingFlags => Utils.AnyBindingFlagss;
 
         protected static readonly Dictionary<string, AccessorBase> Accessors = new Dictionary<string, AccessorBase>();
 

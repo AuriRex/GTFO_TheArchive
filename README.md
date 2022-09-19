@@ -24,6 +24,13 @@ Fully customizable Discord Rich Presence system to show others what you're up to
 
 ![Rich Presence](https://user-images.githubusercontent.com/37329066/190882400-4be7c531-f863-4c3b-a703-34020f579aad.png)
 
+## Settings Redirect
+
+Game settings get saved to a different location for every Rundown so you only have to change them once*.  
+(*for each major version once, a version agnostic settings menu is on the TODO list)
+
+Having to redo your settings whenever you switch to another Rundown is now a thing of the past.
+
 ---
 
 ## Backported Features

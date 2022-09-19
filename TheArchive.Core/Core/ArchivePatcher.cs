@@ -9,6 +9,7 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core
 {
+    [Obsolete]
     public class ArchivePatcher
     {
         private readonly HarmonyLib.Harmony _harmonyInstance;

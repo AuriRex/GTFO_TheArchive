@@ -51,7 +51,7 @@ namespace TheArchive.Core.Managers
         {
             var genericType = ImplementationManager.GameTypeByIdentifier("GameDataBlockBase<>").MakeGenericType(type);
             wrapperType = ImplementationManager.GameTypeByIdentifier("GameDataBlockWrapper<>").MakeGenericType(type);
-            var wrapper = genericType.GetProperty("Wrapper", ArchivePatcher.AnyBindingFlags)?.GetValue(null) ?? genericType.GetField("Wrapper", ArchivePatcher.AnyBindingFlags).GetValue(null);
+            var wrapper = genericType.GetProperty("Wrapper", Utils.AnyBindingFlagss)?.GetValue(null) ?? genericType.GetField("Wrapper", Utils.AnyBindingFlagss).GetValue(null);
 
             return wrapper;
         }
