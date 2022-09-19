@@ -20,7 +20,7 @@ namespace TheArchive.Utilities
                         //CellBuildData.GetRevision()
                         _buildNumber = (int) ((
                             ImplementationManager.FindTypeInCurrentAppDomain("CellBuildData")
-                            ?.GetMethod("GetRevision", ArchivePatcher.AnyBindingFlags)
+                            ?.GetMethod("GetRevision", Utils.AnyBindingFlagss)
                             ?.Invoke(null, null)
                             ) ?? -1);
 
@@ -60,9 +60,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_dataBlockDumpPath))
                 {
-                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? LoaderWrapper.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
-
-                    _dataBlockDumpPath = Path.Combine(path, $"DataBlocks/{ArchiveMod.CurrentRundown}_Build_{BuildNumber}/");
+                    _dataBlockDumpPath = Path.Combine(SaveDirectoryPath, $"DataBlocks/Build_{BuildNumber}_Rundown_{(int) ArchiveMod.CurrentRundown}/");
                     if (!Directory.Exists(_dataBlockDumpPath))
                         Directory.CreateDirectory(_dataBlockDumpPath);
                 }
@@ -97,7 +95,7 @@ namespace TheArchive.Utilities
 
                 if (string.IsNullOrEmpty(_rundownspecificSavePath))
                 {
-                    _rundownspecificSavePath = Path.Combine(SaveDirectoryPath, $"{ArchiveMod.CurrentRundown}_Data/");
+                    _rundownspecificSavePath = Path.Combine(SaveDirectoryPath, $"Rundown_{(int) ArchiveMod.CurrentRundown}_Data/");
 
                     if (!Directory.Exists(_rundownspecificSavePath))
                         Directory.CreateDirectory(_rundownspecificSavePath);
