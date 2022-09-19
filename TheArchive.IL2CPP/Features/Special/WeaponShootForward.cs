@@ -19,6 +19,7 @@ namespace TheArchive.Features.Special
         public static new IArchiveLogger FeatureLogger { get; set; }
 
         public static Vector3 Direction = Vector3.zero;
+        public static int Frame = 0;
 
         [ArchivePatch(typeof(Shotgun), nameof(Shotgun.Fire))]
         public static class Shotgun_Fire_Patch
@@ -26,6 +27,7 @@ namespace TheArchive.Features.Special
             public static void Prefix(Shotgun __instance)
             {
                 Direction = __instance.Owner.FPSCamera.CameraRayPos - __instance.Owner.FPSCamera.Position;
+                Frame = Time.frameCount;
             }
         }
 
@@ -35,6 +37,7 @@ namespace TheArchive.Features.Special
             public static void Prefix(BulletWeapon __instance)
             {
                 Direction = __instance.Owner.FPSCamera.CameraRayPos - __instance.Owner.FPSCamera.Position;
+                Frame = Time.frameCount;
             }
         }
 
@@ -50,7 +53,8 @@ namespace TheArchive.Features.Special
 
             public static void Prefix(ref Weapon.WeaponHitData weaponRayData)
             {
-                weaponRayData.fireDir = Direction;
+                if(Frame == Time.frameCount)
+                    weaponRayData.fireDir = Direction;
             }
         }
     }
