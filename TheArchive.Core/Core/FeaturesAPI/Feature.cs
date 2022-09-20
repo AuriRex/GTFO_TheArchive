@@ -156,5 +156,7 @@ namespace TheArchive.Core.FeaturesAPI
 
         internal FeatureInternal FeatureInternal { get; set; }
         public static bool DevMode => ArchiveMod.Settings.FeatureDevMode;
+        public static bool GameDataInited { get; internal set; } = false;
+        public static bool DataBlocksReady { get; internal set; } = false;
     }
 }

@@ -52,6 +52,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal void OnGameDataInitialized()
         {
             _logger.Debug($"{nameof(OnGameDataInitialized)}()");
+            Feature.GameDataInited = true;
             try
             {
                 foreach (var feature in RegisteredFeatures)
@@ -69,6 +70,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal void OnDatablocksReady()
         {
             _logger.Debug($"{nameof(OnDatablocksReady)}()");
+            Feature.DataBlocksReady = true;
             try
             {
                 foreach (var feature in RegisteredFeatures)

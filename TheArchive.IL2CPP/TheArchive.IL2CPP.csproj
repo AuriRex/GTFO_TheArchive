@@ -324,6 +324,7 @@
     <Compile Include="Features\CustomLobbyCodeString.cs" />
     <Compile Include="Features\Dev\AnalyticsBlocker.cs" />
     <Compile Include="Features\Dev\GameDebugLogRedirect.cs" />
+    <Compile Include="Features\Dev\IconRenderSettings.cs" />
     <Compile Include="Features\Dev\InternalUAudioListenerHelper.cs" />
     <Compile Include="Features\Dev\MaulGavelChecksumPatch.cs" />
     <Compile Include="Features\DiscordRichPresence.cs" />
@@ -335,6 +336,7 @@
     <Compile Include="Features\QoL\LoadoutRandomizer.cs" />
     <Compile Include="Features\QoL\MapToObjectivesSwitchFix.cs" />
     <Compile Include="Features\QoL\ResourcePrioritizationPings.cs" />
+    <Compile Include="Features\Special\CustomWeaponFOV.cs" />
     <Compile Include="Features\Special\RundownInHeader.cs" />
     <Compile Include="Features\Dev\RedirectSettings.cs" />
     <Compile Include="Features\Special\HideFirstPersonItem.cs" />
@@ -349,8 +351,6 @@
     <Compile Include="Features\Dev\ModSettings.cs" />
     <Compile Include="Features\Backport\MeleeCancelBackport.cs" />
     <Compile Include="Features\PlayerInfo.cs" />
-    <Compile Include="HarmonyPatches\Patches\PlayfabMatchmakingManagerPatches.cs" />
-    <Compile Include="HarmonyPatches\Patches\OtherPatches.cs" />
     <Compile Include="Features\HudToggle.cs" />
     <Compile Include="Features\RichPresenceCore.cs" />
     <Compile Include="ArchiveIL2CPPBootstrap.cs" />
@@ -402,9 +402,7 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.6.5.5\build\Fody.targets" Condition="Exists('..\packages\Fody.6.5.5\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

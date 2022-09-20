@@ -51,7 +51,7 @@ namespace TheArchive.Core.FeaturesAPI
                 if (prop?.SetMethod == null) continue;
                 if (prop?.GetCustomAttribute<FSIgnore>() != null) continue;
 
-                if (!type.IsValueType && !typeof(IList).IsAssignableFrom(type) && type != typeof(string))
+                if (!type.IsValueType && !typeof(IList).IsAssignableFrom(type) && type != typeof(string) && type.GenericTypeArguments.Length <= 1)
                 {
                     PopulateThing(type, prop.GetValue(instance), propPath);
                     continue;
@@ -70,7 +70,7 @@ namespace TheArchive.Core.FeaturesAPI
                         setting = new StringSetting(this, prop, instance, propPath);
                         break;
                     default:
-                        if(typeof(IList).IsAssignableFrom(type) && type.GenericTypeArguments.Length >  0 && type.GenericTypeArguments[0].IsEnum)
+                        if(typeof(IList).IsAssignableFrom(type) && type.GenericTypeArguments.Length == 1 && type.GenericTypeArguments[0].IsEnum)
                         {
                             setting = new EnumListSetting(this, prop, instance, propPath);
                             break;
