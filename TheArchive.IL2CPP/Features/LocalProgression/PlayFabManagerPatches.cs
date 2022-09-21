@@ -309,6 +309,13 @@ namespace TheArchive.Features.LocalProgression
         }
 
         [ArchivePatch(typeof(PlayFabManager), "RefreshGlobalTitleData")]
+        internal class PlayFabManager_RefreshGlobalTitleData_Patch
+        {
+            public static bool Prefix(IL2System.Action OnSuccess) => SkipOGAndInvoke(OnSuccess);
+        }
+
+        [RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownThree)]
+        [ArchivePatch(typeof(PlayFabManager), "RefreshStartupScreenTitelData")]
         internal class PlayFabManager_RefreshStartupScreenTitelData_Patch
         {
             public static bool Prefix(IL2System.Action OnSuccess) => SkipOGAndInvoke(OnSuccess);
