@@ -52,6 +52,36 @@ namespace TheArchive.Utilities
             }
         }
 
+        private static string _modLocalLowPath = null;
+        public static string ModLocalLowPath
+        {
+            get
+            {
+                if(_modLocalLowPath == null)
+                {
+                    
+                    _modLocalLowPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "GTFO_TheArchive");
+                    if (!Directory.Exists(_modLocalLowPath))
+                        Directory.CreateDirectory(_modLocalLowPath);
+                }
+                return _modLocalLowPath;
+            }
+        }
+
+        private static string _modDefaultSaveDataPath = null;
+        public static string ModDefaultSaveDataPath
+        {
+            get
+            {
+                if (_modDefaultSaveDataPath == null)
+                {
+                    _modDefaultSaveDataPath = Path.Combine(ModLocalLowPath, "SaveData");
+                    if (!Directory.Exists(_modLocalLowPath))
+                        Directory.CreateDirectory(_modLocalLowPath);
+                }
+                return _modDefaultSaveDataPath;
+            }
+        }
 
         private static string _dataBlockDumpPath = null;
         public static string DataBlockDumpPath
@@ -60,18 +90,17 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_dataBlockDumpPath))
                 {
-                    _dataBlockDumpPath = Path.Combine(SaveDirectoryPath, $"DataBlocks/Build_{BuildNumber}_Rundown_{(int) ArchiveMod.CurrentRundown}/");
+                    _dataBlockDumpPath = Path.Combine(SaveDirectoryPath, "DataBlocks", $"Build_{BuildNumber}_Rundown_{(int) ArchiveMod.CurrentRundown}");
                     if (!Directory.Exists(_dataBlockDumpPath))
                         Directory.CreateDirectory(_dataBlockDumpPath);
                 }
-
                 return _dataBlockDumpPath;
             }
         }
 
         private static string _savePath = null;
         /// <summary>
-        /// Default is <c>"GTFO/UserData/"</c>, can be overridden by using <see cref="ArchiveSettings.CustomFileSaveLocation"/>
+        /// Default is <see cref="ModDefaultSaveDataPath"/> (LocalLow/GTFO_TheArchive/), can be overridden by using <see cref="ArchiveSettings.CustomFileSaveLocation"/>
         /// </summary>
         public static string SaveDirectoryPath
         {
@@ -79,7 +108,9 @@ namespace TheArchive.Utilities
             {
                 if(string.IsNullOrEmpty(_savePath))
                 {
-                    _savePath = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? LoaderWrapper.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
+                    _savePath = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? ModDefaultSaveDataPath : ArchiveMod.Settings.CustomFileSaveLocation;
+                    if (!Directory.Exists(_savePath))
+                        Directory.CreateDirectory(_savePath);
                 }
                 return _savePath;
             }
@@ -95,7 +126,7 @@ namespace TheArchive.Utilities
 
                 if (string.IsNullOrEmpty(_rundownspecificSavePath))
                 {
-                    _rundownspecificSavePath = Path.Combine(SaveDirectoryPath, $"Rundown_{(int) ArchiveMod.CurrentRundown}_Data/");
+                    _rundownspecificSavePath = Path.Combine(SaveDirectoryPath, $"Rundown_{(int) ArchiveMod.CurrentRundown}_Data");
 
                     if (!Directory.Exists(_rundownspecificSavePath))
                         Directory.CreateDirectory(_rundownspecificSavePath);
@@ -113,7 +144,7 @@ namespace TheArchive.Utilities
                 if (string.IsNullOrEmpty(_otherConfigsPath))
                 {
                     var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? LoaderWrapper.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
-                    _otherConfigsPath = Path.Combine(path, "OtherConfigs/");
+                    _otherConfigsPath = Path.Combine(path, "OtherConfigs");
 
                     if (!Directory.Exists(_otherConfigsPath))
                         Directory.CreateDirectory(_otherConfigsPath);
@@ -130,7 +161,7 @@ namespace TheArchive.Utilities
                 if (string.IsNullOrEmpty(_featureConfigsPath))
                 {
                     var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? LoaderWrapper.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
-                    _featureConfigsPath = Path.Combine(path, "FeatureSettings/");
+                    _featureConfigsPath = Path.Combine(path, "FeatureSettings");
 
                     if (!Directory.Exists(_featureConfigsPath))
                         Directory.CreateDirectory(_featureConfigsPath);
@@ -146,7 +177,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_filesPath))
                 {
-                    _filesPath = Path.Combine(RundownSpecificSaveDirectoryPath, "Files/");
+                    _filesPath = Path.Combine(RundownSpecificSaveDirectoryPath, "Files");
                     if (!Directory.Exists(_filesPath))
                         Directory.CreateDirectory(_filesPath);
                 }
@@ -251,27 +282,6 @@ namespace TheArchive.Utilities
             if (!File.Exists(path))
                 return isJson ? "{}" : string.Empty;
             return File.ReadAllText(path);
-        }
-
-        private static string _localRundownProgressionJSON = string.Empty;
-        [Obsolete]
-        public static string LocalRundownProgressionJSON { get => _localRundownProgressionJSON; }
-
-        public const string kRundownProgressionFileName = "RundownProgression_primary.json";
-
-        [Obsolete]
-        public static void LoadRundownFourAndUpLocalRundownProgressionIfNecessary()
-        {
-            if (string.IsNullOrEmpty(_localRundownProgressionJSON))
-            {
-                _localRundownProgressionJSON = LoadFromFilesDir(kRundownProgressionFileName);
-            }
-        }
-
-        [Obsolete]
-        public static void SaveRundownFourAndUpLocalRundownProgression(string json)
-        {
-            SaveToFilesDir(kRundownProgressionFileName, json);
         }
 
         public static T LoadConfig<T>(out bool fileExists, bool saveIfNonExistent = true) where T : new()

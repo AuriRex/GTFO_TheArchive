@@ -45,7 +45,7 @@ namespace TheArchive.Core.Managers
             {
                 try
                 {
-                    var path = Path.Combine(LocalFiles.SaveDirectoryPath, "discord_game_sdk.dll");
+                    var path = Path.Combine(LocalFiles.ModLocalLowPath, "discord_game_sdk.dll");
                     if (!File.Exists(path))
                     {
                         ArchiveLogger.Notice($"Extracting discord_game_sdk.dll into \"{path}\" ...");

@@ -121,17 +121,9 @@ namespace TheArchive
 
         private void LoadConfig()
         {
-            var path = Path.Combine(MelonUtils.UserDataDirectory, kArchiveSettingsFile);
+            var path = Path.Combine(LocalFiles.ModLocalLowPath, kArchiveSettingsFile);
 
             LoadConfig(path);
-
-
-            if (Settings.UseCommonArchiveSettingsFile && !string.IsNullOrWhiteSpace(Settings.CustomFileSaveLocation))
-            {
-                path = Path.Combine(Settings.CustomFileSaveLocation, kArchiveSettingsFile);
-                ArchiveLogger.Notice($"Loading common config from \"{path}\" instead!");
-                LoadConfig(path);
-            }
         }
 
         private void LoadConfig(string path)
