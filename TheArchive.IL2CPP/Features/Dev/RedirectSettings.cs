@@ -1,5 +1,6 @@
 ﻿using Gear;
 using System;
+using System.IO;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
@@ -14,6 +15,18 @@ namespace TheArchive.Features.Dev
         public override bool RequiresRestart => true;
 
         public override string Group => FeatureGroups.Dev;
+
+        [ArchivePatch(typeof(UnityEngine.Application), nameof(UnityEngine.Application.persistentDataPath), patchMethodType: ArchivePatch.PatchMethodType.Getter)]
+        public static class Application_persistentDataPath_Patch
+        {
+            public static bool Prefix(ref string __result)
+            {
+                __result = Path.Combine(LocalFiles.RundownSpecificSaveDirectoryPath, "appdata/");
+                if (!Directory.Exists(__result))
+                    Directory.CreateDirectory(__result);
+                return ArchivePatch.SKIP_OG;
+            }
+        }
 
 #if IL2CPP
         [ArchivePatch(typeof(Il2CppSystem.IO.Path), nameof(Il2CppSystem.IO.Path.Combine), new Type[] { typeof(string), typeof(string) })]
