@@ -19,11 +19,7 @@ namespace TheArchive.Features.LocalProgression
 
         public override void OnEnable()
         {
-            if(BuildInfo.Rundown == Utilities.Utils.RundownID.RundownOne)
-            {
-
-            }
-            else
+            if(BuildInfo.Rundown != Utilities.Utils.RundownID.RundownOne)
             {
                 AllowFullRundown();
             }
@@ -31,11 +27,7 @@ namespace TheArchive.Features.LocalProgression
 
         public override void OnDisable()
         {
-            if (BuildInfo.Rundown == Utilities.Utils.RundownID.RundownOne)
-            {
-
-            }
-            else
+            if (BuildInfo.Rundown != Utilities.Utils.RundownID.RundownOne)
             {
                 AllowFullRundown(false);
             }
