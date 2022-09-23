@@ -13,10 +13,13 @@ namespace TheArchive.Core.FeaturesAPI
     {
 
         public HashSet<Feature> RegisteredFeatures { get; private set; } = new HashSet<Feature>();
+        public HashSet<Feature> FeaturesRequestingRestart { get; private set; } = new HashSet<Feature>();
+        public bool AnyFeatureRequestingRestart => FeaturesRequestingRestart.Count > 0;
 
         public Dictionary<string, HashSet<Feature>> GroupedFeatures { get; private set; } = new Dictionary<string, HashSet<Feature>>();
 
         private EnabledFeatures _enabledFeatures { get; set; }
+
 
         private HashSet<FeatureInternal.Update> _updateMethods = new HashSet<FeatureInternal.Update>();
         private HashSet<FeatureInternal.LateUpdate> _lateUpdateMethods = new HashSet<FeatureInternal.LateUpdate>();
@@ -41,6 +44,7 @@ namespace TheArchive.Core.FeaturesAPI
 
         public event Action<Feature> OnFeatureEnabled;
         public event Action<Feature> OnFeatureDisabled;
+        public event Action<Feature, bool> OnFeatureRestartRequestChanged;
 
         private FeatureManager()
         {
@@ -285,6 +289,18 @@ namespace TheArchive.Core.FeaturesAPI
             Instance.DisableFeature(feature, false);
         }
 
+        internal static void RequestRestart(Feature feature)
+        {
+            Instance.FeaturesRequestingRestart.Add(feature);
+            Instance.OnFeatureRestartRequestChanged?.Invoke(feature, true);
+        }
+
+        internal static void RevokeRestartRequest(Feature feature)
+        {
+            Instance.FeaturesRequestingRestart.Remove(feature);
+            Instance.OnFeatureRestartRequestChanged?.Invoke(feature, false);
+        }
+
         internal static Feature GetById(string featureIdentifier)
         {
             return Instance.RegisteredFeatures.FirstOrDefault(f => f.Identifier == featureIdentifier);
@@ -316,6 +332,12 @@ namespace TheArchive.Core.FeaturesAPI
         public void ToggleFeatureInstance(Feature feature)
         {
             bool enabled = (feature.AppliesToThisGameBuild && !feature.RequiresRestart) ? feature.Enabled : IsEnabledInConfig(feature);
+
+            if (feature.RequiresRestart && feature.FeatureInternal.InitialEnabledState == !enabled && !FeaturesRequestingRestart.Contains(feature))
+            {
+                feature.RequestRestart();
+            }
+
             if (enabled)
             {
                 DisableFeature(feature);

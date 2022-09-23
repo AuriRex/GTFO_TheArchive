@@ -16,6 +16,13 @@ namespace TheArchive.Utilities
             };
         }
 
+        public static Color? ToUnityColor(this SColor? col)
+        {
+            if (col.HasValue)
+                return col.Value.ToUnityColor();
+            return null;
+        }
+
         public static SColor ToSColor(this Color col)
         {
             return new SColor

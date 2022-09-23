@@ -197,6 +197,9 @@
     <Compile Include="..\TheArchive.IL2CPP\Features\HudToggle.cs">
       <Link>Features\HudToggle.cs</Link>
     </Compile>
+    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\ExpeditionUnlockSkip.cs">
+      <Link>Features\LocalProgression\ExpeditionUnlockSkip.cs</Link>
+    </Compile>
     <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalBoosters.cs">
       <Link>Features\LocalProgression\LocalBoosters.cs</Link>
     </Compile>

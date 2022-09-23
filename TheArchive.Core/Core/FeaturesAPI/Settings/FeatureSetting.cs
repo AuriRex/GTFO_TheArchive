@@ -15,6 +15,10 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public Type Type { get; }
         public string DEBUG_Path { get; }
 
+        public bool SeparatorAbove { get; private set; }
+        public bool SpacerAbove { get; private set; }
+        public FSHeader HeaderAbove { get; private set; }
+
         private readonly object _instance;
 
         public FeatureSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "")
@@ -25,6 +29,10 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             DisplayName = $"> {prop?.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
             Identifier = prop?.GetCustomAttribute<FSIdentifier>()?.Identifier ?? ($"{prop.PropertyType.FullName}_{prop.Name}");
             RundownHint = prop?.GetCustomAttribute<FSRundownHint>()?.Rundowns ?? RundownFlags.None;
+
+            SeparatorAbove = prop?.GetCustomAttribute<FSSeparator>() != null;
+            SpacerAbove = prop?.GetCustomAttribute<FSSpacer>() != null;
+            HeaderAbove = prop?.GetCustomAttribute<FSHeader>();
 
             _instance = instance;
             DEBUG_Path = debug_path;

@@ -26,6 +26,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal bool AutomatedFeature { get; private set; }
         internal bool DisableModSettingsButton { get; private set; }
         internal bool HasAdditionalSettings => _settingsHelpers.Count > 0;
+        internal bool InitialEnabledState { get; private set; } = false;
         internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
         internal IArchiveLogger FeatureLoggerInstance { get; private set; }
@@ -366,6 +367,7 @@ namespace TheArchive.Core.FeaturesAPI
 
         private void AfterInit()
         {
+            InitialEnabledState = _feature.Enabled;
             if(_feature.BelongsToGroup)
             {
                 FeatureManager.AddGroupedFeature(_feature);

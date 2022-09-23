@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
@@ -47,6 +48,14 @@ namespace TheArchive.Features.LocalProgression
                 FeatureManager.EnableAutomatedFeature(typeof(LocalBoosters));
             if (shouldEnableVanity)
                 FeatureManager.EnableAutomatedFeature(typeof(LocalVanity));
+
+            if (Settings.SkipExpeditionUnlockRequirements)
+                FeatureManager.EnableAutomatedFeature(typeof(ExpeditionUnlockSkip));
+        }
+
+        public override void OnFeatureSettingChanged(FeatureSetting setting)
+        {
+            RequestRestart();
         }
 
         public class LocalProgressionSettings
@@ -61,6 +70,10 @@ namespace TheArchive.Features.LocalProgression
             [FSDisplayName("Enable Local Vanity")]
             [FSRundownHint(RundownFlags.RundownSix, RundownFlags.Latest)]
             public bool LocalVanity { get; set; } = true;
+
+            [FSHeader("Progression :// Misc")]
+            [FSDisplayName("All Expeditions Unlocked")]
+            public bool SkipExpeditionUnlockRequirements { get; set; } = false;
         }
     }
 }

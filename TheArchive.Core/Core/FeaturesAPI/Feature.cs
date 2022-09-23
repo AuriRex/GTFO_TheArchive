@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
@@ -17,6 +18,8 @@ namespace TheArchive.Core.FeaturesAPI
         public bool BelongsToGroup => Group != null;
         public bool HasAdditionalSettings => FeatureInternal.HasAdditionalSettings;
         public IEnumerable<FeatureSettingsHelper> SettingsHelpers => FeatureInternal.Settings;
+        public void RequestRestart() => FeatureManager.RequestRestart(this);
+        public void RevokeRestartRequest() => FeatureManager.RevokeRestartRequest(this);
 
         /// <summary>
         /// True if this <see cref="Feature"/> is controled via code<br/>

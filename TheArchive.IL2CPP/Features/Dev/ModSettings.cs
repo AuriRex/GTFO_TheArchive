@@ -10,6 +10,7 @@ using TheArchive.Utilities;
 using UnityEngine;
 using TheArchive.Core.Models;
 using static TheArchive.Utilities.Utils;
+using static TheArchive.Utilities.SColorExtensions;
 using TheArchive.Interfaces;
 
 namespace TheArchive.Features.Dev
@@ -137,6 +138,16 @@ namespace TheArchive.Features.Dev
             A_TextMeshPro_ForceMeshUpdate = MethodAccessor<TMPro.TextMeshPro>.GetAccessor("ForceMeshUpdate", Array.Empty<Type>());
         }
 
+        public override void OnEnable()
+        {
+            FeatureManager.Instance.OnFeatureRestartRequestChanged += OnFeatureRestartRequestChanged;
+        }
+
+        private void OnFeatureRestartRequestChanged(Feature feature, bool restartRequested)
+        {
+            CM_PageSettings_SetupPatch.SetRestartInfoText(FeatureManager.Instance.AnyFeatureRequestingRestart);
+        }
+
         //Setup(MainMenuGuiLayer guiLayer)
         [ArchivePatch(typeof(CM_PageSettings), "Setup")]
         public class CM_PageSettings_SetupPatch
@@ -146,6 +157,27 @@ namespace TheArchive.Features.Dev
             private static Transform _mainScrollWindowTransform;
             private static CM_ScrollWindow _popupWindow;
             private static CM_PageSettings _settingsPageInstance;
+
+            private static TMPro.TextMeshPro _restartInfoText;
+
+            public static void SetRestartInfoText(bool value)
+            {
+                if(value)
+                {
+                    SetRestartInfoText($"<color=red><b>Restart required for some settings to apply!</b></color>");
+                }
+                else
+                {
+                    SetRestartInfoText(string.Empty);
+                }
+            }
+
+            public static void SetRestartInfoText(string str)
+            {
+                if (_restartInfoText == null) return;
+                _restartInfoText.SetText(str);
+                JankTextMeshProUpdaterOnce.UpdateMesh(_restartInfoText);
+            }
 
 #if IL2CPP
             public static void Postfix(CM_PageSettings __instance, MainMenuGuiLayer guiLayer)
@@ -203,17 +235,17 @@ namespace TheArchive.Features.Dev
 
                     TMPro.TextMeshPro scrollWindowHeaderTextTMP = mainModSettingsScrollWindow.GetComponentInChildren<TMPro.TextMeshPro>();
 
-                    var infoText = GameObject.Instantiate(scrollWindowHeaderTextTMP, scrollWindowHeaderTextTMP.transform.parent);
+                    _restartInfoText = GameObject.Instantiate(scrollWindowHeaderTextTMP, scrollWindowHeaderTextTMP.transform.parent);
 
-                    infoText.name = "ModSettings_InfoText";
-                    infoText.transform.localPosition += new Vector3(300, 0, 0);
-                    infoText.SetText("");
-                    infoText.text = "";
-                    infoText.enableWordWrapping = false;
-                    infoText.fontSize = 16;
-                    infoText.fontSizeMin = 16;
+                    _restartInfoText.name = "ModSettings_RestartInfoText";
+                    _restartInfoText.transform.localPosition += new Vector3(300, 0, 0);
+                    _restartInfoText.SetText("");
+                    _restartInfoText.text = "";
+                    _restartInfoText.enableWordWrapping = false;
+                    _restartInfoText.fontSize = 16;
+                    _restartInfoText.fontSizeMin = 16;
 
-                    JankTextMeshProUpdaterOnce.UpdateMesh(infoText);
+                    JankTextMeshProUpdaterOnce.UpdateMesh(_restartInfoText);
 
 
                     var odereredGroups = FeatureManager.Instance.GroupedFeatures.OrderBy(kvp => kvp.Key);
@@ -234,7 +266,7 @@ namespace TheArchive.Features.Dev
 
                         foreach(var feature in featureSet)
                         {
-                            SetupEntriesForFeature(feature, infoText);
+                            SetupEntriesForFeature(feature);
                         }
 
                         // Spacer
@@ -271,7 +303,7 @@ namespace TheArchive.Features.Dev
                             CreateHeader(headerTitle);
                             currentAsm = featureAsm;
                         }
-                        SetupEntriesForFeature(feature, infoText);
+                        SetupEntriesForFeature(feature);
                     }
 
 #if IL2CPP
@@ -334,8 +366,11 @@ namespace TheArchive.Features.Dev
                 CreateHeader(string.Empty);
             }
 
-            private static void CreateHeader(string title)
+            private static void CreateHeader(string title, Color? color = null, bool bold = true)
             {
+                if (!color.HasValue)
+                    color = ORANGE;
+
                 var settingsItemGameObject = GameObject.Instantiate(_settingsItemPrefab, _mainScrollWindowTransform);
 
                 _scrollWindowContentElements.Add(settingsItemGameObject.GetComponentInChildren<iScrollWindowContent>());
@@ -346,8 +381,12 @@ namespace TheArchive.Features.Dev
 
                 if(!string.IsNullOrWhiteSpace(title))
                 {
-                    titleTextTMP.SetText($"<b>{title}</b>");
-                    titleTextTMP.color = ORANGE;
+                    if(bold)
+                        titleTextTMP.SetText($"<b>{title}</b>");
+                    else
+                        titleTextTMP.SetText(title);
+
+                    titleTextTMP.color = color.Value;
                     cm_settingsItem.ForcePopupLayer(true);
 
                     JankTextMeshProUpdaterOnce.Apply(titleTextTMP);
@@ -715,7 +754,7 @@ namespace TheArchive.Features.Dev
                 _popupWindow.SetVisible(true);
             }
 
-            private static void SetupEntriesForFeature(Feature feature, TMPro.TextMeshPro infoText)
+            private static void SetupEntriesForFeature(Feature feature)
             {
                 if (!Feature.DevMode && feature.IsHidden) return;
 
@@ -771,15 +810,6 @@ namespace TheArchive.Features.Dev
                             FeatureManager.ToggleFeature(feature);
 
                             SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
-
-                            if (feature.RequiresRestart && !_restartRequested)
-                            {
-                                _restartRequested = true;
-
-                                infoText.SetText($"<color=red><b>Restart required for some settings to apply!</b></color>");
-
-                                JankTextMeshProUpdaterOnce.UpdateMesh(infoText);
-                            }
                         });
                     }
                     
@@ -801,7 +831,14 @@ namespace TheArchive.Features.Dev
                         {
                             foreach (var setting in settingsHelper.Settings)
                             {
-                                switch(setting)
+                                if (setting.HeaderAbove != null)
+                                    CreateHeader(setting.HeaderAbove.Title, setting.HeaderAbove.Color.ToUnityColor(), setting.HeaderAbove.Bold);
+                                else if (setting.SeparatorAbove)
+                                    CreateHeader("------------------------------", DISABLED, false);
+                                else if (setting.SpacerAbove)
+                                    CreateSpacer();
+
+                                switch (setting)
                                 {
                                     case EnumListSetting els:
                                         CreateEnumListSetting(els);

@@ -82,6 +82,9 @@
     <Compile Include="Core\Attributes\Feature\RundownConstraint.cs" />
     <Compile Include="Core\Attributes\Feature\SetEnabledStatus.cs" />
     <Compile Include="Core\Attributes\Feature\SetStaticLogger.cs" />
+    <Compile Include="Core\Attributes\Feature\Settings\FSHeader.cs" />
+    <Compile Include="Core\Attributes\Feature\Settings\FSSeparator.cs" />
+    <Compile Include="Core\Attributes\Feature\Settings\FSSpacer.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSIdentifier.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSIgnore.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSMaxLength.cs" />
