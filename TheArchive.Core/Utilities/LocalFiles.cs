@@ -68,6 +68,21 @@ namespace TheArchive.Utilities
             }
         }
 
+        private static string _modDefaultGameLogsAndCachePath = null;
+        public static string ModDefaultGameLogsAndCachePath
+        {
+            get
+            {
+                if (_modDefaultGameLogsAndCachePath == null)
+                {
+                    _modDefaultGameLogsAndCachePath = Path.Combine(ModLocalLowPath, "GameLogsAndCache");
+                    if (!Directory.Exists(_modDefaultGameLogsAndCachePath))
+                        Directory.CreateDirectory(_modDefaultGameLogsAndCachePath);
+                }
+                return _modDefaultGameLogsAndCachePath;
+            }
+        }
+
         private static string _modDefaultSaveDataPath = null;
         public static string ModDefaultSaveDataPath
         {
@@ -116,18 +131,29 @@ namespace TheArchive.Utilities
             }
         }
 
+        private static string _gameLogsAndCacheSavePath = null;
+        public static string GameLogsAndCachePath
+        {
+            get
+            {
+                if (_gameLogsAndCacheSavePath == null)
+                {
+                    _gameLogsAndCacheSavePath = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomLogsAndCacheLocation) ? ModDefaultGameLogsAndCachePath : ArchiveMod.Settings.CustomLogsAndCacheLocation;
+                    if (!Directory.Exists(_gameLogsAndCacheSavePath))
+                        Directory.CreateDirectory(_gameLogsAndCacheSavePath);
+                }
+                return _gameLogsAndCacheSavePath;
+            }
+        }
+
         private static string _rundownspecificSavePath = null;
         public static string RundownSpecificSaveDirectoryPath
         {
             get
             {
-                if (ArchiveMod.CurrentRundown == Utils.RundownID.RundownUnitialized)
-                    throw new InvalidOperationException("Only get this after GameData has been initialized!");
-
                 if (string.IsNullOrEmpty(_rundownspecificSavePath))
                 {
                     _rundownspecificSavePath = Path.Combine(SaveDirectoryPath, $"Rundown_{(int) ArchiveMod.CurrentRundown}_Data");
-
                     if (!Directory.Exists(_rundownspecificSavePath))
                         Directory.CreateDirectory(_rundownspecificSavePath);
                 }
@@ -143,8 +169,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_otherConfigsPath))
                 {
-                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? LoaderWrapper.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
-                    _otherConfigsPath = Path.Combine(path, "OtherConfigs");
+                    _otherConfigsPath = Path.Combine(SaveDirectoryPath, "OtherConfigs");
 
                     if (!Directory.Exists(_otherConfigsPath))
                         Directory.CreateDirectory(_otherConfigsPath);
@@ -160,8 +185,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_featureConfigsPath))
                 {
-                    var path = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? LoaderWrapper.UserDataDirectory : ArchiveMod.Settings.CustomFileSaveLocation;
-                    _featureConfigsPath = Path.Combine(path, "FeatureSettings");
+                    _featureConfigsPath = Path.Combine(SaveDirectoryPath, "FeatureSettings");
 
                     if (!Directory.Exists(_featureConfigsPath))
                         Directory.CreateDirectory(_featureConfigsPath);

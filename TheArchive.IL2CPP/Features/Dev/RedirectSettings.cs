@@ -21,7 +21,7 @@ namespace TheArchive.Features.Dev
         {
             public static bool Prefix(ref string __result)
             {
-                __result = Path.Combine(LocalFiles.RundownSpecificSaveDirectoryPath, "appdata/");
+                __result = Path.Combine(LocalFiles.GameLogsAndCachePath, $"Rundown_{(int) BuildInfo.Rundown}_Data", "appdata");
                 if (!Directory.Exists(__result))
                     Directory.CreateDirectory(__result);
                 return ArchivePatch.SKIP_OG;
