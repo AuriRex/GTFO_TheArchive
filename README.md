@@ -4,6 +4,16 @@ A [MelonLoader](https://github.com/LavaGang/MelonLoader) based [GTFO](https://gt
 
 Compatible with many different GTFO builds, tested on all of the latest patches for each rundown.
 
+### Quick Links
+ * [Highlighted Features](#Features)
+   * [Backported Features](#Backported-Features)
+   * [Accessibility](#Accessibility)
+   * [Quality of Life](#Quality-of-Life)
+   * [Misc / Other](#Misc-/-Other)
+ * [How to Install](#Installation)
+ * [Where are my saves?](#Where-are-my-saves?)
+ * [Building the project](#Technical-stuffs)
+
 # Features
 
 ## Local Rundown Progression
@@ -133,6 +143,23 @@ Tries to always aim your shots into the center of your crosshair, therefore not 
 
 Allows you to connect to R1 build `19087` games even though you're playing on R1 build `19715`.  
 Build `19087` is/was a commonly redistributed version of Rundown 1
+
+---
+
+# Installation
+
+1. Install [MelonLoader](https://github.com/LavaGang/MelonLoader#how-to-use-the-installer) into your game folder.
+2. Download the latest mod version from [here](https://github.com/AuriRex/GTFO_TheArchive/releases/latest)
+3. Put the dll into the `Mods` folder inside of your GTFO directory
+
+---
+
+# Where are my saves?
+
+By default, all mod files get saved to `%appdata%/../LocalLow/GTFO_TheArchive/`.  
+Most things like progression, boosters and vanity get saved into the `SaveData` folder inside of the previous mentioned one, neatly divided into rundown specific folders.  
+The location of this `SaveData` folder can be customized by editing `TheArchive_Settings.json`'s `"CustomFileSaveLocation"` property to point to any location of your choosing. (Cloud storage like GoogleDrive, Dropbox, etc ..., recommended)  
+(*Make sure to escape backslashes (`\`) in your path by doubling them (like this: `\\`), else it won't work!*)
 
 ---
 
