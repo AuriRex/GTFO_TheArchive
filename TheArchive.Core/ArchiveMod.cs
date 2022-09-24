@@ -91,6 +91,13 @@ namespace TheArchive
                 Rundown = CurrentRundown
             };
 
+            var steam_appidtxt = Path.Combine(LoaderWrapper.GameDirectory, "steam_appid.txt");
+            if(!File.Exists(steam_appidtxt))
+            {
+                ArchiveLogger.Notice("Creating \"steam_appid.txt\" in GTFO folder ...");
+                File.WriteAllText(steam_appidtxt, "493520");
+            }
+
             FeatureManager.Internal_Init();
 
             var archiveModule = LoadMainArchiveModule(LoaderWrapper.IsGameIL2CPP());
