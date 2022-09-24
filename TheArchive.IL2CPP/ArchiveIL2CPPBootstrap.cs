@@ -1,19 +1,26 @@
 ﻿using GameData;
-using HarmonyLib;
 using System;
+using TheArchive.Core.Attributes;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
-using static TheArchive.Core.ArchivePatcher;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive
 {
-    public class ArchiveIL2CPPBootstrap
+    [HideInModSettings]
+    [DisallowInGameToggle]
+    [DoNotSaveToConfig]
+    [EnableFeatureByDefault]
+    public class ArchiveIL2CPPBootstrap : Feature
     {
+        public override string Name => nameof(ArchiveIL2CPPBootstrap);
+        public override string Group => FeatureGroups.Dev;
+        public override bool RequiresRestart => true;
 
         private static void OnGameDataInitialized(uint rundownId)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            ArchiveIL2CPPModule.instance.Core.InvokeGameDataInitialized(rundownId);
+            ArchiveMod.InvokeGameDataInitialized(rundownId);
 #pragma warning restore CS0618 // Type or member is obsolete
 
             if(FlagsContain(RundownFlags.RundownFour.To(RundownFlags.RundownFive), ArchiveMod.CurrentRundown))
@@ -26,12 +33,12 @@ namespace TheArchive
         private static void OnDataBlocksReady()
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            ArchiveIL2CPPModule.instance.Core.InvokeDataBlocksReady();
+            ArchiveMod.InvokeDataBlocksReady();
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
-        [HarmonyPatch(typeof(GameDataInit), nameof(GameDataInit.Initialize))]
-        internal static class GameDataInit_InitializePatch
+        [ArchivePatch(typeof(GameDataInit), nameof(GameDataInit.Initialize))]
+        internal static class GameDataInit_Initialize_Patch
         {
             public static void Postfix()
             {
@@ -64,27 +71,22 @@ namespace TheArchive
             }
         }
 
-        [ArchivePatch(null, "Setup", RundownFlags.RundownSix, RundownFlags.Latest)]
-        internal static class LocalizationManager_SetupPatch
+        [RundownConstraint(RundownFlags.RundownSix, RundownFlags.Latest)]
+        [ArchivePatch("Setup")]
+        internal static class LocalizationManager_Setup_Patch
         {
-            public static Type Type()
-            {
-                return typeof(LocalizationManager);
-            }
+            public static Type Type() => typeof(LocalizationManager);
 
-            public static void Postfix()
-            {
-                OnDataBlocksReady();
-            }
+            public static void Postfix() => OnDataBlocksReady();
         }
 
         [ArchivePatch(typeof(GameStateManager), nameof(GameStateManager.ChangeState))]
-        internal static class GameStateManager_ChangeStatePatch
+        internal static class GameStateManager_ChangeState_Patch
         {
             public static void Postfix(eGameStateName nextState)
             {
 #pragma warning disable CS0618 // Type or member is obsolete
-                ArchiveIL2CPPModule.instance.Core.InvokeGameStateChanged((int) nextState);
+                ArchiveMod.InvokeGameStateChanged((int) nextState);
 #pragma warning restore CS0618 // Type or member is obsolete
             }
         }

@@ -10,9 +10,8 @@ namespace TheArchive.IL2CPP.R5
     public class R5SubModule : IArchiveModule
     {
         public bool ApplyHarmonyPatches => false;
-
-        public ArchivePatcher Patcher { get; set; }
-        public ArchiveMod Core { get; set; }
+        public bool UsesLegacyPatches => false;
+        public ArchiveLegacyPatcher Patcher { get; set; }
 
         public void Init()
         {

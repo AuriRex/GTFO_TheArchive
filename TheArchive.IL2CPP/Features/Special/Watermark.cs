@@ -72,7 +72,7 @@ namespace TheArchive.Features.Special
 					else
 						secondLine = ogText.Split(new string[] { "\n" }, 2, StringSplitOptions.None)[1];
 
-					var text = $"<color=#{ColorHex}>TheArchive v{ArchiveMod.VersionString}</color>\n{secondLine}";
+					var text = $"<color=#{ColorHex}>TheArchive v{ArchiveMod.VERSION_STRING}</color>\n{secondLine}";
 
 #if IL2CPP
 					__instance.m_watermark = text;

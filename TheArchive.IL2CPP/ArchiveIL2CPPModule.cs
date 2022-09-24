@@ -20,9 +20,8 @@ namespace TheArchive
         public static event Action<eGameStateName> OnGameStateChanged;
 
         public bool ApplyHarmonyPatches => true;
-
-        public ArchivePatcher Patcher { get; set; }
-        public ArchiveMod Core { get; set; }
+        public bool UsesLegacyPatches => false;
+        public ArchiveLegacyPatcher Patcher { get; set; }
 
         [SubModule(Utils.RundownFlags.RundownFour, Utils.RundownFlags.RundownFive)]
         public static string R5SubModule => "TheArchive.Resources.TheArchive.IL2CPP.R5.dll";
@@ -30,6 +29,7 @@ namespace TheArchive
         public static string R6SubModule => "TheArchive.Resources.TheArchive.IL2CPP.R6.dll";
 
         public LocalBoosterDropper BoosterDropManager { internal get; set; } = null;
+
 
         static ArchiveIL2CPPModule()
         {
@@ -50,9 +50,9 @@ namespace TheArchive
 
             typeof(Features.RichPresenceCore).RegisterAllPresenceFormatProviders();
 
-            Core.GameDataInitialized += OnGameDataInitialized;
-            Core.DataBlocksReady += OnDataBlocksReady;
-            Core.GameStateChanged += (eGameStateName_state) => OnGameStateChanged?.Invoke((eGameStateName) eGameStateName_state);
+            ArchiveMod.GameDataInitialized += OnGameDataInitialized;
+            ArchiveMod.DataBlocksReady += OnDataBlocksReady;
+            ArchiveMod.GameStateChanged += (eGameStateName_state) => OnGameStateChanged?.Invoke((eGameStateName) eGameStateName_state);
         }
 
         private void OnGameDataInitialized(Utils.RundownID rundownId)

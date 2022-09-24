@@ -9,24 +9,23 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core
 {
-    [Obsolete]
-    public class ArchivePatcher
+    public class ArchiveLegacyPatcher
     {
         private readonly HarmonyLib.Harmony _harmonyInstance;
         private readonly string _name;
         private readonly List<(MethodInfo, MethodInfo)> _patchedMethodList = new List<(MethodInfo, MethodInfo)>();
         private Type[] _patchTypes;
-        private ArchiveNativePatcher _archiveNativePatcher;
+        private ArchiveLegacyNativePatcher _archiveNativePatcher;
         public bool IsPatched { get; private set; } = false;
 
 
-        public ArchivePatcher(HarmonyLib.Harmony harmonyInstance, string name)
+        public ArchiveLegacyPatcher(HarmonyLib.Harmony harmonyInstance, string name)
         {
             _harmonyInstance = harmonyInstance;
             _name = name;
         }
 
-        public static Type[] GetAllTypesWithPatchAttribute(Assembly assembly = null) => GetAllTypesWithPatchAttribute(typeof(ArchivePatch), assembly);
+        public static Type[] GetAllTypesWithPatchAttribute(Assembly assembly = null) => GetAllTypesWithPatchAttribute(typeof(ArchiveLegacyPatch), assembly);
         public static Type[] GetAllTypesWithPatchAttribute(Type patchAttribute, Assembly assembly = null)
         {
             assembly = assembly ?? Assembly.GetExecutingAssembly();
@@ -108,11 +107,11 @@ namespace TheArchive.Core
 
             foreach (Type patchContainingType in _patchTypes)
             {
-                ArchivePatch archivePatchInfo = null;
+                ArchiveLegacyPatch archivePatchInfo = null;
 
                 try
                 {
-                    archivePatchInfo = patchContainingType.GetCustomAttribute<ArchivePatch>();
+                    archivePatchInfo = patchContainingType.GetCustomAttribute<ArchiveLegacyPatch>();
 
                     if (!archivePatchInfo.GeneralPurposePatch && !FlagsContain(archivePatchInfo.RundownsToPatch, currentRundown))
                     {
@@ -227,7 +226,7 @@ namespace TheArchive.Core
 
         private bool DoesMatchBuildNumber(Type patchContainingType, int buildNumber)
         {
-            var constraints = patchContainingType.GetCustomAttributes<BuildConstraint>().ToArray();
+            var constraints = patchContainingType.GetCustomAttributes<LegacyBuildConstraint>().ToArray();
 
             if (constraints.Length == 0)
                 return true;
@@ -245,7 +244,7 @@ namespace TheArchive.Core
         private void ApplyNativePatches(RundownID currentRundown, Assembly assembly)
         {
             if (_archiveNativePatcher == null)
-                _archiveNativePatcher = new ArchiveNativePatcher();
+                _archiveNativePatcher = new ArchiveLegacyNativePatcher();
 
             _archiveNativePatcher.ApplyNativePatches(currentRundown, assembly);
         }
@@ -381,7 +380,7 @@ namespace TheArchive.Core
             }
         }
 
-        public class ArchivePatch : Attribute
+        public class ArchiveLegacyPatch : Attribute
         {
             public bool HasType
             {
@@ -401,7 +400,7 @@ namespace TheArchive.Core
 
             public Type[] ParameterTypes { get; internal set; }
 
-            public ArchivePatch(Type type, string methodName, RundownFlags rundowns, Type[] parameterTypes = null)
+            public ArchiveLegacyPatch(Type type, string methodName, RundownFlags rundowns, Type[] parameterTypes = null)
             {
                 Type = type;
                 MethodName = methodName;
@@ -409,7 +408,7 @@ namespace TheArchive.Core
                 ParameterTypes = parameterTypes;
             }
 
-            public ArchivePatch(Type type, string methodName, RundownFlags from, RundownFlags to, Type[] parameterTypes = null)
+            public ArchiveLegacyPatch(Type type, string methodName, RundownFlags from, RundownFlags to, Type[] parameterTypes = null)
             {
                 Type = type;
                 MethodName = methodName;
@@ -417,7 +416,7 @@ namespace TheArchive.Core
                 ParameterTypes = parameterTypes;
             }
 
-            public ArchivePatch(Type type, string methodName, Type[] parameterTypes = null)
+            public ArchiveLegacyPatch(Type type, string methodName, Type[] parameterTypes = null)
             {
                 Type = type;
                 MethodName = methodName;
@@ -428,14 +427,14 @@ namespace TheArchive.Core
         }
 
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-        public class BuildConstraint : Attribute
+        public class LegacyBuildConstraint : Attribute
         {
             public int BuildNumber { get; private set; }
             public string BuildNumberString => BuildNumber.ToString();
 
             public MatchMode Mode { get; private set; }
 
-            public BuildConstraint(int build, MatchMode mode = MatchMode.Exact)
+            public LegacyBuildConstraint(int build, MatchMode mode = MatchMode.Exact)
             {
                 BuildNumber = build;
                 Mode = mode;

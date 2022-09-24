@@ -1,41 +1,50 @@
 ﻿using Globals;
 using HarmonyLib;
+using TheArchive.Core.Attributes;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
-using static TheArchive.Core.ArchivePatcher;
 
 namespace TheArchive
 {
-    public class ArchiveMONOBootstrap
+    [HideInModSettings]
+    [DisallowInGameToggle]
+    [DoNotSaveToConfig]
+    [EnableFeatureByDefault]
+    public class ArchiveMONOBootstrap : Feature
     {
-        [HarmonyPatch(typeof(StartMainGame), "Awake")]
-        internal static class StartMainGame_AwakePatch
+        public override string Name => nameof(ArchiveMONOBootstrap);
+        public override string Group => FeatureGroups.Dev;
+        public override bool RequiresRestart => true;
+
+        [ArchivePatch(typeof(StartMainGame), "Awake")]
+        internal static class StartMainGame_Awake_Patch
         {
             public static void Postfix()
             {
 #pragma warning disable CS0618 // Type or member is obsolete
-                ArchiveMONOModule.instance.Core.InvokeGameDataInitialized(Global.RundownIdToLoad);
+                ArchiveMod.InvokeGameDataInitialized(Global.RundownIdToLoad);
 #pragma warning restore CS0618 // Type or member is obsolete
             }
         }
 
-        [HarmonyPatch(typeof(SNet_GlobalManager), nameof(SNet_GlobalManager.Setup))]
-        internal static class SNet_GlobalManager_SetupPatch
+        [ArchivePatch(typeof(SNet_GlobalManager), nameof(SNet_GlobalManager.Setup))]
+        internal static class SNet_GlobalManager_Setup_Patch
         {
             public static void Postfix()
             {
 #pragma warning disable CS0618 // Type or member is obsolete
-                ArchiveMONOModule.instance.Core.InvokeDataBlocksReady();
+                ArchiveMod.InvokeDataBlocksReady();
 #pragma warning restore CS0618 // Type or member is obsolete
             }
         }
 
         [ArchivePatch(typeof(GameStateManager), nameof(GameStateManager.ChangeState))]
-        internal static class GameStateManager_ChangeStatePatch
+        internal static class GameStateManager_ChangeState_Patch
         {
             public static void Postfix(eGameStateName nextState)
             {
 #pragma warning disable CS0618 // Type or member is obsolete
-                ArchiveMONOModule.instance.Core.InvokeGameStateChanged((int) nextState);
+                ArchiveMod.InvokeGameStateChanged((int) nextState);
 #pragma warning restore CS0618 // Type or member is obsolete
             }
         }

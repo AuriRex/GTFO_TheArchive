@@ -1,11 +1,9 @@
-﻿using MelonLoader;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using TheArchive;
 using TheArchive.Core;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
@@ -14,16 +12,16 @@ using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
-[assembly: MelonInfo(typeof(ArchiveMod), ArchiveMod.NAME, ArchiveMod.VersionString, "AuriRex", "https://github.com/AuriRex/GTFO_TheArchive")]
-[assembly: MelonGame("10 Chambers Collective", "GTFO")]
-[assembly: MelonColor(ConsoleColor.DarkMagenta)]
-[assembly: MelonOptionalDependencies("System.Runtime.CompilerServices.Unsafe", "UnhollowerBaseLib")]
 namespace TheArchive
 {
-    public class ArchiveMod : MelonMod
+    public static class ArchiveMod
     {
-        public const string NAME = "TheArchive";
+        public const string MOD_NAME = "TheArchive";
         public const string ABBREVIATION = "Ar";
+        public const string AUTHOR = "AuriRex";
+        public const string VERSION_STRING = ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch;
+        public const string GITHUB_LINK = "https://github.com/AuriRex/GTFO_TheArchive";
+
         public static ArchiveSettings Settings { get; private set; } = new ArchiveSettings();
 
         private static JsonSerializerSettings _jsonSerializerSettings = null;
@@ -43,37 +41,36 @@ namespace TheArchive
             }
         }
 
-        public const string VersionString = ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch;
 
         public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnitialized;
         public static GameBuildInfo CurrentBuildInfo { get; private set; }
         public static int CurrentGameState { get; private set; }
 
-        public event Action<RundownID> GameDataInitialized;
-        public event Action DataBlocksReady;
-        public event Action<int> GameStateChanged;
+        public static event Action<RundownID> GameDataInitialized;
+        public static event Action DataBlocksReady;
+        public static event Action<int> GameStateChanged;
 
-        internal static ArchiveMod Instance;
         internal static event Action<IArchiveModule> OnNewModuleRegistered;
 
-        private IArchiveModule _mainModule;
+        private static IArchiveModule _mainModule;
 
-        private readonly HashSet<Assembly> _inspectedAssemblies = new HashSet<Assembly>();
-        private readonly HashSet<Type> _typesToInitOnDataBlocksReady = new HashSet<Type>();
-        private readonly HashSet<Type> _typesToInitOnGameDataInit = new HashSet<Type>();
-        private readonly HashSet<IInitializable> _iinitializablesToInjectOnGameDataInit = new HashSet<IInitializable>();
+        private static readonly HashSet<Assembly> _inspectedAssemblies = new HashSet<Assembly>();
+        private static readonly HashSet<Type> _typesToInitOnDataBlocksReady = new HashSet<Type>();
+        private static readonly HashSet<Type> _typesToInitOnGameDataInit = new HashSet<Type>();
+        private static readonly HashSet<IInitializable> _iinitializablesToInjectOnGameDataInit = new HashSet<IInitializable>();
 
-        private readonly HashSet<Assembly> _moduleAssemblies = new HashSet<Assembly>();
-        private readonly List<Type> _moduleTypes = new List<Type>();
+        private static readonly HashSet<Assembly> _moduleAssemblies = new HashSet<Assembly>();
+        private static readonly List<Type> _moduleTypes = new List<Type>();
 
-        private readonly List<IArchiveModule> _modules = new List<IArchiveModule>();
+        private static readonly List<IArchiveModule> _modules = new List<IArchiveModule>();
         private const string kArchiveSettingsFile = "TheArchive_Settings.json";
 
-        public override void OnApplicationStart()
-        {
-            Instance = this;
+        private static HarmonyLib.Harmony _harmonyInstance;
 
-            ArchiveLogger.logger = LoaderWrapper.WrapLogger(base.LoggerInstance);
+        public static void OnApplicationStart(IArchiveLogger logger, HarmonyLib.Harmony harmonyInstance)
+        {
+            ArchiveLogger.logger = logger;
+            _harmonyInstance = harmonyInstance;
 
             LoadConfig();
 
@@ -116,24 +113,20 @@ namespace TheArchive
             }
         }
 
-        public override void OnApplicationQuit()
+        public static void OnApplicationQuit()
         {
             DiscordManager.OnApplicationQuit();
             FeatureManager.Instance.OnApplicationQuit();
-            // Doesn't work properly anyways ...
-            // UnpatchAll();
-
-            base.OnApplicationQuit();
         }
 
-        private void LoadConfig()
+        private static void LoadConfig()
         {
             var path = Path.Combine(LocalFiles.ModLocalLowPath, kArchiveSettingsFile);
 
             LoadConfig(path);
         }
 
-        private void LoadConfig(string path)
+        private static void LoadConfig(string path)
         {
             try
             {
@@ -151,7 +144,7 @@ namespace TheArchive
             }
         }
 
-        private void SaveConfig(string path)
+        private static void SaveConfig(string path)
         {
             ArchiveLogger.Debug($"Saving config file ... [{path}]");
             File.WriteAllText(path, JsonConvert.SerializeObject(Settings, JsonSerializerSettings));
@@ -167,10 +160,10 @@ namespace TheArchive
 
         public static void RegisterArchiveModule(Type moduleType)
         {
-            Instance.RegisterModule(moduleType);
+            RegisterModule(moduleType);
         }
 
-        public bool RegisterModule(Type moduleType)
+        public static bool RegisterModule(Type moduleType)
         {
             if (moduleType == null) throw new ArgumentException("Module can't be null!");
             if (_moduleTypes.Contains(moduleType)) throw new ArgumentException($"Module \"{moduleType.Name}\" is already registered!");
@@ -182,7 +175,7 @@ namespace TheArchive
 
             if (CurrentRundown != RundownID.RundownUnitialized)
             {
-                module.Patcher.PatchRundownSpecificMethods(module.GetType().Assembly);
+                module.Patcher?.PatchRundownSpecificMethods(module.GetType().Assembly);
                 LoadSubModulesFrom(moduleType);
                 return true;
             }
@@ -191,7 +184,7 @@ namespace TheArchive
         }
 
 
-        private void LoadSubModules()
+        private static void LoadSubModules()
         {
             ArchiveLogger.Info("Loading all SubModules ...");
             foreach (var moduleType in new List<Type>(_moduleTypes))
@@ -200,9 +193,9 @@ namespace TheArchive
             }
         }
 
-        private HashSet<Type> _submodulesLoadedFrom = new HashSet<Type>();
+        private static HashSet<Type> _submodulesLoadedFrom = new HashSet<Type>();
 
-        private void LoadSubModulesFrom(Type moduleType)
+        private static void LoadSubModulesFrom(Type moduleType)
         {
             if (_submodulesLoadedFrom.Contains(moduleType))
                 return;
@@ -256,7 +249,7 @@ namespace TheArchive
         }
 
         [Obsolete("Do not call!")]
-        public void InvokeGameDataInitialized(uint rundownId)
+        public static void InvokeGameDataInitialized(uint rundownId)
         {
             ArchiveLogger.Info($"GameData has been initialized, invoking event.");
             //CurrentRundownInt = rundownId;
@@ -312,7 +305,7 @@ namespace TheArchive
         }
 
         [Obsolete("Do not call!")]
-        public void InvokeDataBlocksReady()
+        public static void InvokeDataBlocksReady()
         {
             ArchiveLogger.Info($"DataBlocks should be ready to be interacted with, invoking event.");
 
@@ -345,7 +338,7 @@ namespace TheArchive
         }
 
         [Obsolete("Do not call!")]
-        public void InvokeGameStateChanged(int eGameState_state)
+        public static void InvokeGameStateChanged(int eGameState_state)
         {
             CurrentGameState = eGameState_state;
             GameStateChanged?.Invoke(eGameState_state);
@@ -353,7 +346,7 @@ namespace TheArchive
 
 
 
-        public void InjectInstanceIntoModules(object instance)
+        public static void InjectInstanceIntoModules(object instance)
         {
             if (instance == null) return;
 
@@ -363,7 +356,7 @@ namespace TheArchive
             }
         }
 
-        private void InjectInstanceIntoModules(object instance, IArchiveModule module)
+        private static void InjectInstanceIntoModules(object instance, IArchiveModule module)
         {
             foreach (var prop in module.GetType().GetProperties().Where(p => p.SetMethod != null && !p.SetMethod.IsStatic && p.PropertyType.IsAssignableFrom(instance.GetType())))
             {
@@ -371,7 +364,7 @@ namespace TheArchive
             }
         }
 
-        private void InitInitializables(Type type, out IInitializable initializable)
+        private static void InitInitializables(Type type, out IInitializable initializable)
         {
             ArchiveLogger.Debug($"Creating instance of: \"{type.FullName}\".");
             var instance = (IInitializable) Activator.CreateInstance(type);
@@ -414,7 +407,7 @@ namespace TheArchive
             }
         }
 
-        private void InspectType(Type type)
+        private static void InspectType(Type type)
         {
             if(typeof(Feature).IsAssignableFrom(type) && type != typeof(Feature))
             {
@@ -452,7 +445,7 @@ namespace TheArchive
             }
         }
 
-        private IArchiveModule CreateAndInitModule(Type moduleType)
+        private static IArchiveModule CreateAndInitModule(Type moduleType)
         {
             if (moduleType == null) throw new ArgumentException($"Parameter {nameof(moduleType)} can not be null!");
 
@@ -467,8 +460,8 @@ namespace TheArchive
 
             _moduleAssemblies.Add(moduleType.Assembly);
 
-            module.Patcher = new ArchivePatcher(HarmonyInstance, $"{moduleType.Assembly.GetName().Name}_{moduleType.FullName}_ArchivePatcher");
-            module.Core = this;
+            if(module.UsesLegacyPatches)
+                module.Patcher = new ArchiveLegacyPatcher(_harmonyInstance, $"{moduleType.Assembly.GetName().Name}_{moduleType.FullName}_ArchivePatcher");
 
             try
             {
@@ -477,7 +470,7 @@ namespace TheArchive
                 if (module.ApplyHarmonyPatches)
                 {
                     ArchiveLogger.Warning($"Applying regular Harmony patches on module \"{moduleType.FullName}\" ...");
-                    HarmonyInstance.PatchAll(moduleType.Assembly);
+                    _harmonyInstance.PatchAll(moduleType.Assembly);
                 }
             }
             catch(Exception ex)
@@ -490,19 +483,19 @@ namespace TheArchive
             return module;
         }
 
-        private void ApplyPatches(RundownID rundownID)
+        private static void ApplyPatches(RundownID rundownID)
         {
             if (rundownID != RundownID.RundownUnitialized)
             {
                 foreach (var module in _modules)
                 {
-                    module.Patcher.PatchRundownSpecificMethods(module.GetType().Assembly);
+                    module.Patcher?.PatchRundownSpecificMethods(module.GetType().Assembly);
                 }
                 LoadSubModules();
             }
         }
 
-        internal void UnpatchAll()
+        internal static void UnpatchAll()
         {
             foreach (var module in _modules)
             {
@@ -510,7 +503,7 @@ namespace TheArchive
             }
         }
 
-        public void UnpatchModule(Type moduleType)
+        public static void UnpatchModule(Type moduleType)
         {
             if (!_moduleTypes.Contains(moduleType)) throw new ArgumentException($"Can't unpatch non patched module \"{moduleType.FullName}\".");
 
@@ -526,11 +519,11 @@ namespace TheArchive
             throw new ArgumentException($"Can't unpatch module \"{moduleType.FullName}\", module not found.");
         }
 
-        public void UnpatchModule(IArchiveModule module)
+        public static void UnpatchModule(IArchiveModule module)
         {
             try
             {
-                module.Patcher.Unpatch();
+                module.Patcher?.Unpatch();
                 module.OnExit();
             }
             catch (Exception ex)
@@ -542,7 +535,7 @@ namespace TheArchive
             _moduleTypes.Remove(module.GetType());
         }
 
-        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+        public static void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             foreach(var module in _modules)
             {
@@ -556,15 +549,14 @@ namespace TheArchive
                     ArchiveLogger.Exception(ex);
                 }
             }
-            base.OnSceneWasLoaded(buildIndex, sceneName);
         }
 
-        public override void OnUpdate()
+        public static void OnUpdate()
         {
             FeatureManager.Instance.OnUpdate();
         }
 
-        public override void OnLateUpdate()
+        public static void OnLateUpdate()
         {
             foreach (var module in _modules)
             {
@@ -582,7 +574,7 @@ namespace TheArchive
             FeatureManager.Instance.OnLateUpdate();
         }
 
-        private Assembly LoadMainArchiveModule(bool isIl2Cpp)
+        private static Assembly LoadMainArchiveModule(bool isIl2Cpp)
         {
             try
             {

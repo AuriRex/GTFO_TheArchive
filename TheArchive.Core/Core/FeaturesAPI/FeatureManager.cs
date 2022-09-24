@@ -50,7 +50,7 @@ namespace TheArchive.Core.FeaturesAPI
         {
             Feature.BuildInfo = ArchiveMod.CurrentBuildInfo;
             _enabledFeatures = LocalFiles.LoadConfig<EnabledFeatures>();
-            ArchiveMod.Instance.GameStateChanged += OnGameStateChanged;
+            ArchiveMod.GameStateChanged += OnGameStateChanged;
         }
 
         internal void OnGameDataInitialized()
@@ -391,7 +391,12 @@ namespace TheArchive.Core.FeaturesAPI
 
         private bool IsFeatureEnabledInConfig(Feature feature)
         {
-            if (feature.FeatureInternal.DoNotSaveToConfig) return false;
+            if (feature.FeatureInternal.DoNotSaveToConfig)
+            {
+                if(feature.FeatureInternal.AutomatedFeature)
+                    return false;
+                return true;
+            }
 
             if (_enabledFeatures.Features.TryGetValue(feature.Identifier, out var value))
             {

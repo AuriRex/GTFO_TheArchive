@@ -7,9 +7,8 @@ namespace TheArchive.IL2CPP.R6
     public class R6SubModule : IArchiveModule
     {
         public bool ApplyHarmonyPatches => false;
-
-        public ArchivePatcher Patcher { get; set; }
-        public ArchiveMod Core { get; set; }
+        public bool UsesLegacyPatches => false;
+        public ArchiveLegacyPatcher Patcher { get; set; }
 
         public void Init()
         {

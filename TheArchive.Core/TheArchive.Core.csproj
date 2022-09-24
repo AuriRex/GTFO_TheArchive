@@ -60,7 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArchiveMod.cs" />
-    <Compile Include="Core\ArchiveNativePatcher.cs" />
+    <Compile Include="Core\ArchiveLegacyNativePatcher.cs" />
     <Compile Include="Core\ArchiveSettings.cs" />
     <Compile Include="Core\Attributes\Feature\ArchivePatch.cs" />
     <Compile Include="Core\Attributes\Feature\AutomatedFeature.cs" />
@@ -111,7 +111,7 @@
     <Compile Include="Core\FeaturesAPI\FeatureSettingsHelper.cs" />
     <Compile Include="Core\FeaturesAPI\Settings\StringSetting.cs" />
     <Compile Include="Core\IArchiveModule.cs" />
-    <Compile Include="Core\ArchivePatcher.cs" />
+    <Compile Include="Core\ArchiveLegacyPatcher.cs" />
     <Compile Include="Core\InitSingletonBase.cs" />
     <Compile Include="Core\Managers\DataBlockManager.cs" />
     <Compile Include="Core\Managers\DiscordManager.cs" />
@@ -132,6 +132,7 @@
     <Compile Include="Interfaces\IInitializable.cs" />
     <Compile Include="Interfaces\IInitImmediately.cs" />
     <Compile Include="Interfaces\IInjectLogger.cs" />
+    <Compile Include="ML_ArchiveMod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Accessors.cs" />
     <Compile Include="Utilities\ArchiveLogger.cs" />

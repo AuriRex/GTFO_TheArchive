@@ -23,9 +23,8 @@ namespace TheArchive
         public static SharedCoroutineStarter CoroutineHelper { get; private set; } = null;
 
         public bool ApplyHarmonyPatches => true;
-
-        public ArchivePatcher Patcher { get; set; }
-        public ArchiveMod Core { get; set; }
+        public bool UsesLegacyPatches => false;
+        public ArchiveLegacyPatcher Patcher { get; set; }
 
         public class SharedCoroutineStarter : MonoBehaviour
         {
@@ -55,9 +54,9 @@ namespace TheArchive
 
             typeof(Features.RichPresenceCore).RegisterAllPresenceFormatProviders();
 
-            Core.GameDataInitialized += OnGameDataInitialized;
-            Core.DataBlocksReady += OnDataBlocksReady;
-            Core.GameStateChanged += (eGameStateName_state) => OnGameStateChanged?.Invoke((eGameStateName) eGameStateName_state);
+            ArchiveMod.GameDataInitialized += OnGameDataInitialized;
+            ArchiveMod.DataBlocksReady += OnDataBlocksReady;
+            ArchiveMod.GameStateChanged += (eGameStateName_state) => OnGameStateChanged?.Invoke((eGameStateName) eGameStateName_state);
         }
 
         private void OnDataBlocksReady()
