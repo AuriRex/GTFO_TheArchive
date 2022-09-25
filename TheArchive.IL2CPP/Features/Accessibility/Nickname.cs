@@ -2,11 +2,13 @@
 using SNetwork;
 using Steamworks;
 using System;
+using System.Text.RegularExpressions;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Accessibility
@@ -20,14 +22,12 @@ namespace TheArchive.Features.Accessibility
         public class NicknameSettings
         {
             public NicknameMode Mode { get; set; } = NicknameMode.Normal;
-            [FSMaxLength(25), FSDisplayName("Nick (25) no Color")]
+            [FSMaxLength(25), FSDisplayName("Nick (25) (No Color)")]
             public string Nick25 { get; set; }
             public SColor Color { get; set; } = new SColor(0f, 1f, 0.75f);
-            [FSMaxLength(19), FSDisplayName("Nick (19) ++ Color")]
+            [FSMaxLength(19), FSDisplayName("Nick (19) <#E4A818>(Colored)</color>")]
             public string Nick19 { get; set; }
-            [FSMaxLength(11), FSDisplayName("Nick (11) + Color")]
-            public string Nick11 { get; set; }
-
+            [FSHeader("Nickname :// Others")]
             [FSDisplayName("Allow Other Player Nicknames"), FSIdentifier("AllowNicks")]
             public bool AllowRemotePlayerNicknames { get; set; } = true;
             [FSDisplayName("See Other Players Colors"), FSIdentifier("AllowTags")]
@@ -36,6 +36,8 @@ namespace TheArchive.Features.Accessibility
 
         [FeatureConfig]
         public static NicknameSettings Settings { get; set; }
+
+        public static new IArchiveLogger FeatureLogger { get; set; }
 
         public override void OnEnable()
         {
@@ -111,23 +113,38 @@ namespace TheArchive.Features.Accessibility
                     }
                     
                     break;
-                case NicknameMode.ColorWithOverflow:
-                    if(!string.IsNullOrWhiteSpace(Settings.Nick19))
+                case NicknameMode.Color:
+                    if (!string.IsNullOrWhiteSpace(Settings.Nick19))
                     {
                         SNet.LocalPlayer.NickName = $"<{Settings.Color.ToShortHexString()}>{Settings.Nick19}";
-                        return;
-                    }
-                    break;
-                case NicknameMode.Color:
-                    if (!string.IsNullOrWhiteSpace(Settings.Nick11))
-                    {
-                        SNet.LocalPlayer.NickName = $"<{Settings.Color.ToShortHexString()}>{Settings.Nick11}</color>";
                         return;
                     }
                     break;
             }
 
             ResetNickname();
+        }
+
+        [ArchivePatch(typeof(PUI_GameEventLog), "AddLogItem")]
+        public static class PUI_GameEventLog_AddLogItem_Patch
+        {
+            public static void Prefix(ref string log, eGameEventChatLogType type)
+            {
+                if (Settings.Mode != NicknameMode.Color) return;
+                if (type != eGameEventChatLogType.OutgoingChat) return;
+
+                var match = Regex.Match(log, @"<color=#.+<\/color>");
+
+                if(!match.Success)
+                {
+                    FeatureLogger.Warning("Couldn't parse outgoing chat message from local player! This should not happen?!");
+                    return;
+                }
+
+                var chatMsgAndColon = log.Remove(0, match.Value.Length);
+
+                log = $"{match.Value}</color>{chatMsgAndColon}";
+            }
         }
 
         [ArchivePatch(typeof(SNet_Player), nameof(SNet_Player.UpdateVisibleName))]
@@ -155,7 +172,6 @@ namespace TheArchive.Features.Accessibility
         public enum NicknameMode
         {
             Normal,
-            ColorWithOverflow,
             Color
         }
     }
