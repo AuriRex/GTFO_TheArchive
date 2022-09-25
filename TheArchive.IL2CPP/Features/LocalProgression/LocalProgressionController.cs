@@ -30,6 +30,12 @@ namespace TheArchive.Features.LocalProgression
 
         public override void OnGameDataInitialized()
         {
+            if(Settings.DisableLocalProgressionOnLatest && BuildInfo.Rundown.IsIncludedIn(RundownFlags.Latest))
+            {
+                FeatureLogger.Notice($"Detected build to be latest ({BuildInfo.Rundown}), disabling LocalProgression because {nameof(LocalProgressionSettings.DisableLocalProgressionOnLatest)} is set.");
+                return;
+            }
+
             bool rundownFiveOrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownFive.ToLatest());
             bool rundownSixOrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownSix.ToLatest());
             bool shouldEnableVanity = Settings.LocalVanity && rundownSixOrLater;
@@ -72,6 +78,10 @@ namespace TheArchive.Features.LocalProgression
             public bool LocalVanity { get; set; } = true;
 
             [FSHeader("Progression :// Misc")]
+            [FSRundownHint(RundownFlags.Latest)]
+            [FSDisplayName("Use Servers on Latest")]
+            public bool DisableLocalProgressionOnLatest { get; set; } = true;
+
             [FSDisplayName("All Expeditions Unlocked")]
             public bool SkipExpeditionUnlockRequirements { get; set; } = false;
         }
