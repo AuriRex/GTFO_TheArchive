@@ -9,7 +9,7 @@
         public static readonly SColor GREEN = new SColor(0.1f, 0.8f, 0.1f, 1f);
 
         public static readonly SColor DARK_PURPLE = new SColor(0.3f, 0.03f, 0.6f, 1f);
-        public static readonly SColor DARK_ORANGE = new SColor(1f, 0.5f, 0.05f, 1f);
+        public static readonly SColor DARK_ORANGE = new SColor(0.8f, 0.3f, 0.03f, 1f);
 
         public SColor(float r, float g, float b, float? a = null)
         {

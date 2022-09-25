@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
@@ -154,13 +155,18 @@ namespace TheArchive.Features.Accessibility
         {
             public ColorizationMode Mode { get; set; } = ColorizationMode.Character;
 
+            [FSDisplayName("Your Color")]
             public SColor LocalPlayer { get; set; } = SColorExtensions.FromHexString("#44D2CD");
+            [FSDisplayName("Other Players' Color")]
             public SColor OtherPlayers { get; set; } = SColorExtensions.FromHexString("#5AE55D");
 
-
+            [FSDisplayName("Color for <#C21F4E>Woods</color> (P1)")]
             public SColor P1_Woods { get; set; } = SColorExtensions.FromHexString("#C21F4E");
+            [FSDisplayName("Color for <#18935E>Dauda</color> (P2)")]
             public SColor P2_Dauda { get; set; } = SColorExtensions.FromHexString("#18935E");
+            [FSDisplayName("Color for <#20558C>Hackett</color> (P3)")]
             public SColor P3_Hackett { get; set; } = SColorExtensions.FromHexString("#20558C");
+            [FSDisplayName("Color for <#7A1A8E>Bishop</color> (P4)")]
             public SColor P4_Bishop { get; set; } = SColorExtensions.FromHexString("#7A1A8E");
 
             public enum ColorizationMode
