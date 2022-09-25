@@ -2,7 +2,7 @@
 using System;
 using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
-using UnhollowerRuntimeLib;
+using static TheArchive.Utilities.LoaderWrapper;
 
 namespace TheArchive.IL2CPP.R6.Factories
 {

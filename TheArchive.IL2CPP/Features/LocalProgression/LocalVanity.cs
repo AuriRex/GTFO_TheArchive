@@ -3,6 +3,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
+using System.Reflection;
 #if IL2CPP
 using DropServer;
 using DropServer.VanityItems;
@@ -26,6 +27,14 @@ namespace TheArchive.Features.LocalProgression
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetInventoryPlayerDataAsync))]
         public static class DropServerClientAPI_GetInventoryPlayerDataAsyncPatch
         {
+            private static PropertyInfo Boosters;
+            private static PropertyInfo VanityItems;
+            public static void Init()
+            {
+                Boosters = typeof(GetInventoryPlayerDataResult).GetProperty(nameof(GetInventoryPlayerDataResult.Boosters), AnyBindingFlagss);
+                VanityItems = typeof(GetInventoryPlayerDataResult).GetProperty(nameof(GetInventoryPlayerDataResult.VanityItems), AnyBindingFlagss);
+            }
+
             public static bool Prefix(GetInventoryPlayerDataRequest request, ref IL2Tasks.Task<GetInventoryPlayerDataResult> __result)
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(GetInventoryPlayerDataRequest)}: EntityToken:{request.EntityToken}, MaxBackendTemplateId:{request.MaxBackendTemplateId}");
@@ -35,8 +44,8 @@ namespace TheArchive.Features.LocalProgression
 
                 var result = new GetInventoryPlayerDataResult();
 
-                Il2CppUtils.SetFieldUnsafe(result, bipd, nameof(GetInventoryPlayerDataResult.Boosters));
-                Il2CppUtils.SetFieldUnsafe(result, vipd, nameof(GetInventoryPlayerDataResult.VanityItems));
+                Boosters.SetValue(result, bipd);
+                VanityItems.SetValue(result, vipd);
 
                 __result = IL2Tasks.Task.FromResult(result);
                 return ArchivePatch.SKIP_OG;
@@ -46,6 +55,12 @@ namespace TheArchive.Features.LocalProgression
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.UpdateVanityItemPlayerDataAsync))]
         public static class DropServerClientAPI_UpdateVanityItemPlayerDataAsyncPatch
         {
+            private static PropertyInfo VanityItems;
+            public static void Init()
+            {
+                VanityItems = typeof(GetInventoryPlayerDataResult).GetProperty(nameof(GetInventoryPlayerDataResult.VanityItems), AnyBindingFlagss);
+            }
+
             public static bool Prefix(UpdateVanityItemPlayerDataRequest request, ref IL2Tasks.Task<UpdateVanityItemPlayerDataResult> __result)
             {
                 ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(GetInventoryPlayerDataRequest)}: EntityToken:{request.EntityToken}, MaxBackendTemplateId:{request.BuildRev}");
@@ -54,7 +69,7 @@ namespace TheArchive.Features.LocalProgression
 
                 var result = new UpdateVanityItemPlayerDataResult();
 
-                Il2CppUtils.SetFieldUnsafe(result, vipd, nameof(UpdateVanityItemPlayerDataResult.Data));
+                VanityItems.SetValue(result, vipd);
 
                 __result = IL2Tasks.Task.FromResult(result);
                 return ArchivePatch.SKIP_OG;

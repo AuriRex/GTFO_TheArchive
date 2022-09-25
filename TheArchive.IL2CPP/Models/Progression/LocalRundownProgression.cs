@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using TheArchive.Models.Progression;
 using TheArchive.Utilities;
-using UnhollowerRuntimeLib;
+using static TheArchive.Utilities.LoaderWrapper;
 
 namespace TheArchive.Models
 {

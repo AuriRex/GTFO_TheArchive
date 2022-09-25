@@ -1,5 +1,4 @@
-﻿using MelonLoader;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -114,6 +113,7 @@ namespace TheArchive.Core
         /// <summary>
         /// Patch things using MelonUtils.NativeHookAttach, WIP
         /// </summary>
+        [Obsolete("Just a janky mess, wouldn't recommend using")]
         public class ArchiveLegacyNativePatch : Attribute
         {
             public bool HasType
@@ -219,7 +219,7 @@ namespace TheArchive.Core
 
                     var patch = replacementMethodInfo.MethodHandle.GetFunctionPointer();
 
-                    MelonUtils.NativeHookAttach((IntPtr) (&ptr), patch);
+                    LoaderWrapper.NativeHookAttach((IntPtr) (&ptr), patch);
 
                     OriginalMethod = Marshal.GetDelegateForFunctionPointer(ptr, DelegateType);
                 }

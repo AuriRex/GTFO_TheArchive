@@ -1,6 +1,7 @@
 ﻿using GameData;
 using System.Collections.Generic;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
 #if IL2CPP
@@ -108,6 +109,7 @@ namespace TheArchive.Features.Special
 
         public class WeaponFOVSettings
         {
+            [FSHide]
             public Dictionary<string, CustomItemFPSSettingsEntry> ItemFPSSettings { get; set; } = new Dictionary<string, CustomItemFPSSettingsEntry>();
 
         }

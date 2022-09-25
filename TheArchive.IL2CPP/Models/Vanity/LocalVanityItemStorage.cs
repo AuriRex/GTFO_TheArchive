@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnhollowerRuntimeLib;
+using static TheArchive.Utilities.LoaderWrapper;
 
 namespace TheArchive.Models.Vanity
 {
@@ -45,7 +45,7 @@ namespace TheArchive.Models.Vanity
 
             var vipd = new VanityItemPlayerData(ClassInjector.DerivedConstructorPointer<VanityItemPlayerData>());
 
-            vipd.Items = new UnhollowerBaseLib.Il2CppReferenceArray<DropServer.VanityItems.VanityItem>(customData.Items.Count);
+            vipd.Items = new (customData.Items.Count);
 
             for (int i = 0; i < customData.Items.Count; i++)
             {

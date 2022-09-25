@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
-using UnhollowerRuntimeLib;
+using static TheArchive.Utilities.LoaderWrapper;
 using static TheArchive.Models.Boosters.LocalBoosterImplantPlayerData;
 
 namespace TheArchive.IL2CPP.R5.Factories
@@ -38,7 +38,7 @@ namespace TheArchive.IL2CPP.R5.Factories
         {
             var cat = (BoosterImplantPlayerData.Category) existingBaseGameCat ?? new BoosterImplantPlayerData.Category(ClassInjector.DerivedConstructorPointer<BoosterImplantPlayerData.Category>());
 
-            cat.Inventory = new UnhollowerBaseLib.Il2CppReferenceArray<DropServer.BoosterImplantInventoryItem>(customCat.Inventory.Length);
+            cat.Inventory = new (customCat.Inventory.Length);
             for (int i = 0; i < customCat.Inventory.Length; i++)
             {
                 cat.Inventory[i] = (DropServer.BoosterImplantInventoryItem) customCat.Inventory[i].ToBaseGame();

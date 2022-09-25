@@ -4,7 +4,7 @@ using TheArchive.Interfaces;
 
 namespace TheArchive.Utilities
 {
-    public class LoaderWrapper
+    public static class LoaderWrapper
     {
 
         public static string GameDirectory
@@ -50,6 +50,32 @@ namespace TheArchive.Utilities
             MelonCoroutines.Stop(coroutineToken);
         }
 
-        
+        public static void NativeHookAttach(IntPtr target, IntPtr detour)
+        {
+            MelonUtils.NativeHookAttach(target, detour);
+        }
+
+        public static class ClassInjector
+        {
+            public static IntPtr DerivedConstructorPointer<T>()
+            {
+                return UnhollowerRuntimeLib.ClassInjector.DerivedConstructorPointer<T>();
+            }
+
+            public static void DerivedConstructorBody(UnhollowerBaseLib.Il2CppObjectBase objectBase)
+            {
+                UnhollowerRuntimeLib.ClassInjector.DerivedConstructorBody(objectBase);
+            }
+
+            public static void RegisterTypeInIl2Cpp<T>(bool logSuccess = false) where T : class
+            {
+                UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<T>(logSuccess);
+            }
+
+            public static void RegisterTypeInIl2CppWithInterfaces<T>(bool logSuccess = false, params Type[] interfaces) where T : class
+            {
+                UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2CppWithInterfaces<T>(logSuccess, interfaces);
+            }
+        }
     }
 }

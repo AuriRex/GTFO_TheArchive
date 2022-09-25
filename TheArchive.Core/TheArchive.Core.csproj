@@ -10,7 +10,7 @@
     <RootNamespace>TheArchive</RootNamespace>
     <AssemblyName>TheArchive.Core</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
@@ -83,6 +83,7 @@
     <Compile Include="Core\Attributes\Feature\SetEnabledStatus.cs" />
     <Compile Include="Core\Attributes\Feature\SetStaticLogger.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSHeader.cs" />
+    <Compile Include="Core\Attributes\Feature\Settings\FSHide.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSSeparator.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSSpacer.cs" />
     <Compile Include="Core\Attributes\Feature\Settings\FSIdentifier.cs" />

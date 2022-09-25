@@ -1,15 +1,30 @@
 ﻿using DropServer;
 using System;
+using System.Reflection;
 using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
 using TheArchive.Utilities;
-using UnhollowerRuntimeLib;
+using static TheArchive.Utilities.LoaderWrapper;
 using static TheArchive.Models.Boosters.LocalBoosterImplant;
 
 namespace TheArchive.IL2CPP.R5.Factories
 {
     public class CustomBoosterImplantPlayerDataFactory : IBaseGameConverter<LocalBoosterImplantPlayerData>
     {
+        private static bool _reflectionInitDone = false;
+        private static PropertyInfo Basic;
+        private static PropertyInfo Advanced;
+        private static PropertyInfo Specialized;
+
+        private static void ReflectionInit()
+        {
+            if (_reflectionInitDone) return;
+            Basic = typeof(BoosterImplantPlayerData).GetProperty(nameof(BoosterImplantPlayerData.Basic), Utils.AnyBindingFlagss);
+            Advanced = typeof(BoosterImplantPlayerData).GetProperty(nameof(BoosterImplantPlayerData.Advanced), Utils.AnyBindingFlagss);
+            Specialized = typeof(BoosterImplantPlayerData).GetProperty(nameof(BoosterImplantPlayerData.Specialized), Utils.AnyBindingFlagss);
+            _reflectionInitDone = true;
+        }
+
         public LocalBoosterImplantPlayerData FromBaseGame(object baseGame, LocalBoosterImplantPlayerData existingCBIP = null)
         {
             var data = (BoosterImplantPlayerData) baseGame;
@@ -38,21 +53,18 @@ namespace TheArchive.IL2CPP.R5.Factories
 
         public object ToBaseGame(LocalBoosterImplantPlayerData customBoosterImplantPlayerData, object existingBaseGame = null)
         {
+            ReflectionInit();
+
             var bipd = (BoosterImplantPlayerData) existingBaseGame ?? new BoosterImplantPlayerData(ClassInjector.DerivedConstructorPointer<BoosterImplantPlayerData>());
 
             var basic = (BoosterImplantPlayerData.Category) customBoosterImplantPlayerData.Basic.ToBaseGame();
             var advanced = (BoosterImplantPlayerData.Category) customBoosterImplantPlayerData.Advanced.ToBaseGame();
             var specialized = (BoosterImplantPlayerData.Category) customBoosterImplantPlayerData.Specialized.ToBaseGame();
 
-            Il2CppUtils.SetFieldUnsafe(bipd, basic, nameof(BoosterImplantPlayerData.Basic));
-            Il2CppUtils.SetFieldUnsafe(bipd, advanced, nameof(BoosterImplantPlayerData.Advanced));
-            Il2CppUtils.SetFieldUnsafe(bipd, specialized, nameof(BoosterImplantPlayerData.Specialized));
+            Basic.SetValue(bipd, basic);
+            Advanced.SetValue(bipd, advanced);
+            Specialized.SetValue(bipd, specialized);
 
-            // Throws invalid IL exception for some reason:
-            // System.InvalidProgramException: Invalid IL code in DropServer.BoosterImplantPlayerData:set_Basic (DropServer.BoosterImplantPlayerData/Category): IL_0029: call      0x0a000053
-            //bipd.Basic = Basic.ToBaseGame();
-            //bipd.Advanced = Advanced.ToBaseGame();
-            //bipd.Specialized = Specialized.ToBaseGame();
             bipd.New = customBoosterImplantPlayerData.New;
 
             return bipd;

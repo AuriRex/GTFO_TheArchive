@@ -1,7 +1,7 @@
 ﻿using DropServer.BoosterImplants;
 using System;
 using TheArchive.Interfaces;
-using UnhollowerRuntimeLib;
+using static TheArchive.Utilities.LoaderWrapper;
 using static TheArchive.Models.Boosters.LocalBoosterTransaction;
 
 namespace TheArchive.IL2CPP.R6.Factories

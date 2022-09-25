@@ -1,6 +1,4 @@
-﻿using MelonLoader;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TheArchive.Interfaces;
 
 namespace TheArchive.Utilities

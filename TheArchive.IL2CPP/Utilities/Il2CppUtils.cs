@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using UnhollowerBaseLib;
+//using UnhollowerBaseLib;
 using UnityEngine;
 using IL2Tasks = Il2CppSystem.Threading.Tasks;
 
@@ -23,7 +23,7 @@ namespace TheArchive.Utilities
             return list;
         }
 
-        public static IntPtr GetFieldPointer<T>(string fieldName)
+       /* public static IntPtr GetFieldPointer<T>(string fieldName)
         {
             return (IntPtr) typeof(T).GetField($"NativeFieldInfoPtr_{fieldName}", Utils.AnyBindingFlagss).GetValue(null);
         }
@@ -51,7 +51,7 @@ namespace TheArchive.Utilities
             IntPtr nativeClassPtr = (IntPtr) classPointerStoreType.GetField(nameof(Il2CppClassPointerStore<bool>.NativeClassPtr), Utils.AnyBindingFlagss).GetValue(null);
 
             System.Runtime.CompilerServices.Unsafe.CopyBlock((void*)((long)UnhollowerBaseLib.IL2CPP.Il2CppObjectBaseToPtrNotNull(instance) + (long)(int)UnhollowerBaseLib.IL2CPP.il2cpp_field_get_offset(fieldOffset)), (void*)UnhollowerBaseLib.IL2CPP.il2cpp_object_unbox(UnhollowerBaseLib.IL2CPP.Il2CppObjectBaseToPtr(value)), (uint)UnhollowerBaseLib.IL2CPP.il2cpp_class_value_size(nativeClassPtr, ref *(uint*)null));
-        }
+        }*/
 
         public static IEnumerator DoAfter(float time, Action action)
         {

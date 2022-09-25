@@ -93,9 +93,9 @@ namespace TheArchive.Features.Dev
             {
             }
 
-            public CustomStringReceiver(Func<string> getFunc, Action<string> setAction) : base(UnhollowerRuntimeLib.ClassInjector.DerivedConstructorPointer<CustomStringReceiver>())
+            public CustomStringReceiver(Func<string> getFunc, Action<string> setAction) : base(LoaderWrapper.ClassInjector.DerivedConstructorPointer<CustomStringReceiver>())
             {
-                UnhollowerRuntimeLib.ClassInjector.DerivedConstructorBody(this);
+                LoaderWrapper.ClassInjector.DerivedConstructorBody(this);
 
                 _getValue = getFunc;
                 _setValue = setAction;
@@ -130,9 +130,9 @@ namespace TheArchive.Features.Dev
         public override void Init()
         {
 #if IL2CPP
-            UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<JankTextMeshProUpdaterOnce>();
+            LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<JankTextMeshProUpdaterOnce>();
 
-            UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2CppWithInterfaces<CustomStringReceiver>(true, typeof(iStringInputReceiver));
+            LoaderWrapper.ClassInjector.RegisterTypeInIl2CppWithInterfaces<CustomStringReceiver>(true, typeof(iStringInputReceiver));
 #endif
 
             A_TextMeshPro_ForceMeshUpdate = MethodAccessor<TMPro.TextMeshPro>.GetAccessor("ForceMeshUpdate", Array.Empty<Type>());
@@ -422,7 +422,7 @@ namespace TheArchive.Features.Dev
 
             private static void CreateColorSetting(ColorSetting setting)
             {
-                CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
+                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -473,7 +473,7 @@ namespace TheArchive.Features.Dev
 
             private static void CreateStringSetting(StringSetting setting)
             {
-                CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
+                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -515,7 +515,7 @@ namespace TheArchive.Features.Dev
 
             private static void CreateBoolSetting(BoolSetting setting)
             {
-                CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
+                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -548,7 +548,7 @@ namespace TheArchive.Features.Dev
 
             private static void CreateEnumListSetting(EnumListSetting setting)
             {
-                CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
+                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -584,6 +584,14 @@ namespace TheArchive.Features.Dev
                 cm_settingsEnumDropdownButton.m_popupWindow = _popupWindow;
 #endif
 
+            }
+
+            private static string GetNameForSetting(FeatureSetting setting)
+            {
+                if (setting.HideInModSettings)
+                    return $"<{DISABLED.ToSColor().ToHexString()}>[H] {setting.DisplayName}</color>";
+
+                return setting.DisplayName;
             }
 
             private static void CreateAndShowEnumListPopup(EnumListSetting setting, CM_Item enumButton_cm_item, CM_SettingsEnumDropdownButton cm_settingsEnumDropdownButton)
@@ -666,7 +674,7 @@ namespace TheArchive.Features.Dev
 
             private static void CreateEnumSetting(EnumSetting setting)
             {
-                CreateSettingsItem(setting.DisplayName, out var cm_settingsItem);
+                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -837,6 +845,11 @@ namespace TheArchive.Features.Dev
                                     CreateHeader("------------------------------", DISABLED, false);
                                 else if (setting.SpacerAbove)
                                     CreateSpacer();
+
+                                if (setting.HideInModSettings && !Feature.DevMode)
+                                {
+                                    continue;
+                                }
 
                                 switch (setting)
                                 {

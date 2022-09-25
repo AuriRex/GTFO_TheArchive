@@ -18,6 +18,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public bool SeparatorAbove { get; private set; }
         public bool SpacerAbove { get; private set; }
         public FSHeader HeaderAbove { get; private set; }
+        public bool HideInModSettings { get; private set; }
 
         private readonly object _instance;
 
@@ -33,6 +34,8 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             SeparatorAbove = prop?.GetCustomAttribute<FSSeparator>() != null;
             SpacerAbove = prop?.GetCustomAttribute<FSSpacer>() != null;
             HeaderAbove = prop?.GetCustomAttribute<FSHeader>();
+
+            HideInModSettings = prop?.GetCustomAttribute<FSHide>() != null;
 
             _instance = instance;
             DEBUG_Path = debug_path;

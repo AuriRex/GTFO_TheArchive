@@ -39,6 +39,12 @@ namespace TheArchive.Features.LocalProgression
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetBoosterImplantPlayerDataAsync))]
         public static class DropServerClientAPI_GetBoosterImplantPlayerDataAsync_Patch
         {
+            private static PropertyInfo Data;
+            public static void Init()
+            {
+                Data = typeof(GetBoosterImplantPlayerDataResult).GetProperty(nameof(GetBoosterImplantPlayerDataResult.Data), AnyBindingFlagss);
+            }
+
             public static bool Prefix(GetBoosterImplantPlayerDataRequest request, ref IL2Tasks.Task<GetBoosterImplantPlayerDataResult> __result)
             {
                 FeatureLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(GetBoosterImplantPlayerDataRequest)}: EntityToken:{request.EntityToken}, MaxBackendTemplateId:{request.MaxBackendTemplateId}");
@@ -47,7 +53,7 @@ namespace TheArchive.Features.LocalProgression
 
                 var result = new GetBoosterImplantPlayerDataResult();
 
-                Utilities.Il2CppUtils.SetFieldUnsafe(result, bipd, nameof(GetBoosterImplantPlayerDataResult.Data));
+                Data.SetValue(result, bipd);
 
                 __result = IL2Tasks.Task.FromResult(result);
                 return ArchivePatch.SKIP_OG;
@@ -58,9 +64,11 @@ namespace TheArchive.Features.LocalProgression
         public static class DropServerClientAPI_UpdateBoosterImplantPlayerDataAsync_Patch
         {
             private static PropertyInfo Transaction;
+            private static PropertyInfo Data;
             public static void Init()
             {
                 Transaction = typeof(UpdateBoosterImplantPlayerDataRequest).GetProperty(nameof(UpdateBoosterImplantPlayerDataRequest.Transaction), AnyBindingFlagss);
+                Data = typeof(UpdateBoosterImplantPlayerDataResult).GetProperty(nameof(UpdateBoosterImplantPlayerDataResult.Data), AnyBindingFlagss);
             }
 
             // called everytime a new booster is selected for the first time to update the value / missed boosters are aknowledged / a booster has been dropped
@@ -75,9 +83,9 @@ namespace TheArchive.Features.LocalProgression
                     // Reflection here because funny type-namespace-was-renamed-in-r6-moment :)
                     var transaction = Transaction.GetValue(request);
 
-                    var value = LocalBoosterManager.Instance.UpdateBoosterImplantPlayerData(transaction);
+                    var bipd = LocalBoosterManager.Instance.UpdateBoosterImplantPlayerData(transaction);
 
-                    Utilities.Il2CppUtils.SetFieldUnsafe(result, value, nameof(UpdateBoosterImplantPlayerDataResult.Data));
+                    Data.SetValue(result, bipd);
 
                     __result = IL2Tasks.Task.FromResult(result);
                 }

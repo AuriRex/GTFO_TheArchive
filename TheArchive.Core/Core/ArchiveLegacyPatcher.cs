@@ -216,7 +216,7 @@ namespace TheArchive.Core
             }
 
 
-            if(MelonLoader.MelonUtils.IsGameIl2Cpp())
+            if(LoaderWrapper.IsGameIL2CPP())
             {
                 ApplyNativePatches(currentRundown, assembly);
             }
