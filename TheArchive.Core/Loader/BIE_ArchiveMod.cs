@@ -2,6 +2,7 @@
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using System;
+using UnityEngine;
 
 namespace TheArchive.Loader
 {
@@ -12,6 +13,8 @@ namespace TheArchive.Loader
         {
             var harmony = new HarmonyLib.Harmony(ArchiveMod.GUID);
             ArchiveMod.OnApplicationStart(LoaderWrapper.WrapLogger(Log), harmony);
+
+            Application.add_quitting((Il2CppSystem.Action) (() => ArchiveMod.OnApplicationQuit()));
 
             AddComponent<TheArchive_BIE_Controller>();
         }
