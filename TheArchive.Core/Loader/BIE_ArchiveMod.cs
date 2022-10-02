@@ -9,6 +9,8 @@ namespace TheArchive.Loader
     [BepInPlugin(ArchiveMod.GUID, ArchiveMod.MOD_NAME, ArchiveMod.VERSION_STRING)]
     public class BIE_ArchiveMod : BasePlugin
     {
+        public static MonoBehaviour MainComponent { get; private set; }
+
         public override void Load()
         {
             var harmony = new HarmonyLib.Harmony(ArchiveMod.GUID);
@@ -16,7 +18,7 @@ namespace TheArchive.Loader
 
             Application.add_quitting((Il2CppSystem.Action) (() => ArchiveMod.OnApplicationQuit()));
 
-            AddComponent<TheArchive_BIE_Controller>();
+            MainComponent = AddComponent<TheArchive_BIE_Controller>();
         }
 
         public override bool Unload()

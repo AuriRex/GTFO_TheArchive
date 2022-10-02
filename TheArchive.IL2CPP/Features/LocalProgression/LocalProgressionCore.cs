@@ -107,28 +107,26 @@ namespace TheArchive.Features.LocalProgression
         }
 
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.Latest)]
-        [ArchivePatch(nameof(DropServerManager.GetRundownProgressionAsync))]
+        [ArchivePatch(null)]
         public static class DropServerManager_GetRundownProgressionAsync_Patch
         {
-            public static Type Type() => typeof(DropServerManager);
+            public static ArchivePatch PatchInfo { get; set; }
 
-            public static bool Prefix(ref IL2Tasks.Task<RundownProgression> __result, string rundownName, IL2System.Threading.CancellationToken cancellationToken, IL2System.Action<IL2Tasks.Task<RundownProgression>> callback)
+            public static Type Type()
+            {
+                return typeof(DropServerManager).GetNestedTypes().FirstOrDefault(t => t.GetMethods(AnyBindingFlagss).Any(m => m.Name.Contains(nameof(DropServerManager.GetRundownProgressionAsync))));
+            }
+
+            public static string MethodName()
+            {
+                return PatchInfo.Type.GetMethods(AnyBindingFlagss).FirstOrDefault(m => m.Name.Contains(nameof(DropServerManager.GetRundownProgressionAsync)))?.Name;
+            }
+
+            public static bool Prefix(ref IL2Tasks.Task<RundownProgression> __result)
             {
                 FeatureLogger.Msg(ConsoleColor.Magenta, "Getting RundownProgression from local files ...");
 
-                try
-                {
-                    var task = __result = IL2Tasks.Task.FromResult(LocalProgressionManager.LocalRundownProgression.ToBaseGameProgression());
-
-                    if (callback != null)
-                    {
-                        TenCC.Utils.TaskUtils.ContinueOnCurrentContext<RundownProgression>(task, callback);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ArchiveLogger.Exception(ex);
-                }
+                __result = IL2Tasks.Task.FromResult(LocalProgressionManager.LocalRundownProgression.ToBaseGameProgression());
 
                 return ArchivePatch.SKIP_OG;
             }

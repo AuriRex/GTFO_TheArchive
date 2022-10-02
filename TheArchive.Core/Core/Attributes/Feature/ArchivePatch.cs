@@ -29,7 +29,7 @@ namespace TheArchive.Core.Attributes
 
         public Type Type { get; internal set; }
 
-        public string MethodName { get; private set; }
+        public string MethodName { get; internal set; }
 
         public Type[] ParameterTypes { get; internal set; }
 

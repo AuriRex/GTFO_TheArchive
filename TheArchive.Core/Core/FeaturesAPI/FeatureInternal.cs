@@ -225,6 +225,18 @@ namespace TheArchive.Core.FeaturesAPI
 
                 try
                 {
+                    var patchTypePatchInfoProperty = patchType.GetProperty("PatchInfo");
+
+                    if (patchTypePatchInfoProperty != null
+                        && patchTypePatchInfoProperty.GetMethod != null
+                        && patchTypePatchInfoProperty.GetMethod.IsStatic
+                        && patchTypePatchInfoProperty.GetMethod.ReturnType == typeof(ArchivePatch)
+                        && patchTypePatchInfoProperty.SetMethod != null)
+                    {
+                        patchTypePatchInfoProperty.SetValue(null, archivePatchInfo);
+                        _FILogger.Debug($"Populated PatchInfo Property for Patch \"{patchType.FullName}\".");
+                    }
+
                     var patchTypeMethods = patchType.GetMethods(Utils.AnyBindingFlagss);
 
                     if (!archivePatchInfo.HasType)
@@ -242,7 +254,7 @@ namespace TheArchive.Core.FeaturesAPI
                                 throw new ArchivePatchMethodNotStaticException($"Method \"{typeMethod.Name}\" in Feature \"{feature.Identifier}\" must be static!");
                             }
 
-                            archivePatchInfo.Type = (Type) typeMethod.Invoke(null, new object[0]);
+                            archivePatchInfo.Type = (Type) typeMethod.Invoke(null, null);
                             _FILogger.Debug($"Discovered target Type for Patch \"{patchType.FullName}\" to be \"{archivePatchInfo.Type.FullName}\"");
                         }
                         else
@@ -263,6 +275,17 @@ namespace TheArchive.Core.FeaturesAPI
                             throw new ArchivePatchMethodNotStaticException($"Method \"{parameterTypesMethod.Name}\" in Feature \"{feature.Identifier}\" must be static!");
 
                         archivePatchInfo.ParameterTypes = (Type[]) parameterTypesMethod.Invoke(null, null);
+                    }
+
+                    if (string.IsNullOrWhiteSpace(archivePatchInfo.MethodName))
+                    {
+                        var methodNameMethod = patchTypeMethods
+                            .FirstOrDefault(mi => mi.ReturnType == typeof(string)
+                                && (mi.Name == "MethodName" || mi.GetCustomAttribute<IsMethodNameProvider>() != null)
+                                && AnyRundownConstraintMatches(mi)
+                                && AnyBuildConstraintMatches(mi));
+                        _FILogger.Debug($"Invoking static MethodNameProvider method {patchType.Name}.{methodNameMethod.Name} on {_feature.Identifier}");
+                        archivePatchInfo.MethodName = (string) methodNameMethod.Invoke(null, null);
                     }
 
                     MethodInfo original;

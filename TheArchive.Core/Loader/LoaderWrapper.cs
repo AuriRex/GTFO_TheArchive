@@ -87,12 +87,12 @@ namespace TheArchive.Loader
 
         public static object StartCoroutine(System.Collections.IEnumerator routine)
         {
-            throw new NotImplementedException();
+            return BepInEx.Unity.IL2CPP.Utils.MonoBehaviourExtensions.StartCoroutine(BIE_ArchiveMod.MainComponent, routine);
         }
 
         public static void StopCoroutine(object coroutineToken)
         {
-            throw new NotImplementedException();
+            BIE_ArchiveMod.MainComponent.StopCoroutine((UnityEngine.Coroutine)coroutineToken);
         }
 
         public static void NativeHookAttach(IntPtr target, IntPtr detour)
