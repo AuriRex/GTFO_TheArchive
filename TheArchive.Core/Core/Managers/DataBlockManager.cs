@@ -24,12 +24,24 @@ namespace TheArchive.Core.Managers
 
         private static void GetAllDataBlockTypes()
         {
-            var AllTypesOfGameDataBlockBase = from x in Assembly.GetAssembly(ImplementationManager.GameTypeByIdentifier("EnemyDataBlock")).GetTypes()
-                                              let y = x.BaseType
-                                              where !x.IsAbstract && !x.IsInterface &&
-                                              y != null && y.IsGenericType &&
-                                              y.GetGenericTypeDefinition() == ImplementationManager.GameTypeByIdentifier("GameDataBlockBase<>")
-                                              select x;
+            Type[] gameTypes;
+
+            try
+            {
+                gameTypes = Assembly.GetAssembly(ImplementationManager.GameTypeByIdentifier("EnemyDataBlock")).GetTypes();
+            }
+            catch(ReflectionTypeLoadException rtle)
+            {
+                gameTypes = rtle.Types;
+            }
+
+            var AllTypesOfGameDataBlockBase = gameTypes.Where(x => x != null
+                && !x.IsAbstract
+                && !x.IsInterface
+                && x.BaseType != null
+                && x.BaseType.IsGenericType
+                && x.BaseType.GetGenericTypeDefinition() == ImplementationManager.GameTypeByIdentifier("GameDataBlockBase<>"));
+
             _dataBlockTypes = AllTypesOfGameDataBlockBase.ToList();
         }
 

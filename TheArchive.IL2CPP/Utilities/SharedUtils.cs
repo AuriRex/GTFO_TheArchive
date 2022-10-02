@@ -5,8 +5,11 @@ using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
-#if IL2CPP
+#if IL2CPP && MelonLoader
 using UnhollowerBaseLib;
+#endif
+#if IL2CPP && BepInEx
+using Il2CppInterop.Runtime.InteropTypes;
 #endif
 
 namespace TheArchive.Utilities

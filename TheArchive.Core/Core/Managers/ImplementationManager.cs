@@ -68,23 +68,40 @@ namespace TheArchive.Core.Managers
         /// </summary>
         /// <typeparam name="T">Implementation to lookup (cached)</typeparam>
         /// <returns>An instance of the first found type that implements <typeparamref name="T"/></returns>
-        public static T GetOrFindImplementation<T>()
+        public static T GetOrFindImplementation<T>() 
         {
             if(_implementationInstances.TryGetValue(typeof(T), out var val)) {
                 return (T) val;
             }
-
-            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            try
             {
-                foreach (Type type in asm.GetTypes())
+                foreach (var module in ArchiveMod.Modules)
                 {
-                    if(typeof(T).IsAssignableFrom(type) && typeof(T) != type)
+                    var asm = module.GetType().Assembly;
+                    foreach (Type type in asm.GetTypes())
                     {
-                        ArchiveLogger.Debug($"Found implementation \"{type.FullName}\" for \"{typeof(T).FullName}\"!");
-                        var instance = Activator.CreateInstance(type);
-                        _implementationInstances.Add(typeof(T), instance);
-                        return (T) instance;
+                        if (typeof(T).IsAssignableFrom(type) && typeof(T) != type)
+                        {
+                            ArchiveLogger.Debug($"Found implementation \"{type.FullName}\" for \"{typeof(T).FullName}\"!");
+                            var instance = Activator.CreateInstance(type);
+                            _implementationInstances.Add(typeof(T), instance);
+                            return (T)instance;
+                        }
                     }
+                }
+            }
+            catch(System.Reflection.ReflectionTypeLoadException tlex)
+            {
+                ArchiveLogger.Error($"{nameof(ReflectionTypeLoadException)} was thrown! This should not happen! Falling back to loaded types ... (Ignore stack trace if no {nameof(ArgumentException)} is thrown afterwards)");
+                ArchiveLogger.Exception(tlex);
+
+                var type = tlex.Types.FirstOrDefault(type => typeof(T).IsAssignableFrom(type) && typeof(T) != type);
+                if (type != null)
+                {
+                    ArchiveLogger.Debug($"Found implementation \"{type.FullName}\" for \"{typeof(T).FullName}\"!");
+                    var instance = Activator.CreateInstance(type);
+                    _implementationInstances.Add(typeof(T), instance);
+                    return (T)instance;
                 }
             }
 
@@ -98,14 +115,25 @@ namespace TheArchive.Core.Managers
         /// <returns></returns>
         public static Type FindTypeInCurrentAppDomain(string typeName)
         {
-            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            try
             {
-                foreach (Type type in asm.GetTypes())
+                
+                foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    if (type.FullName.Contains(typeName))
+                    foreach (var type in asm.GetTypes())
+                    {
                         return type;
+                       /* if (type.FullName.Contains(typeName))
+                            return Type.GetType(type.FullName);*/
+                    }
                 }
             }
+            catch(System.Reflection.ReflectionTypeLoadException rtle)
+            {
+                ArchiveLogger.Warning($"{nameof(ImplementationManager)}.{nameof(FindTypeInCurrentAppDomain)} caused a {nameof(ReflectionTypeLoadException)}.");
+                return rtle.Types.FirstOrDefault(t => t.FullName.Contains(typeName));
+            }
+            
             return null;
         }
 

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using TheArchive.Models.Progression;
 using TheArchive.Utilities;
-using static TheArchive.Utilities.LoaderWrapper;
+using static TheArchive.Loader.LoaderWrapper;
 
 namespace TheArchive.Models
 {

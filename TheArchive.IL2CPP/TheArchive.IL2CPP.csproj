@@ -1,298 +1,130 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Costura.Fody.5.7.0\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.5.7.0\build\Costura.Fody.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">R_ML</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{65BB64DC-68AB-4543-B176-7BF2FA8488BF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TheArchive</RootNamespace>
     <AssemblyName>TheArchive.IL2CPP</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <LangVersion>9.0</LangVersion>
+		<!--<TargetFrameworks>net472;net6.0</TargetFrameworks>-->
+
+	  <LangVersion>9.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;IL2CPP</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
+	  <TargetFramework>net472</TargetFramework>
     <DefineConstants>TRACE;IL2CPP</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_BIE|AnyCPU'">
+	  <TargetFramework>net6.0</TargetFramework>
+	  <DefineConstants>TRACE;IL2CPP</DefineConstants>
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  <Optimize>true</Optimize>
+	  <DebugType>pdbonly</DebugType>
+	  <PlatformTarget>AnyCPU</PlatformTarget>
+	  <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+	<Import Project="../Loader.props" />
+	<PropertyGroup>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\_R_LATEST\MelonLoader\0Harmony.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="CellSound-ASM">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\CellSound-ASM.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Costura, Version=5.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Costura.Fody.5.7.0\lib\netstandard1.0\Costura.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)CellSound-ASM.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DropServerSDK-ASM, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\DropServerSDK-ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)DropServerSDK-ASM.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="GlobalFramework-ASM">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\GlobalFramework-ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)GlobalFramework-ASM.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Il2Cppmscorlib">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Il2Cppmscorlib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Il2CppSystem">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Il2CppSystem.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Il2CppSystem.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Il2CppSystem.Core">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Il2CppSystem.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MelonLoader">
-      <HintPath>..\_R_LATEST\MelonLoader\MelonLoader.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Il2CppSystem.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Modules-ASM">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Modules-ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Modules-ASM.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PlayFab-ASM">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\PlayFab-ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)PlayFab-ASM.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SNet_ASM">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\SNet_ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)SNet_ASM.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SteamWorks_ASM">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\SteamWorks_ASM.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.AppContext.4.3.0\lib\net463\System.AppContext.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Console, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Console.4.3.0\lib\net46\System.Console.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Diagnostics.Tracing, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Diagnostics.Tracing.4.3.0\lib\net462\System.Diagnostics.Tracing.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Globalization.Calendars, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Globalization.Calendars.4.3.0\lib\net46\System.Globalization.Calendars.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.IO.FileSystem, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.FileSystem.4.3.0\lib\net46\System.IO.FileSystem.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Linq, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Linq.4.3.0\lib\net463\System.Linq.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Linq.Expressions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Linq.Expressions.4.3.0\lib\net463\System.Linq.Expressions.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Net.Http, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Net.Http.4.3.0\lib\net46\System.Net.Http.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Net.Sockets, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Net.Sockets.4.3.0\lib\net46\System.Net.Sockets.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Reflection, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.4.3.0\lib\net462\System.Reflection.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Runtime.Extensions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.Extensions.4.3.0\lib\net462\System.Runtime.Extensions.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Runtime.InteropServices, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.InteropServices.4.3.0\lib\net463\System.Runtime.InteropServices.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Text.RegularExpressions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.RegularExpressions.4.3.0\lib\net463\System.Text.RegularExpressions.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
-      <Private>False</Private>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnhollowerBaseLib">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnhollowerBaseLib.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)SteamWorks_ASM.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Unity.TextMeshPro.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.AudioModule.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.AudioModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UnityEngine.CrashReportingModule">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CrashReportingModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.CrashReportingModule.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.CrashReportingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.IMGUIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.InputLegacyModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.Physics2DModule">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.Physics2DModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityAnalyticsModule">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.UnityAnalyticsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Utils-ASM">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Utils-ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Utils-ASM.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Wwise-ASM">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Wwise-ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Wwise-ASM.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -312,87 +144,8 @@
     <Compile Include="..\TheArchive.MONO\Features\Special\R1SNetRevisionOverridePatch.cs">
       <Link>Features\Special\R1SNetRevisionOverridePatch.cs</Link>
     </Compile>
-    <Compile Include="ArchiveIL2CPPModule.cs" />
-    <Compile Include="ColorConverter.cs" />
-    <Compile Include="Features\Accessibility\ChatTweaks.cs" />
-    <Compile Include="Features\Accessibility\Nickname.cs" />
-    <Compile Include="Features\Accessibility\PlayerColorOverride.cs" />
-    <Compile Include="Features\Backport\InstantHackRelease.cs" />
-    <Compile Include="Features\Backport\MineFixBackport.cs" />
-    <Compile Include="Features\Backport\TerminalKeyMessage.cs" />
-    <Compile Include="Features\Backport\ThrowablesRunFix.cs" />
-    <Compile Include="Features\CustomLobbyCodeString.cs" />
-    <Compile Include="Features\Dev\AnalyticsBlocker.cs" />
-    <Compile Include="Features\Dev\GameDebugLogRedirect.cs" />
-    <Compile Include="Features\Dev\IconRenderSettings.cs" />
-    <Compile Include="Features\Dev\InternalUAudioListenerHelper.cs" />
-    <Compile Include="Features\Dev\MaulGavelChecksumPatch.cs" />
-    <Compile Include="Features\DiscordRichPresence.cs" />
-    <Compile Include="Features\LocalProgression\ExpeditionUnlockSkip.cs" />
-    <Compile Include="Features\LocalProgression\LocalBoosters.cs" />
-    <Compile Include="Features\LocalProgression\LocalProgressionController.cs" />
-    <Compile Include="Features\LocalProgression\LocalProgressionCore.cs" />
-    <Compile Include="Features\LocalProgression\LocalVanity.cs" />
-    <Compile Include="Features\LocalProgression\PlayFabManagerPatches.cs" />
-    <Compile Include="Features\QoL\LoadoutRandomizer.cs" />
-    <Compile Include="Features\QoL\MapToObjectivesSwitchFix.cs" />
-    <Compile Include="Features\QoL\ResourcePrioritizationPings.cs" />
-    <Compile Include="Features\Special\CustomWeaponFOV.cs" />
-    <Compile Include="Features\Special\RundownInHeader.cs" />
-    <Compile Include="Features\Dev\RedirectSettings.cs" />
-    <Compile Include="Features\Special\HideFirstPersonItem.cs" />
-    <Compile Include="Features\Special\ProcessPriority.cs" />
-    <Compile Include="Features\Special\RemoveChatRestrictions.cs" />
-    <Compile Include="Features\Special\RemoveDownedMessage.cs" />
-    <Compile Include="Features\Special\WeaponShootForward.cs" />
-    <Compile Include="Features\Special\UnityRandomOverrider.cs" />
-    <Compile Include="Features\Special\Watermark.cs" />
-    <Compile Include="Features\SteamRichPresenceTweaks.cs" />
-    <Compile Include="Features\Special\IntroSkip.cs" />
-    <Compile Include="Features\Dev\ModSettings.cs" />
-    <Compile Include="Features\Backport\MeleeCancelBackport.cs" />
-    <Compile Include="Features\PlayerInfo.cs" />
-    <Compile Include="Features\HudToggle.cs" />
-    <Compile Include="Features\RichPresenceCore.cs" />
-    <Compile Include="ArchiveIL2CPPBootstrap.cs" />
-    <Compile Include="Features\QoL\UnreadyButtonPatches.cs" />
-    <Compile Include="Managers\LocalBoosterDropper.cs" />
-    <Compile Include="Managers\LocalBoosterManager.cs" />
-    <Compile Include="Managers\LocalProgressionManager.cs" />
-    <Compile Include="Managers\LocalVanityItemDropper.cs" />
-    <Compile Include="Managers\LocalVanityItemManager.cs" />
-    <Compile Include="Models\Vanity\LocalVanityAcquiredLayerDrops.cs" />
-    <Compile Include="Models\Progression\ExpeditionCompletionData.cs" />
-    <Compile Include="Utilities\SColorExtensions.cs" />
-    <Compile Include="Utilities\SoundEventCache.cs" />
-    <Compile Include="Models\DataBlocks\CustomVanityItemsGroupDataBlock.cs" />
-    <Compile Include="Models\DataBlocks\CustomVanityItemsLayerDropsDataBlock.cs" />
-    <Compile Include="Models\DataBlocks\CustomVanityItemsTemplateDataBlock.cs" />
-    <Compile Include="Models\Progression\LocalRundownProgression.cs" />
-    <Compile Include="Models\Progression\ExpeditionSession.cs" />
-    <Compile Include="Models\Progression\LayerExtensions.cs" />
-    <Compile Include="Models\Progression\LayerFlags.cs" />
-    <Compile Include="Models\Progression\Layers.cs" />
-    <Compile Include="Models\Progression\LayerState.cs" />
-    <Compile Include="Features\Special\MuteSpeak.cs" />
-    <Compile Include="Models\Boosters\LocalBoosterImplant.cs" />
-    <Compile Include="Models\Boosters\LocalBoosterImplantPlayerData.cs" />
-    <Compile Include="Models\Boosters\LocalDropServerBoosterImplantInventoryItem.cs" />
-    <Compile Include="Models\Boosters\LocalBoosterTransaction.cs" />
-    <Compile Include="Models\DataBlocks\CustomBoosterImplantConditionDataBlock.cs" />
-    <Compile Include="Models\DataBlocks\CustomBoosterImplantEffectDataBlock.cs" />
-    <Compile Include="Models\DataBlocks\CustomBoosterImplantTemplateDataBlock.cs" />
-    <Compile Include="Models\DataBlocks\CustomGameDataBlockBase.cs" />
-    <Compile Include="Models\Vanity\LocalVanityItemStorage.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\Il2CppUtils.cs" />
-    <Compile Include="Utilities\SharedUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="FodyWeavers.xml" />
     <EmbeddedResource Include="Resources\TheArchive.IL2CPP.R5.dll" />
     <EmbeddedResource Include="Resources\TheArchive.IL2CPP.R6.dll" />
   </ItemGroup>
@@ -401,37 +154,27 @@
       <Project>{7bb66dc5-d29d-4cdd-bb82-d228abe35bda}</Project>
       <Name>TheArchive.Core</Name>
       <Private>False</Private>
+      <CopyLocal>False</CopyLocal>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Fody.6.5.5\build\Fody.targets" Condition="Exists('..\packages\Fody.6.5.5\build\Fody.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Fody.6.5.5\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.6.5.5\build\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\Costura.Fody.5.7.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.5.7.0\build\Costura.Fody.props'))" />
-    <Error Condition="!Exists('..\packages\Costura.Fody.5.7.0\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.5.7.0\build\Costura.Fody.targets'))" />
-  </Target>
-  <Import Project="..\packages\Costura.Fody.5.7.0\build\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.5.7.0\build\Costura.Fody.targets')" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
   <PropertyGroup>
-    <PostBuildEvent>cd $(ProjectDir)
-IF ($(ConfigurationName)) == (Debug) GOTO DEBUG
-copy /y bin\release\TheArchive.IL2CPP.dll ..\TheArchive.Core\Resources\TheArchive.IL2CPP.dll
-GOTO END
-:DEBUG
-copy /y bin\debug\TheArchive.IL2CPP.dll ..\TheArchive.Core\Resources\TheArchive.IL2CPP.dll
-:END
-</PostBuildEvent>
+    <PostBuildEvent>
+		cd $(MSBuildProjectDirectory)
+		copy /y bin\$(Configuration)\TheArchive.IL2CPP.dll ..\TheArchive.Core\Resources\TheArchive.IL2CPP.dll
+	</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>cd $(ProjectDir)Resources\
-if exist TheArchive.IL2CPP.R5.dll (
-    ECHO Not generating IL2CPP.R5 dummy dll
-) else (
-    ECHO Generating IL2CPP.R5 dummy dll ...
-    ECHO DUMMY &gt; TheArchive.IL2CPP.R5.dll
+    <PreBuildEvent>
+		cd $(MSBuildProjectDirectory)\Resources\
+		if exist TheArchive.IL2CPP.R5.dll (
+		ECHO Not generating IL2CPP.R5 dummy dll
+		) else (
+		ECHO Generating IL2CPP.R5 dummy dll ...
+		ECHO DUMMY &gt; TheArchive.IL2CPP.R5.dll
 )
 if exist TheArchive.IL2CPP.R6.dll (
     ECHO Not generating IL2CPP.R6 dummy dll

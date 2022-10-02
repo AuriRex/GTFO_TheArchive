@@ -23,7 +23,7 @@ namespace TheArchive.Utilities
             logger.Msg(col, msg);
         }
 
-        [Conditional("DEBUG")]
+        //[Conditional("DEBUG")]
         public static void Debug(string msg)
         {
             logger.Msg(ConsoleColor.DarkGray, msg);

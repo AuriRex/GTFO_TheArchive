@@ -1,8 +1,9 @@
-﻿using MelonLoader;
+﻿#if MelonLoader
+using MelonLoader;
 using System;
 using TheArchive.Interfaces;
 
-namespace TheArchive.Utilities
+namespace TheArchive.Loader
 {
     internal class ML_LogWrapper : IArchiveLogger
     {
@@ -33,3 +34,4 @@ namespace TheArchive.Utilities
         public void Exception(Exception ex) => _logger.Error($"{ex}: {ex.Message}\n{ex.StackTrace}");
     }
 }
+#endif

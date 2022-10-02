@@ -43,8 +43,6 @@ namespace TheArchive
         {
             instance = this;
 
-            CosturaUtility.Initialize();
-
             CrashReportHandler.SetUserMetadata("Modded", "true");
             CrashReportHandler.enableCaptureExceptions = false;
 

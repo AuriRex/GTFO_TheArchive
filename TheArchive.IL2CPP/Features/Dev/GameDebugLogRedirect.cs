@@ -7,6 +7,9 @@ using UnityEngine;
 namespace TheArchive.Features.Dev
 {
     [EnableFeatureByDefault, HideInModSettings]
+#if BepInEx
+    [ForceDisable]
+#endif
     public class GameDebugLogRedirect : Feature
     {
         public override string Name => "Game Logs Redirect";

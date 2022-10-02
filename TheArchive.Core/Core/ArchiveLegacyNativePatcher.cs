@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using TheArchive.Loader;
 using TheArchive.Utilities;
+#if MelonLoader
 using UnhollowerBaseLib;
+#endif
 using static TheArchive.Core.ArchiveLegacyPatcher;
 using static TheArchive.Utilities.Utils;
 
@@ -203,7 +206,7 @@ namespace TheArchive.Core
 
                 DelegateType = NativeDelegates.Get(nativePatchInfo);
 
-                
+#if MelonLoader
                 unsafe
                 {
                     var ptr = *(IntPtr*) (IntPtr) UnhollowerUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(originalMethodInfo).GetValue(null);
@@ -234,6 +237,7 @@ namespace TheArchive.Core
                 {
                     WasNotAbleToSetProperty = true;
                 }
+#endif
             }
 
             internal static LegacyNativePatchInstance CreatePatch(ArchiveLegacyNativePatch nativePatchInfo, Type patchContainingType)

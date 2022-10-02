@@ -4,7 +4,7 @@ using System.Reflection;
 using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
 using TheArchive.Utilities;
-using static TheArchive.Utilities.LoaderWrapper;
+using static TheArchive.Loader.LoaderWrapper;
 using static TheArchive.Models.Boosters.LocalBoosterImplant;
 
 namespace TheArchive.IL2CPP.R6.Factories

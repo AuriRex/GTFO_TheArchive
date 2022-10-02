@@ -1,13 +1,14 @@
-﻿using MelonLoader;
+﻿#if MelonLoader
+using MelonLoader;
 using System;
 using TheArchive;
-using TheArchive.Utilities;
+using TheArchive.Loader;
 
 [assembly: MelonInfo(typeof(ML_ArchiveMod), ArchiveMod.MOD_NAME, ArchiveMod.VERSION_STRING, ArchiveMod.AUTHOR, ArchiveMod.GITHUB_LINK)]
 [assembly: MelonGame("10 Chambers Collective", "GTFO")]
 [assembly: MelonColor(ConsoleColor.DarkMagenta)]
-[assembly: MelonOptionalDependencies("System.Runtime.CompilerServices.Unsafe", "UnhollowerBaseLib")]
-namespace TheArchive
+[assembly: MelonOptionalDependencies("UnhollowerBaseLib")]
+namespace TheArchive.Loader
 {
     public class ML_ArchiveMod : MelonMod
     {
@@ -37,3 +38,4 @@ namespace TheArchive
         }
     }
 }
+#endif

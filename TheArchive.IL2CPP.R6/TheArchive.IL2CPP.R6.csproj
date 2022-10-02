@@ -1,101 +1,78 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">R_ML</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A13776AA-7033-4424-9500-90CA9E6F7BA8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TheArchive.IL2CPP.R6</RootNamespace>
     <AssemblyName>TheArchive.IL2CPP.R6</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+	<!--<TargetFrameworks>net472;net6.0</TargetFrameworks>-->
     <LangVersion>9.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <Configurations>R_ML;R_BIE</Configurations>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
+    <TargetFramework>net472</TargetFramework>
+    <OutputPath>bin\R_ML\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>9.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='R_BIE|AnyCPU'">
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputPath>bin\R_BIE\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>9.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+	<Import Project="../Loader.props" />
+	<PropertyGroup>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
   <ItemGroup>
     <Reference Include="CellSound-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\CellSound-ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)CellSound-ASM.dll</HintPath>
     </Reference>
     <Reference Include="DropServerSDK-ASM">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\DropServerSDK-ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)DropServerSDK-ASM.dll</HintPath>
     </Reference>
     <Reference Include="GameData-ASM">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\GameData-ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)GameData-ASM.dll</HintPath>
     </Reference>
     <Reference Include="Il2Cppmscorlib">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Il2Cppmscorlib.dll</HintPath>
     </Reference>
     <Reference Include="Modules-ASM">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Modules-ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Modules-ASM.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UnhollowerBaseLib">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnhollowerBaseLib.dll</HintPath>
-    </Reference>
-    <Reference Include="UnhollowerRuntimeLib">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnhollowerRuntimeLib.dll</HintPath>
-    </Reference>
+
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="Wwise-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Wwise-ASM.dll</HintPath>
+      <HintPath>$(LatestGeneratedGameAssembliesPath)Wwise-ASM.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Factories\Boosters\CustomBoosterImplantFactory.cs" />
-    <Compile Include="Factories\Boosters\CustomBoosterImplantPlayerData.CustomCategoryFactory.cs" />
-    <Compile Include="Factories\Boosters\CustomBoosterImplantPlayerDataFactory.cs" />
-    <Compile Include="Factories\Boosters\CustomBoosterTransaction.CustomMissedFactory.cs" />
-    <Compile Include="Factories\Boosters\CustomBoosterTransactionFactory.cs" />
-    <Compile Include="Factories\Boosters\CustomDropServerBoosterImplantInventoryItemFactory.cs" />
-    <Compile Include="Factories\DataBlocks\CustomBoosterImplantConditionDataBlockFactory.cs" />
-    <Compile Include="Factories\DataBlocks\CustomBoosterImplantEffectDataBlockFactory.cs" />
-    <Compile Include="Factories\DataBlocks\CustomBoosterImplantTemplateDataBlockFactory.cs" />
-    <Compile Include="Factories\DataBlocks\CustomGameDataBlockBaseFactory.cs" />
-    <Compile Include="Factories\DataBlocks\CustomVanityItemsGroupDataBlockFactory.cs" />
-    <Compile Include="Factories\DataBlocks\CustomVanityItemsLayerDropsDataBlockFactory.cs" />
-    <Compile Include="Factories\DataBlocks\CustomVanityItemsTemplateDataBlockFactory.cs" />
-    <Compile Include="R6SubModule.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
@@ -109,16 +86,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
+    <Folder Include="Properties\" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
   <PropertyGroup>
-    <PostBuildEvent>cd $(ProjectDir)
-IF ($(ConfigurationName)) == (Debug) GOTO DEBUG
-copy /y bin\release\TheArchive.IL2CPP.R6.dll ..\TheArchive.IL2CPP\Resources\TheArchive.IL2CPP.R6.dll
-GOTO END
-:DEBUG
-copy /y bin\debug\TheArchive.IL2CPP.R6.dll ..\TheArchive.IL2CPP\Resources\TheArchive.IL2CPP.R6.dll
-:END
-</PostBuildEvent>
+    <PostBuildEvent>
+		cd $(MSBuildProjectDirectory)
+		copy /y bin\$(Configuration)\TheArchive.IL2CPP.R6.dll ..\TheArchive.IL2CPP\Resources\TheArchive.IL2CPP.R6.dll
+	</PostBuildEvent>
   </PropertyGroup>
 </Project>

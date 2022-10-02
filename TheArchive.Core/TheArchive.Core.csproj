@@ -1,151 +1,44 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7BB66DC5-D29D-4CDD-BB82-D228ABE35BDA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TheArchive</RootNamespace>
-    <AssemblyName>TheArchive.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <LangVersion>9.0</LangVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">R_ML</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+
+		<RootNamespace>TheArchive</RootNamespace>
+		<AssemblyName>TheArchive.Core</AssemblyName>
+		<!--<TargetFrameworks>net472;net6.0</TargetFrameworks>-->
+
+
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+		
+		<NuGetPackageImportStamp>
+		</NuGetPackageImportStamp>
+	</PropertyGroup>
+	
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
+	  <TargetFramework>net472</TargetFramework>
     <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\_R_LATEST\MelonLoader\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="MelonLoader">
-      <HintPath>..\_R_LATEST\MelonLoader\MelonLoader.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UnhollowerBaseLib">
-      <HintPath>..\_R_LATEST\MelonLoader\Managed\UnhollowerBaseLib.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ArchiveMod.cs" />
-    <Compile Include="Core\ArchiveLegacyNativePatcher.cs" />
-    <Compile Include="Core\ArchiveSettings.cs" />
-    <Compile Include="Core\Attributes\Feature\ArchivePatch.cs" />
-    <Compile Include="Core\Attributes\Feature\AutomatedFeature.cs" />
-    <Compile Include="Core\Attributes\Feature\BuildConstraint.cs" />
-    <Compile Include="Core\Attributes\Feature\DisallowInGameToggle.cs" />
-    <Compile Include="Core\Attributes\Feature\DoNotSaveToConfig.cs" />
-    <Compile Include="Core\Attributes\Feature\EnableFeatureByDefault.cs" />
-    <Compile Include="Core\Attributes\Feature\FeatureConfig.cs" />
-    <Compile Include="Core\Attributes\Feature\HideInModSettings.cs" />
-    <Compile Include="Core\Attributes\Feature\IsGameStateChangedMethod.cs" />
-    <Compile Include="Core\Attributes\Feature\IsInitMethod.cs" />
-    <Compile Include="Core\Attributes\Feature\IsLateUpdate.cs" />
-    <Compile Include="Core\Attributes\Feature\IsParameterTypesProvider.cs" />
-    <Compile Include="Core\Attributes\Feature\IsPostfix.cs" />
-    <Compile Include="Core\Attributes\Feature\IsPrefix.cs" />
-    <Compile Include="Core\Attributes\Feature\IsTypeProvider.cs" />
-    <Compile Include="Core\Attributes\Feature\IsUpdate.cs" />
-    <Compile Include="Core\Attributes\Feature\ModDefaultFeatureGroupName.cs" />
-    <Compile Include="Core\Attributes\Feature\RundownConstraint.cs" />
-    <Compile Include="Core\Attributes\Feature\SetEnabledStatus.cs" />
-    <Compile Include="Core\Attributes\Feature\SetStaticLogger.cs" />
-    <Compile Include="Core\Attributes\Feature\Settings\FSHeader.cs" />
-    <Compile Include="Core\Attributes\Feature\Settings\FSHide.cs" />
-    <Compile Include="Core\Attributes\Feature\Settings\FSSeparator.cs" />
-    <Compile Include="Core\Attributes\Feature\Settings\FSSpacer.cs" />
-    <Compile Include="Core\Attributes\Feature\Settings\FSIdentifier.cs" />
-    <Compile Include="Core\Attributes\Feature\Settings\FSIgnore.cs" />
-    <Compile Include="Core\Attributes\Feature\Settings\FSMaxLength.cs" />
-    <Compile Include="Core\Attributes\Feature\Settings\FSRundownHint.cs" />
-    <Compile Include="Core\Attributes\Feature\Settings\FSSlider.cs" />
-    <Compile Include="Core\BuildDB.cs" />
-    <Compile Include="Core\DiscordApi\ActivityManager.cs" />
-    <Compile Include="Core\DiscordApi\Constants.cs" />
-    <Compile Include="Core\DiscordApi\Core.cs" />
-    <Compile Include="Core\DiscordApi\ImageManager.cs" />
-    <Compile Include="Core\DiscordApi\LobbyManager.cs" />
-    <Compile Include="Core\DiscordApi\StorageManager.cs" />
-    <Compile Include="Core\DiscordApi\StoreManager.cs" />
-    <Compile Include="Core\Exceptions\ArchivePatchExceptions.cs" />
-    <Compile Include="Core\FeaturesAPI\Feature.cs" />
-    <Compile Include="Core\FeaturesAPI\FeatureGroups.cs" />
-    <Compile Include="Core\FeaturesAPI\FeatureInternal.cs" />
-    <Compile Include="Core\FeaturesAPI\FeatureManager.cs" />
-    <Compile Include="Core\FeaturesAPI\Settings\BoolSetting.cs" />
-    <Compile Include="Core\FeaturesAPI\Settings\ColorSetting.cs" />
-    <Compile Include="Core\FeaturesAPI\Settings\EnumListSetting.cs" />
-    <Compile Include="Core\FeaturesAPI\Settings\EnumSetting.cs" />
-    <Compile Include="Core\FeaturesAPI\Settings\FeatureSetting.cs" />
-    <Compile Include="Core\FeaturesAPI\FeatureSettingsHelper.cs" />
-    <Compile Include="Core\FeaturesAPI\Settings\StringSetting.cs" />
-    <Compile Include="Core\IArchiveModule.cs" />
-    <Compile Include="Core\ArchiveLegacyPatcher.cs" />
-    <Compile Include="Core\InitSingletonBase.cs" />
-    <Compile Include="Core\Managers\DataBlockManager.cs" />
-    <Compile Include="Core\Managers\DiscordManager.cs" />
-    <Compile Include="Core\Managers\ImplementationManager.cs" />
-    <Compile Include="Core\Managers\PresenceManager.cs" />
-    <Compile Include="Core\Models\SColor.cs" />
-    <Compile Include="Core\Models\ExpeditionLog.cs" />
-    <Compile Include="Core\Models\GameBuildInfo.cs" />
-    <Compile Include="Core\Settings\EnabledFeatures.cs" />
-    <Compile Include="Core\Models\PresenceGameState.cs" />
-    <Compile Include="Core\Settings\RichPresenceSettings.cs" />
-    <Compile Include="Core\SubModuleAttribute.cs" />
-    <Compile Include="Interfaces\IArchiveLogger.cs" />
-    <Compile Include="Interfaces\IBaseGameConverter.cs" />
-    <Compile Include="Interfaces\IInitAfterDataBlocksReady.cs" />
-    <Compile Include="Interfaces\IInitAfterGameDataInitialized.cs" />
-    <Compile Include="Interfaces\IInitCondition.cs" />
-    <Compile Include="Interfaces\IInitializable.cs" />
-    <Compile Include="Interfaces\IInitImmediately.cs" />
-    <Compile Include="Interfaces\IInjectLogger.cs" />
-    <Compile Include="ML_ArchiveMod.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\Accessors.cs" />
-    <Compile Include="Utilities\ArchiveLogger.cs" />
-    <Compile Include="Utilities\GTFOLogger.cs" />
-    <Compile Include="Utilities\ImplementationManagerExtensions.cs" />
-    <Compile Include="Utilities\LoaderWrapper.cs" />
-    <Compile Include="Utilities\ML_LogWrapper.cs" />
-    <Compile Include="Utilities\PresenceFormatter.cs" />
-    <Compile Include="Utilities\LocalFiles.cs" />
-    <Compile Include="Utilities\RundownFlagsExtensions.cs" />
-    <Compile Include="Utilities\Utils.cs" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_BIE|AnyCPU'">
+	  <TargetFramework>net6.0</TargetFramework>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+	<!-- -->
+  <Import Project="../Loader.props" />
+	<PropertyGroup>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+	<!-- -->
   <ItemGroup>
     <EmbeddedResource Include="Resources\TheArchive.IL2CPP.dll" />
   </ItemGroup>
@@ -168,31 +61,29 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Core\Attributes\Feature\Settings\FSDisplayName.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
   <PropertyGroup>
-    <PreBuildEvent>cd $(ProjectDir)Resources\
-if exist TheArchive.IL2CPP.dll (
-    ECHO Not generating IL2CPP dummy dll
-) else (
-    ECHO Generating IL2CPP dummy dll ...
-    ECHO DUMMY &gt; TheArchive.IL2CPP.dll
-)
-if exist TheArchive.MONO.dll (
-    ECHO Not generating MONO dummy dll
-) else (
-    ECHO Generating MONO dummy dll ...
-    ECHO DUMMY &gt; TheArchive.MONO.dll
-)
-</PreBuildEvent>
+    <PreBuildEvent>
+		cd $(MSBuildProjectDirectory)\Resources\
+		if exist TheArchive.IL2CPP.dll (
+		ECHO Not generating IL2CPP dummy dll
+		) else (
+		ECHO Generating IL2CPP dummy dll ...
+		ECHO DUMMY &gt; TheArchive.IL2CPP.dll
+			)
+			if exist TheArchive.MONO.dll (
+			ECHO Not generating MONO dummy dll
+			) else (
+			ECHO Generating MONO dummy dll ...
+			ECHO DUMMY &gt; TheArchive.MONO.dll
+		)
+	</PreBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\GitInfo.2.2.0\build\GitInfo.targets" Condition="Exists('..\packages\GitInfo.2.2.0\build\GitInfo.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\GitInfo.2.2.0\build\GitInfo.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitInfo.2.2.0\build\GitInfo.targets'))" />
-  </Target>
+	<ItemGroup>
+		<PackageReference Include="GitInfo" Version="2.2.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta2">
+			<GeneratePathProperty>True</GeneratePathProperty>
+		</PackageReference>
+
+	</ItemGroup>
 </Project>

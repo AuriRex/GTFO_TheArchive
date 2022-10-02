@@ -8,6 +8,7 @@ using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
+using TheArchive.Loader;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI
@@ -83,6 +84,12 @@ namespace TheArchive.Core.FeaturesAPI
             DoNotSaveToConfig = featureType.GetCustomAttribute<DoNotSaveToConfig>() != null;
             AutomatedFeature = featureType.GetCustomAttribute<AutomatedFeature>() != null;
             DisableModSettingsButton = featureType.GetCustomAttribute<DisallowInGameToggle>() != null;
+
+            if (featureType.GetCustomAttribute<ForceDisable>() != null)
+            {
+                InternalDisabled = true;
+                DisabledReason |= InternalDisabledReason.ForceDisabled;
+            }
 
             foreach (var constraint in featureType.GetCustomAttributes<RundownConstraint>())
             {
@@ -631,7 +638,8 @@ namespace TheArchive.Core.FeaturesAPI
             PatchInitMethodFailed,
             UpdateMethodFailed,
             LateUpdateMethodFailed,
-            Other
+            ForceDisabled,
+            Other,
         }
     }
 }

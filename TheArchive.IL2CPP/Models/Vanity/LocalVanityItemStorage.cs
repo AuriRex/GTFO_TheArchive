@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static TheArchive.Utilities.LoaderWrapper;
+using static TheArchive.Loader.LoaderWrapper;
 
 namespace TheArchive.Models.Vanity
 {

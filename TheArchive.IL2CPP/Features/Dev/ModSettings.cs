@@ -12,6 +12,13 @@ using TheArchive.Core.Models;
 using static TheArchive.Utilities.Utils;
 using static TheArchive.Utilities.SColorExtensions;
 using TheArchive.Interfaces;
+using TheArchive.Loader;
+#if IL2CPP && MelonLoader
+using UnhollowerBaseLib.Attributes;
+#endif
+#if IL2CPP && BepInEx
+using Il2CppInterop.Runtime.Attributes;
+#endif
 
 namespace TheArchive.Features.Dev
 {
@@ -65,7 +72,7 @@ namespace TheArchive.Features.Dev
             }
 
 #if IL2CPP
-            [UnhollowerBaseLib.Attributes.HideFromIl2Cpp]
+            [HideFromIl2Cpp]
 #endif
             public static JankTextMeshProUpdaterOnce Apply(TMPro.TextMeshPro tmp)
             {

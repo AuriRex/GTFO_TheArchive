@@ -9,6 +9,7 @@ using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
+using TheArchive.Loader;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -16,6 +17,7 @@ namespace TheArchive
 {
     public static class ArchiveMod
     {
+        public const string GUID = "dev." + AUTHOR + ".gtfo." + MOD_NAME;
         public const string MOD_NAME = "TheArchive";
         public const string ABBREVIATION = "Ar";
         public const string AUTHOR = "AuriRex";
@@ -62,7 +64,7 @@ namespace TheArchive
         private static readonly HashSet<Assembly> _moduleAssemblies = new HashSet<Assembly>();
         private static readonly List<Type> _moduleTypes = new List<Type>();
 
-        private static readonly List<IArchiveModule> _modules = new List<IArchiveModule>();
+        public static List<IArchiveModule> Modules { get; private set; } = new List<IArchiveModule>();
         private const string kArchiveSettingsFile = "TheArchive_Settings.json";
 
         private static HarmonyLib.Harmony _harmonyInstance;
@@ -350,7 +352,7 @@ namespace TheArchive
         {
             if (instance == null) return;
 
-            foreach (var module in _modules)
+            foreach (var module in Modules)
             {
                 InjectInstanceIntoModules(instance, module);
             }
@@ -479,7 +481,7 @@ namespace TheArchive
                 ArchiveLogger.Exception(ex);
             }
 
-            _modules.Add(module);
+            Modules.Add(module);
             return module;
         }
 
@@ -487,7 +489,7 @@ namespace TheArchive
         {
             if (rundownID != RundownID.RundownUnitialized)
             {
-                foreach (var module in _modules)
+                foreach (var module in Modules)
                 {
                     module.Patcher?.PatchRundownSpecificMethods(module.GetType().Assembly);
                 }
@@ -497,7 +499,7 @@ namespace TheArchive
 
         internal static void UnpatchAll()
         {
-            foreach (var module in _modules)
+            foreach (var module in Modules)
             {
                 UnpatchModule(module);
             }
@@ -507,7 +509,7 @@ namespace TheArchive
         {
             if (!_moduleTypes.Contains(moduleType)) throw new ArgumentException($"Can't unpatch non patched module \"{moduleType.FullName}\".");
 
-            foreach (var module in _modules)
+            foreach (var module in Modules)
             {
                 if (module.GetType() == moduleType)
                 {
@@ -531,13 +533,13 @@ namespace TheArchive
                 ArchiveLogger.Error($"Error while trying to unpatch and/or run {nameof(IArchiveModule.OnExit)} in module \"{module?.GetType()?.FullName ?? "Unknown"}\"!");
                 ArchiveLogger.Exception(ex);
             }
-            _modules.Remove(module);
+            Modules.Remove(module);
             _moduleTypes.Remove(module.GetType());
         }
 
         public static void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            foreach(var module in _modules)
+            foreach(var module in Modules)
             {
                 try
                 {
@@ -558,7 +560,7 @@ namespace TheArchive
 
         public static void OnLateUpdate()
         {
-            foreach (var module in _modules)
+            foreach (var module in Modules)
             {
                 try
                 {

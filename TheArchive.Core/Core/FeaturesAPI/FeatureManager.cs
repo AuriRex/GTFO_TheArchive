@@ -5,6 +5,7 @@ using System.Reflection;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Settings;
 using TheArchive.Interfaces;
+using TheArchive.Loader;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI

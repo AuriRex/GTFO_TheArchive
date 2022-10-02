@@ -3,6 +3,12 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
+#if IL2CPP && MelonLoader
+using UnhollowerBaseLib;
+#endif
+#if IL2CPP && BepInEx
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+#endif
 
 namespace TheArchive.Features.Special
 {
@@ -14,7 +20,7 @@ namespace TheArchive.Features.Special
         public override string Group => FeatureGroups.Special;
 
 #if IL2CPP
-        private static PropertyAccessor<PlayerChatManager, UnhollowerBaseLib.Il2CppStructArray<int>> A_PlayerChatManager_m_forbiddenChars;
+        private static PropertyAccessor<PlayerChatManager, Il2CppStructArray<int>> A_PlayerChatManager_m_forbiddenChars;
 #else
         private static FieldAccessor<PlayerChatManager, int[]> A_PlayerChatManager_m_forbiddenChars;
 #endif
@@ -40,7 +46,7 @@ namespace TheArchive.Features.Special
         {
             A_PlayerChatManager_m_forbiddenChars =
 #if IL2CPP
-                PropertyAccessor<PlayerChatManager, UnhollowerBaseLib.Il2CppStructArray<int>>
+                PropertyAccessor<PlayerChatManager, Il2CppStructArray<int>>
 #else
                 FieldAccessor<PlayerChatManager, int[]>
 #endif

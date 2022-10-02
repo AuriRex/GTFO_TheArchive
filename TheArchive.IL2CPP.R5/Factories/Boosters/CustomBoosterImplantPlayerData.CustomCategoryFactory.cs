@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using TheArchive.Interfaces;
 using TheArchive.Models.Boosters;
-using static TheArchive.Utilities.LoaderWrapper;
+using static TheArchive.Loader.LoaderWrapper;
 using static TheArchive.Models.Boosters.LocalBoosterImplantPlayerData;
 
 namespace TheArchive.IL2CPP.R5.Factories

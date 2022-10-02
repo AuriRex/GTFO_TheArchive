@@ -6,7 +6,7 @@ using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
-using TheArchive.Utilities;
+using TheArchive.Loader;
 
 namespace TheArchive.Core.FeaturesAPI
 {

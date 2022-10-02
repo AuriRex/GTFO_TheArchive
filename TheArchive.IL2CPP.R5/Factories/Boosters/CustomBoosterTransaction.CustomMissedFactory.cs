@@ -1,7 +1,7 @@
 ﻿using DropServer;
 using System;
 using TheArchive.Interfaces;
-using static TheArchive.Utilities.LoaderWrapper;
+using static TheArchive.Loader.LoaderWrapper;
 using static TheArchive.Models.Boosters.LocalBoosterTransaction;
 
 namespace TheArchive.IL2CPP.R5.Factories
