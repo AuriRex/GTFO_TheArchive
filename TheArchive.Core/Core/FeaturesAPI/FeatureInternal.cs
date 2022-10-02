@@ -200,7 +200,7 @@ namespace TheArchive.Core.FeaturesAPI
                 }
             }
 
-            _harmonyInstance = new HarmonyLib.Harmony(_feature.Identifier);
+            _harmonyInstance = new HarmonyLib.Harmony($"{ArchiveMod.MOD_NAME}_FeaturesAPI_{_feature.Identifier}");
 
             var potentialPatchTypes = featureType.GetNestedTypes(Utils.AnyBindingFlagss).Where(nt => nt.GetCustomAttribute<ArchivePatch>() != null);
 
