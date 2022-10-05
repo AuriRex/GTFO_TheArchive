@@ -42,6 +42,7 @@
 		
 		<Message Importance="High" Text="[#1.1] Building R5 Sub-Module ..." Condition="'$(Configuration)' == 'R_ML'" />
 		<MSBuild Projects="$(MSBuildProjectDirectory)\..\TheArchive.IL2CPP.R5\TheArchive.IL2CPP.R5.csproj" Properties="UseNetForLoader=$(Configuration);UseCommonOutputDirectory=True" ContinueOnError="false" Condition="'$(Configuration)' == 'R_ML'" BuildInParallel="false" />
+		<Exec Command="ECHO DUMMY > $(MSBuildProjectDirectory)\..\TheArchive.IL2CPP\Resources\TheArchive.IL2CPP.R5.dll" Condition="'$(Configuration)' != 'R_ML'" />
 		
 		<Message Importance="High" Text="[#1.2] Building R6 Sub-Module ..." />
 		<MSBuild Projects="$(MSBuildProjectDirectory)\..\TheArchive.IL2CPP.R6\TheArchive.IL2CPP.R6.csproj" ContinueOnError="false" BuildInParallel="false" />
@@ -76,6 +77,9 @@
 			  if '$(Configuration)' == 'R_ML' (
 			  ECHO [#2.2] Building MONO Support-Module ...
 			  dotnet build -f $(TargetFramework) -c $(Configuration)
+			  ) ELSE (
+			  if exist $(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\TheArchive.MONO.dll del /F  $(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\TheArchive.MONO.dll
+			  ECHO DUMMY >  $(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\TheArchive.MONO.dll
 			  )
 			  ECHO [#3] Building Core Mod
 			  cd $(MSBuildProjectDirectory)\..\TheArchive.Core\

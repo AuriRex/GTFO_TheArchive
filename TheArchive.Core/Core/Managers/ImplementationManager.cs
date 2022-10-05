@@ -115,26 +115,44 @@ namespace TheArchive.Core.Managers
         /// <returns></returns>
         public static Type FindTypeInCurrentAppDomain(string typeName)
         {
+            IEnumerable<Type> types = new List<Type>();
+#if BepInEx
             try
             {
-                
+                foreach (var loadedPlugin in BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Plugins.Values)
+                {
+                    var asm = loadedPlugin.Instance?.GetType().Assembly;
+                    if(asm != null)
+                        foreach (var type in asm.GetTypes())
+                        {
+                            if (type.FullName.Contains(typeName))
+                                return type;
+                        }
+                }
+
+            }
+            catch (System.Reflection.ReflectionTypeLoadException rtle)
+            {
+                types = types.Concat(rtle.Types.Where(t => t != null));
+            }
+#endif
+            try
+            {
                 foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
                 {
                     foreach (var type in asm.GetTypes())
                     {
-                        return type;
-                       /* if (type.FullName.Contains(typeName))
-                            return Type.GetType(type.FullName);*/
+                        if (type.FullName.Contains(typeName))
+                            return type;
                     }
                 }
             }
             catch(System.Reflection.ReflectionTypeLoadException rtle)
             {
-                ArchiveLogger.Warning($"{nameof(ImplementationManager)}.{nameof(FindTypeInCurrentAppDomain)} caused a {nameof(ReflectionTypeLoadException)}.");
-                return rtle.Types.FirstOrDefault(t => t.FullName.Contains(typeName));
+                types = types.Concat(rtle.Types.Where(t => t != null));
             }
-            
-            return null;
+
+            return types.FirstOrDefault(t => t?.FullName?.Contains(typeName) ?? false);
         }
 
         /// <summary>

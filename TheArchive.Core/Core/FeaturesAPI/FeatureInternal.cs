@@ -108,6 +108,20 @@ namespace TheArchive.Core.FeaturesAPI
                 DisabledReason |= InternalDisabledReason.BuildConstraintMismatch;
             }
 
+            try
+            {
+                if (!_feature.PreInit())
+                {
+                    InternalDisabled = true;
+                    DisabledReason |= InternalDisabledReason.PreInitReturnedFalse;
+                }
+            }
+            catch(Exception ex)
+            {
+                _FILogger.Error($"{nameof(Feature.PreInit)} method on {nameof(Feature)} failed: {ex}: {ex.Message}");
+                _FILogger.Exception(ex);
+            }
+
             if (InternalDisabled)
             {
                 _FILogger.Msg(ConsoleColor.Magenta, $"Feature \"{_feature.Identifier}\" has been disabled internally! ({DisabledReason})");
@@ -255,7 +269,7 @@ namespace TheArchive.Core.FeaturesAPI
                             }
 
                             archivePatchInfo.Type = (Type) typeMethod.Invoke(null, null);
-                            _FILogger.Debug($"Discovered target Type for Patch \"{patchType.FullName}\" to be \"{archivePatchInfo.Type.FullName}\"");
+                            _FILogger.Debug($"Discovered target Type for Patch \"{patchType.FullName}\" to be \"{archivePatchInfo.Type?.FullName ?? "TYPE NOT FOUND"}\"");
                         }
                         else
                         {
@@ -366,7 +380,7 @@ namespace TheArchive.Core.FeaturesAPI
                 }
                 catch(Exception ex)
                 {
-                    _FILogger.Error($"Patch discovery for \"{archivePatchInfo.Type.FullName}\" failed: {ex}: {ex.Message}");
+                    _FILogger.Error($"Patch discovery for \"{archivePatchInfo.Type?.FullName ?? $"TYPE NOT FOUND - PatchType:{patchType.FullName}"}\" failed: {ex}: {ex.Message}");
                     _FILogger.Exception(ex);
                 }
             }
@@ -393,6 +407,13 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 _feature.Enabled = false;
             }
+        }
+
+
+        internal void RequestDisable(string reason)
+        {
+            _FILogger.Info($"Feature {_feature.Identifier} has requested to be disabled: {reason}");
+            InternalyDisableFeature(InternalDisabledReason.ForceDisabled);
         }
 
         private void AfterInit()
@@ -662,6 +683,7 @@ namespace TheArchive.Core.FeaturesAPI
             UpdateMethodFailed,
             LateUpdateMethodFailed,
             ForceDisabled,
+            PreInitReturnedFalse,
             Other,
         }
     }

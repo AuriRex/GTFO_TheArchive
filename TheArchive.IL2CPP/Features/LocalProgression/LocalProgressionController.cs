@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheArchive.Core.Attributes;
+﻿using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
@@ -15,6 +10,7 @@ namespace TheArchive.Features.LocalProgression
 {
     [EnableFeatureByDefault]
     [DisallowInGameToggle]
+    [DoNotSaveToConfig]
     public class LocalProgressionController : Feature
     {
         public override string Name => "Local Progression";
@@ -28,9 +24,16 @@ namespace TheArchive.Features.LocalProgression
         [FeatureConfig]
         public static LocalProgressionSettings Settings { get; set; }
 
+        public static bool ForceEnable { get; internal set; } = false;
+
         public override void OnGameDataInitialized()
         {
-            if(Settings.DisableLocalProgressionOnLatest && BuildInfo.Rundown.IsIncludedIn(RundownFlags.Latest))
+            if (ForceEnable)
+            {
+                FeatureLogger.Notice($"Local Progression is forced on!");
+            }
+
+            if (!ForceEnable && Settings.DisableLocalProgressionOnLatest && BuildInfo.Rundown.IsIncludedIn(RundownFlags.Latest))
             {
                 FeatureLogger.Notice($"Detected build to be latest ({BuildInfo.Rundown}), disabling LocalProgression because {nameof(LocalProgressionSettings.DisableLocalProgressionOnLatest)} is set.");
                 return;
@@ -38,10 +41,10 @@ namespace TheArchive.Features.LocalProgression
 
             bool rundownFiveOrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownFive.ToLatest());
             bool rundownSixOrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownSix.ToLatest());
-            bool shouldEnableVanity = Settings.LocalVanity && rundownSixOrLater;
-            bool shouldEnableBoosters = (Settings.LocalBoosters && rundownFiveOrLater) | (rundownSixOrLater && shouldEnableVanity);
+            bool shouldEnableVanity = (ForceEnable || Settings.LocalVanity) && rundownSixOrLater;
+            bool shouldEnableBoosters = ((ForceEnable || Settings.LocalBoosters) && rundownFiveOrLater) | (rundownSixOrLater && shouldEnableVanity);
 
-            if (Settings.LocalProgression)
+            if (ForceEnable || Settings.LocalProgression)
             {
                 FeatureManager.EnableAutomatedFeature(typeof(PlayFabManagerPatches));
                 FeatureManager.EnableAutomatedFeature(typeof(LocalProgressionCore));

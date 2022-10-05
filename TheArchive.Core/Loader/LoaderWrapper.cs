@@ -2,6 +2,7 @@
 using MelonLoader;
 #endif
 using System;
+using System.Linq;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
@@ -41,6 +42,11 @@ namespace TheArchive.Loader
         public static void NativeHookAttach(IntPtr target, IntPtr detour)
         {
             MelonUtils.NativeHookAttach(target, detour);
+        }
+
+        public static bool IsModInstalled(string modName)
+        {
+            return MelonHandler.Mods.Any(m => m.Info.Name == modName);
         }
 
         public static class ClassInjector
@@ -98,6 +104,13 @@ namespace TheArchive.Loader
         public static void NativeHookAttach(IntPtr target, IntPtr detour)
         {
             ArchiveLogger.Warning("NativeHookAttach not implemented");
+        }
+
+        public static bool IsModInstalled(string guid)
+        {
+            BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Plugins.TryGetValue(guid, out var plugin);
+
+            return plugin != null;
         }
 
         public static class ClassInjector

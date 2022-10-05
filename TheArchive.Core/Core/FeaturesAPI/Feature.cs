@@ -21,6 +21,8 @@ namespace TheArchive.Core.FeaturesAPI
         public void RequestRestart() => FeatureManager.RequestRestart(this);
         public void RevokeRestartRequest() => FeatureManager.RevokeRestartRequest(this);
 
+        protected void RequestDisable(string reason = null) => FeatureInternal.RequestDisable(reason);
+
         /// <summary>
         /// True if this <see cref="Feature"/> is controled via code<br/>
         /// (button disabled in Mod Settings!)
@@ -91,7 +93,16 @@ namespace TheArchive.Core.FeaturesAPI
         public virtual bool PlaceSettingsInSubMenu => false;
 
         /// <summary>
-        /// Called once upon application start
+        /// Called once upon application start before <see cref="Init"/> and before any patches have been loaded
+        /// </summary>
+        /// <returns>If the <see cref="Feature"/> should be inited</returns>
+        public virtual bool PreInit()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Called once upon application start and after all patches have been loaded
         /// </summary>
         public virtual void Init()
         {

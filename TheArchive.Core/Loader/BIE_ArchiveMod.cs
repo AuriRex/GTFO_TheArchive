@@ -7,6 +7,7 @@ using UnityEngine;
 namespace TheArchive.Loader
 {
     [BepInPlugin(ArchiveMod.GUID, ArchiveMod.MOD_NAME, ArchiveMod.VERSION_STRING)]
+    [BepInDependency("dev.gtfomodding.gtfo-api", BepInDependency.DependencyFlags.SoftDependency)]
     public class BIE_ArchiveMod : BasePlugin
     {
         public static MonoBehaviour MainComponent { get; private set; }

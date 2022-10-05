@@ -311,6 +311,15 @@ namespace TheArchive
         [Obsolete("Do not call!")]
         public static void InvokeDataBlocksReady()
         {
+            try
+            {
+                DataBlockManager.Setup();
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
+            }
+
             ArchiveLogger.Info($"DataBlocks should be ready to be interacted with, invoking event.");
 
             foreach(var type in _typesToInitOnDataBlocksReady)
