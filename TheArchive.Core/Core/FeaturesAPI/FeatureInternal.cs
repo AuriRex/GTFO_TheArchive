@@ -409,13 +409,6 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-
-        internal void RequestDisable(string reason)
-        {
-            _FILogger.Info($"Feature {_feature.Identifier} has requested to be disabled: {reason}");
-            InternalyDisableFeature(InternalDisabledReason.ForceDisabled);
-        }
-
         private void AfterInit()
         {
             InitialEnabledState = _feature.Enabled;
@@ -632,6 +625,12 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
+        internal void RequestDisable(string reason)
+        {
+            _FILogger.Info($"Feature {_feature.Identifier} has requested to be disabled: {reason}");
+            InternalyDisableFeature(InternalDisabledReason.DisabledByRequest);
+        }
+
         private void InternalyDisableFeature(InternalDisabledReason reason)
         {
             InternalDisabled = true;
@@ -684,6 +683,7 @@ namespace TheArchive.Core.FeaturesAPI
             LateUpdateMethodFailed,
             ForceDisabled,
             PreInitReturnedFalse,
+            DisabledByRequest,
             Other,
         }
     }

@@ -9,9 +9,9 @@ Compatible with many different GTFO builds, tested on all of the latest patches 
    * [Backported Features](#Backported-Features)
    * [Accessibility](#Accessibility)
    * [Quality of Life](#Quality-of-Life)
-   * [Misc / Other](#Misc-/-Other)
+   * [Misc / Other](#Misc--Other)
  * [How to Install](#Installation)
- * [Where are my saves?](#Where-are-my-saves?)
+ * [Where are my saves?](#Where-are-my-saves)
  * [Building the project](#Technical-stuffs)
 
 # Features
