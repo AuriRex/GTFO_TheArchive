@@ -22,6 +22,8 @@ namespace TheArchive.Core.Managers
         public static extern bool FreeLibrary(IntPtr hModule);
         #endregion native_methods
 
+        private static IntPtr _discordLibPointer;
+
         public static bool HasBeenSetup => _settings != null;
 
         private static Discord.Activity _lastActivity;
@@ -58,7 +60,7 @@ namespace TheArchive.Core.Managers
                         }
                     }
 
-                    LoadLibrary(path);
+                    _discordLibPointer = LoadLibrary(path);
                 }
                 catch (Exception ex)
                 {
