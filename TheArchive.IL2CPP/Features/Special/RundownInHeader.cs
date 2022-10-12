@@ -13,6 +13,11 @@ namespace TheArchive.Features.Special
 
         public override string Group => FeatureGroups.QualityOfLife;
 
+        public override bool ShouldInit()
+        {
+            return !IsPlayingModded;
+        }
+
         // add R4 / R5 to the beginning of the header text ("R4A1: Crytology")
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.Latest)]
         [ArchivePatch(typeof(PlayerGuiLayer), "UpdateObjectiveHeader")]

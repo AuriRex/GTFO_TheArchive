@@ -17,7 +17,7 @@ namespace TheArchive.Features.LocalProgression
     {
         public override string Name => nameof(GTFOApi_Compat);
 
-        public override bool PreInit()
+        public override bool ShouldInit()
         {
 #if !BepInEx
             RequestDisable("Not needed.");

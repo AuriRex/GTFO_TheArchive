@@ -96,7 +96,7 @@ namespace TheArchive.Core.FeaturesAPI
         /// Called once upon application start before <see cref="Init"/> and before any patches have been loaded
         /// </summary>
         /// <returns>If the <see cref="Feature"/> should be inited</returns>
-        public virtual bool PreInit()
+        public virtual bool ShouldInit()
         {
             return true;
         }
@@ -169,6 +169,7 @@ namespace TheArchive.Core.FeaturesAPI
         }
 
         internal FeatureInternal FeatureInternal { get; set; }
+        public static bool IsPlayingModded => ArchiveMod.IsPlayingModded;
         public static bool DevMode => ArchiveMod.Settings.FeatureDevMode;
         public static bool GameDataInited { get; internal set; } = false;
         public static bool DataBlocksReady { get; internal set; } = false;

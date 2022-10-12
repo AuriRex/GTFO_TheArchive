@@ -15,6 +15,11 @@ namespace TheArchive.Features.Special
 
         public const string ColorHex = "FBF3FF";
 
+		public override bool ShouldInit()
+		{
+			return !IsPlayingModded;
+		}
+
 #if MONO
 		private static MethodAccessor<PUI_Watermark> A_PUI_Watermark_UpdateWatermark;
 #endif

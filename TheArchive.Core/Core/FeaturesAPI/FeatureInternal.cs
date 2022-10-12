@@ -110,15 +110,15 @@ namespace TheArchive.Core.FeaturesAPI
 
             try
             {
-                if (!_feature.PreInit())
+                if (!_feature.ShouldInit())
                 {
                     InternalDisabled = true;
-                    DisabledReason |= InternalDisabledReason.PreInitReturnedFalse;
+                    DisabledReason |= InternalDisabledReason.DisabledViaShouldInit;
                 }
             }
             catch(Exception ex)
             {
-                _FILogger.Error($"{nameof(Feature.PreInit)} method on {nameof(Feature)} failed: {ex}: {ex.Message}");
+                _FILogger.Error($"{nameof(Feature.ShouldInit)} method on {nameof(Feature)} failed: {ex}: {ex.Message}");
                 _FILogger.Exception(ex);
             }
 
@@ -682,7 +682,7 @@ namespace TheArchive.Core.FeaturesAPI
             UpdateMethodFailed,
             LateUpdateMethodFailed,
             ForceDisabled,
-            PreInitReturnedFalse,
+            DisabledViaShouldInit,
             DisabledByRequest,
             Other,
         }
