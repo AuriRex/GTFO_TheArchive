@@ -48,9 +48,9 @@
     <Reference Include="Modules-ASM">
       <HintPath>..\_R_RD005\MelonLoader\Managed\Modules-ASM.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
+    <!--<Reference Include="Newtonsoft.Json">
       <HintPath>..\_R_RD005\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
-    </Reference>
+    </Reference>-->
     <Reference Include="UnhollowerBaseLib">
       <HintPath>..\_R_RD005\MelonLoader\Managed\UnhollowerBaseLib.dll</HintPath>
     </Reference>

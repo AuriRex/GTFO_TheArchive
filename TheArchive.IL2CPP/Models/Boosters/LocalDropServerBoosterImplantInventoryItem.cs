@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using TheArchive.Core.Managers;
+﻿using TheArchive.Core.Managers;
 
 namespace TheArchive.Models.Boosters
 {

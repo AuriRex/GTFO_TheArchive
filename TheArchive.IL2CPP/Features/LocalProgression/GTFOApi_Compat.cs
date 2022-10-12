@@ -86,6 +86,19 @@ namespace TheArchive.Features.LocalProgression
 
             public static bool Prefix()
             {
+                GameData.GameSetupDataBlock setupDB = GameData.GameDataBlockBase<GameData.GameSetupDataBlock>.GetBlock(1);
+
+                GameData.RundownDataBlock.RemoveBlockByID(1);
+
+                var rundownDB = GameData.RundownDataBlock.GetBlock(setupDB.RundownIdToLoad);
+
+                rundownDB.persistentID = 1;
+
+                GameData.RundownDataBlock.RemoveBlockByID(setupDB.RundownIdToLoad);
+                GameData.RundownDataBlock.AddBlock(rundownDB, -1);
+
+                setupDB.RundownIdToLoad = 1;
+
                 _invokeGameDataInit.Invoke(null, null);
 
                 //if (APIStatus.Network.Created) return;

@@ -55,9 +55,9 @@
     <Reference Include="Modules-ASM">
       <HintPath>$(LatestGeneratedGameAssembliesPath)Modules-ASM.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
+    <!--<Reference Include="Newtonsoft.Json">
       <HintPath>$(LatestGeneratedGameAssembliesPath)Newtonsoft.Json.dll</HintPath>
-    </Reference>
+    </Reference>-->
 
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.CoreModule.dll</HintPath>

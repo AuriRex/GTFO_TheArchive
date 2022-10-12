@@ -78,31 +78,33 @@ namespace TheArchive.Core.Managers
             ArchiveLogger.Msg(ConsoleColor.Green, $"{nameof(DataBlockManager)} is setting up ...");
             try
             {
-                ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(DataBlockManager)}] Dumping built in DataBlocks ...");
-                foreach (var type in DataBlockTypes)
+                if (!ArchiveMod.IsPlayingModded)
                 {
-                    ArchiveLogger.Msg(ConsoleColor.DarkGreen, $"> {type.FullName}");
-
-                    var path = Path.Combine(LocalFiles.DataBlockDumpPath, type.Name + ".json");
-
-                    
-
-                    var genericType = ImplementationManager.GameTypeByIdentifier("GameDataBlockBase<>").MakeGenericType(type);
-
-                    string fileContents = (string) genericType.GetMethod("GetFileContents").Invoke(null, new object[0]);
-                    
-                    if (string.IsNullOrWhiteSpace(fileContents))
+                    ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(DataBlockManager)}] Dumping built in DataBlocks ...");
+                    foreach (var type in DataBlockTypes)
                     {
-                        ArchiveLogger.Warning($"  X returned string is empty!!");
-                    }
+                        ArchiveLogger.Msg(ConsoleColor.DarkGreen, $"> {type.FullName}");
 
-                    if (ArchiveMod.Settings.DumpDataBlocks && (ArchiveMod.Settings.AlwaysOverrideDataBlocks || !File.Exists(path)))
-                    {
-                        ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"  > Writing to file: {path}");
+                        var path = Path.Combine(LocalFiles.DataBlockDumpPath, type.Name + ".json");
 
-                        File.WriteAllText(path, fileContents);
+                        var genericType = ImplementationManager.GameTypeByIdentifier("GameDataBlockBase<>").MakeGenericType(type);
+
+                        string fileContents = (string)genericType.GetMethod("GetFileContents").Invoke(null, new object[0]);
+
+                        if (string.IsNullOrWhiteSpace(fileContents))
+                        {
+                            ArchiveLogger.Warning($"  X returned string is empty!!");
+                        }
+
+                        if (ArchiveMod.Settings.DumpDataBlocks && (ArchiveMod.Settings.AlwaysOverrideDataBlocks || !File.Exists(path)))
+                        {
+                            ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"  > Writing to file: {path}");
+
+                            File.WriteAllText(path, fileContents);
+                        }
                     }
                 }
+                    
                 if(_transformationDictionary.Count > 0)
                 {
                     ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(DataBlockManager)}] Applying DataBlock transformations ...");

@@ -129,6 +129,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalUsings.cs" Link="GlobalUsings.cs" />
     <Compile Include="..\TheArchive.MONO\Features\Backport\AlarmClassOnDoors.cs">
       <Link>Features\Backport\AlarmClassOnDoors.cs</Link>
     </Compile>

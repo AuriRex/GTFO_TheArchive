@@ -1,9 +1,6 @@
 ﻿using GameData;
-using Newtonsoft.Json;
 using System;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using TheArchive.Core;
 using TheArchive.Interfaces;
 using TheArchive.Models.Progression;

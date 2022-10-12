@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.IO;
 using TheArchive.Core;
 using TheArchive.Core.Managers;
@@ -154,7 +153,15 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_rundownspecificSavePath))
                 {
-                    _rundownspecificSavePath = Path.Combine(SaveDirectoryPath, $"Rundown_{(int) ArchiveMod.CurrentRundown}_Data");
+                    if(LoaderWrapper.IsModInstalled(ArchiveMod.MTFO_GUID))
+                    {
+#warning TODO: Not this
+                        _rundownspecificSavePath = Path.Combine(SaveDirectoryPath, "Modded", $"Rundown_{(int)ArchiveMod.CurrentRundown}_Data");
+                    }
+                    else
+                    {
+                        _rundownspecificSavePath = Path.Combine(SaveDirectoryPath, $"Rundown_{(int)ArchiveMod.CurrentRundown}_Data");
+                    }
                     if (!Directory.Exists(_rundownspecificSavePath))
                         Directory.CreateDirectory(_rundownspecificSavePath);
                 }

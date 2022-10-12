@@ -38,6 +38,9 @@
 	<PropertyGroup>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Include="..\GlobalUsings.cs" Link="GlobalUsings.cs" />
+	</ItemGroup>
 	<!-- -->
   <ItemGroup>
     <EmbeddedResource Include="Resources\TheArchive.IL2CPP.dll" />
@@ -81,9 +84,6 @@
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="GitInfo" Version="2.2.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta2">
-			<GeneratePathProperty>True</GeneratePathProperty>
-		</PackageReference>
 
 	</ItemGroup>
 </Project>

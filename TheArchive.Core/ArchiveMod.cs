@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,6 +23,8 @@ namespace TheArchive
         public const string VERSION_STRING = ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch;
         public const string GITHUB_LINK = "https://github.com/AuriRex/GTFO_TheArchive";
 
+        public const string MTFO_GUID = "com.dak.MTFO";
+
         public static ArchiveSettings Settings { get; private set; } = new ArchiveSettings();
 
         private static JsonSerializerSettings _jsonSerializerSettings = null;
@@ -37,13 +38,13 @@ namespace TheArchive
                     {
                         Formatting = Formatting.Indented,
                     };
-                    _jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                    _jsonSerializerSettings.Converters.Add(new JsonLib.Converters.StringEnumConverter());
                 }
                 return _jsonSerializerSettings;
             }
         }
 
-
+        public static bool IsPlayingModded { get; private set; } = false;
         public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnitialized;
         public static GameBuildInfo CurrentBuildInfo { get; private set; }
         public static int CurrentGameState { get; private set; }
@@ -75,6 +76,11 @@ namespace TheArchive
             _harmonyInstance = harmonyInstance;
 
             LoadConfig();
+
+            if(LoaderWrapper.IsModInstalled(MTFO_GUID))
+            {
+                IsPlayingModded = true;
+            }
 
 #if !BepInEx
             HarmonyLib.Tools.Logger.ChannelFilter |= HarmonyLib.Tools.Logger.LogChannel.Error;
@@ -564,11 +570,17 @@ namespace TheArchive
             }
         }
 
+#if BepInEx
+        [Il2CppInterop.Runtime.Attributes.HideFromIl2Cpp]
+#endif
         public static void OnUpdate()
         {
             FeatureManager.Instance.OnUpdate();
         }
 
+#if BepInEx
+        [Il2CppInterop.Runtime.Attributes.HideFromIl2Cpp]
+#endif
         public static void OnLateUpdate()
         {
             foreach (var module in Modules)

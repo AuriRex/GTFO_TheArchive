@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.Models;
 

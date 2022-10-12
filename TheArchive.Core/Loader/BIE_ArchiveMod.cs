@@ -8,6 +8,7 @@ namespace TheArchive.Loader
 {
     [BepInPlugin(ArchiveMod.GUID, ArchiveMod.MOD_NAME, ArchiveMod.VERSION_STRING)]
     [BepInDependency("dev.gtfomodding.gtfo-api", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(ArchiveMod.MTFO_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     public class BIE_ArchiveMod : BasePlugin
     {
         public static MonoBehaviour MainComponent { get; private set; }
@@ -49,23 +50,6 @@ namespace TheArchive.Loader
                 ArchiveMod.OnLateUpdate();
             }
         }
-
-        /*public override void OnUpdate()
-        {
-            ArchiveMod.OnUpdate();
-        }
-
-        public override void OnLateUpdate()
-        {
-            ArchiveMod.OnLateUpdate();
-        }
-
-        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
-        {
-            ArchiveMod.OnSceneWasLoaded(buildIndex, sceneName);
-        }*/
-
-
     }
 }
 #endif
