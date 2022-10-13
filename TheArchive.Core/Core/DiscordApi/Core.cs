@@ -1638,6 +1638,8 @@ namespace Discord
         [StructLayout(LayoutKind.Sequential)]
         internal partial struct FFIMethods
         {
+            private static UpdateActivityCallback _Ignore_UpdateActivityCallback;
+
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             internal delegate Result RegisterCommandMethod(IntPtr methodsPtr, [MarshalAs(UnmanagedType.LPStr)]string command);
 
