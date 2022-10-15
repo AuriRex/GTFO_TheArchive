@@ -40,7 +40,7 @@ namespace TheArchive.Core.Settings
                     {
                         new GSActivityFormat()
                         {
-                            Details = "Rundown %RundownNumber%: \"%RundownTitle%\"",
+                            Details = "%RundownWithNumberOrModdedPrefix%: \"%RundownTitle%\"",
                             Status = "Deciding what to do",
                             Assets = new GSActivityAssets
                             {

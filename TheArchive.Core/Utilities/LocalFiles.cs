@@ -381,6 +381,7 @@ namespace TheArchive.Utilities
 
             var path = Path.Combine(FeatureConfigsDirectoryPath, $"{featureIdentifier}_{configType.Name}.json");
 
+            ArchiveLogger.Debug($"Saving Feature Setting to: {path}");
             File.WriteAllText(path, JsonConvert.SerializeObject(configInstance, ArchiveMod.JsonSerializerSettings));
         }
     }

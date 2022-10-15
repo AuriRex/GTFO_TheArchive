@@ -570,17 +570,11 @@ namespace TheArchive
             }
         }
 
-#if BepInEx
-        [Il2CppInterop.Runtime.Attributes.HideFromIl2Cpp]
-#endif
         public static void OnUpdate()
         {
             FeatureManager.Instance.OnUpdate();
         }
 
-#if BepInEx
-        [Il2CppInterop.Runtime.Attributes.HideFromIl2Cpp]
-#endif
         public static void OnLateUpdate()
         {
             foreach (var module in Modules)

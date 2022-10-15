@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using TheArchive.Loader;
@@ -169,6 +170,21 @@ namespace TheArchive.Utilities
                     return "Rise";
             }
             return "Unknown";
+        }
+
+        public static string GetHash(byte[] bytes)
+        {
+            using (SHA256 hasher = SHA256.Create())
+            {
+                byte[] hashBytes = hasher.ComputeHash(bytes);
+
+                StringBuilder builder = new StringBuilder();
+                foreach (var b in hashBytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                return builder.ToString();
+            }
         }
 
         public const string EXTENDED_WITHOUT_TMP_TAGS = "://EXTENDED";

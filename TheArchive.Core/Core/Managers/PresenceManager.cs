@@ -234,6 +234,9 @@ namespace TheArchive.Core.Managers
         #endregion player
 
         #region lobby
+        [FallbackPresenceFormatProvider(nameof(HasLobby))]
+        public static bool HasLobby => false;
+
         [FallbackPresenceFormatProvider(nameof(LobbyID))]
         public static string LobbyID => "0123456789";
 
@@ -269,6 +272,9 @@ namespace TheArchive.Core.Managers
 
         [FallbackPresenceFormatProvider(nameof(AreaSuffix))]
         public static string AreaSuffix { get; set; } = string.Empty;
+
+        [FallbackPresenceFormatProvider(nameof(RundownTitleFromDataBlocks))]
+        public static string RundownTitleFromDataBlocks { get; set; } = "Unknown";
 
         [PresenceFormatProvider(nameof(CurrentZoneShort))]
         public static string CurrentZoneShort
@@ -324,6 +330,8 @@ namespace TheArchive.Core.Managers
         {
             get
             {
+                if (ArchiveMod.IsPlayingModded)
+                    return "Mod";
                 return $"R{RundownNumber}";
             }
         }
@@ -345,7 +353,20 @@ namespace TheArchive.Core.Managers
         {
             get
             {
-                return Utilities.Utils.GetRundownTitle(ArchiveMod.CurrentRundown);
+                if (ArchiveMod.IsPlayingModded)
+                    return $"{Get(nameof(RundownTitleFromDataBlocks))}";
+                return Utils.GetRundownTitle(ArchiveMod.CurrentRundown);
+            }
+        }
+
+        [PresenceFormatProvider(nameof(RundownWithNumberOrModdedPrefix))]
+        public static string RundownWithNumberOrModdedPrefix
+        {
+            get
+            {
+                if (ArchiveMod.IsPlayingModded)
+                    return "Modded";
+                return $"Rundown {Get(nameof(RundownNumber))}";
             }
         }
         #endregion rundown

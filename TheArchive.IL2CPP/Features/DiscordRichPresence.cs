@@ -28,6 +28,7 @@ namespace TheArchive.Features
         {
             try
             {
+                DiscordManager.OnActivityJoin += DiscordManager_OnActivityJoin;
                 DiscordManager.Enable(DiscordRPCSettings);
             }
             catch (Exception ex)
@@ -36,8 +37,17 @@ namespace TheArchive.Features
             }
         }
 
+        private void DiscordManager_OnActivityJoin(string secret)
+        {
+            ulong.TryParse(secret, out ulong value);
+            if (value == 0) return;
+
+            SNetwork.SNet.Lobbies.JoinLobby(value);
+        }
+
         public override void OnDisable()
         {
+            DiscordManager.OnActivityJoin -= DiscordManager_OnActivityJoin;
             DiscordManager.Disable();
         }
 

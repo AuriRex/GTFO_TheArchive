@@ -303,6 +303,24 @@ namespace TheArchive.Utilities
             player.Post(eventId);
         }
 
+        private static GameData.RundownDataBlock _loadedRundownDataBlock;
+        public static string GetDataBlockRundownTitle()
+        {
+            if (_loadedRundownDataBlock == null)
+            {
+                uint blockToLoad;
+#if IL2CPP
+                GameData.GameSetupDataBlock setupBlock = GameData.GameSetupDataBlock.GetBlock(1);
+                blockToLoad = setupBlock.RundownIdToLoad;
+#else
+                blockToLoad = Globals.Global.RundownIdToLoad;
+#endif
+                _loadedRundownDataBlock = GameData.RundownDataBlock.GetBlock(blockToLoad);
+            }
+
+            return _loadedRundownDataBlock?.StorytellingData?.Title ?? "Unknown";
+        }
+
         private static readonly eFocusState eFocusState_ComputerTerminal = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.ComputerTerminal));
         private static readonly eFocusState eFocusState_Map = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.Map));
         private static readonly eFocusState eFocusState_Dead = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.Dead));

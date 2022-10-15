@@ -127,9 +127,12 @@ namespace TheArchive.Features
 
         [PresenceFormatProvider(nameof(PresenceManager.MaxSpecialAmmo))]
         public static int MaxSpecialAmmo => (LocalAmmo?.SpecialAmmo?.BulletsMaxCap ?? -1);
-#endregion player_values
+        #endregion player_values
 
 #region lobby
+        [PresenceFormatProvider(nameof(PresenceManager.HasLobby))]
+        public static bool HasLobby => SNet.Lobby?.Identifier?.ID != null;
+
         [PresenceFormatProvider(nameof(PresenceManager.LobbyID))]
         public static string LobbyID => SNet.Lobby?.Identifier?.ID.ToString() ?? "0123456789";
 
@@ -219,6 +222,9 @@ namespace TheArchive.Features
 
         [PresenceFormatProvider(nameof(PresenceManager.AreaSuffix))]
         public static string AreaSuffix => PlayerManager.GetLocalPlayerAgent()?.CourseNode?.m_area?.m_navInfo?.Suffix ?? "?";
+
+        [PresenceFormatProvider(nameof(PresenceManager.RundownTitleFromDataBlocks))]
+        public static string RundownTitleFromDataBlocks => SharedUtils.GetDataBlockRundownTitle();
 #endregion expedition
 
         // RundownManager.SetActiveExpedition(pActiveExpedition expPackage, ExpeditionInTierData expTierData) calls:
