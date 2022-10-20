@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using TheArchive.Core.Models;
 using TheArchive.Core.Settings;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core.Managers
@@ -38,6 +39,15 @@ namespace TheArchive.Core.Managers
 
         public static event Action<string> OnActivityJoin;
 
+        private static IArchiveLogger _logger;
+        private static IArchiveLogger Logger
+        {
+            get
+            {
+                return _logger ??= Loader.LoaderWrapper.CreateLoggerInstance(nameof(DiscordManager), ConsoleColor.Magenta);
+            }
+        }
+
         public static void Enable(RichPresenceSettings rpcSettings)
         {
             if (_internalDisabled) return;
@@ -66,10 +76,10 @@ namespace TheArchive.Core.Managers
                         {
                             if (File.Exists(path))
                             {
-                                ArchiveLogger.Notice($"Updating discord sdk ... [old:{hashExisting}] vs [new:{hashResource}]");
+                                Logger.Notice($"Updating discord sdk ... [old:{hashExisting}] vs [new:{hashResource}]");
                                 File.Delete(path);
                             }
-                            ArchiveLogger.Notice($"Extracting discord_game_sdk.dll into \"{path}\" ...");
+                            Logger.Notice($"Extracting discord_game_sdk.dll into \"{path}\" ...");
                             File.WriteAllBytes(path, discord_game_sdk_bytes);
                         }
                         
@@ -79,8 +89,8 @@ namespace TheArchive.Core.Managers
                 }
                 catch (Exception ex)
                 {
-                    ArchiveLogger.Error($"[{nameof(DiscordManager)}] Error while trying to load the native discord dll! {ex}: {ex.Message}");
-                    ArchiveLogger.Exception(ex);
+                    Logger.Error($"Error while trying to load the native discord dll! {ex}: {ex.Message}");
+                    Logger.Exception(ex);
                     _internalDisabled = true;
                 }
                 finally
@@ -106,13 +116,13 @@ namespace TheArchive.Core.Managers
             }
             catch(Discord.ResultException ex)
             {
-                ArchiveLogger.Warning($"Discord seems to be closed, disabling Rich Presence Features ... ({ex}: {ex.Message})");
+                Logger.Warning($"Discord seems to be closed, disabling Rich Presence Features ... ({ex}: {ex.Message})");
                 _internalDisabled = true;
             }
             catch(Exception ex)
             {
-                ArchiveLogger.Error($"Exception has been thrown in {nameof(DiscordManager)}. {ex}: {ex.Message}");
-                ArchiveLogger.Exception(ex);
+                Logger.Error($"Exception has been thrown in {nameof(DiscordManager)}. {ex}: {ex.Message}");
+                Logger.Exception(ex);
             }
         }
 
@@ -155,6 +165,15 @@ namespace TheArchive.Core.Managers
             private static long _clientId = 0L;
             private static Discord.Discord _discordClient;
             private static Discord.ActivityManager _activityManager;
+
+            private static IArchiveLogger _clientLogger;
+            private static IArchiveLogger ClientLogger
+            {
+                get
+                {
+                    return _clientLogger ??= Loader.LoaderWrapper.CreateLoggerInstance("DiscordClient", ConsoleColor.Magenta);
+                }
+            }
 
             public static void Initialize(long clientId = CLIENT_ID)
             {
@@ -280,7 +299,7 @@ namespace TheArchive.Core.Managers
                 
                 if(_settings.DEBUG_RichPresenceLogSpam)
                 {
-                    ArchiveLogger.Notice($"[{nameof(DiscordManager)}] Activity updated: Details:{activity.Details} State:{activity.State}");
+                    ClientLogger.Notice($"Activity updated: Details:{activity.Details} State:{activity.State}");
                     _activityManager.UpdateActivity(activity, ActivityUpdateDebugLog);
                     return true;
                 }
@@ -294,7 +313,7 @@ namespace TheArchive.Core.Managers
                 if(_activityManager != null)
                 {
                     _activityManager.OnActivityJoin -= _activityManager_OnActivityJoin;
-                    _activityManager.ClearActivity((result) => ArchiveLogger.Debug($"[{nameof(DiscordManager)}] Activity clear result: {result}"));
+                    _activityManager.ClearActivity((result) => ClientLogger.Debug($"Activity clear result: {result}"));
                 }
                 
                 _discordClient?.Dispose();
@@ -303,33 +322,34 @@ namespace TheArchive.Core.Managers
 
             private static void ActivityUpdateDebugLog(Result result)
             {
-                ArchiveLogger.Debug($"[{nameof(DiscordManager)}] Activity update result: {result}");
+                ClientLogger.Debug($"Activity update result: {result}");
             }
 
             private static void ActivityVoidLog(Result result)
             {
                 if(result != Result.Ok)
                 {
-                    ArchiveLogger.Error("Update Activity failed!");
+                    ClientLogger.Error("Update Activity failed!");
                 }
             }
 
             private static void LogHook(LogLevel level, string message)
             {
-                switch(level)
+                var msg = $"{level}: {message}";
+                switch (level)
                 {
                     case LogLevel.Error:
-                        ArchiveLogger.Error($"[{nameof(DiscordClient)}] {level}: {message}");
+                        ClientLogger.Error(msg);
                         return;
                     case LogLevel.Warn:
-                        ArchiveLogger.Warning($"[{nameof(DiscordClient)}] {level}: {message}");
+                        ClientLogger.Warning(msg);
                         return;
                     default:
                     case LogLevel.Info:
-                        ArchiveLogger.Notice($"[{nameof(DiscordClient)}] {level}: {message}");
+                        ClientLogger.Notice(msg);
                         return;
                     case LogLevel.Debug:
-                        ArchiveLogger.Debug($"[{nameof(DiscordClient)}] {level}: {message}");
+                        ClientLogger.Debug(msg);
                         return;
                 }
             }

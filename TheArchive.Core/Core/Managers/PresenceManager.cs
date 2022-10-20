@@ -1,6 +1,7 @@
 ﻿using System;
 using TheArchive.Core.Models;
 using TheArchive.Core.Settings;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.PresenceFormatter;
 
@@ -12,9 +13,18 @@ namespace TheArchive.Core.Managers
         public static PresenceGameState CurrentState { get; private set; } = PresenceGameState.Startup;
         public static DateTimeOffset CurrentStateStartTime { get; private set; } = DateTimeOffset.UtcNow;
 
+        private static IArchiveLogger _logger;
+        private static IArchiveLogger Logger
+        {
+            get
+            {
+                return _logger ??= Loader.LoaderWrapper.CreateLoggerInstance(nameof(PresenceManager), ConsoleColor.DarkMagenta);
+            }
+        }
+
         public static void UpdateGameState(PresenceGameState state, bool keepTimer = false)
         {
-            ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{nameof(PresenceManager)}] UpdateGameState(): {CurrentState} --> {state}, keepTimer: {keepTimer}");
+            Logger.Msg(ConsoleColor.DarkMagenta, $"GameState has been updated: {CurrentState} --> {state}, keepTimer: {keepTimer}");
             LastState = CurrentState;
             CurrentState = state;
             if (!keepTimer)

@@ -1374,6 +1374,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -1409,6 +1410,7 @@ namespace Discord
             try
             {
                 callback(result, ref oauth2Token);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -1430,6 +1432,7 @@ namespace Discord
             try
             {
                 callback(result, ref data);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -1542,6 +1545,7 @@ namespace Discord
             try
             {
                 callback(result, ref user);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -1663,6 +1667,7 @@ namespace Discord
             try
             {
                 callback(result, handleResult);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -1867,6 +1872,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -1888,6 +1894,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -1909,6 +1916,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -1930,6 +1938,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -1951,6 +1960,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -2554,6 +2564,7 @@ namespace Discord
             try
             {
                 callback(result, ref lobby);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -2576,6 +2587,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -2598,6 +2610,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -2619,6 +2632,7 @@ namespace Discord
             try
             {
                 callback(result, ref lobby);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -2640,6 +2654,7 @@ namespace Discord
             try
             {
                 callback(result, ref lobby);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -2661,6 +2676,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -2803,6 +2819,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -2825,6 +2842,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -2857,6 +2875,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -2897,6 +2916,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -2918,6 +2938,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -3493,6 +3514,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -3514,6 +3536,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -3535,6 +3558,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -3556,6 +3580,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -3631,6 +3656,7 @@ namespace Discord
             try
             {
                 callback(from, to, ref bounds);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -3652,6 +3678,7 @@ namespace Discord
             try
             {
                 callback(anchor, focus, isAnchorFirst);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -3819,6 +3846,7 @@ namespace Discord
             try
             {
                 callback(result, data);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -3842,6 +3870,7 @@ namespace Discord
             try
             {
                 callback(result, data);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -3872,6 +3901,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -4083,6 +4113,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -4133,6 +4164,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -4194,6 +4226,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -4358,6 +4391,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -4560,6 +4594,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
@@ -4581,6 +4616,7 @@ namespace Discord
             try
             {
                 callback(result);
+                GC.KeepAlive(callback);
             }
             finally
             {
