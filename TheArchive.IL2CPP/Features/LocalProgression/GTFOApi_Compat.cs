@@ -90,14 +90,14 @@ namespace TheArchive.Features.LocalProgression
 
                 GameData.RundownDataBlock.RemoveBlockByID(1);
 
-                var rundownDB = GameData.RundownDataBlock.GetBlock(setupDB.RundownIdToLoad);
+                /*var rundownDB = GameData.RundownDataBlock.GetBlock(setupDB.RundownIdToLoad);
 
                 rundownDB.persistentID = 1;
 
                 GameData.RundownDataBlock.RemoveBlockByID(setupDB.RundownIdToLoad);
                 GameData.RundownDataBlock.AddBlock(rundownDB, -1);
 
-                setupDB.RundownIdToLoad = 1;
+                setupDB.RundownIdToLoad = 1;*/
 
                 _invokeGameDataInit.Invoke(null, null);
 

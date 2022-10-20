@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
+using GameData;
 #if IL2CPP && MelonLoader
 using UnhollowerBaseLib;
 #endif
@@ -303,6 +304,17 @@ namespace TheArchive.Utilities
             player.Post(eventId);
         }
 
+#if IL2CPP
+        private static PropertyAccessor<GameSetupDataBlock, uint> _rundownIdToLoad;
+        private static PropertyAccessor<GameSetupDataBlock, uint[]> _rundownIdsToLoad;
+
+        public static void Init()
+        {
+            _rundownIdToLoad = PropertyAccessor<GameSetupDataBlock, uint>.GetAccessor("RundownIdToLoad");
+            _rundownIdsToLoad = PropertyAccessor<GameSetupDataBlock, uint[]>.GetAccessor("RundownIdsToLoad");
+        }
+#endif
+
         private static GameData.RundownDataBlock _loadedRundownDataBlock;
         public static string GetDataBlockRundownTitle()
         {
@@ -311,7 +323,7 @@ namespace TheArchive.Utilities
                 uint blockToLoad;
 #if IL2CPP
                 GameData.GameSetupDataBlock setupBlock = GameData.GameSetupDataBlock.GetBlock(1);
-                blockToLoad = setupBlock.RundownIdToLoad;
+                blockToLoad = 31;//setupBlock.RundownIdsToLoad;
 #else
                 blockToLoad = Globals.Global.RundownIdToLoad;
 #endif

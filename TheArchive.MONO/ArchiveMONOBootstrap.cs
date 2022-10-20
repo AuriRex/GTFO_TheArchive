@@ -22,7 +22,7 @@ namespace TheArchive
             public static void Postfix()
             {
 #pragma warning disable CS0618 // Type or member is obsolete
-                ArchiveMod.InvokeGameDataInitialized(Global.RundownIdToLoad);
+                ArchiveMod.InvokeGameDataInitialized();
 #pragma warning restore CS0618 // Type or member is obsolete
             }
         }

@@ -259,7 +259,7 @@ namespace TheArchive
         }
 
         [Obsolete("Do not call!")]
-        public static void InvokeGameDataInitialized(uint rundownId)
+        public static void InvokeGameDataInitialized()
         {
             ArchiveLogger.Info($"GameData has been initialized, invoking event.");
             //CurrentRundownInt = rundownId;

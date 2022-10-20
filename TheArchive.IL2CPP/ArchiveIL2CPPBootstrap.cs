@@ -17,10 +17,10 @@ namespace TheArchive
         public override string Group => FeatureGroups.Dev;
         public override bool RequiresRestart => true;
 
-        private static void OnGameDataInitialized(uint rundownId)
+        private static void OnGameDataInitialized()
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            ArchiveMod.InvokeGameDataInitialized(rundownId);
+            ArchiveMod.InvokeGameDataInitialized();
 #pragma warning restore CS0618 // Type or member is obsolete
 
             if(FlagsContain(RundownFlags.RundownFour.To(RundownFlags.RundownFive), ArchiveMod.CurrentRundown))
@@ -44,10 +44,7 @@ namespace TheArchive
             {
                 try
                 {
-                    GameSetupDataBlock block = GameDataBlockBase<GameSetupDataBlock>.GetBlock(1u);
-                    var rundownId = block.RundownIdToLoad;
-
-                    OnGameDataInitialized(rundownId);
+                    OnGameDataInitialized();
                 }
                 catch(System.Reflection.ReflectionTypeLoadException rtlex)
                 {

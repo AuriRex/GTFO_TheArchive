@@ -115,7 +115,7 @@ namespace TheArchive.Utilities
         /// <returns><see cref="PropertyAccessor{T, FT}"/></returns>
         public static PropertyAccessor<T, PT> GetAccessor(string propertyName)
         {
-            var identifier = $"Field_{typeof(T).FullName}_{propertyName}";
+            var identifier = $"Property_{typeof(T).FullName}_{propertyName}";
 
             if (Accessors.TryGetValue(identifier, out var val))
                 return (PropertyAccessor<T, PT>)val;
