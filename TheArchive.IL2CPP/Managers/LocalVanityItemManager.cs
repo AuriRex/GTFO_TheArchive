@@ -14,7 +14,6 @@ namespace TheArchive.Managers
     {
         public IArchiveLogger Logger { get; set; }
 
-        private uint _vanityItemLayerDropDataBlockPersistentID = 0;
         private LocalVanityItemStorage _localVanityItemStorage;
         public LocalVanityItemStorage LocalVanityItemPlayerData
         {
@@ -53,19 +52,22 @@ namespace TheArchive.Managers
         public void OnExpeditionCompleted(ExpeditionCompletionData data)
         {
             CheckFirstTimeExpeditionCompletion(data);
-            CheckTotalUniqueCompletionsRequirementMet();
+            CheckTotalUniqueCompletionsRequirementMet(data);
         }
 
-        public void CheckTotalUniqueCompletionsRequirementMet()
+        public void CheckTotalUniqueCompletionsRequirementMet(ExpeditionCompletionData data)
         {
             try
             {
-                if(_vanityItemLayerDropDataBlockPersistentID == 0)
+                if (data.RundownId == 0)
                 {
-                    _vanityItemLayerDropDataBlockPersistentID = RundownDataBlock.GetBlock((uint)ArchiveMod.CurrentRundown.GetIntValue()).VanityItemLayerDropDataBlock;
+                    Logger.Error($"[{nameof(CheckTotalUniqueCompletionsRequirementMet)}] {nameof(ExpeditionCompletionData)}.{nameof(ExpeditionCompletionData.RundownId)} returned 0!");
+                    return;
                 }
 
-                VanityItemsLayerDropsDataBlock vilddb = VanityItemsLayerDropsDataBlock.GetBlock(_vanityItemLayerDropDataBlockPersistentID);
+                var vanityItemLayerDropDataBlockPersistentID = RundownDataBlock.GetBlock(data.RundownId).VanityItemLayerDropDataBlock;
+
+                VanityItemsLayerDropsDataBlock vilddb = VanityItemsLayerDropsDataBlock.GetBlock(vanityItemLayerDropDataBlockPersistentID);
 
                 bool anyDropped = false;
 
@@ -109,13 +111,13 @@ namespace TheArchive.Managers
             if (!data.WasFirstTimeCompletion) return;
             try
             {
-                if (!uint.TryParse(data.RundownId.Replace("Local_", string.Empty), out var rundownId))
+                if (data.RundownId == 0)
                 {
-                    Logger.Error($"[{nameof(OnExpeditionCompleted)}] Could not parse \"{data.RundownId}\"!");
+                    Logger.Error($"[{nameof(CheckFirstTimeExpeditionCompletion)}] {nameof(ExpeditionCompletionData)}.{nameof(ExpeditionCompletionData.RundownId)} returned 0!");
                     return;
                 }
 
-                RundownDataBlock rddb = RundownDataBlock.GetBlock(rundownId);
+                RundownDataBlock rddb = RundownDataBlock.GetBlock(data.RundownId);
 
                 char tierCharacter = data.ExpeditionId[0];
                 int.TryParse(data.ExpeditionId[1].ToString(), out var expeditionIndex);

@@ -1,8 +1,26 @@
-﻿namespace TheArchive.Models.Progression
+﻿using TheArchive.Utilities;
+
+namespace TheArchive.Models.Progression
 {
     public struct ExpeditionCompletionData
     {
-        public string RundownId => RawSessionData.RundownId;
+        public string RundownIdString => RawSessionData.RundownId;
+        private uint _rundownId { get; set; }
+        public uint RundownId
+        {
+            get
+            {
+                if(_rundownId == 0)
+                {
+                    if (!uint.TryParse(RundownIdString.Replace("Local_", string.Empty), out var rundownId))
+                    {
+                        ArchiveLogger.Error($"[{nameof(ExpeditionCompletionData)}] Could not parse rundown id \"{RundownIdString}\"!");
+                        return 0;
+                    }
+                }
+                return _rundownId;
+            }
+        }
         public string ExpeditionId => RawSessionData.ExpeditionId;
         public string SessionId => RawSessionData.SessionId;
         public int ArtifactsCollected => RawSessionData.ArtifactsCollected;
