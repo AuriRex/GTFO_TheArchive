@@ -5,8 +5,6 @@
 
 		<RootNamespace>TheArchive</RootNamespace>
 		<AssemblyName>TheArchive.Core</AssemblyName>
-		<!--<TargetFrameworks>net472;net6.0</TargetFrameworks>-->
-
 
 		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
 		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
@@ -16,74 +14,73 @@
 		</NuGetPackageImportStamp>
 	</PropertyGroup>
 	
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
-	  <TargetFramework>net472</TargetFramework>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_BIE|AnyCPU'">
-	  <TargetFramework>net6.0</TargetFramework>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
+		<TargetFramework>net472</TargetFramework>
+		<DefineConstants>TRACE</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+		<DebugType>pdbonly</DebugType>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_BIE|AnyCPU'">
+		<TargetFramework>net6.0</TargetFramework>
+		<DefineConstants>TRACE</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+		<DebugType>pdbonly</DebugType>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
 	<!-- -->
-  <Import Project="../Loader.props" />
+	<Import Project="../Loader.props" />
 	<PropertyGroup>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Compile Include="..\GlobalUsings.cs" Link="GlobalUsings.cs" />
+		<Compile Include="..\GlobalUsings.cs" Link="GlobalUsings.cs" />
 	</ItemGroup>
 	<!-- -->
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\TheArchive.IL2CPP.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\TheArchive.MONO.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\discord_game_sdk.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\README.md">
-      <Link>Resources\README.md</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\LICENSE">
-      <Link>Resources\LICENSE</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\TheArchive.IL2CPP.dll" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\TheArchive.MONO.dll" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\discord_game_sdk.dll" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="..\README.md">
+			<Link>Resources\README.md</Link>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="..\LICENSE">
+			<Link>Resources\LICENSE</Link>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="packages.config" />
+	</ItemGroup>
 
-  <PropertyGroup>
-    <PreBuildEvent>
-		cd $(MSBuildProjectDirectory)\Resources\
-		if exist TheArchive.IL2CPP.dll (
-		ECHO Not generating IL2CPP dummy dll
-		) else (
-		ECHO Generating IL2CPP dummy dll ...
-		ECHO DUMMY &gt; TheArchive.IL2CPP.dll
-			)
-			if exist TheArchive.MONO.dll (
-			ECHO Not generating MONO dummy dll
+	<PropertyGroup>
+		<PreBuildEvent>
+			cd $(MSBuildProjectDirectory)\Resources\
+			if exist TheArchive.IL2CPP.dll (
+			ECHO Not generating IL2CPP dummy dll
 			) else (
-			ECHO Generating MONO dummy dll ...
-			ECHO DUMMY &gt; TheArchive.MONO.dll
-		)
-	</PreBuildEvent>
-  </PropertyGroup>
+			ECHO Generating IL2CPP dummy dll ...
+			ECHO DUMMY &gt; TheArchive.IL2CPP.dll
+				)
+				if exist TheArchive.MONO.dll (
+				ECHO Not generating MONO dummy dll
+				) else (
+				ECHO Generating MONO dummy dll ...
+				ECHO DUMMY &gt; TheArchive.MONO.dll
+			)
+		</PreBuildEvent>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="GitInfo" Version="2.2.0" />
-
 	</ItemGroup>
 </Project>

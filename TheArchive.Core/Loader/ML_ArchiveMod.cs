@@ -12,9 +12,12 @@ namespace TheArchive.Loader
 {
     public class ML_ArchiveMod : MelonMod
     {
-        public override void OnApplicationStart()
+        public override void OnEarlyInitializeMelon()
         {
-            ArchiveMod.OnApplicationStart(LoaderWrapper.WrapLogger(LoggerInstance), HarmonyInstance);
+            MelonEvents.OnApplicationStart.Subscribe(() =>
+            {
+                ArchiveMod.OnApplicationStart(LoaderWrapper.WrapLogger(LoggerInstance), HarmonyInstance);
+            }, 1000);
         }
 
         public override void OnApplicationQuit()

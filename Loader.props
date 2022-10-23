@@ -4,42 +4,42 @@
 		<LangVersion>10.0</LangVersion>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)' == 'R_ML'">
-        <DefineConstants>$(DefineConstants);MelonLoader</DefineConstants>
+	<PropertyGroup Condition="'$(Configuration)' == 'R_ML'">
+		<DefineConstants>$(DefineConstants);MelonLoader</DefineConstants>
 		<TargetFramework>net472</TargetFramework>
 		<LatestGeneratedGameAssembliesPath>$(ProjectDir)..\_R_LATEST\MelonLoader\Managed\</LatestGeneratedGameAssembliesPath>
 		<LoaderRootPath>$(ProjectDir)..\_R_LATEST\MelonLoader\</LoaderRootPath>
 	</PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)' == 'R_BIE'">
-        <DefineConstants>$(DefineConstants);BepInEx;UseClonesoft</DefineConstants>
+	<PropertyGroup Condition="'$(Configuration)' == 'R_BIE'">
+		<DefineConstants>$(DefineConstants);BepInEx;UseClonesoft</DefineConstants>
 		<TargetFramework>net6.0</TargetFramework>
 		<LatestGeneratedGameAssembliesPath>$(ProjectDir)..\_R_LATEST\BepInEx\interop\</LatestGeneratedGameAssembliesPath>
 		<LoaderRootPath>$(ProjectDir)..\_R_LATEST\BepInEx\core\</LoaderRootPath>
 		<DotnetPath>$(ProjectDir)..\_R_LATEST\dotnet\</DotnetPath>
 	</PropertyGroup>
 	
-    <ItemGroup Condition="'$(Configuration)' == 'R_ML'">
-        <Reference Include="0Harmony">
-            <HintPath>$(LoaderRootPath)0Harmony.dll</HintPath>
+	<ItemGroup Condition="'$(Configuration)' == 'R_ML'">
+		<Reference Include="0Harmony">
+			<HintPath>$(LoaderRootPath)0Harmony.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
-        <Reference Include="MelonLoader">
-            <HintPath>$(LoaderRootPath)MelonLoader.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
+		<Reference Include="MelonLoader">
+			<HintPath>$(LoaderRootPath)MelonLoader.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
 		<!--<Reference Include="Clonesoft.Json">
 			<HintPath>$(ProjectDir)..\lib\net45\Clonesoft.Json.dll</HintPath>
 			<Private>True</Private>
 		</Reference>-->
-        <Reference Include="Newtonsoft.Json">
-            <HintPath>$(LatestGeneratedGameAssembliesPath)Newtonsoft.Json.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="UnhollowerBaseLib">
-            <HintPath>$(LatestGeneratedGameAssembliesPath)UnhollowerBaseLib.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
+		<Reference Include="Newtonsoft.Json">
+			<HintPath>$(LatestGeneratedGameAssembliesPath)Newtonsoft.Json.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnhollowerBaseLib">
+			<HintPath>$(LatestGeneratedGameAssembliesPath)UnhollowerBaseLib.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
 		<Reference Include="UnityEngine.CoreModule">
 			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.CoreModule.dll</HintPath>
 			<Private>False</Private>
@@ -52,27 +52,27 @@
 			<HintPath>$(LatestGeneratedGameAssembliesPath)Il2Cppmscorlib.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
-    </ItemGroup>
+	</ItemGroup>
 
-     <ItemGroup Condition="'$(Configuration)' == 'R_BIE'">
-        <Reference Include="0Harmony">
-            <HintPath>$(LoaderRootPath)0Harmony.dll</HintPath>
+	 <ItemGroup Condition="'$(Configuration)' == 'R_BIE'">
+		<Reference Include="0Harmony">
+			<HintPath>$(LoaderRootPath)0Harmony.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		 <Reference Include="Clonesoft.Json">
 			 <HintPath>$(ProjectDir)..\lib\net60\Clonesoft.Json.dll</HintPath>
 			 <Private>True</Private>
 		 </Reference>
-        <Reference Include="BepInEx.Core">
-            <HintPath>$(LoaderRootPath)BepInEx.Core.dll</HintPath>
+		<Reference Include="BepInEx.Core">
+			<HintPath>$(LoaderRootPath)BepInEx.Core.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
-        <Reference Include="BepInEx.Unity.IL2CPP">
-            <HintPath>$(LoaderRootPath)BepInEx.Unity.IL2CPP.dll</HintPath>
+		<Reference Include="BepInEx.Unity.IL2CPP">
+			<HintPath>$(LoaderRootPath)BepInEx.Unity.IL2CPP.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
-        <Reference Include="Il2CppInterop.Common">
-            <HintPath>$(LoaderRootPath)Il2CppInterop.Common.dll</HintPath>
+		<Reference Include="Il2CppInterop.Common">
+			<HintPath>$(LoaderRootPath)Il2CppInterop.Common.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="Il2CppInterop.Runtime">
@@ -91,9 +91,5 @@
 			 <HintPath>$(LatestGeneratedGameAssembliesPath)Il2Cppmscorlib.dll</HintPath>
 			 <Private>False</Private>
 		 </Reference>
-		 
 	 </ItemGroup>
-
-
-
 </Project>

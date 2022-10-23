@@ -1,282 +1,276 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">R_ML</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{907C68FA-DF5A-42B8-9762-7363B2A499E9}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TheArchive</RootNamespace>
-    <AssemblyName>TheArchive.MONO</AssemblyName>
-	  <!--<TargetFrameworks>net472;net6.0</TargetFrameworks>-->
-
-	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <LangVersion>10.0</LangVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <Configurations>R_ML;R_BIE</Configurations>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
-	  <TargetFramework>net472</TargetFramework>
-    <OutputPath>bin\R_ML\</OutputPath>
-    <DefineConstants>TRACE;MONO</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='R_BIE|AnyCPU'">
-	  <TargetFramework>net6.0</TargetFramework>
-    <OutputPath>bin\R_BIE\</OutputPath>
-    <DefineConstants>TRACE;MONO</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">R_ML</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProjectGuid>{907C68FA-DF5A-42B8-9762-7363B2A499E9}</ProjectGuid>
+		<OutputType>Library</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>TheArchive</RootNamespace>
+		<AssemblyName>TheArchive.MONO</AssemblyName>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<LangVersion>10.0</LangVersion>
+		<FileAlignment>512</FileAlignment>
+		<Deterministic>true</Deterministic> 
+		<Configurations>R_ML;R_BIE</Configurations>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
+		<TargetFramework>net472</TargetFramework>
+		<OutputPath>bin\R_ML\</OutputPath>
+		<DefineConstants>TRACE;MONO</DefineConstants>
+		<Optimize>true</Optimize>
+		<DebugType>pdbonly</DebugType>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='R_BIE|AnyCPU'">
+		<TargetFramework>net6.0</TargetFramework>
+		<OutputPath>bin\R_BIE\</OutputPath>
+		<DefineConstants>TRACE;MONO</DefineConstants>
+		<Optimize>true</Optimize>
+		<DebugType>pdbonly</DebugType>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
 	<PropertyGroup>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'R_ML'">
-    <Reference Include="CellSound-ASM">
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\CellSound-ASM.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="GlobalFramework-ASM, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\GlobalFramework-ASM.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MelonLoader">
-      <HintPath>$(ProjectDir)..\_R_RD003\MelonLoader\MelonLoader.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Modules-ASM, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Modules-ASM.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PlayFab-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\PlayFab-ASM.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SNet_ASM, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\SNet_ASM.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SteamWorks_ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\SteamWorks_ASM.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.AudioModule">
-      <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CrashReportingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.CrashReportingModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.InputModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.InputModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.Physics2DModule">
-      <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UnityAnalyticsModule">
-      <HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Utils-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Utils-ASM.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Wwise-ASM">
-      <HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Wwise-ASM.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)' == 'R_ML'">
-    <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\ChatTweaks.cs">
-      <Link>Features\Accessibility\ChatTweaks.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\Nickname.cs">
-      <Link>Features\Accessibility\Nickname.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\PlayerColorOverride.cs">
-      <Link>Features\Accessibility\PlayerColorOverride.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Backport\InstantHackRelease.cs">
-      <Link>Features\Backport\InstantHackRelease.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Backport\MeleeCancelBackport.cs">
-      <Link>Features\Backport\MeleeCancelBackport.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Backport\MineFixBackport.cs">
-      <Link>Features\Backport\MineFixBackport.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Backport\TerminalKeyMessage.cs">
-      <Link>Features\Backport\TerminalKeyMessage.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Backport\ThrowablesRunFix.cs">
-      <Link>Features\Backport\ThrowablesRunFix.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\CustomLobbyCodeString.cs">
-      <Link>Features\CustomLobbyCodeString.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\AnalyticsBlocker.cs">
-      <Link>Features\Dev\AnalyticsBlocker.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\GameDebugLogRedirect.cs">
-      <Link>Features\Dev\GameDebugLogRedirect.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\InternalUAudioListenerHelper.cs">
-      <Link>Features\Dev\InternalUAudioListenerHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\MaulGavelChecksumPatch.cs">
-      <Link>Features\Dev\MaulGavelChecksumPatch.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModSettings.cs">
-      <Link>Features\Dev\ModSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Dev\RedirectSettings.cs">
-      <Link>Features\Dev\RedirectSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\DiscordRichPresence.cs">
-      <Link>Features\DiscordRichPresence.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\HudToggle.cs">
-      <Link>Features\HudToggle.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\ExpeditionUnlockSkip.cs">
-      <Link>Features\LocalProgression\ExpeditionUnlockSkip.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalBoosters.cs">
-      <Link>Features\LocalProgression\LocalBoosters.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalProgressionController.cs">
-      <Link>Features\LocalProgression\LocalProgressionController.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalProgressionCore.cs">
-      <Link>Features\LocalProgression\LocalProgressionCore.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalVanity.cs">
-      <Link>Features\LocalProgression\LocalVanity.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\PlayFabManagerPatches.cs">
-      <Link>Features\LocalProgression\PlayFabManagerPatches.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
-      <Link>Features\PlayerInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\LoadoutRandomizer.cs">
-      <Link>Features\QoL\LoadoutRandomizer.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\MapToObjectivesSwitchFix.cs">
-      <Link>Features\QoL\MapToObjectivesSwitchFix.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\ResourcePrioritizationPings.cs">
-      <Link>Features\QoL\ResourcePrioritizationPings.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\QoL\UnreadyButtonPatches.cs">
-      <Link>Features\QoL\UnreadyButtonPatches.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\RichPresenceCore.cs">
-      <Link>Features\RichPresenceCore.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Special\CustomWeaponFOV.cs">
-      <Link>Features\Special\CustomWeaponFOV.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Special\HideFirstPersonItem.cs">
-      <Link>Features\Special\HideFirstPersonItem.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Special\IntroSkip.cs">
-      <Link>Features\Special\IntroSkip.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Special\MuteSpeak.cs">
-      <Link>Features\Special\MuteSpeak.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Special\ProcessPriority.cs">
-      <Link>Features\Special\ProcessPriority.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveChatRestrictions.cs">
-      <Link>Features\Special\RemoveChatRestrictions.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveDownedMessage.cs">
-      <Link>Features\Special\RemoveDownedMessage.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Special\RundownInHeader.cs">
-      <Link>Features\Special\RundownInHeader.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Special\UnityRandomOverrider.cs">
-      <Link>Features\Special\UnityRandomOverrider.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Special\Watermark.cs">
-      <Link>Features\Special\Watermark.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\Special\WeaponShootForward.cs">
-      <Link>Features\Special\WeaponShootForward.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Features\SteamRichPresenceTweaks.cs">
-      <Link>Features\SteamRichPresenceTweaks.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Utilities\SColorExtensions.cs">
-      <Link>Utilities\SColorExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Utilities\SharedUtils.cs">
-      <Link>Utilities\SharedUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\TheArchive.IL2CPP\Utilities\SoundEventCache.cs">
-      <Link>Utilities\SoundEventCache.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
-      <Project>{7bb66dc5-d29d-4cdd-bb82-d228abe35bda}</Project>
-      <Name>TheArchive.Core</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Managers\" />
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="GitInfo" Version="2.2.0" />
-  </ItemGroup>
-  
-  <PropertyGroup>
-    <PostBuildEvent>
-		cd $(MSBuildProjectDirectory)
-		copy /y bin\$(Configuration)\TheArchive.MONO.dll ..\TheArchive.Core\Resources\TheArchive.MONO.dll
-	</PostBuildEvent>
-  </PropertyGroup>
+	<ItemGroup Condition="'$(Configuration)' == 'R_ML'">
+		<Reference Include="CellSound-ASM">
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\CellSound-ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="GlobalFramework-ASM, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\GlobalFramework-ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Modules-ASM, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Modules-ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PlayFab-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\PlayFab-ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="SNet_ASM, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\SNet_ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="SteamWorks_ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\SteamWorks_ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Unity.TextMeshPro">
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.AudioModule">
+			<HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.CrashReportingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.CrashReportingModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.IMGUIModule">
+			<HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.InputModule, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.Physics2DModule">
+			<HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.PhysicsModule">
+			<HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.UI">
+			<HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.UI.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.UnityAnalyticsModule">
+			<HintPath>..\_R_RD003\GTFO_Data\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Utils-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Utils-ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Wwise-ASM">
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Wwise-ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup Condition="'$(Configuration)' == 'R_ML'">
+		<Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\ChatTweaks.cs">
+			<Link>Features\Accessibility\ChatTweaks.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\Nickname.cs">
+			<Link>Features\Accessibility\Nickname.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\PlayerColorOverride.cs">
+			<Link>Features\Accessibility\PlayerColorOverride.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Backport\InstantHackRelease.cs">
+			<Link>Features\Backport\InstantHackRelease.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Backport\MeleeCancelBackport.cs">
+			<Link>Features\Backport\MeleeCancelBackport.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Backport\MineFixBackport.cs">
+			<Link>Features\Backport\MineFixBackport.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Backport\TerminalKeyMessage.cs">
+			<Link>Features\Backport\TerminalKeyMessage.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Backport\ThrowablesRunFix.cs">
+			<Link>Features\Backport\ThrowablesRunFix.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\CustomLobbyCodeString.cs">
+			<Link>Features\CustomLobbyCodeString.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Dev\AnalyticsBlocker.cs">
+			<Link>Features\Dev\AnalyticsBlocker.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Dev\GameDebugLogRedirect.cs">
+			<Link>Features\Dev\GameDebugLogRedirect.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Dev\InternalUAudioListenerHelper.cs">
+			<Link>Features\Dev\InternalUAudioListenerHelper.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Dev\MaulGavelChecksumPatch.cs">
+			<Link>Features\Dev\MaulGavelChecksumPatch.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModSettings.cs">
+			<Link>Features\Dev\ModSettings.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Dev\RedirectSettings.cs">
+			<Link>Features\Dev\RedirectSettings.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\DiscordRichPresence.cs">
+			<Link>Features\DiscordRichPresence.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\HudToggle.cs">
+			<Link>Features\HudToggle.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\ExpeditionUnlockSkip.cs">
+			<Link>Features\LocalProgression\ExpeditionUnlockSkip.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalBoosters.cs">
+			<Link>Features\LocalProgression\LocalBoosters.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalProgressionController.cs">
+			<Link>Features\LocalProgression\LocalProgressionController.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalProgressionCore.cs">
+			<Link>Features\LocalProgression\LocalProgressionCore.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\LocalVanity.cs">
+			<Link>Features\LocalProgression\LocalVanity.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\PlayFabManagerPatches.cs">
+			<Link>Features\LocalProgression\PlayFabManagerPatches.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
+			<Link>Features\PlayerInfo.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\QoL\LoadoutRandomizer.cs">
+			<Link>Features\QoL\LoadoutRandomizer.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\QoL\MapToObjectivesSwitchFix.cs">
+			<Link>Features\QoL\MapToObjectivesSwitchFix.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\QoL\ResourcePrioritizationPings.cs">
+			<Link>Features\QoL\ResourcePrioritizationPings.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\QoL\UnreadyButtonPatches.cs">
+			<Link>Features\QoL\UnreadyButtonPatches.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\RichPresenceCore.cs">
+			<Link>Features\RichPresenceCore.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Special\CustomWeaponFOV.cs">
+			<Link>Features\Special\CustomWeaponFOV.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Special\HideFirstPersonItem.cs">
+			<Link>Features\Special\HideFirstPersonItem.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Special\IntroSkip.cs">
+			<Link>Features\Special\IntroSkip.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Special\MuteSpeak.cs">
+			<Link>Features\Special\MuteSpeak.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Special\ProcessPriority.cs">
+			<Link>Features\Special\ProcessPriority.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveChatRestrictions.cs">
+			<Link>Features\Special\RemoveChatRestrictions.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveDownedMessage.cs">
+			<Link>Features\Special\RemoveDownedMessage.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Special\RundownInHeader.cs">
+			<Link>Features\Special\RundownInHeader.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Special\UnityRandomOverrider.cs">
+			<Link>Features\Special\UnityRandomOverrider.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Special\Watermark.cs">
+			<Link>Features\Special\Watermark.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\Special\WeaponShootForward.cs">
+			<Link>Features\Special\WeaponShootForward.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Features\SteamRichPresenceTweaks.cs">
+			<Link>Features\SteamRichPresenceTweaks.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Utilities\SColorExtensions.cs">
+			<Link>Utilities\SColorExtensions.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Utilities\SharedUtils.cs">
+			<Link>Utilities\SharedUtils.cs</Link>
+		</Compile>
+		<Compile Include="..\TheArchive.IL2CPP\Utilities\SoundEventCache.cs">
+			<Link>Utilities\SoundEventCache.cs</Link>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
+			<Project>{7bb66dc5-d29d-4cdd-bb82-d228abe35bda}</Project>
+			<Name>TheArchive.Core</Name>
+			<Private>False</Private>
+		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Managers\" />
+		<Folder Include="Properties\" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="GitInfo" Version="2.2.0" />
+	</ItemGroup>
+	
+	<PropertyGroup>
+		<PostBuildEvent>
+			cd $(MSBuildProjectDirectory)
+			copy /y bin\$(Configuration)\TheArchive.MONO.dll ..\TheArchive.Core\Resources\TheArchive.MONO.dll
+		</PostBuildEvent>
+	</PropertyGroup>
 </Project>

@@ -1,8 +1,6 @@
 ﻿using Globals;
-using HarmonyLib;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Utilities;
 
 namespace TheArchive
 {
