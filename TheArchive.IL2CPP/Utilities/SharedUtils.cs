@@ -305,32 +305,66 @@ namespace TheArchive.Utilities
         }
 
 #if IL2CPP
-        private static PropertyAccessor<GameSetupDataBlock, uint> _rundownIdToLoad;
-        private static PropertyAccessor<GameSetupDataBlock, uint[]> _rundownIdsToLoad;
-
-        public static void Init()
-        {
-            _rundownIdToLoad = PropertyAccessor<GameSetupDataBlock, uint>.GetAccessor("RundownIdToLoad");
-            _rundownIdsToLoad = PropertyAccessor<GameSetupDataBlock, uint[]>.GetAccessor("RundownIdsToLoad");
-        }
+        private static PropertyAccessor<GameSetupDataBlock, uint> _rundownIdToLoad = PropertyAccessor<GameSetupDataBlock, uint>.GetAccessor("RundownIdToLoad");
+        
+        private static GameSetupDataBlock _setupBlock = null;
 #endif
 
-        private static GameData.RundownDataBlock _loadedRundownDataBlock;
-        public static string GetDataBlockRundownTitle()
+        public static bool TryGetRundownDataBlock(out RundownDataBlock block)
         {
-            if (_loadedRundownDataBlock == null)
-            {
-                uint blockToLoad;
+            uint blockToLoad;
 #if IL2CPP
-                GameData.GameSetupDataBlock setupBlock = GameData.GameSetupDataBlock.GetBlock(1);
-                blockToLoad = 31;//setupBlock.RundownIdsToLoad;
+            if (ArchiveMod.IsOnALTBuild)
+            {
+                if(RundownManager.ActiveExpedition != null)
+                {
+                    var rundownKeyFromExpedition = RundownManager.GetActiveExpeditionData()?.rundownKey?.data;
+                    if (rundownKeyFromExpedition != null && !rundownKeyFromExpedition.StartsWith("pString") && rundownKeyFromExpedition != ArchiveMod.CurrentlySelectedRundownKey)
+                    {
+                        ArchiveMod.CurrentlySelectedRundownKey = rundownKeyFromExpedition;
+                    }
+                }
+
+                blockToLoad = ArchiveMod.CurrentlySelectedRundownPersistentID;
+            }
+            else
+            {
+                if (_setupBlock == null)
+                    _setupBlock = GameData.GameSetupDataBlock.GetBlock(1);
+                blockToLoad = _rundownIdToLoad.Get(_setupBlock);
+            }
 #else
-                blockToLoad = Globals.Global.RundownIdToLoad;
+            blockToLoad = Globals.Global.RundownIdToLoad;
 #endif
-                _loadedRundownDataBlock = GameData.RundownDataBlock.GetBlock(blockToLoad);
+            if (blockToLoad != 0)
+            {
+                block = GameData.RundownDataBlock.GetBlock(blockToLoad);
+
+                
+                return true;
             }
 
-            return _loadedRundownDataBlock?.StorytellingData?.Title ?? "Unknown";
+            block = null;
+            return false;
+        }
+
+        public static string GetDataBlockRundownTitle()
+        {
+            string text = null;
+            if (TryGetRundownDataBlock(out var block))
+            {
+                text = Utils.StripTMPTagsRegex(block.StorytellingData.Title);
+            }
+
+            if(!ArchiveMod.IsPlayingModded && text != null)
+            {
+                text = text.Replace("TITLE:", "-");
+            }
+
+            if(ArchiveMod.IsOnALTBuild && text == null)
+                return "Selecting Rundown";
+
+            return text ?? "Unknown";
         }
 
         private static readonly eFocusState eFocusState_ComputerTerminal = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.ComputerTerminal));

@@ -307,28 +307,23 @@ namespace TheArchive.Utilities
          * 29 = RD#006
          */
 
+        /// <summary>
+        /// This is used to identify the game build in a more broad way.
+        /// </summary>
         public enum RundownID : int
         {
-            [Value(-1)]
             RundownUnitialized = -1,
-            [Value(0)]
-            RundownUnknown = 0,
-            [Value(17)]
-            RundownOne = 1,
-            [Value(19)]
-            RundownTwo = 2,
-            [Value(22)]
-            RundownThree = 3,
-            [Value(25)]
-            RundownFour = 4,
-            [Value(26)]
-            RundownFive = 5,
-            [Value(29)]
-            RundownSix = 6,
-            [Value(31)]
-            RundownSeven = 7,
+            RundownUnknown,
+            RundownOne,
+            RundownTwo,
+            RundownThree,
+            RundownFour,
+            RundownFive,
+            RundownSix,
+            RundownSeven,
+            RundownAltOne,
 
-            Latest = RundownSeven,
+            Latest = RundownAltOne,
         }
 
         [Flags]
@@ -342,8 +337,9 @@ namespace TheArchive.Utilities
             RundownFive = 1 << 4,
             RundownSix = 1 << 5,
             RundownSeven = 1 << 6,
-            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive | RundownSix | RundownSeven,
-            Latest = RundownSeven,
+            RundownAltOne = 1 << 7,
+            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive | RundownSix | RundownSeven | RundownAltOne,
+            Latest = RundownAltOne,
         }
 
         public static bool FlagsContain(RundownFlags flags, RundownID id)

@@ -33,8 +33,8 @@ namespace TheArchive.Utilities
 
         public static void CallEvent<TOn>(string eventFieldName, object instance = null, params object[] parameters)
         {
-            var eventInfo = typeof(TOn).GetType().GetEvent(eventFieldName, HarmonyLib.AccessTools.all);
-            var eventDelegate = (MulticastDelegate) typeof(TOn).GetField(eventFieldName, HarmonyLib.AccessTools.all).GetValue(instance);
+            var eventInfo = typeof(TOn).GetType().GetEvent(eventFieldName, Utils.AnyBindingFlagss);
+            var eventDelegate = (MulticastDelegate) typeof(TOn).GetField(eventFieldName, Utils.AnyBindingFlagss).GetValue(instance);
             if (eventDelegate != null)
             {
                 foreach (var handler in eventDelegate.GetInvocationList())
@@ -47,7 +47,7 @@ namespace TheArchive.Utilities
 
         public static void RemoveAllEventHandlers<TOn>(string eventFieldName, object instance = null)
         {
-            var eventFieldInfo = typeof(TOn).GetField(eventFieldName, HarmonyLib.AccessTools.all);
+            var eventFieldInfo = typeof(TOn).GetField(eventFieldName, Utils.AnyBindingFlagss);
 
             eventFieldInfo?.SetValue(instance, null);
         }

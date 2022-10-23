@@ -129,9 +129,9 @@ namespace TheArchive.Core
                         continue;
                     }
 
-                    if (!DoesMatchBuildNumber(patchContainingType, LocalFiles.BuildNumber))
+                    if (!DoesMatchBuildNumber(patchContainingType, BuildDB.BuildNumber))
                     {
-                        ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{LocalFiles.BuildNumber} not in BuildConstraint] Skipped patch: \"{patchContainingType.FullName}\".");
+                        ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{BuildDB.BuildNumber} not in BuildConstraint] Skipped patch: \"{patchContainingType.FullName}\".");
                         continue;
                     }
 

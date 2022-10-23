@@ -1,57 +1,13 @@
 ﻿using System;
 using System.IO;
 using TheArchive.Core;
-using TheArchive.Core.Managers;
 using TheArchive.Loader;
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Utilities
 {
     public class LocalFiles
     {
-        private static int _buildNumber = -1;
-        public static int BuildNumber
-        {
-            get
-            {
-                if(_buildNumber == -1)
-                {
-                    try
-                    {
-                        //CellBuildData.GetRevision()
-                        _buildNumber = (int) ((
-                            ImplementationManager.FindTypeInCurrentAppDomain("CellBuildData")
-                            ?.GetMethod("GetRevision", Utils.AnyBindingFlagss)
-                            ?.Invoke(null, null)
-                            ) ?? -1);
-
-                        if (_buildNumber <= 0)
-                        {
-                            var buildNumFilePath = Path.Combine(LoaderWrapper.GameDirectory, "revision.txt");
-
-                            if (!File.Exists(buildNumFilePath))
-                            {
-                                throw new Exception($"File doesn't exist: \"{buildNumFilePath}\"");
-                            }
-
-                            var buildStringRaw = File.ReadAllLines(buildNumFilePath)[0];
-                            buildStringRaw = buildStringRaw.Replace(" ", ""); // remove the trailing space
-                            _buildNumber = int.Parse(buildStringRaw);
-                        }
-
-                        if (_buildNumber <= 0)
-                            throw new Exception("Build / Revision number couldn't be found ...");
-                    }
-                    catch(Exception ex)
-                    {
-                        _buildNumber = 0;
-                        ArchiveLogger.Error($"Couldn't load the current build / revision number from revisions.txt! - {ex}: {ex.Message}\n{ex.StackTrace}");
-                    }
-                    
-                }
-                return _buildNumber;
-            }
-        }
-
         private static string _modLocalLowPath = null;
         public static string ModLocalLowPath
         {
@@ -105,7 +61,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_dataBlockDumpPath))
                 {
-                    _dataBlockDumpPath = Path.Combine(SaveDirectoryPath, "DataBlocks", $"Build_{BuildNumber}_Rundown_{(int) ArchiveMod.CurrentRundown}");
+                    _dataBlockDumpPath = Path.Combine(SaveDirectoryPath, "DataBlocks", $"Build_{BuildDB.BuildNumber}_{ArchiveMod.CurrentRundown}");
                     if (!Directory.Exists(_dataBlockDumpPath))
                         Directory.CreateDirectory(_dataBlockDumpPath);
                 }
@@ -146,28 +102,48 @@ namespace TheArchive.Utilities
             }
         }
 
-        private static string _rundownspecificSavePath = null;
-        public static string RundownSpecificSaveDirectoryPath
+        private static string _versionSpecificLogsAndCachePath = null;
+        public static string VersionSpecificLogsAndCachePath
         {
             get
             {
-                if (string.IsNullOrEmpty(_rundownspecificSavePath))
+                if (string.IsNullOrEmpty(_versionSpecificLogsAndCachePath))
+                {
+                    _versionSpecificLogsAndCachePath = Path.Combine(LocalFiles.GameLogsAndCachePath, $"{((int)ArchiveMod.CurrentRundown).ToString().PadLeft(2, '0')}_{ArchiveMod.CurrentRundown}_Data", "appdata");
+                    if (!Directory.Exists(_versionSpecificLogsAndCachePath))
+                        Directory.CreateDirectory(_versionSpecificLogsAndCachePath);
+                }
+                return _versionSpecificLogsAndCachePath;
+            }
+        }
+
+        private static string _versionSpecificSavePath = null;
+        public static string VersionSpecificSaveDirectoryPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_versionSpecificSavePath))
                 {
                     if(LoaderWrapper.IsModInstalled(ArchiveMod.MTFO_GUID))
                     {
 #warning TODO: Not this
-                        _rundownspecificSavePath = Path.Combine(SaveDirectoryPath, "Modded", $"Rundown_{(int)ArchiveMod.CurrentRundown}_Data");
+                        _versionSpecificSavePath = Path.Combine(SaveDirectoryPath, "Modded", $"TODO_USE_MTFO_FOLDER_HERE_Data");
                     }
                     else
                     {
-                        _rundownspecificSavePath = Path.Combine(SaveDirectoryPath, $"Rundown_{(int)ArchiveMod.CurrentRundown}_Data");
+                        _versionSpecificSavePath = GetVersionSpecificSaveDirectoryPath(ArchiveMod.CurrentRundown);
                     }
-                    if (!Directory.Exists(_rundownspecificSavePath))
-                        Directory.CreateDirectory(_rundownspecificSavePath);
+                    if (!Directory.Exists(_versionSpecificSavePath))
+                        Directory.CreateDirectory(_versionSpecificSavePath);
                 }
 
-                return _rundownspecificSavePath;
+                return _versionSpecificSavePath;
             }
+        }
+
+        public static string GetVersionSpecificSaveDirectoryPath(RundownID rundown)
+        {
+            return Path.Combine(SaveDirectoryPath, $"{((int)rundown).ToString().PadLeft(2, '0')}_{rundown}_Data");
         }
 
         private static string _otherConfigsPath = null;
@@ -209,7 +185,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_filesPath))
                 {
-                    _filesPath = Path.Combine(RundownSpecificSaveDirectoryPath, "Files");
+                    _filesPath = Path.Combine(VersionSpecificSaveDirectoryPath, "Files");
                     if (!Directory.Exists(_filesPath))
                         Directory.CreateDirectory(_filesPath);
                 }
@@ -223,10 +199,12 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_settingsPath))
-                    _settingsPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"GTFO_Settings.json");
+                    _settingsPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"GTFO_Settings.json");
                 return _settingsPath;
             }
         }
+
+        public static string GetSettingsPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), $"GTFO_Settings.json");
 
         private static string _favoritesPath = null;
         public static string FavoritesPath
@@ -234,10 +212,13 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_favoritesPath))
-                    _favoritesPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"GTFO_Favorites.json");
+                    _favoritesPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"GTFO_Favorites.json");
                 return _favoritesPath;
             }
         }
+
+        public static string GetFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), $"GTFO_Favorites.json");
+
 
         private static string _botFavoritesPath = null;
         public static string BotFavoritesPath
@@ -245,10 +226,13 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_botFavoritesPath))
-                    _botFavoritesPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"GTFO_BotFavorites.json");
+                    _botFavoritesPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"GTFO_BotFavorites.json");
                 return _botFavoritesPath;
             }
         }
+
+        public static string GetBotFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), $"GTFO_BotFavorites.json");
+
 
         private static string _boostersPath = null;
         public static string BoostersPath
@@ -256,7 +240,7 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_boostersPath))
-                    _boostersPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"Booster_Data.json");
+                    _boostersPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"Booster_Data.json");
                 return _boostersPath;
             }
         }
@@ -267,7 +251,7 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_vanityItemsPath))
-                    _vanityItemsPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"VanityItems_Data.json");
+                    _vanityItemsPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"VanityItems_Data.json");
                 return _vanityItemsPath;
             }
         }
@@ -278,7 +262,7 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_vanityItemsLayerDropsPath))
-                    _vanityItemsLayerDropsPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"VanityItemsLayerDrops_Data.json");
+                    _vanityItemsLayerDropsPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"VanityItemsLayerDrops_Data.json");
                 return _vanityItemsLayerDropsPath;
             }
         }
@@ -289,7 +273,7 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_progressionPath))
-                    _progressionPath = Path.Combine(RundownSpecificSaveDirectoryPath, $"RundownProgression_Data.json");
+                    _progressionPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"RundownProgression_Data.json");
                 return _progressionPath;
             }
         }

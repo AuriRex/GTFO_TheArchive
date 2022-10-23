@@ -21,6 +21,7 @@ namespace TheArchive
         {
             public static void Postfix()
             {
+                ArchiveMod.CurrentlySelectedRundownKey = $"Local_{Global.RundownIdToLoad}";
 #pragma warning disable CS0618 // Type or member is obsolete
                 ArchiveMod.InvokeGameDataInitialized();
 #pragma warning restore CS0618 // Type or member is obsolete

@@ -17,21 +17,25 @@ namespace TheArchive
         public override string Group => FeatureGroups.Dev;
         public override bool RequiresRestart => true;
 
-        private static void OnGameDataInitialized()
+        private static void InvokeGameDataInitialized()
         {
 #pragma warning disable CS0618 // Type or member is obsolete
             ArchiveMod.InvokeGameDataInitialized();
 #pragma warning restore CS0618 // Type or member is obsolete
 
-            if(FlagsContain(RundownFlags.RundownFour.To(RundownFlags.RundownFive), ArchiveMod.CurrentRundown))
+            if(ArchiveMod.CurrentRundown.IsIncludedIn(RundownFlags.RundownFour | RundownFlags.RundownFive))
             {
                 // Invoke DataBlocksReady on R4 & R5 instantly
-                OnDataBlocksReady();
+                InvokeDataBlocksReady();
             }
         }
 
-        private static void OnDataBlocksReady()
+        private static void InvokeDataBlocksReady()
         {
+            if(SharedUtils.TryGetRundownDataBlock(out var block))
+            {
+                ArchiveMod.CurrentlySelectedRundownKey = $"Local_{block.persistentID}";
+            }
 #pragma warning disable CS0618 // Type or member is obsolete
             ArchiveMod.InvokeDataBlocksReady();
 #pragma warning restore CS0618 // Type or member is obsolete
@@ -44,7 +48,7 @@ namespace TheArchive
             {
                 try
                 {
-                    OnGameDataInitialized();
+                    InvokeGameDataInitialized();
                 }
                 catch(System.Reflection.ReflectionTypeLoadException rtlex)
                 {
@@ -74,7 +78,7 @@ namespace TheArchive
         {
             public static Type Type() => typeof(LocalizationManager);
 
-            public static void Postfix() => OnDataBlocksReady();
+            public static void Postfix() => InvokeDataBlocksReady();
         }
 
         [ArchivePatch(typeof(GameStateManager), nameof(GameStateManager.ChangeState))]
@@ -85,6 +89,29 @@ namespace TheArchive
 #pragma warning disable CS0618 // Type or member is obsolete
                 ArchiveMod.InvokeGameStateChanged((int) nextState);
 #pragma warning restore CS0618 // Type or member is obsolete
+            }
+        }
+
+        [RundownConstraint(RundownFlags.RundownAltOne, RundownFlags.Latest)]
+        [ArchivePatch(nameof(CellMenu.CM_Item.OnBtnPress))]
+        internal static class CM_RundownSelection_OnBtnPress_Patch
+        {
+            public static Type Type() => typeof(CM_RundownSelection);
+            public static void Postfix(CM_RundownSelection __instance)
+            {
+                ArchiveMod.CurrentlySelectedRundownKey = __instance.RundownKey;
+            }
+        }
+
+        [RundownConstraint(RundownFlags.RundownAltOne, RundownFlags.Latest)]
+        [ArchivePatch(typeof(CellMenu.CM_PageRundown_New), nameof(CellMenu.CM_PageRundown_New.Setup))]
+        internal static class CM_PageRundown_New_Setup_Patch
+        {
+            public static void Postfix(CellMenu.CM_PageRundown_New __instance)
+            {
+                __instance.m_selectRundownButton.AddCMItemEvents((_) => {
+                    ArchiveMod.CurrentlySelectedRundownKey = string.Empty;
+                });
             }
         }
     }

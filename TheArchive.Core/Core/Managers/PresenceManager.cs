@@ -342,6 +342,12 @@ namespace TheArchive.Core.Managers
             {
                 if (ArchiveMod.IsPlayingModded)
                     return "Mod";
+                if (ArchiveMod.IsOnALTBuild)
+                {
+                    if (Get(nameof(ExpeditionTier)).ToString().StartsWith("R7"))
+                        return string.Empty;
+                    return "Alt";
+                }
                 return $"R{RundownNumber}";
             }
         }
@@ -363,7 +369,7 @@ namespace TheArchive.Core.Managers
         {
             get
             {
-                if (ArchiveMod.IsPlayingModded)
+                if (ArchiveMod.IsPlayingModded || ArchiveMod.IsOnALTBuild)
                     return $"{Get(nameof(RundownTitleFromDataBlocks))}";
                 return Utils.GetRundownTitle(ArchiveMod.CurrentRundown);
             }
@@ -376,6 +382,8 @@ namespace TheArchive.Core.Managers
             {
                 if (ArchiveMod.IsPlayingModded)
                     return "Modded";
+                if (ArchiveMod.IsOnALTBuild)
+                    return "GTFO";
                 return $"Rundown {Get(nameof(RundownNumber))}";
             }
         }

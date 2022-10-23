@@ -48,6 +48,43 @@ namespace TheArchive
         public static RundownID CurrentRundown { get; private set; } = RundownID.RundownUnitialized;
         public static GameBuildInfo CurrentBuildInfo { get; private set; }
         public static int CurrentGameState { get; private set; }
+        public static bool IsOnALTBuild { get; private set; }
+        /// <summary>
+        /// The currently selected rundown on the rundown screen.<br/>
+        /// Is equal to <seealso cref="string.Empty"/> on the "Select Rundown" screen.<br/>
+        /// </summary>
+        public static string CurrentlySelectedRundownKey
+        {
+            get => _currentlySelectedRundownKey;
+            set
+            {
+                _currentlySelectedRundownKey = value;
+
+                ArchiveLogger.Debug($"Setting {nameof(CurrentlySelectedRundownKey)} to \"{_currentlySelectedRundownKey}\".");
+
+                if(string.IsNullOrEmpty(_currentlySelectedRundownKey))
+                {
+                    CurrentlySelectedRundownPersistentID = 0;
+                    return;
+                }
+
+                try
+                {
+                    CurrentlySelectedRundownPersistentID = uint.Parse(_currentlySelectedRundownKey.Replace("Local_", ""));
+                }
+                catch(Exception ex)
+                {
+                    ArchiveLogger.Error($"Failed to parse selected rundown persistentId from {nameof(CurrentlySelectedRundownKey)} \"{CurrentlySelectedRundownKey}\"!");
+                    ArchiveLogger.Exception(ex);
+                }
+            }
+        }
+        private static string _currentlySelectedRundownKey = string.Empty;
+        /// <summary>
+        /// Persistent ID of the currently selected RundownDataBlock on the rundown screen.<br/>
+        /// </summary>
+        public static uint CurrentlySelectedRundownPersistentID { get; set; } = 0;
+
 
         public static event Action<RundownID> GameDataInitialized;
         public static event Action DataBlocksReady;
@@ -66,6 +103,7 @@ namespace TheArchive
         private static readonly List<Type> _moduleTypes = new List<Type>();
 
         public static List<IArchiveModule> Modules { get; private set; } = new List<IArchiveModule>();
+
         private const string kArchiveSettingsFile = "TheArchive_Settings.json";
 
         private static HarmonyLib.Harmony _harmonyInstance;
@@ -89,14 +127,16 @@ namespace TheArchive
 
             GTFOLogger.Logger = LoaderWrapper.CreateLoggerInstance("GTFO-Internals", ConsoleColor.DarkGray);
 
-            CurrentRundown = BuildDB.GetCurrentRundownID(LocalFiles.BuildNumber);
-            ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"Current game revision determined to be {LocalFiles.BuildNumber}! ({CurrentRundown})");
+            CurrentRundown = BuildDB.GetCurrentRundownID(BuildDB.BuildNumber);
+            ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"Current game revision determined to be {BuildDB.BuildNumber}! ({CurrentRundown})");
 
             CurrentBuildInfo = new GameBuildInfo
             {
-                BuildNumber = LocalFiles.BuildNumber,
+                BuildNumber = BuildDB.BuildNumber,
                 Rundown = CurrentRundown
             };
+
+            IsOnALTBuild = CurrentRundown.IsIncludedIn(RundownFlags.RundownAltOne.ToLatest());
 
             var steam_appidtxt = Path.Combine(LoaderWrapper.GameDirectory, "steam_appid.txt");
             if(!File.Exists(steam_appidtxt))

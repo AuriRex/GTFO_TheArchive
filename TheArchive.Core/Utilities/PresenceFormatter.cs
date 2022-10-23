@@ -122,7 +122,7 @@ namespace TheArchive.Utilities
                 }
             }
 
-            return formatted;
+            return formatted.Trim();
         }
 
         [AttributeUsage(AttributeTargets.Property)]
