@@ -1,5 +1,6 @@
 ﻿using System;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
@@ -18,6 +19,18 @@ namespace TheArchive.Features.Special
             return !IsPlayingModded;
         }
 
+        [FeatureConfig]
+        public static RundownInHeaderSettings Settings { get; set; }
+
+        public class RundownInHeaderSettings
+        {
+            [FSDisplayName($"Add {ALTText} and {OGText} prefixes")]
+            public bool IncludeALTorOGText { get; set; } = true;
+        }
+
+        public const string ALTText = "<color=orange>ALT://</color>";
+        public const string OGText = "<color=orange>OG://</color>";
+
         // add R4 / R5 to the beginning of the header text ("R4A1: Crytology")
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.Latest)]
         [ArchivePatch(typeof(PlayerGuiLayer), "UpdateObjectiveHeader")]
@@ -27,20 +40,38 @@ namespace TheArchive.Features.Special
             public static void Prefix(ref string header)
             {
                 header = $"R{(int)BuildInfo.Rundown}{header}";
+
+                if (Settings.IncludeALTorOGText)
+                {
+                    header = $"{OGText}{header}";
+                }
             }
 
 #if IL2CPP
-            [RundownConstraint(RundownFlags.RundownSeven, RundownFlags.Latest)]
-            public static void Postfix(PlayerGuiLayer __instance, ref Il2CppSystem.Func<string> header)
+            [IsPostfix, RundownConstraint(RundownFlags.RundownSeven)]
+            public static void PostfixR7(PlayerGuiLayer __instance, ref Il2CppSystem.Func<string> header)
             {
-                /*var headerText = header.Invoke();
-                header = new Func<string>(() =>
-                {
-                    return $"R{(int)BuildInfo.Rundown}{headerText}";
-                });*/
                 var headerText = __instance.m_wardenObjective.m_header.text;
 
                 __instance.m_wardenObjective.m_header.text = $"R{(int)BuildInfo.Rundown}{headerText}";
+            }
+
+            [IsPostfix, RundownConstraint(RundownFlags.RundownAltOne, RundownFlags.Latest)]
+            public static void PostfixAlt(PlayerGuiLayer __instance, ref Il2CppSystem.Func<string> header)
+            {
+                var headerText = __instance.m_wardenObjective.m_header.text;
+
+                if (Settings.IncludeALTorOGText)
+                {
+                    if(headerText.StartsWith("R7"))
+                    {
+                        __instance.m_wardenObjective.m_header.text = $"{OGText}{headerText}";
+                    }
+                    else
+                    {
+                        __instance.m_wardenObjective.m_header.text = $"{ALTText}{headerText}";
+                    }
+                }
             }
 #endif
 
@@ -69,6 +100,11 @@ namespace TheArchive.Features.Special
                         default:
                             rundownPrefix = $"R{(int)ArchiveMod.CurrentRundown}";
                             break;
+                    }
+
+                    if(Settings.IncludeALTorOGText)
+                    {
+                        rundownPrefix = $"{OGText}{rundownPrefix}";
                     }
 
                     ___m_wardenObjective.m_header.text = $"{rundownPrefix}{RundownManager.ActiveExpedition.Descriptive.Prefix}{activeExpeditionData.expeditionIndex + 1}: {RundownManager.ActiveExpedition.Descriptive.PublicName}";

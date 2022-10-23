@@ -10,7 +10,7 @@
 	  <!--<TargetFrameworks>net472;net6.0</TargetFrameworks>-->
 
 	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <Configurations>R_ML;R_BIE</Configurations>
@@ -22,7 +22,6 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>9.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='R_BIE|AnyCPU'">
@@ -32,7 +31,6 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>9.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
 	<PropertyGroup>
