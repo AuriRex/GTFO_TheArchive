@@ -82,8 +82,15 @@ namespace TheArchive.Models
 				}
             }
 
+			if (!uint.TryParse(session.RundownId.Replace("Local_", string.Empty), out var rundownId))
+			{
+				ArchiveLogger.Error($"[{nameof(LocalRundownProgression)}.{nameof(AddSessionResults)}] Could not parse rundown id from \"{session.RundownId}\"!");
+				rundownId = 0;
+			}
+
 			completionData = new ExpeditionCompletionData
 			{
+				RundownId = rundownId,
 				PreArtifactHeat = previousHeat,
 				NewArtifactHeat = expeditionEntry.ArtifactHeat,
 				WasFirstTimeCompletion = isFirstTimeCompletion,
