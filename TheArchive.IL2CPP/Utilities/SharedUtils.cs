@@ -40,8 +40,19 @@ namespace TheArchive.Utilities
 
             return list;
         }
+
+        public static Il2CppSystem.Collections.Generic.List<T> ToIL2CPPListIfNecessary<T>(this List<T> list)
+        {
+            Il2CppSystem.Collections.Generic.List<T> il2List = new Il2CppSystem.Collections.Generic.List<T>();
+            foreach (var item in list)
+            {
+                il2List.Add(item);
+            }
+            return il2List;
+        }
 #else
-        public static List<T> ToSystemList<T>(this System.Collections.Generic.List<T> list) => list;
+        public static List<T> ToSystemList<T>(this List<T> list) => list;
+        public static List<T> ToIL2CPPListIfNecessary<T>(this List<T> list) => list;
 #endif
 
         public static void ChangeColorTimedExpeditionButton(CM_TimedButton button, Color col) => ChangeColorOnAllChildren(button.transform, col, new string[] { "ProgressFill" });

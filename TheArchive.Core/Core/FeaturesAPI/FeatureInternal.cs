@@ -38,6 +38,7 @@ namespace TheArchive.Core.FeaturesAPI
         private readonly List<Type> _patchTypes = new List<Type>();
         private readonly HashSet<FeaturePatchInfo> _patchInfos = new HashSet<FeaturePatchInfo>();
         private readonly HashSet<FeatureSettingsHelper> _settingsHelpers = new HashSet<FeatureSettingsHelper>();
+        private readonly Dictionary<string, object> _storage = new Dictionary<string, object>();
         private PropertyInfo _isEnabledPropertyInfo;
         private bool _onGameStateChangedMethodUsesGameEnum = false;
         private MethodInfo _onGameStateChangedMethodInfo;
@@ -623,6 +624,27 @@ namespace TheArchive.Core.FeaturesAPI
                         wrapTryCatch = wrapTryCatch
                     };
             }
+        }
+
+        internal bool Store<T>(string key, T obj)
+        {
+            if(_storage.TryGetValue(key, out var _))
+            {
+                return false;
+            }
+            _storage.Add(key, obj);
+            return true;
+        }
+
+        internal bool Retrieve<T>(string key, out T value)
+        {
+            if (_storage.TryGetValue(key, out var val))
+            {
+                value = (T) val;
+                return true;
+            }
+            value = default;
+            return false; 
         }
 
         internal void RequestDisable(string reason)

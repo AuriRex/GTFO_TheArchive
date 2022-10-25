@@ -16,6 +16,8 @@ namespace TheArchive.Features.Accessibility
 
         public override string Group => FeatureGroups.Accessibility;
 
+        public override bool PlaceSettingsInSubMenu => true;
+
         public override bool SkipInitialOnEnable => true;
 
         [FeatureConfig]

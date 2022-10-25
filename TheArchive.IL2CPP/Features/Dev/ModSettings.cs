@@ -13,6 +13,8 @@ using static TheArchive.Utilities.Utils;
 using static TheArchive.Utilities.SColorExtensions;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
+using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
+using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
 #if IL2CPP && MelonLoader
 using UnhollowerBaseLib.Attributes;
 #endif
@@ -41,11 +43,12 @@ namespace TheArchive.Features.Dev
         private static readonly FieldAccessor<CM_SettingsInputField, int> A_CM_SettingsInputField_m_maxLen = FieldAccessor<CM_SettingsInputField, int>.GetAccessor("m_maxLen");
         private static readonly FieldAccessor<CM_SettingsInputField, iStringInputReceiver> A_CM_SettingsInputField_m_stringReceiver = FieldAccessor<CM_SettingsInputField, iStringInputReceiver>.GetAccessor("m_stringReceiver");
         private static readonly FieldAccessor<TMPro.TMP_Text, float> A_TMP_Text_m_marginWidth = FieldAccessor<TMPro.TMP_Text, float>.GetAccessor("m_marginWidth");
+        
+        private static readonly FieldAccessor<CM_PageSettings, List<CM_ScrollWindow>> A_CM_PageSettings_m_allSettingsWindows = FieldAccessor<CM_PageSettings, List<CM_ScrollWindow>>.GetAccessor("m_allSettingsWindows");
 #endif
         private static MethodAccessor<TMPro.TextMeshPro> A_TextMeshPro_ForceMeshUpdate;
 
-        private static bool _restartRequested = false;
-
+        public static Color ORANGE_WHITE = new Color(1f, 0.85f, 0.75f, 0.8f);
         public static Color ORANGE = new Color(1f, 0.5f, 0.05f, 0.8f);
         public static Color RED = new Color(0.8f, 0.1f, 0.1f, 0.8f);
         public static Color GREEN = new Color(0.1f, 0.8f, 0.1f, 0.8f);
@@ -155,16 +158,93 @@ namespace TheArchive.Features.Dev
             CM_PageSettings_SetupPatch.SetRestartInfoText(FeatureManager.Instance.AnyFeatureRequestingRestart);
         }
 
+        public static SubMenu CreateSubMenu(string title)
+        {
+            var subMenu = new SubMenu(title);
+
+            return subMenu;
+        }
+
+        public class SubMenu
+        {
+            public SubMenu(string title)
+            {
+                Title = title;
+                ScrollWindow = SettingsCreationHelper.CreateScrollWindow(title);
+            }
+
+            public string Title { get; private set; }
+            public bool HasBeenBuilt { get; private set; }
+            public Transform WindowTransform => ScrollWindow.transform;
+            public CM_ScrollWindow ScrollWindow { get; private set; }
+            private readonly List<iScrollWindowContent> _content = new List<iScrollWindowContent>();
+
+            public bool AppendContent(iScrollWindowContent item)
+            {
+                if (HasBeenBuilt)
+                    return false;
+                _content.Add(item);
+                return true;
+            }
+
+            public bool Build()
+            {
+                if (HasBeenBuilt)
+                    return false;
+                ScrollWindow.SetContentItems(_content.ToIL2CPPListIfNecessary());
+#if IL2CPP
+                SettingsPageInstance.m_allSettingsWindows.Add(ScrollWindow);
+#else
+                A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Add(ScrollWindow);
+#endif
+                HasBeenBuilt = true;
+                return true;
+            }
+
+            public void Show()
+            {
+                ShowScrollWindow(ScrollWindow);
+            }
+        }
+
+        public static class PageSettingsData
+        {
+            internal static GameObject SettingsItemPrefab { get; set; }
+            internal static CM_ScrollWindow MainModSettingsScrollWindow { get; set; }
+            internal static List<iScrollWindowContent> ScrollWindowContentElements { get; set; }
+            internal static Transform MainScrollWindowTransform { get; set; }
+            internal static CM_ScrollWindow PopupWindow { get; set; }
+            internal static CM_PageSettings SettingsPageInstance { get; set; }
+
+            public static MainMenuGuiLayer MMGuiLayer { get; internal set; }
+            public static GameObject ScrollWindowPrefab { get; internal set; }
+            public static RectTransform MovingContentHolder { get; internal set; }
+        }
+
+        public static void ShowMainModSettingsWindow(int _)
+        {
+            ShowScrollWindow(MainModSettingsScrollWindow);
+        }
+
+        public static void ShowScrollWindow(CM_ScrollWindow window)
+        {
+            CM_PageSettings.ToggleAudioTestLoop(false);
+            SettingsPageInstance.ResetAllInputFields();
+#if IL2CPP
+            SettingsPageInstance.ResetAllValueHolders();
+            SettingsPageInstance.m_currentSubMenuId = eSettingsSubMenuId.None;
+            SettingsPageInstance.ShowSettingsWindow(window);
+#else
+            A_CM_PageSettings_ResetAllValueHolders.Invoke(SettingsPageInstance);
+            A_CM_PageSettings_m_currentSubMenuId.Set(SettingsPageInstance, eSettingsSubMenuId.None);
+            A_CM_PageSettings_ShowSettingsWindow.Invoke(SettingsPageInstance, window);
+#endif
+        }
+
         //Setup(MainMenuGuiLayer guiLayer)
         [ArchivePatch(typeof(CM_PageSettings), "Setup")]
         public class CM_PageSettings_SetupPatch
         {
-            private static GameObject _settingsItemPrefab;
-            private static List<iScrollWindowContent> _scrollWindowContentElements;
-            private static Transform _mainScrollWindowTransform;
-            private static CM_ScrollWindow _popupWindow;
-            private static CM_PageSettings _settingsPageInstance;
-
             private static TMPro.TextMeshPro _restartInfoText;
 
             public static void SetRestartInfoText(bool value)
@@ -205,14 +285,17 @@ namespace TheArchive.Features.Dev
                 try
                 {
 #endif
-                    _settingsPageInstance = __instance;
-                    _popupWindow = __instance.m_popupWindow;
-                    _settingsItemPrefab = __instance.m_settingsItemPrefab;
-                    if(_scrollWindowContentElements == null)
+                    SettingsPageInstance = __instance;
+                    PopupWindow = __instance.m_popupWindow;
+                    SettingsItemPrefab = __instance.m_settingsItemPrefab;
+                    ScrollWindowPrefab = m_scrollwindowPrefab;
+                    MMGuiLayer = guiLayer;
+                    MovingContentHolder = m_movingContentHolder;
+                    if (ScrollWindowContentElements == null)
                     {
-                        _scrollWindowContentElements = new List<iScrollWindowContent>();
+                        ScrollWindowContentElements = new List<iScrollWindowContent>();
                     }
-                    _scrollWindowContentElements.Clear();
+                    ScrollWindowContentElements.Clear();
 
                     var title = "Mod Settings";
 
@@ -231,16 +314,12 @@ namespace TheArchive.Features.Dev
 
                     SharedUtils.ChangeColorCMItem(mainModSettingsButton, Color.magenta);
 
-                    CM_ScrollWindow mainModSettingsScrollWindow = guiLayer.AddRectComp(m_scrollwindowPrefab, GuiAnchor.TopLeft, new Vector2(420f, -200f), m_movingContentHolder).TryCastTo<CM_ScrollWindow>();
+                    MainModSettingsScrollWindow = SettingsCreationHelper.CreateScrollWindow(title);
 
-                    _mainScrollWindowTransform = mainModSettingsScrollWindow.transform;
+                    MainScrollWindowTransform = MainModSettingsScrollWindow.transform;
 
-                    mainModSettingsScrollWindow.Setup();
-                    mainModSettingsScrollWindow.SetSize(new Vector2(1020f, 900f));
-                    mainModSettingsScrollWindow.SetVisible(visible: false);
-                    mainModSettingsScrollWindow.SetHeader(title);
 
-                    TMPro.TextMeshPro scrollWindowHeaderTextTMP = mainModSettingsScrollWindow.GetComponentInChildren<TMPro.TextMeshPro>();
+                    TMPro.TextMeshPro scrollWindowHeaderTextTMP = MainModSettingsScrollWindow.GetComponentInChildren<TMPro.TextMeshPro>();
 
                     _restartInfoText = GameObject.Instantiate(scrollWindowHeaderTextTMP, scrollWindowHeaderTextTMP.transform.parent);
 
@@ -314,35 +393,13 @@ namespace TheArchive.Features.Dev
                     }
 
 #if IL2CPP
-                    __instance.m_allSettingsWindows.Add(mainModSettingsScrollWindow);
+                    __instance.m_allSettingsWindows.Add(MainModSettingsScrollWindow);
 #else
-                    ___m_allSettingsWindows.Add(mainModSettingsScrollWindow);
+                    ___m_allSettingsWindows.Add(MainModSettingsScrollWindow);
 #endif
-                    mainModSettingsButton.SetCMItemEvents(delegate (int id)
-                    {
-                        CM_PageSettings.ToggleAudioTestLoop(false);
-                        __instance.ResetAllInputFields();
-#if IL2CPP
-                        __instance.ResetAllValueHolders();
-                        __instance.m_currentSubMenuId = eSettingsSubMenuId.None;
-                        __instance.ShowSettingsWindow(mainModSettingsScrollWindow);
-#else
-                        A_CM_PageSettings_ResetAllValueHolders.Invoke(__instance);
-                        A_CM_PageSettings_m_currentSubMenuId.Set(__instance, eSettingsSubMenuId.None);
-                        A_CM_PageSettings_ShowSettingsWindow.Invoke(__instance, mainModSettingsScrollWindow);
-#endif
-                    });
+                    mainModSettingsButton.SetCMItemEvents(ShowMainModSettingsWindow);
 
-#if IL2CPP
-                    Il2CppSystem.Collections.Generic.List<iScrollWindowContent> allSWCsIL2CPP = new Il2CppSystem.Collections.Generic.List<iScrollWindowContent>();
-                    foreach(var swc in _scrollWindowContentElements)
-                    {
-                        allSWCsIL2CPP.Add(swc);
-                    }
-                    mainModSettingsScrollWindow.SetContentItems(allSWCsIL2CPP, 5f);
-#else
-                    mainModSettingsScrollWindow.SetContentItems(_scrollWindowContentElements, 5f);
-#endif
+                    MainModSettingsScrollWindow.SetContentItems(PageSettingsData.ScrollWindowContentElements.ToIL2CPPListIfNecessary(), 5);
                 }
                 catch (Exception ex)
                 {
@@ -350,65 +407,246 @@ namespace TheArchive.Features.Dev
                 }
             }
 
-            private static void ShowPopupWindow(string header, Vector2 pos)
+            private static void SetupEntriesForFeature(Feature feature)
             {
-                _popupWindow.SetHeader(header);
-                _popupWindow.transform.position = pos;
-                _popupWindow.SetVisible(true);
+                if (!Feature.DevMode && feature.IsHidden) return;
+
+                try
+                {
+                    string featureName;
+                    Color? col = null;
+                    if (feature.IsHidden)
+                    {
+                        featureName = $"[H] {feature.Name}";
+                        col = DISABLED;
+                    }
+                    else
+                    {
+                        featureName = feature.Name;
+                    }
+
+                    if (feature.RequiresRestart)
+                    {
+                        featureName = $"<color=red>[!]</color> {featureName}";
+                    }
+
+                    SubMenu subMenu = null;
+                    if(feature.PlaceSettingsInSubMenu)
+                    {
+                        subMenu = CreateSubMenu(featureName);
+                        feature.TryStore("SubMenu", subMenu);
+                        featureName = $"<u>{featureName}</u>";
+                    }
+
+                    CreateSettingsItem(featureName, out var cm_settingsItem, col);
+
+                    CM_SettingsItem sub_cm_settingsItem = null;
+                    CM_SettingsItem into_sub_cm_settingsItem = null;
+                    CM_SettingsItem outof_sub_cm_settingsItem = null;
+                    if (subMenu != null)
+                    {
+                        CreateSettingsItem("<<< Back <<<", out outof_sub_cm_settingsItem, RED, subMenu);
+                        CreateSpacer(subMenu);
+                        CreateSettingsItem(featureName, out sub_cm_settingsItem, ORANGE, subMenu);
+
+                        CreateSettingsItem("> Settings", out into_sub_cm_settingsItem, col);
+                    }
+
+                    
+                    SetupToggleButton(cm_settingsItem, out CM_Item toggleButton_cm_item, out var toggleButtonText);
+
+                    CM_Item sub_toggleButton_cm_item = null;
+                    TMPro.TextMeshPro sub_toggleButtonText = null;
+                    if (subMenu != null)
+                    {
+                        SetupToggleButton(sub_cm_settingsItem, out sub_toggleButton_cm_item, out sub_toggleButtonText);
+
+                        #region back-button
+                        var outButtonItem = outof_sub_cm_settingsItem.gameObject.AddComponent<CM_Item>();
+
+                        outof_sub_cm_settingsItem.ForcePopupLayer(true);
+                        GameObject.Destroy(outof_sub_cm_settingsItem);
+
+                        outButtonItem.SetCMItemEvents((_) => {
+                            ShowMainModSettingsWindow(_);
+                        });
+                        #endregion back-button
+
+                        SetupToggleButton(into_sub_cm_settingsItem, out var into_sub_toggleButton_cm_item, out var into_sub_toggleButtonText);
+
+                        SharedUtils.ChangeColorCMItem(into_sub_toggleButton_cm_item, ORANGE);
+
+                        into_sub_toggleButton_cm_item.SetCMItemEvents(delegate (int id) {
+                            FeatureLogger.Debug($"Submenu opened: \"{subMenu.Title}\"");
+                            subMenu.Show();
+                        });
+
+                        into_sub_cm_settingsItem.ForcePopupLayer(true);
+
+                        into_sub_toggleButtonText.SetText("> ENTER <");
+                        JankTextMeshProUpdaterOnce.Apply(into_sub_toggleButtonText);
+                    }
+
+                    if (feature.DisableModSettingsButton)
+                    {
+                        toggleButton_cm_item.gameObject.SetActive(false);
+                        sub_toggleButton_cm_item?.gameObject.SetActive(false);
+                    }
+
+                    if (feature.IsAutomated || feature.DisableModSettingsButton)
+                    {
+                        toggleButton_cm_item.SetCMItemEvents(delegate (int id) { });
+                        sub_toggleButton_cm_item?.SetCMItemEvents(delegate (int id) { });
+                    }
+                    else
+                    {
+                        var del = delegate (int id)
+                        {
+                            FeatureManager.ToggleFeature(feature);
+
+                            SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
+                            if(sub_toggleButton_cm_item != null)
+                                SetFeatureItemTextAndColor(feature, sub_toggleButton_cm_item, sub_toggleButtonText);
+                        };
+
+                        toggleButton_cm_item.SetCMItemEvents(del);
+                        sub_toggleButton_cm_item?.SetCMItemEvents(del);
+                    }
+                    
+
+                    SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
+                    if(sub_toggleButton_cm_item != null)
+                        SetFeatureItemTextAndColor(feature, sub_toggleButton_cm_item, sub_toggleButtonText);
+
+                    CreateRundownInfoTextForItem(cm_settingsItem, feature.AppliesToRundowns);
+                    if(sub_cm_settingsItem != null)
+                        CreateRundownInfoTextForItem(sub_cm_settingsItem, feature.AppliesToRundowns);
+
+                    cm_settingsItem.ForcePopupLayer(true);
+                    sub_cm_settingsItem?.ForcePopupLayer(true);
+
+                    if (feature.HasAdditionalSettings)
+                    {
+                        // Create SubMenu for additional settings
+                        foreach (var settingsHelper in feature.SettingsHelpers)
+                        {
+                            foreach (var setting in settingsHelper.Settings)
+                            {
+                                if (setting.HeaderAbove != null)
+                                    CreateHeader(setting.HeaderAbove.Title, setting.HeaderAbove.Color.ToUnityColor(), setting.HeaderAbove.Bold, subMenu);
+                                else if (setting.SeparatorAbove)
+                                    CreateHeader("------------------------------", DISABLED, false, subMenu);
+                                else if (setting.SpacerAbove)
+                                    CreateSpacer(subMenu: subMenu);
+
+                                if (setting.HideInModSettings && !Feature.DevMode)
+                                {
+                                    continue;
+                                }
+
+                                switch (setting)
+                                {
+                                    case EnumListSetting els:
+                                        CreateEnumListSetting(els);
+                                        break;
+                                    case ColorSetting cs:
+                                        CreateColorSetting(cs);
+                                        break;
+                                    case StringSetting ss:
+                                        CreateStringSetting(ss);
+                                        break;
+                                    case BoolSetting bs:
+                                        CreateBoolSetting(bs);
+                                        break;
+                                    case EnumSetting es:
+                                        CreateEnumSetting(es);
+                                        break;
+                                    default:
+                                        CreateHeader(setting.DEBUG_Path, subMenu: subMenu);
+                                        break;
+                                }
+                            }
+                        }
+                    }
+
+                    subMenu?.Build();
+                }
+                catch (Exception ex)
+                {
+                    FeatureLogger.Exception(ex);
+                }
             }
 
-            private static void SetPopupVisible(bool visible)
+            private static void SetupToggleButton(CM_SettingsItem cm_settingsItem, out CM_Item toggleButton_cm_item, out TMPro.TextMeshPro toggleButtonText)
             {
-                _popupWindow.SetVisible(visible);
+                CM_SettingsToggleButton cm_SettingsToggleButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);
+
+                toggleButton_cm_item = cm_SettingsToggleButton.gameObject.AddComponent<CM_Item>();
+
+                Component.Destroy(cm_SettingsToggleButton);
+
+                toggleButtonText = toggleButton_cm_item.GetComponentInChildren<TMPro.TextMeshPro>();
+
+                var collider = toggleButton_cm_item.GetComponent<BoxCollider2D>();
+                collider.size = new Vector2(550, 50);
+                collider.offset = new Vector2(250, -25);
+            }
+        }
+
+        public static class SettingsCreationHelper
+        {
+            public static CM_ScrollWindow CreateScrollWindow(string title)
+            {
+                CM_ScrollWindow scrollWindow = MMGuiLayer.AddRectComp(ScrollWindowPrefab, GuiAnchor.TopLeft, new Vector2(420f, -200f), MovingContentHolder).TryCastTo<CM_ScrollWindow>();
+
+                scrollWindow.Setup();
+                scrollWindow.SetSize(new Vector2(1020f, 900f));
+                scrollWindow.SetVisible(visible: false);
+                scrollWindow.SetHeader(title);
+
+                return scrollWindow;
             }
 
-            private static CM_ScrollWindow CreateScrollWindow()
+            public static void CreateSpacer(SubMenu subMenu = null)
             {
-                // TODO
-                return null;
+                CreateHeader(string.Empty, subMenu: subMenu);
             }
 
-            private static void CreateSpacer()
-            {
-                CreateHeader(string.Empty);
-            }
-
-            private static void CreateHeader(string title, Color? color = null, bool bold = true)
+            public static void CreateHeader(string title, Color? color = null, bool bold = true, SubMenu subMenu = null)
             {
                 if (!color.HasValue)
                     color = ORANGE;
 
-                var settingsItemGameObject = GameObject.Instantiate(_settingsItemPrefab, _mainScrollWindowTransform);
-
-                _scrollWindowContentElements.Add(settingsItemGameObject.GetComponentInChildren<iScrollWindowContent>());
-
-                var cm_settingsItem = settingsItemGameObject.GetComponentInChildren<CM_SettingsItem>();
-
-                var titleTextTMP = cm_settingsItem.transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
-
-                if(!string.IsNullOrWhiteSpace(title))
+                if (string.IsNullOrWhiteSpace(title))
                 {
-                    if(bold)
-                        titleTextTMP.SetText($"<b>{title}</b>");
-                    else
-                        titleTextTMP.SetText(title);
-
-                    titleTextTMP.color = color.Value;
-                    cm_settingsItem.ForcePopupLayer(true);
-
-                    JankTextMeshProUpdaterOnce.Apply(titleTextTMP);
+                    title = string.Empty;
                 }
                 else
                 {
-                    titleTextTMP.SetText(string.Empty);
+                    if (bold)
+                        title = $"<b>{title}</b>";
+                }
+
+                CreateSettingsItem(title, out var cm_settingsItem, color.Value, subMenu);
+                
+                if (!string.IsNullOrWhiteSpace(title))
+                {
+                    cm_settingsItem.ForcePopupLayer(true);
                 }
             }
 
-            private static void CreateSettingsItem(string titleText, out CM_SettingsItem cm_settingsItem, Color? titleColor = null)
+            public static void CreateSettingsItem(string titleText, out CM_SettingsItem cm_settingsItem, Color? titleColor = null, SubMenu subMenu = null)
             {
-                var settingsItemGameObject = GameObject.Instantiate(_settingsItemPrefab, _mainScrollWindowTransform);
+                var settingsItemGameObject = GameObject.Instantiate(SettingsItemPrefab, subMenu?.WindowTransform ?? MainScrollWindowTransform);
 
-                _scrollWindowContentElements.Add(settingsItemGameObject.GetComponentInChildren<iScrollWindowContent>());
+                if(subMenu != null)
+                {
+                    subMenu.AppendContent(settingsItemGameObject.GetComponentInChildren<iScrollWindowContent>());
+                }
+                else
+                {
+                    ScrollWindowContentElements.Add(settingsItemGameObject.GetComponentInChildren<iScrollWindowContent>());
+                }
 
                 cm_settingsItem = settingsItemGameObject.GetComponentInChildren<CM_SettingsItem>();
 
@@ -427,9 +665,11 @@ namespace TheArchive.Features.Dev
                 JankTextMeshProUpdaterOnce.Apply(titleTextTMP);
             }
 
-            private static void CreateColorSetting(ColorSetting setting)
+            public static void CreateColorSetting(ColorSetting setting)
             {
-                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem);
+                setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
+
+                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -458,7 +698,7 @@ namespace TheArchive.Features.Dev
                 var receiver = new CustomStringReceiver(new Func<string>(
                     () => {
                         FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}({nameof(ColorSetting)})] Gotten value of \"{setting.DEBUG_Path}\"!");
-                        SColor color = (SColor) setting.GetValue();
+                        SColor color = (SColor)setting.GetValue();
                         renderer.color = color.ToUnityColor();
                         return color.ToHexString();
                     }),
@@ -478,9 +718,11 @@ namespace TheArchive.Features.Dev
                 cm_settingsItem.ForcePopupLayer(true);
             }
 
-            private static void CreateStringSetting(StringSetting setting)
+            public static void CreateStringSetting(StringSetting setting)
             {
-                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem);
+                setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
+
+                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -501,7 +743,7 @@ namespace TheArchive.Features.Dev
                         FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}] Set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
                         setting.SetValue(val);
                     });
-                
+
 #if IL2CPP
                 cm_settingsInputField.m_stringReceiver = new iStringInputReceiver(receiver.Pointer);
 #else
@@ -511,7 +753,7 @@ namespace TheArchive.Features.Dev
                 cm_settingsItem.ForcePopupLayer(true);
             }
 
-            private static void StringInputSetMaxLength(CM_SettingsInputField sif, int maxLength)
+            public static void StringInputSetMaxLength(CM_SettingsInputField sif, int maxLength)
             {
 #if MONO
                 A_CM_SettingsInputField_m_maxLen.Set(sif, maxLength);
@@ -520,9 +762,11 @@ namespace TheArchive.Features.Dev
 #endif
             }
 
-            private static void CreateBoolSetting(BoolSetting setting)
+            public static void CreateBoolSetting(BoolSetting setting)
             {
-                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem);
+                setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
+
+                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -553,9 +797,11 @@ namespace TheArchive.Features.Dev
                 cm_settingsItem.ForcePopupLayer(true);
             }
 
-            private static void CreateEnumListSetting(EnumListSetting setting)
+            public static void CreateEnumListSetting(EnumListSetting setting)
             {
-                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem);
+                setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
+
+                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -586,22 +832,14 @@ namespace TheArchive.Features.Dev
                 UnityEngine.Object.Destroy(cm_settingsEnumDropdownButton);
 
 #if MONO
-                A_CM_SettingsEnumDropdownButton_m_popupWindow.Set(cm_settingsEnumDropdownButton, _popupWindow);
+                A_CM_SettingsEnumDropdownButton_m_popupWindow.Set(cm_settingsEnumDropdownButton, PopupWindow);
 #else
-                cm_settingsEnumDropdownButton.m_popupWindow = _popupWindow;
+                cm_settingsEnumDropdownButton.m_popupWindow = PopupWindow;
 #endif
 
             }
 
-            private static string GetNameForSetting(FeatureSetting setting)
-            {
-                if (setting.HideInModSettings)
-                    return $"<{DISABLED.ToSColor().ToHexString()}>[H] {setting.DisplayName}</color>";
-
-                return setting.DisplayName;
-            }
-
-            private static void CreateAndShowEnumListPopup(EnumListSetting setting, CM_Item enumButton_cm_item, CM_SettingsEnumDropdownButton cm_settingsEnumDropdownButton)
+            public static void CreateAndShowEnumListPopup(EnumListSetting setting, CM_Item enumButton_cm_item, CM_SettingsEnumDropdownButton cm_settingsEnumDropdownButton)
             {
 #if MONO
                 List<iScrollWindowContent> list = new List<iScrollWindowContent>();
@@ -638,7 +876,7 @@ namespace TheArchive.Features.Dev
                     }
                 }
 
-                foreach(var cm_Item in allCMItems)
+                foreach (var cm_Item in allCMItems)
                 {
                     cm_Item.SetCMItemEvents((_) =>
                     {
@@ -652,17 +890,17 @@ namespace TheArchive.Features.Dev
                 }
 
 #if MONO
-                _popupWindow.SetupFromButton(cm_settingsEnumDropdownButton as iCellMenuPopupController, _settingsPageInstance);
+                PopupWindow.SetupFromButton(cm_settingsEnumDropdownButton as iCellMenuPopupController, SettingsPageInstance);
 #else
-                _popupWindow.SetupFromButton(cm_settingsEnumDropdownButton.TryCast<iCellMenuPopupController>(), _settingsPageInstance);
+                PopupWindow.SetupFromButton(cm_settingsEnumDropdownButton.TryCast<iCellMenuPopupController>(), SettingsPageInstance);
 #endif
-                _popupWindow.transform.position = cm_settingsEnumDropdownButton.m_popupWindowAlign.position;
-                _popupWindow.SetContentItems(list, 5f);
-                _popupWindow.SetHeader(setting.DisplayName);
-                _popupWindow.SetVisible(true);
+                PopupWindow.transform.position = cm_settingsEnumDropdownButton.m_popupWindowAlign.position;
+                PopupWindow.SetContentItems(list, 5f);
+                PopupWindow.SetHeader(setting.DisplayName);
+                PopupWindow.SetVisible(true);
             }
 
-            private static string GetEnumListItemName(EnumListSetting setting)
+            public static string GetEnumListItemName(EnumListSetting setting)
             {
                 var str = string.Join(", ", setting.CurrentSelectedValues());
 
@@ -671,7 +909,7 @@ namespace TheArchive.Features.Dev
                     return "[None]";
                 }
 
-                if(str.Length > 36)
+                if (str.Length > 36)
                 {
                     return str.Substring(0, 36) + " ...";
                 }
@@ -679,9 +917,11 @@ namespace TheArchive.Features.Dev
                 return str;
             }
 
-            private static void CreateEnumSetting(EnumSetting setting)
+            public static void CreateEnumSetting(EnumSetting setting)
             {
-                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem);
+                setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
+
+                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -696,7 +936,7 @@ namespace TheArchive.Features.Dev
 
                 SharedUtils.ChangeColorCMItem(enumButton_cm_item, ORANGE);
                 var bg = enumButton_cm_item.gameObject.transform.GetChildWithExactName("Background");
-                if(bg != null)
+                if (bg != null)
                 {
                     UnityEngine.Object.Destroy(bg.gameObject);
                 }
@@ -712,14 +952,14 @@ namespace TheArchive.Features.Dev
                 UnityEngine.Object.Destroy(cm_settingsEnumDropdownButton);
 
 #if MONO
-                A_CM_SettingsEnumDropdownButton_m_popupWindow.Set(cm_settingsEnumDropdownButton, _popupWindow);
+                A_CM_SettingsEnumDropdownButton_m_popupWindow.Set(cm_settingsEnumDropdownButton, PopupWindow);
 #else
-                cm_settingsEnumDropdownButton.m_popupWindow = _popupWindow;
+                cm_settingsEnumDropdownButton.m_popupWindow = PopupWindow;
 #endif
 
             }
 
-            private static void CreateAndShowEnumPopup(EnumSetting setting, CM_Item enumButton_cm_item, CM_SettingsEnumDropdownButton cm_settingsEnumDropdownButton)
+            public static void CreateAndShowEnumPopup(EnumSetting setting, CM_Item enumButton_cm_item, CM_SettingsEnumDropdownButton cm_settingsEnumDropdownButton)
             {
 #if MONO
                 List<iScrollWindowContent> list = new List<iScrollWindowContent>();
@@ -758,136 +998,12 @@ namespace TheArchive.Features.Dev
                     }
                 }
 
-#if MONO
-                _popupWindow.SetupFromButton(cm_settingsEnumDropdownButton as iCellMenuPopupController, _settingsPageInstance);
-#else
-                _popupWindow.SetupFromButton(cm_settingsEnumDropdownButton.TryCast<iCellMenuPopupController>(), _settingsPageInstance);
-#endif
-                _popupWindow.transform.position = cm_settingsEnumDropdownButton.m_popupWindowAlign.position;
-                _popupWindow.SetContentItems(list, 5f);
-                _popupWindow.SetHeader(setting.DisplayName);
-                _popupWindow.SetVisible(true);
-            }
+                PopupWindow.SetupFromButton(cm_settingsEnumDropdownButton.CastTo<iCellMenuPopupController>(), SettingsPageInstance);
 
-            private static void SetupEntriesForFeature(Feature feature)
-            {
-                if (!Feature.DevMode && feature.IsHidden) return;
-
-                try
-                {
-                    string featureName;
-                    Color? col = null;
-                    if (feature.IsHidden)
-                    {
-                        featureName = $"[H] {feature.Name}";
-                        col = DISABLED;
-                    }
-                    else
-                    {
-                        featureName = feature.Name;
-                    }
-
-                    if (feature.RequiresRestart)
-                    {
-                        featureName = $"<color=red>[!]</color> {featureName}";
-                    }
-
-                    if(feature.PlaceSettingsInSubMenu)
-                    {
-#warning TODO: Implement Mod Settings sub menus.
-                        featureName = $"<u>{featureName}</u>";
-                    }
-
-                    CreateSettingsItem(featureName, out var cm_settingsItem, col);
-
-                    CM_SettingsToggleButton cm_SettingsToggleButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);
-
-                    var toggleButton_cm_item = cm_SettingsToggleButton.gameObject.AddComponent<CM_Item>();
-
-
-
-                    Component.Destroy(cm_SettingsToggleButton);
-
-                    var toggleButtonText = toggleButton_cm_item.GetComponentInChildren<TMPro.TextMeshPro>();
-
-                    if(feature.DisableModSettingsButton)
-                    {
-                        toggleButton_cm_item.gameObject.SetActive(false);
-                    }
-
-                    if (feature.IsAutomated || feature.DisableModSettingsButton)
-                    {
-                        toggleButton_cm_item.SetCMItemEvents(delegate (int id) { });
-                    }
-                    else
-                    {
-                        toggleButton_cm_item.SetCMItemEvents(delegate (int id) {
-                            FeatureManager.ToggleFeature(feature);
-
-                            SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
-                        });
-                    }
-                    
-
-                    SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
-
-                    CreateRundownInfoTextForItem(cm_settingsItem, feature.AppliesToRundowns);
-
-                    var collider = toggleButton_cm_item.GetComponent<BoxCollider2D>();
-                    collider.size = new Vector2(550, 50);
-                    collider.offset = new Vector2(250, -25);
-
-                    cm_settingsItem.ForcePopupLayer(true);
-
-                    if(feature.HasAdditionalSettings)
-                    {
-                        // Create SubMenu for additional settings
-                        foreach (var settingsHelper in feature.SettingsHelpers)
-                        {
-                            foreach (var setting in settingsHelper.Settings)
-                            {
-                                if (setting.HeaderAbove != null)
-                                    CreateHeader(setting.HeaderAbove.Title, setting.HeaderAbove.Color.ToUnityColor(), setting.HeaderAbove.Bold);
-                                else if (setting.SeparatorAbove)
-                                    CreateHeader("------------------------------", DISABLED, false);
-                                else if (setting.SpacerAbove)
-                                    CreateSpacer();
-
-                                if (setting.HideInModSettings && !Feature.DevMode)
-                                {
-                                    continue;
-                                }
-
-                                switch (setting)
-                                {
-                                    case EnumListSetting els:
-                                        CreateEnumListSetting(els);
-                                        break;
-                                    case ColorSetting cs:
-                                        CreateColorSetting(cs);
-                                        break;
-                                    case StringSetting ss:
-                                        CreateStringSetting(ss);
-                                        break;
-                                    case BoolSetting bs:
-                                        CreateBoolSetting(bs);
-                                        break;
-                                    case EnumSetting es:
-                                        CreateEnumSetting(es);
-                                        break;
-                                    default:
-                                        CreateHeader(setting.DEBUG_Path);
-                                        break;
-                                }
-                            }
-                        }
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    FeatureLogger.Exception(ex);
-                }
+                PopupWindow.transform.position = cm_settingsEnumDropdownButton.m_popupWindowAlign.position;
+                PopupWindow.SetContentItems(list, 5f);
+                PopupWindow.SetHeader(setting.DisplayName);
+                PopupWindow.SetVisible(true);
             }
 
             public static void CreateRundownInfoTextForItem(CM_SettingsItem cm_settingsItem, RundownFlags rundowns)
@@ -924,9 +1040,9 @@ namespace TheArchive.Features.Dev
                 rundownInfoTMP.color = ORANGE;
             }
 
-            private static void SetFeatureItemTextAndColor(Feature feature, CM_Item buttonItem, TMPro.TextMeshPro text)
+            public static void SetFeatureItemTextAndColor(Feature feature, CM_Item buttonItem, TMPro.TextMeshPro text)
             {
-                if(feature.IsAutomated)
+                if (feature.IsAutomated)
                 {
                     text.SetText("Automated");
                     SharedUtils.ChangeColorCMItem(buttonItem, DISABLED);
@@ -940,7 +1056,7 @@ namespace TheArchive.Features.Dev
                 JankTextMeshProUpdaterOnce.UpdateMesh(text);
             }
 
-            private static void SetFeatureItemColor(Feature feature, CM_Item item)
+            public static void SetFeatureItemColor(Feature feature, CM_Item item)
             {
                 if (!feature.AppliesToThisGameBuild)
                 {
@@ -959,6 +1075,26 @@ namespace TheArchive.Features.Dev
 
                 col = feature.Enabled ? GREEN : RED;
                 SharedUtils.ChangeColorCMItem(item, col);
+            }
+
+            public static void ShowPopupWindow(string header, Vector2 pos)
+            {
+                PopupWindow.SetHeader(header);
+                PopupWindow.transform.position = pos;
+                PopupWindow.SetVisible(true);
+            }
+
+            public static void SetPopupVisible(bool visible)
+            {
+                PopupWindow.SetVisible(visible);
+            }
+
+            public static string GetNameForSetting(FeatureSetting setting)
+            {
+                if (setting.HideInModSettings)
+                    return $"<{DISABLED.ToSColor().ToHexString()}>[H] {setting.DisplayName}</color>";
+
+                return setting.DisplayName;
             }
         }
     }

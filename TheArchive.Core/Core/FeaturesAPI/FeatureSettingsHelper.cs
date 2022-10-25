@@ -18,7 +18,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal string PropertyName => Property?.Name;
         internal Type SettingType { get; private set; }
         internal object Instance { get; set; }
-        internal Feature Feature { get; }
+        public Feature Feature { get; }
 
         private static readonly IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureSettingsHelper), ConsoleColor.DarkYellow);
 

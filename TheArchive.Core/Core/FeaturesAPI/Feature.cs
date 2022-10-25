@@ -168,6 +168,24 @@ namespace TheArchive.Core.FeaturesAPI
 
         }
 
+        /// <summary>
+        /// Store a value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="obj"></param>
+        /// <returns>true if the value has been stored successfully</returns>
+        public bool TryStore<T>(string key, T obj) => FeatureInternal.Store(key, obj);
+
+        /// <summary>
+        /// Retrieve a stored value via a key
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns>true if a value has been returned</returns>
+        public bool TryRetrieve<T>(string key, out T value) => FeatureInternal.Retrieve(key, out value);
+
         internal FeatureInternal FeatureInternal { get; set; }
         public static bool IsPlayingModded => ArchiveMod.IsPlayingModded;
         public static bool DevMode => ArchiveMod.Settings.FeatureDevMode;
