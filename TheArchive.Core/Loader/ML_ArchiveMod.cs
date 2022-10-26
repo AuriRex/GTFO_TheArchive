@@ -17,7 +17,7 @@ namespace TheArchive.Loader
             MelonEvents.OnApplicationStart.Subscribe(() =>
             {
                 ArchiveMod.OnApplicationStart(LoaderWrapper.WrapLogger(LoggerInstance), HarmonyInstance);
-            }, 1000);
+            }, -1);
         }
 
         public override void OnApplicationQuit()
