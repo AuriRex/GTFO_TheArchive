@@ -163,7 +163,7 @@ namespace TheArchive.Features
 
         private static int GetPlayerCount()
         {
-            if (FlagsContain(RundownFlags.RundownSix.To(RundownFlags.Latest), BuildInfo.Rundown))
+            if (BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownSix.ToLatest()))
                 return GetPlayerCountR6Plus();
 
             return SNet.Lobby?.Players?.Count ?? 1;

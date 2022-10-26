@@ -1,6 +1,7 @@
 ﻿using SNetwork;
 using System;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using static TheArchive.Utilities.PresenceFormatter;
 
@@ -11,11 +12,15 @@ namespace TheArchive.Features
     {
         public class SteamRPCSettings
         {
+            [FSDisplayName("Disable <color=orange>ALL</color> of Steam RPC")]
             public bool DisableSteamRPC { get; set; } = false;
+            [FSDisplayName("Custom Status Format")]
             public string CustomSteamRPCFormat { get; set; } = "%Rundown%%Expedition% \"%ExpeditionName%\"";
         }
 
-        public override string Name => "Steam Rich Presence Control";
+        public override string Name => "Steam Rich Presence Tweaks";
+
+        public override bool PlaceSettingsInSubMenu => true;
 
         [FeatureConfig]
         public static SteamRPCSettings Config { get; set; }

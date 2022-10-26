@@ -961,11 +961,7 @@ namespace TheArchive.Features.Dev
 
             public static void CreateAndShowEnumPopup(EnumSetting setting, CM_Item enumButton_cm_item, CM_SettingsEnumDropdownButton cm_settingsEnumDropdownButton)
             {
-#if MONO
-                List<iScrollWindowContent> list = new List<iScrollWindowContent>();
-#else
-                Il2CppSystem.Collections.Generic.List<iScrollWindowContent> list = new Il2CppSystem.Collections.Generic.List<iScrollWindowContent>();
-#endif
+                var list = SharedUtils.NewListForGame<iScrollWindowContent>();
 
                 var currentKey = setting.GetCurrentEnumKey();
 

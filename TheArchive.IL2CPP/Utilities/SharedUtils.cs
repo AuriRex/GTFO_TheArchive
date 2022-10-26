@@ -50,9 +50,18 @@ namespace TheArchive.Utilities
             }
             return il2List;
         }
+
+        public static Il2CppSystem.Collections.Generic.List<T> NewListForGame<T>()
+        {
+            return new Il2CppSystem.Collections.Generic.List<T>();
+        }
 #else
         public static List<T> ToSystemList<T>(this List<T> list) => list;
         public static List<T> ToIL2CPPListIfNecessary<T>(this List<T> list) => list;
+        public static List<T> NewListForGame<T>()
+        {
+            return new List<T>();
+        }
 #endif
 
         public static void ChangeColorTimedExpeditionButton(CM_TimedButton button, Color col) => ChangeColorOnAllChildren(button.transform, col, new string[] { "ProgressFill" });
