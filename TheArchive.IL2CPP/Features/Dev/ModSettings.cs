@@ -69,6 +69,11 @@ namespace TheArchive.Features.Dev
             public static void UpdateMesh(TMPro.TextMeshPro textMesh)
             {
                 if (!BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownFour | RundownFlags.RundownFive)) return;
+                ForceUpdateMesh(textMesh);
+            }
+
+            public static void ForceUpdateMesh(TMPro.TextMeshPro textMesh)
+            {
                 if (textMesh == null) return;
 
                 A_TextMeshPro_ForceMeshUpdate.Invoke(textMesh);
@@ -219,6 +224,27 @@ namespace TheArchive.Features.Dev
             public static MainMenuGuiLayer MMGuiLayer { get; internal set; }
             public static GameObject ScrollWindowPrefab { get; internal set; }
             public static RectTransform MovingContentHolder { get; internal set; }
+        }
+
+        public static class UIHelper
+        {
+            internal static void Setup()
+            {
+                var settingsItemGameObject = GameObject.Instantiate(ModSettings.PageSettingsData.SettingsItemPrefab);
+
+                var settingsItem = settingsItemGameObject.GetComponentInChildren<CM_SettingsItem>();
+
+                var enumDropdown = GOUtil.SpawnChildAndGetComp<CM_SettingsEnumDropdownButton>(settingsItem.m_enumDropdownInputPrefab, settingsItemGameObject.transform);
+
+                PopupItemPrefab = GameObject.Instantiate(enumDropdown.m_popupItemPrefab);
+                GameObject.DontDestroyOnLoad(PopupItemPrefab);
+                PopupItemPrefab.hideFlags = HideFlags.HideAndDontSave;
+                PopupItemPrefab.transform.position = new Vector3(-3000, -3000, 0);
+
+                GameObject.Destroy(settingsItemGameObject);
+            }
+
+            public static GameObject PopupItemPrefab { get; private set; } //iScrollWindowContent
         }
 
         public static void ShowMainModSettingsWindow(int _)
@@ -402,6 +428,15 @@ namespace TheArchive.Features.Dev
                     MainModSettingsScrollWindow.SetContentItems(PageSettingsData.ScrollWindowContentElements.ToIL2CPPListIfNecessary(), 5);
                 }
                 catch (Exception ex)
+                {
+                    FeatureLogger.Exception(ex);
+                }
+
+                try
+                {
+                    UIHelper.Setup();
+                }
+                catch(Exception ex)
                 {
                     FeatureLogger.Exception(ex);
                 }
@@ -841,11 +876,8 @@ namespace TheArchive.Features.Dev
 
             public static void CreateAndShowEnumListPopup(EnumListSetting setting, CM_Item enumButton_cm_item, CM_SettingsEnumDropdownButton cm_settingsEnumDropdownButton)
             {
-#if MONO
-                List<iScrollWindowContent> list = new List<iScrollWindowContent>();
-#else
-                Il2CppSystem.Collections.Generic.List<iScrollWindowContent> list = new Il2CppSystem.Collections.Generic.List<iScrollWindowContent>();
-#endif
+                var list = SharedUtils.NewListForGame<iScrollWindowContent>();
+
                 var currentValues = setting.CurrentSelectedValues();
 
                 var allCMItems = new List<CM_Item>();
@@ -889,11 +921,8 @@ namespace TheArchive.Features.Dev
                     });
                 }
 
-#if MONO
-                PopupWindow.SetupFromButton(cm_settingsEnumDropdownButton as iCellMenuPopupController, SettingsPageInstance);
-#else
-                PopupWindow.SetupFromButton(cm_settingsEnumDropdownButton.TryCast<iCellMenuPopupController>(), SettingsPageInstance);
-#endif
+                PopupWindow.SetupFromButton(cm_settingsEnumDropdownButton.TryCastTo<iCellMenuPopupController>(), SettingsPageInstance);
+
                 PopupWindow.transform.position = cm_settingsEnumDropdownButton.m_popupWindowAlign.position;
                 PopupWindow.SetContentItems(list, 5f);
                 PopupWindow.SetHeader(setting.DisplayName);

@@ -145,6 +145,15 @@ namespace TheArchive.Utilities
             return default;
         }
 
+        public static bool TryGetEnumFromName<T>(string name, out T value) where T : struct
+        {
+            if (Enum.TryParse<T>(name, out value))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public static object StartCoroutine(System.Collections.IEnumerator routine) => LoaderWrapper.StartCoroutine(routine);
 
         public static void StopCoroutine(object coroutineToken) => LoaderWrapper.StopCoroutine(coroutineToken);

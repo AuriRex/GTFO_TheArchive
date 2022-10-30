@@ -202,6 +202,15 @@ namespace TheArchive.Utilities
             return item;
         }
 
+        public static void SetHoldDuration(this CM_TimedButton button, float duration)
+        {
+#if IL2CPP
+            button.m_holdButtonDuration = duration;
+#else
+            FieldAccessor<CM_TimedButton, float>.GetAccessor("m_holdButtonDuration").Set(button, duration);
+#endif
+        }
+
         /// <summary>
         /// Creates the same <see cref="Color"/> but with a different alpha value
         /// </summary>
@@ -440,5 +449,5 @@ namespace TheArchive.Utilities
             return value as T;
         }
 #endif
-        }
+    }
 }
