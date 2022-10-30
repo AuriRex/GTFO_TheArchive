@@ -188,9 +188,6 @@
 		<Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\PlayFabManagerPatches.cs">
 			<Link>Features\LocalProgression\PlayFabManagerPatches.cs</Link>
 		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\PlayerInfo.cs">
-			<Link>Features\PlayerInfo.cs</Link>
-		</Compile>
 		<Compile Include="..\TheArchive.IL2CPP\Features\QoL\LoadoutRandomizer.cs">
 			<Link>Features\QoL\LoadoutRandomizer.cs</Link>
 		</Compile>
@@ -251,6 +248,9 @@
 		<Compile Include="..\TheArchive.IL2CPP\Utilities\SoundEventCache.cs">
 			<Link>Utilities\SoundEventCache.cs</Link>
 		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Include="..\TheArchive.IL2CPP\Features\PlayerLobbyManagement.cs" Link="Features\PlayerLobbyManagement.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
