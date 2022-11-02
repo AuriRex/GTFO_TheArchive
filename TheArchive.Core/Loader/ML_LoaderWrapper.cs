@@ -46,7 +46,7 @@ namespace TheArchive.Loader
 
         public static bool IsModInstalled(string modName)
         {
-            return MelonHandler.Mods.Any(m => m.Info.Name == modName);
+            return MelonMod.RegisteredMelons.Any(m => m.Info.Name == modName);
         }
 
         public static class ClassInjector

@@ -12,6 +12,7 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core
 {
+#pragma warning disable CS0618 // Type or member is obsolete
     public class ArchiveLegacyNativePatcher
     {
         private RundownID _currentRundown;
@@ -32,7 +33,7 @@ namespace TheArchive.Core
             if(_patchTypes == null)
                 _patchTypes = GetAllTypesWithPatchAttribute(typeof(ArchiveLegacyNativePatch) ,assembly);
 
-            foreach(var patchContainingType in _patchTypes)
+            foreach (var patchContainingType in _patchTypes)
             {
                 ArchiveLegacyNativePatch nativePatchInfo;
                 try
@@ -264,6 +265,6 @@ namespace TheArchive.Core
             public delegate void void_Param_2(IntPtr s, IntPtr a, IntPtr b, IntPtr n);
             public delegate void void_Param_3(IntPtr s, IntPtr a, IntPtr b, IntPtr c, IntPtr n);
         }
-
     }
+#pragma warning restore CS0618 // Type or member is obsolete
 }
