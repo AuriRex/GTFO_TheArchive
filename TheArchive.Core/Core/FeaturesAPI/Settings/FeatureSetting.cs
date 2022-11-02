@@ -12,6 +12,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public RundownFlags RundownHint { get; }
         public string DisplayName { get; }
         public string Identifier { get; }
+        public bool Readonly { get; }
         public Type Type { get; }
         public string DEBUG_Path { get; }
 
@@ -20,7 +21,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public FSHeader HeaderAbove { get; private set; }
         public bool HideInModSettings { get; private set; }
 
-        private readonly object _instance;
+        public object WrappedInstance { get; set; }
 
         public FeatureSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "")
         {
@@ -36,20 +37,21 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             HeaderAbove = prop?.GetCustomAttribute<FSHeader>();
 
             HideInModSettings = prop?.GetCustomAttribute<FSHide>() != null;
+            Readonly = prop?.GetCustomAttribute<FSReadOnly>() != null;
 
-            _instance = instance;
+            WrappedInstance = instance;
             DEBUG_Path = debug_path;
         }
 
         public virtual void SetValue(object value)
         {
-            Prop.SetValue(_instance, value);
+            Prop.SetValue(WrappedInstance, value);
             FeatureManager.Instance.OnFeatureSettingChanged(this);
         }
 
         public virtual object GetValue()
         {
-            return Prop.GetValue(_instance, Array.Empty<object>());
+            return Prop.GetValue(WrappedInstance, Array.Empty<object>());
         }
     }
 }

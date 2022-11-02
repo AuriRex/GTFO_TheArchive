@@ -32,7 +32,9 @@ namespace TheArchive.Core.FeaturesAPI
             DisplayName = settingsProperty.GetCustomAttribute<FSDisplayName>()?.DisplayName;
         }
 
-        private void PopulateThing(Type typeToCheck, object instance, string path = "")
+        protected FeatureSettingsHelper() { }
+
+        protected void PopulateSettings(Type typeToCheck, object instance, string path = "")
         {
             if (typeToCheck.IsValueType) return;
 
@@ -53,7 +55,7 @@ namespace TheArchive.Core.FeaturesAPI
 
                 if (!type.IsValueType && !typeof(IList).IsAssignableFrom(type) && type != typeof(string) && type.GenericTypeArguments.Length <= 1)
                 {
-                    PopulateThing(type, prop.GetValue(instance), propPath);
+                    PopulateSettings(type, prop.GetValue(instance), propPath);
                     continue;
                 }
                 // Add to dict?
@@ -69,10 +71,23 @@ namespace TheArchive.Core.FeaturesAPI
                     case nameof(String):
                         setting = new StringSetting(this, prop, instance, propPath);
                         break;
+                    case nameof(UInt64):
+                    case nameof(UInt32):
+                    case nameof(UInt16):
+                    case nameof(Int64):
+                    case nameof(Int32):
+                    case nameof(Int16):
+                        setting = new NumberSetting(this, prop, instance, propPath);
+                        break;
                     default:
                         if(typeof(IList).IsAssignableFrom(type) && type.GenericTypeArguments.Length == 1 && type.GenericTypeArguments[0].IsEnum)
                         {
                             setting = new EnumListSetting(this, prop, instance, propPath);
+                            break;
+                        }
+                        if (typeof(IList).IsAssignableFrom(type) && type.GenericTypeArguments.Length == 1)
+                        {
+                            setting = new GenericListSetting(this, prop, instance, propPath);
                             break;
                         }
                         if (type.IsEnum)
@@ -90,17 +105,52 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        internal void SetupViaInstance(object configInstance)
+        internal virtual void SetupViaInstance(object configInstance)
         {
             Instance = configInstance;
             Property.SetValue(Feature, configInstance);
             Settings.Clear();
-            PopulateThing(SettingType, Instance, string.Empty);
+            PopulateSettings(SettingType, Instance, string.Empty);
         }
 
-        public object GetInstance()
+        public virtual object GetInstance()
         {
             return Instance ?? Property.GetValue(Feature);
+        }
+    }
+
+    public class FeaturelessFeatureSettingsHelper : FeatureSettingsHelper
+    {
+        public FeaturelessFeatureSettingsHelper() { }
+
+        /// <summary>
+        /// Initialize the <see cref="FeatureSettingsHelper.Settings"/> list and returns itself.
+        /// </summary>
+        /// <param name="typeToCheck"></param>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        public FeaturelessFeatureSettingsHelper Initialize(Type typeToCheck, object instance)
+        {
+            PopulateSettings(typeToCheck, instance, string.Empty);
+            return this;
+        }
+
+        public void SetInstanceForAllSettings(object instance)
+        {
+            foreach(var setting in Settings)
+            {
+                setting.WrappedInstance = instance;
+            }
+        }
+
+        internal override void SetupViaInstance(object objectInstance)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object GetInstance()
+        {
+            throw new NotImplementedException();
         }
     }
 }

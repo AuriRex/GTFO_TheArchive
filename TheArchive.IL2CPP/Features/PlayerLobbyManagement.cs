@@ -3,6 +3,7 @@ using SNetwork;
 using System;
 using System.Collections.Generic;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Features.Dev;
 using TheArchive.Interfaces;
@@ -17,6 +18,25 @@ namespace TheArchive.Features
         public override string Name => "Player Lobby Management";
 
         public new static IArchiveLogger FeatureLogger { get; set; }
+
+        [FeatureConfig]
+        public static LobbyManagementSettings Settings { get; set; }
+
+        public class LobbyManagementSettings
+        {
+            [FSDisplayName("Banned Players")]
+            public List<BanListEntry> BanList { get; set; } = new List<BanListEntry>();
+
+            public class BanListEntry
+            {
+                [FSReadOnly]
+                public string Name { get; set; }
+                [FSReadOnly]
+                public ulong SteamID { get; set; }
+                [FSReadOnly]
+                public ulong Timestamp { get; set; }
+            }
+        }
 
 #if MONO
         private static MethodAccessor<SNet_SyncManager> A_SNet_SyncManager_EjectPlayer;

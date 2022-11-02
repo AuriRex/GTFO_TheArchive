@@ -163,52 +163,145 @@ namespace TheArchive.Features.Dev
             CM_PageSettings_SetupPatch.SetRestartInfoText(FeatureManager.Instance.AnyFeatureRequestingRestart);
         }
 
-        public static SubMenu CreateSubMenu(string title)
+        public class DynamicSubMenu : SubMenu
         {
-            var subMenu = new SubMenu(title);
+            private readonly Action<DynamicSubMenu> _buildMenuAction;
 
-            return subMenu;
+            public DynamicSubMenu(string title, Action<DynamicSubMenu> buildMenuAction) : base(title)
+            {
+                _buildMenuAction = buildMenuAction;
+            }
+
+            public override bool Build()
+            {
+                ClearItems();
+                _buildMenuAction?.Invoke(this);
+                base.Build();
+                HasBeenBuilt = false;
+                return true;
+            }
+
+            public override void Show()
+            {
+                Build();
+                base.Show();
+            }
+
+            public void ClearItems()
+            {
+                foreach(var item in persistentContent)
+                {
+                    // Setting new content destroys our old items so we unparent to have that not happen.
+                    // This works because the game code is iterating through the children of the gameobject that all items are parented to.
+                    item.GameObject.transform.SetParent(WindowTransform);
+                }
+                
+                foreach (var item in content)
+                {
+                    GameObject.Destroy(item.GameObject);
+                }
+                content.Clear();
+            }
         }
 
         public class SubMenu
         {
+            internal static Stack<SubMenu> openMenus = new Stack<SubMenu>();
+
             public SubMenu(string title)
             {
                 Title = title;
                 ScrollWindow = SettingsCreationHelper.CreateScrollWindow(title);
-            }
 
-            public string Title { get; private set; }
-            public bool HasBeenBuilt { get; private set; }
-            public Transform WindowTransform => ScrollWindow.transform;
-            public CM_ScrollWindow ScrollWindow { get; private set; }
-            private readonly List<iScrollWindowContent> _content = new List<iScrollWindowContent>();
-
-            public bool AppendContent(iScrollWindowContent item)
-            {
-                if (HasBeenBuilt)
-                    return false;
-                _content.Add(item);
-                return true;
-            }
-
-            public bool Build()
-            {
-                if (HasBeenBuilt)
-                    return false;
-                ScrollWindow.SetContentItems(_content.ToIL2CPPListIfNecessary());
 #if IL2CPP
                 SettingsPageInstance.m_allSettingsWindows.Add(ScrollWindow);
 #else
                 A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Add(ScrollWindow);
 #endif
+            }
+
+            public string Title { get; private set; }
+            public bool HasBeenBuilt { get; protected set; }
+            public float Padding { get; set; } = 5;
+            public bool AddContentAsPersistent { get; set; } = false;
+            public Transform WindowTransform => ScrollWindow.transform;
+            public CM_ScrollWindow ScrollWindow { get; private set; }
+
+            protected readonly List<SubMenuEntry> persistentContent = new List<SubMenuEntry>();
+            protected readonly List<SubMenuEntry> content = new List<SubMenuEntry>();
+
+            public bool AppendContent(GameObject go)
+            {
+                return AppendContent(new SubMenuEntry(go));
+            }
+
+            public virtual bool AppendContent(SubMenuEntry item)
+            {
+                if (HasBeenBuilt)
+                    return false;
+
+                if(AddContentAsPersistent)
+                    persistentContent.Add(item);
+                else
+                    content.Add(item);
+
+                return true;
+            }
+
+            public virtual bool Build()
+            {
+                if (HasBeenBuilt)
+                    return false;
+
+                var list = new List<iScrollWindowContent>();
+
+                if(persistentContent.Count > 0)
+                    list.AddRange(persistentContent.Select(sme => sme.IScrollWindowContent));
+                if(content.Count > 0)
+                    list.AddRange(content.Select(sme => sme.IScrollWindowContent));
+
+                ScrollWindow.SetContentItems(list.ToIL2CPPListIfNecessary(), Padding);
+
                 HasBeenBuilt = true;
                 return true;
             }
 
-            public void Show()
+            public virtual void Show()
             {
+                FeatureLogger.Debug($"Opening SubMenu \"{Title}\" ...");
                 ShowScrollWindow(ScrollWindow);
+                openMenus.Push(this);
+            }
+
+            public void Close()
+            {
+                if(openMenus.Count > 0)
+                {
+                    openMenus.Pop();
+                }
+
+                if (openMenus.Count > 0)
+                {
+                    openMenus.Pop().Show();
+                }
+                else
+                {
+                    ShowMainModSettingsWindow(0);
+                }
+            }
+
+            public class SubMenuEntry
+            {
+                public GameObject GameObject { get; private set; }
+                public iScrollWindowContent IScrollWindowContent { get; private set; }
+
+                public SubMenuEntry(GameObject go)
+                {
+                    GameObject = go;
+                    IScrollWindowContent = go.GetComponentInChildren<iScrollWindowContent>();
+
+                    if (IScrollWindowContent == null) throw new ArgumentException(nameof(go));
+                }
             }
         }
 
@@ -254,6 +347,11 @@ namespace TheArchive.Features.Dev
 
         public static void ShowScrollWindow(CM_ScrollWindow window)
         {
+            if(window == MainModSettingsScrollWindow)
+            {
+                SubMenu.openMenus.Clear();
+            }
+
             CM_PageSettings.ToggleAudioTestLoop(false);
             SettingsPageInstance.ResetAllInputFields();
 #if IL2CPP
@@ -468,58 +566,29 @@ namespace TheArchive.Features.Dev
                     SubMenu subMenu = null;
                     if(feature.PlaceSettingsInSubMenu)
                     {
-                        subMenu = CreateSubMenu(featureName);
+                        subMenu = new SubMenu(featureName);
                         feature.TryStore("SubMenu", subMenu);
                         featureName = $"<u>{featureName}</u>";
                     }
 
                     CreateSettingsItem(featureName, out var cm_settingsItem, col);
-
-                    CM_SettingsItem sub_cm_settingsItem = null;
-                    CM_SettingsItem into_sub_cm_settingsItem = null;
-                    CM_SettingsItem outof_sub_cm_settingsItem = null;
-                    if (subMenu != null)
-                    {
-                        CreateSettingsItem("<<< Back <<<", out outof_sub_cm_settingsItem, RED, subMenu);
-                        CreateSpacer(subMenu);
-                        CreateSettingsItem(featureName, out sub_cm_settingsItem, ORANGE, subMenu);
-
-                        CreateSettingsItem("> Settings", out into_sub_cm_settingsItem, col);
-                    }
-
                     
                     SetupToggleButton(cm_settingsItem, out CM_Item toggleButton_cm_item, out var toggleButtonText);
+
+
+                    CM_SettingsItem sub_cm_settingsItem = null;
+                    if (subMenu != null)
+                    {
+                        CreateSubMenuControls(subMenu, col);
+
+                        CreateSettingsItem(featureName, out sub_cm_settingsItem, ORANGE, subMenu);
+                    }
 
                     CM_Item sub_toggleButton_cm_item = null;
                     TMPro.TextMeshPro sub_toggleButtonText = null;
                     if (subMenu != null)
                     {
                         SetupToggleButton(sub_cm_settingsItem, out sub_toggleButton_cm_item, out sub_toggleButtonText);
-
-                        #region back-button
-                        var outButtonItem = outof_sub_cm_settingsItem.gameObject.AddComponent<CM_Item>();
-
-                        outof_sub_cm_settingsItem.ForcePopupLayer(true);
-                        GameObject.Destroy(outof_sub_cm_settingsItem);
-
-                        outButtonItem.SetCMItemEvents((_) => {
-                            ShowMainModSettingsWindow(_);
-                        });
-                        #endregion back-button
-
-                        SetupToggleButton(into_sub_cm_settingsItem, out var into_sub_toggleButton_cm_item, out var into_sub_toggleButtonText);
-
-                        SharedUtils.ChangeColorCMItem(into_sub_toggleButton_cm_item, ORANGE);
-
-                        into_sub_toggleButton_cm_item.SetCMItemEvents(delegate (int id) {
-                            FeatureLogger.Debug($"Submenu opened: \"{subMenu.Title}\"");
-                            subMenu.Show();
-                        });
-
-                        into_sub_cm_settingsItem.ForcePopupLayer(true);
-
-                        into_sub_toggleButtonText.SetText("> ENTER <");
-                        JankTextMeshProUpdaterOnce.Apply(into_sub_toggleButtonText);
                     }
 
                     if (feature.DisableModSettingsButton)
@@ -547,7 +616,6 @@ namespace TheArchive.Features.Dev
                         toggleButton_cm_item.SetCMItemEvents(del);
                         sub_toggleButton_cm_item?.SetCMItemEvents(del);
                     }
-                    
 
                     SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
                     if(sub_toggleButton_cm_item != null)
@@ -562,45 +630,9 @@ namespace TheArchive.Features.Dev
 
                     if (feature.HasAdditionalSettings)
                     {
-                        // Create SubMenu for additional settings
                         foreach (var settingsHelper in feature.SettingsHelpers)
                         {
-                            foreach (var setting in settingsHelper.Settings)
-                            {
-                                if (setting.HeaderAbove != null)
-                                    CreateHeader(setting.HeaderAbove.Title, setting.HeaderAbove.Color.ToUnityColor(), setting.HeaderAbove.Bold, subMenu);
-                                else if (setting.SeparatorAbove)
-                                    CreateHeader("------------------------------", DISABLED, false, subMenu);
-                                else if (setting.SpacerAbove)
-                                    CreateSpacer(subMenu: subMenu);
-
-                                if (setting.HideInModSettings && !Feature.DevMode)
-                                {
-                                    continue;
-                                }
-
-                                switch (setting)
-                                {
-                                    case EnumListSetting els:
-                                        CreateEnumListSetting(els);
-                                        break;
-                                    case ColorSetting cs:
-                                        CreateColorSetting(cs);
-                                        break;
-                                    case StringSetting ss:
-                                        CreateStringSetting(ss);
-                                        break;
-                                    case BoolSetting bs:
-                                        CreateBoolSetting(bs);
-                                        break;
-                                    case EnumSetting es:
-                                        CreateEnumSetting(es);
-                                        break;
-                                    default:
-                                        CreateHeader(setting.DEBUG_Path, subMenu: subMenu);
-                                        break;
-                                }
-                            }
+                            SetupItemsForSettingsHelper(settingsHelper, subMenu);
                         }
                     }
 
@@ -611,30 +643,61 @@ namespace TheArchive.Features.Dev
                     FeatureLogger.Exception(ex);
                 }
             }
-
-            private static void SetupToggleButton(CM_SettingsItem cm_settingsItem, out CM_Item toggleButton_cm_item, out TMPro.TextMeshPro toggleButtonText)
-            {
-                CM_SettingsToggleButton cm_SettingsToggleButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);
-
-                toggleButton_cm_item = cm_SettingsToggleButton.gameObject.AddComponent<CM_Item>();
-
-                Component.Destroy(cm_SettingsToggleButton);
-
-                toggleButtonText = toggleButton_cm_item.GetComponentInChildren<TMPro.TextMeshPro>();
-
-                var collider = toggleButton_cm_item.GetComponent<BoxCollider2D>();
-                collider.size = new Vector2(550, 50);
-                collider.offset = new Vector2(250, -25);
-            }
         }
 
         public static class SettingsCreationHelper
         {
+            public static void SetupItemsForSettingsHelper(FeatureSettingsHelper settingsHelper, SubMenu placeIntoMenu = null)
+            {
+                foreach (var setting in settingsHelper.Settings)
+                {
+                    if (setting.HeaderAbove != null)
+                        CreateHeader(setting.HeaderAbove.Title, setting.HeaderAbove.Color.ToUnityColor(), setting.HeaderAbove.Bold, placeIntoMenu);
+                    else if (setting.SeparatorAbove)
+                        CreateSeparator(subMenu: placeIntoMenu);
+                    else if (setting.SpacerAbove)
+                        CreateSpacer(subMenu: placeIntoMenu);
+
+                    if (setting.HideInModSettings && !Feature.DevMode)
+                    {
+                        continue;
+                    }
+
+                    switch (setting)
+                    {
+                        case EnumListSetting els:
+                            CreateEnumListSetting(els, placeIntoMenu);
+                            break;
+                        case ColorSetting cs:
+                            CreateColorSetting(cs, placeIntoMenu);
+                            break;
+                        case StringSetting ss:
+                            CreateStringSetting(ss, placeIntoMenu);
+                            break;
+                        case BoolSetting bs:
+                            CreateBoolSetting(bs, placeIntoMenu);
+                            break;
+                        case EnumSetting es:
+                            CreateEnumSetting(es, placeIntoMenu);
+                            break;
+                        case GenericListSetting gls:
+                            CreateGenericListSetting(gls, placeIntoMenu);
+                            break;
+                        case NumberSetting ns:
+                            CreateNumberSetting(ns, placeIntoMenu);
+                            break;
+                        default:
+                            CreateHeader(setting.DEBUG_Path, subMenu: placeIntoMenu);
+                            break;
+                    }
+                }
+            }
+
             public static CM_ScrollWindow CreateScrollWindow(string title)
             {
                 CM_ScrollWindow scrollWindow = MMGuiLayer.AddRectComp(ScrollWindowPrefab, GuiAnchor.TopLeft, new Vector2(420f, -200f), MovingContentHolder).TryCastTo<CM_ScrollWindow>();
 
-                scrollWindow.Setup();
+                scrollWindow.SetupCMItem();
                 scrollWindow.SetSize(new Vector2(1020f, 900f));
                 scrollWindow.SetVisible(visible: false);
                 scrollWindow.SetHeader(title);
@@ -645,6 +708,13 @@ namespace TheArchive.Features.Dev
             public static void CreateSpacer(SubMenu subMenu = null)
             {
                 CreateHeader(string.Empty, subMenu: subMenu);
+            }
+
+            public static void CreateSeparator(Color? col = null, SubMenu subMenu = null)
+            {
+                if (!col.HasValue)
+                    col = DISABLED;
+                CreateHeader("------------------------------", col, false, subMenu);
             }
 
             public static void CreateHeader(string title, Color? color = null, bool bold = true, SubMenu subMenu = null)
@@ -676,7 +746,7 @@ namespace TheArchive.Features.Dev
 
                 if(subMenu != null)
                 {
-                    subMenu.AppendContent(settingsItemGameObject.GetComponentInChildren<iScrollWindowContent>());
+                    subMenu.AppendContent(settingsItemGameObject);
                 }
                 else
                 {
@@ -700,9 +770,62 @@ namespace TheArchive.Features.Dev
                 JankTextMeshProUpdaterOnce.Apply(titleTextTMP);
             }
 
-            public static void CreateColorSetting(ColorSetting setting)
+            public static void SetupToggleButton(CM_SettingsItem cm_settingsItem, out CM_Item toggleButton_cm_item, out TMPro.TextMeshPro toggleButtonText)
             {
-                setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
+                CM_SettingsToggleButton cm_SettingsToggleButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);
+
+                toggleButton_cm_item = cm_SettingsToggleButton.gameObject.AddComponent<CM_Item>();
+
+                Component.Destroy(cm_SettingsToggleButton);
+
+                toggleButtonText = toggleButton_cm_item.GetComponentInChildren<TMPro.TextMeshPro>();
+
+                var collider = toggleButton_cm_item.GetComponent<BoxCollider2D>();
+                collider.size = new Vector2(550, 50);
+                collider.offset = new Vector2(250, -25);
+            }
+
+            public static void CreateSubMenuControls(SubMenu subMenu, Color? entryItemColor = null, string menuEntryLabelText = "> Settings", SubMenu placeIntoMenu = null, string headerText = null)
+            {
+                if (subMenu == null) return;
+
+                subMenu.AddContentAsPersistent = true;
+                CreateSettingsItem("<<< Back <<<", out var outof_sub_cm_settingsItem, RED, subMenu);
+                CreateSpacer(subMenu);
+                
+                if (!string.IsNullOrWhiteSpace(headerText))
+                {
+                    CreateHeader(headerText, subMenu: subMenu);
+                }
+
+                CreateSettingsItem(menuEntryLabelText, out var into_sub_cm_settingsItem, entryItemColor, placeIntoMenu);
+
+#region back-button
+                outof_sub_cm_settingsItem.ForcePopupLayer(true);
+
+                outof_sub_cm_settingsItem.SetCMItemEvents((_) => subMenu.Close());
+#endregion back-button
+
+                SetupToggleButton(into_sub_cm_settingsItem, out var into_sub_toggleButton_cm_item, out var into_sub_toggleButtonText);
+
+                SharedUtils.ChangeColorCMItem(into_sub_toggleButton_cm_item, ORANGE);
+
+                into_sub_toggleButton_cm_item.SetCMItemEvents(delegate (int id) {
+                    FeatureLogger.Debug($"Submenu opened: \"{subMenu.Title}\"");
+                    subMenu.Show();
+                });
+
+                into_sub_cm_settingsItem.ForcePopupLayer(true);
+
+                into_sub_toggleButtonText.SetText("> ENTER <");
+                JankTextMeshProUpdaterOnce.Apply(into_sub_toggleButtonText);
+
+                subMenu.AddContentAsPersistent = false;
+            }
+
+            public static void CreateColorSetting(ColorSetting setting, SubMenu subMenu = null)
+            {
+                //setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
 
                 CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
@@ -715,6 +838,11 @@ namespace TheArchive.Features.Dev
                 var bg_rt = cm_settingsInputField.m_background.GetComponent<RectTransform>();
                 bg_rt.anchoredPosition = new Vector2(-175, 0);
                 bg_rt.localScale = new Vector3(0.19f, 1, 1);
+
+                if(setting.Readonly)
+                {
+                    cm_settingsInputField.GetComponent<BoxCollider2D>().enabled = false;
+                }
 
                 var colorPreviewGO = GameObject.Instantiate(cm_settingsInputField.m_background.gameObject, cm_settingsInputField.transform, true);
                 colorPreviewGO.transform.SetParent(cm_settingsItem.m_inputAlign);
@@ -753,10 +881,8 @@ namespace TheArchive.Features.Dev
                 cm_settingsItem.ForcePopupLayer(true);
             }
 
-            public static void CreateStringSetting(StringSetting setting)
+            public static void CreateStringSetting(StringSetting setting, SubMenu subMenu = null)
             {
-                setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
-
                 CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
@@ -766,6 +892,12 @@ namespace TheArchive.Features.Dev
                 StringInputSetMaxLength(cm_settingsInputField, setting.MaxInputLength);
 
                 cm_settingsInputField.m_text.SetText(setting.GetValue()?.ToString() ?? string.Empty);
+
+                if(setting.Readonly)
+                {
+                    cm_settingsInputField.GetComponent<BoxCollider2D>().enabled = false;
+                    cm_settingsInputField.m_background.gameObject.SetActive(false);
+                }
 
                 JankTextMeshProUpdaterOnce.Apply(cm_settingsInputField.m_text);
 
@@ -797,10 +929,8 @@ namespace TheArchive.Features.Dev
 #endif
             }
 
-            public static void CreateBoolSetting(BoolSetting setting)
+            public static void CreateBoolSetting(BoolSetting setting, SubMenu subMenu = null)
             {
-                setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
-
                 CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
@@ -809,7 +939,10 @@ namespace TheArchive.Features.Dev
 
                 var toggleButton_cm_item = cm_SettingsToggleButton.gameObject.AddComponent<CM_Item>();
 
-
+                if (setting.Readonly)
+                {
+                    toggleButton_cm_item.GetComponent<BoxCollider2D>().enabled = false;
+                }
 
                 Component.Destroy(cm_SettingsToggleButton);
 
@@ -832,10 +965,8 @@ namespace TheArchive.Features.Dev
                 cm_settingsItem.ForcePopupLayer(true);
             }
 
-            public static void CreateEnumListSetting(EnumListSetting setting)
+            public static void CreateEnumListSetting(EnumListSetting setting, SubMenu subMenu = null)
             {
-                setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
-
                 CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
@@ -848,6 +979,11 @@ namespace TheArchive.Features.Dev
                 enumButton_cm_item.SetCMItemEvents(delegate (int _) {
                     CreateAndShowEnumListPopup(setting, enumButton_cm_item, cm_settingsEnumDropdownButton);
                 });
+
+                if (setting.Readonly)
+                {
+                    enumButton_cm_item.GetComponent<BoxCollider2D>().enabled = false;
+                }
 
                 SharedUtils.ChangeColorCMItem(enumButton_cm_item, ORANGE);
                 var bg = enumButton_cm_item.gameObject.transform.GetChildWithExactName("Background");
@@ -946,10 +1082,8 @@ namespace TheArchive.Features.Dev
                 return str;
             }
 
-            public static void CreateEnumSetting(EnumSetting setting)
+            public static void CreateEnumSetting(EnumSetting setting, SubMenu subMenu = null)
             {
-                setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
-
                 CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
@@ -962,6 +1096,11 @@ namespace TheArchive.Features.Dev
                 enumButton_cm_item.SetCMItemEvents(delegate (int _) {
                     CreateAndShowEnumPopup(setting, enumButton_cm_item, cm_settingsEnumDropdownButton);
                 });
+
+                if (setting.Readonly)
+                {
+                    enumButton_cm_item.GetComponent<BoxCollider2D>().enabled = false;
+                }
 
                 SharedUtils.ChangeColorCMItem(enumButton_cm_item, ORANGE);
                 var bg = enumButton_cm_item.gameObject.transform.GetChildWithExactName("Background");
@@ -1029,6 +1168,58 @@ namespace TheArchive.Features.Dev
                 PopupWindow.SetContentItems(list, 5f);
                 PopupWindow.SetHeader(setting.DisplayName);
                 PopupWindow.SetVisible(true);
+            }
+
+            public static void CreateGenericListSetting(GenericListSetting setting, SubMenu subMenu = null)
+            {
+                var dynamicSubMenu = new DynamicSubMenu(setting.DisplayName, (menu) => {
+                    foreach (var entry in setting.GetEntries())
+                    {
+                        SetupItemsForSettingsHelper(entry.Helper, menu);
+                    }
+                });
+
+                CreateSubMenuControls(dynamicSubMenu, menuEntryLabelText: setting.DisplayName, headerText: setting.DisplayName, placeIntoMenu: subMenu);
+            }
+
+            public static void CreateNumberSetting(NumberSetting setting, SubMenu subMenu)
+            {
+                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
+
+                CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
+
+                CM_SettingsInputField cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
+
+                StringInputSetMaxLength(cm_settingsInputField, 30);
+
+                cm_settingsInputField.m_text.SetText(setting.GetValue()?.ToString() ?? string.Empty);
+
+                if (setting.Readonly)
+                {
+                    cm_settingsInputField.GetComponent<BoxCollider2D>().enabled = false;
+                    cm_settingsInputField.m_background.gameObject.SetActive(false);
+                }
+
+                JankTextMeshProUpdaterOnce.Apply(cm_settingsInputField.m_text);
+
+                var receiver = new CustomStringReceiver(new Func<string>(
+                    () => {
+                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}] Gotten value of \"{setting.DEBUG_Path}\"!");
+                        return setting.GetValue()?.ToString() ?? string.Empty;
+                    }),
+                    (val) => {
+                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}] Set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
+                        long.TryParse(val, out var result);
+                        setting.SetValue(result);
+                    });
+
+#if IL2CPP
+                cm_settingsInputField.m_stringReceiver = new iStringInputReceiver(receiver.Pointer);
+#else
+                A_CM_SettingsInputField_m_stringReceiver.Set(cm_settingsInputField, receiver);
+#endif
+
+                cm_settingsItem.ForcePopupLayer(true);
             }
 
             public static void CreateRundownInfoTextForItem(CM_SettingsItem cm_settingsItem, RundownFlags rundowns)
