@@ -22,6 +22,9 @@ namespace TheArchive
         public const string AUTHOR = "AuriRex";
         public const string VERSION_STRING = ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch;
         public const string GITHUB_LINK = "https://github.com/AuriRex/GTFO_TheArchive";
+        public static readonly bool GIT_IS_DIRTY = ThisAssembly.Git.IsDirty;
+        public const string GIT_COMMIT_SHORT_HASH = ThisAssembly.Git.Commit;
+        public const string GIT_COMMIT_DATE = ThisAssembly.Git.CommitDate;
 
         public const string MTFO_GUID = "com.dak.MTFO";
 
@@ -112,6 +115,11 @@ namespace TheArchive
         {
             ArchiveLogger.logger = logger;
             _harmonyInstance = harmonyInstance;
+
+            if(GIT_IS_DIRTY)
+            {
+                ArchiveLogger.Warning("Git is dirty, this is a development build!");
+            }
 
             LoadConfig();
 

@@ -50,6 +50,7 @@ namespace TheArchive.Features.Dev
 
         public static Color ORANGE_WHITE = new Color(1f, 0.85f, 0.75f, 0.8f);
         public static Color ORANGE = new Color(1f, 0.5f, 0.05f, 0.8f);
+        public static Color WHITE_GRAY = new Color(0.7358f, 0.7358f, 0.7358f, 0.7686f);
         public static Color RED = new Color(0.8f, 0.1f, 0.1f, 0.8f);
         public static Color GREEN = new Color(0.1f, 0.8f, 0.1f, 0.8f);
         public static Color DISABLED = new Color(0.3f, 0.3f, 0.3f, 0.8f);
@@ -497,6 +498,8 @@ namespace TheArchive.Features.Dev
 
                     features = features.OrderBy(f => f.GetType().Assembly.GetName().Name + f.Name);
 
+                    CreateHeader("Uncategorized", DISABLED);
+
                     Assembly currentAsm = null;
                     bool createSpacer = false;
                     foreach (var feature in features)
@@ -514,6 +517,39 @@ namespace TheArchive.Features.Dev
                             currentAsm = featureAsm;
                         }
                         SetupEntriesForFeature(feature);
+                    }
+
+                    CreateSpacer();
+                    CreateHeader("Info");
+
+                    CreateSimpleButton("Open saves folder", "Open", () => {
+                        System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
+                        {
+                            Arguments = System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath),
+                            UseShellExecute = true,
+                            FileName = "explorer.exe"
+                        };
+
+                        System.Diagnostics.Process.Start(startInfo);
+                    });
+                    
+                    CreateHeader($"> {System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath)}", WHITE_GRAY, false);
+
+                    CreateSimpleButton("Open mod github", "Open in Browser", () => {
+                        Application.OpenURL(ArchiveMod.GITHUB_LINK);
+                    });
+
+                    CreateHeader($"{ArchiveMod.MOD_NAME} <color=orange>v{ArchiveMod.VERSION_STRING}", WHITE_GRAY, false);
+
+                    if(ArchiveMod.GIT_IS_DIRTY)
+                    {
+                        CreateHeader($"Built with uncommitted changes | <color=red>Git is dirty</color>", ORANGE, false);
+                    }
+
+                    if(Feature.DevMode)
+                    {
+                        CreateHeader($"Last Commit Hash: {ArchiveMod.GIT_COMMIT_SHORT_HASH}", WHITE_GRAY, false);
+                        CreateHeader($"Last Commit Date: {ArchiveMod.GIT_COMMIT_DATE}", WHITE_GRAY, false);
                     }
 
 #if IL2CPP
@@ -708,6 +744,18 @@ namespace TheArchive.Features.Dev
                 return scrollWindow;
             }
 
+            public static void CreateSimpleButton(string labelText, string buttonText, Action onPress, SubMenu placeIntoMenu = null)
+            {
+                CreateSettingsItem(labelText, out var buttonSettingsItem, subMenu: placeIntoMenu);
+                buttonSettingsItem.ForcePopupLayer(true);
+                SetupToggleButton(buttonSettingsItem, out var buttonCMItem, out var buttonTmp);
+                buttonTmp.SetText($"[ {buttonText} ]");
+                JankTextMeshProUpdaterOnce.Apply(buttonTmp);
+                buttonCMItem.SetCMItemEvents((_) => {
+                    onPress?.Invoke();
+                });
+            }
+
             public static void CreateSpacer(SubMenu subMenu = null)
             {
                 CreateHeader(string.Empty, subMenu: subMenu);
@@ -736,7 +784,11 @@ namespace TheArchive.Features.Dev
                 }
 
                 CreateSettingsItem(title, out var cm_settingsItem, color.Value, subMenu);
-                
+
+                var rectTrans = cm_settingsItem.transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<RectTransform>();
+
+                rectTrans.sizeDelta = new Vector2(rectTrans.sizeDelta.x * 2, rectTrans.sizeDelta.y);
+
                 if (!string.IsNullOrWhiteSpace(title))
                 {
                     cm_settingsItem.ForcePopupLayer(true);
