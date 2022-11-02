@@ -683,6 +683,9 @@ namespace TheArchive.Features.Dev
                         case GenericListSetting gls:
                             CreateGenericListSetting(gls, placeIntoMenu);
                             break;
+                        case GenericDictionarySetting gds:
+                            CreateGenericDictionarySetting(gds, placeIntoMenu);
+                            break;
                         case NumberSetting ns:
                             CreateNumberSetting(ns, placeIntoMenu);
                             break;
@@ -1172,10 +1175,31 @@ namespace TheArchive.Features.Dev
 
             public static void CreateGenericListSetting(GenericListSetting setting, SubMenu subMenu = null)
             {
-                var dynamicSubMenu = new DynamicSubMenu(setting.DisplayName, (menu) => {
+                var dynamicSubMenu = new DynamicSubMenu(setting.DisplayName, (dynamicMenu) => {
                     foreach (var entry in setting.GetEntries())
                     {
-                        SetupItemsForSettingsHelper(entry.Helper, menu);
+                        SetupItemsForSettingsHelper(entry.Helper, dynamicMenu);
+                    }
+                });
+
+                CreateSubMenuControls(dynamicSubMenu, menuEntryLabelText: setting.DisplayName, headerText: setting.DisplayName, placeIntoMenu: subMenu);
+            }
+
+            public static void CreateGenericDictionarySetting(GenericDictionarySetting setting, SubMenu subMenu = null)
+            {
+                var dynamicSubMenu = new DynamicSubMenu(setting.DisplayName, (dynamicMenu) => {
+                    foreach (var entry in setting.GetEntries())
+                    {
+                        if(setting.TopLevelReadonly || setting.Readonly)
+                        {
+                            CreateHeader(entry.Key.ToString(), subMenu: dynamicMenu);
+                        }
+                        else
+                        {
+#warning TODO: Editable keys in dict setting?
+                            CreateHeader("EDITABLE=TODO: " + entry.Key.ToString(), subMenu: dynamicMenu);
+                        }
+                        SetupItemsForSettingsHelper(entry.Helper, dynamicMenu);
                     }
                 });
 
@@ -1204,13 +1228,14 @@ namespace TheArchive.Features.Dev
 
                 var receiver = new CustomStringReceiver(new Func<string>(
                     () => {
-                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}] Gotten value of \"{setting.DEBUG_Path}\"!");
-                        return setting.GetValue()?.ToString() ?? string.Empty;
+                        var val = setting.GetValue()?.ToString() ?? string.Empty;
+                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}] Gotten value of \"{setting.DEBUG_Path}\"! ({val})");
+                        return val;
                     }),
                     (val) => {
-                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}] Set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
-                        long.TryParse(val, out var result);
-                        setting.SetValue(result);
+                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}] Attempting to set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
+                        setting.SetValue(val);
+                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}] Set value of \"{setting.DEBUG_Path}\" to \"{setting.GetValue()}\"");
                     });
 
 #if IL2CPP

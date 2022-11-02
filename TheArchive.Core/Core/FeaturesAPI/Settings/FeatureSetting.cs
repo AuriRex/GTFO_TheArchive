@@ -13,6 +13,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public string DisplayName { get; }
         public string Identifier { get; }
         public bool Readonly { get; }
+        public bool TopLevelReadonly { get; }
         public Type Type { get; }
         public string DEBUG_Path { get; }
 
@@ -37,7 +38,8 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             HeaderAbove = prop?.GetCustomAttribute<FSHeader>();
 
             HideInModSettings = prop?.GetCustomAttribute<FSHide>() != null;
-            Readonly = prop?.GetCustomAttribute<FSReadOnly>() != null;
+            Readonly = prop?.GetCustomAttribute<FSReadOnly>()?.RecursiveReadOnly ?? false;
+            TopLevelReadonly = !(prop?.GetCustomAttribute<FSReadOnly>()?.RecursiveReadOnly ?? true);
 
             WrappedInstance = instance;
             DEBUG_Path = debug_path;

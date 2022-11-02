@@ -12,8 +12,6 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public GenericListSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
         {
             ListType = Type.GenericTypeArguments[0];
-
-            
         }
 
         public IList GetList()
@@ -50,7 +48,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             public GenericListSetting Parent { get; private set; }
             public Type EntryType { get; private set; }
             public object Instance { get; private set; }
-            public FeaturelessFeatureSettingsHelper Helper { get; private set; }
+            public DynamicFeatureSettingsHelper Helper { get; private set; }
 
             public ListEntry(GenericListSetting gls, Type entryType, object instance)
             {
@@ -65,7 +63,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
                     _helperForType.Add(entryType, helper);
                 }*/
 
-                Helper = new FeaturelessFeatureSettingsHelper().Initialize(entryType, instance);
+                Helper = new DynamicFeatureSettingsHelper(Parent.Helper.Feature).Initialize(entryType, instance);
             }
 
             public void RemoveFromList()

@@ -18,7 +18,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal string PropertyName => Property?.Name;
         internal Type SettingType { get; private set; }
         internal object Instance { get; set; }
-        public Feature Feature { get; }
+        public Feature Feature { get; protected set; }
 
         private static readonly IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureSettingsHelper), ConsoleColor.DarkYellow);
 
@@ -53,7 +53,11 @@ namespace TheArchive.Core.FeaturesAPI
                 if (prop?.SetMethod == null) continue;
                 if (prop?.GetCustomAttribute<FSIgnore>() != null) continue;
 
-                if (!type.IsValueType && !typeof(IList).IsAssignableFrom(type) && type != typeof(string) && type.GenericTypeArguments.Length <= 1)
+                if (!type.IsValueType
+                    && !typeof(IList).IsAssignableFrom(type)
+                    && !typeof(IDictionary).IsAssignableFrom(type)
+                    && type != typeof(string)
+                    && type.GenericTypeArguments.Length <= 1)
                 {
                     PopulateSettings(type, prop.GetValue(instance), propPath);
                     continue;
@@ -74,9 +78,13 @@ namespace TheArchive.Core.FeaturesAPI
                     case nameof(UInt64):
                     case nameof(UInt32):
                     case nameof(UInt16):
+                    case nameof(Byte):
                     case nameof(Int64):
                     case nameof(Int32):
                     case nameof(Int16):
+                    case nameof(SByte):
+                    case nameof(Single):
+                    case nameof(Double):
                         setting = new NumberSetting(this, prop, instance, propPath);
                         break;
                     default:
@@ -88,6 +96,11 @@ namespace TheArchive.Core.FeaturesAPI
                         if (typeof(IList).IsAssignableFrom(type) && type.GenericTypeArguments.Length == 1)
                         {
                             setting = new GenericListSetting(this, prop, instance, propPath);
+                            break;
+                        }
+                        if (typeof(IDictionary).IsAssignableFrom(type) && type.GenericTypeArguments.Length == 2)
+                        {
+                            setting = new GenericDictionarySetting(this, prop, instance, propPath);
                             break;
                         }
                         if (type.IsEnum)
@@ -119,9 +132,12 @@ namespace TheArchive.Core.FeaturesAPI
         }
     }
 
-    public class FeaturelessFeatureSettingsHelper : FeatureSettingsHelper
+    public class DynamicFeatureSettingsHelper : FeatureSettingsHelper
     {
-        public FeaturelessFeatureSettingsHelper() { }
+        public DynamicFeatureSettingsHelper(Feature feature)
+        {
+            Feature = feature;
+        }
 
         /// <summary>
         /// Initialize the <see cref="FeatureSettingsHelper.Settings"/> list and returns itself.
@@ -129,7 +145,7 @@ namespace TheArchive.Core.FeaturesAPI
         /// <param name="typeToCheck"></param>
         /// <param name="instance"></param>
         /// <returns></returns>
-        public FeaturelessFeatureSettingsHelper Initialize(Type typeToCheck, object instance)
+        public DynamicFeatureSettingsHelper Initialize(Type typeToCheck, object instance)
         {
             PopulateSettings(typeToCheck, instance, string.Empty);
             return this;
