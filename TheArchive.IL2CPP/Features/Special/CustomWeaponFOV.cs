@@ -13,7 +13,6 @@ using IL2ColGen = System.Collections.Generic;
 
 namespace TheArchive.Features.Special
 {
-    [EnableFeatureByDefault]
     internal class CustomWeaponFOV : Feature
     {
         public override string Name => "Weapon FOV Adjustments";
