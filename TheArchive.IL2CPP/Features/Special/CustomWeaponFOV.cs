@@ -93,6 +93,7 @@ namespace TheArchive.Features.Special
 
         public void SetCustomValues()
         {
+            if (_allFPSSettingsBlocks == null) return;
             foreach (var block in _allFPSSettingsBlocks)
             {
                 var id = GetID(block);
@@ -105,6 +106,7 @@ namespace TheArchive.Features.Special
 
         public void SetDefaultValues()
         {
+            if (_allFPSSettingsBlocks == null) return;
             foreach (var block in _allFPSSettingsBlocks)
             {
                 var id = GetID(block);

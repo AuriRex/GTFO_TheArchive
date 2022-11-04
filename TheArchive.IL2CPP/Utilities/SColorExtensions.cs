@@ -36,14 +36,20 @@ namespace TheArchive.Utilities
 
         public static SColor FromHexString(string col)
         {
-            if(!col.StartsWith("#"))
-                col = $"#{col}";
+            col = EnsureLeadingHash(col);
 
             if (ColorUtility.TryParseHtmlString(col, out var color))
             {
                 return color.ToSColor();
             }
             return SColor.WHITE;
+        }
+
+        public static string EnsureLeadingHash(string hexString)
+        {
+            if (!hexString.StartsWith("#"))
+                hexString = $"#{hexString}";
+            return hexString;
         }
 
         public static string ToHexString(this SColor col)

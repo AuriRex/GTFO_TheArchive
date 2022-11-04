@@ -45,10 +45,11 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             DEBUG_Path = debug_path;
         }
 
-        public virtual void SetValue(object value)
+        public virtual object SetValue(object value)
         {
             Prop.SetValue(WrappedInstance, value);
             FeatureManager.Instance.OnFeatureSettingChanged(this);
+            return value;
         }
 
         public virtual object GetValue()

@@ -77,9 +77,23 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             }
         }
 
-        public override void SetValue(object value)
+        public override object SetValue(object value)
         {
-            base.SetValue(ConvertNumber(value.ToString()));
+            var val = value.ToString();
+            if(string.IsNullOrWhiteSpace(val))
+            {
+                val = "0";
+            }
+            try
+            {
+                val = base.SetValue(ConvertNumber(val)).ToString();
+            }
+            catch (FormatException ex)
+            {
+                Helper.Feature.FeatureLogger.Warning($"[{nameof(NumberSetting)}] {ex.GetType().FullName} was thrown! Invalid input data \"{value}\".");
+                val = "0";
+            }
+            return val;
         }
 
         public enum NumberFormat
