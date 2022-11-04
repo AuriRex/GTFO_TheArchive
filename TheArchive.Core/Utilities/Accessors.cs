@@ -274,10 +274,10 @@ namespace TheArchive.Utilities
         /// <param name="methodName">The name of the method</param>
         /// <param name="parameterTypes">Parameter Types of the method (leave null if there are none)</param>
         /// <returns><see cref="MethodAccessor{T}"/></returns>
-        public static MethodAccessor<T> GetAccessor(string methodName, Type[] parameterTypes = null)
+        public static MethodAccessor<T> GetAccessor(string methodName, Type[] parameterTypes = null, bool ignoreErrors = false)
         {
             var identifier = $"Method_{typeof(T).FullName}_void_{methodName}";
-            if (parameterTypes != null)
+            if (parameterTypes != null && parameterTypes != Array.Empty<Type>())
             {
                 identifier += $"_{string.Join("_", parameterTypes.Select(pt => pt.Name))}";
             }
@@ -285,7 +285,7 @@ namespace TheArchive.Utilities
             if (Accessors.TryGetValue(identifier, out var val))
                 return (MethodAccessor<T>)val;
 
-            val = new MethodAccessor<T>(identifier, methodName, parameterTypes);
+            val = new MethodAccessor<T>(identifier, methodName, parameterTypes, ignoreErrors);
 
             Accessors.Add(identifier, val);
 
@@ -296,7 +296,7 @@ namespace TheArchive.Utilities
         public bool IsMethodStatic => _method.IsStatic;
         public override bool HasMemberBeenFound => _method != null;
 
-        private MethodAccessor(string identifier, string methodName, Type[] parameterTypes) : base(identifier)
+        private MethodAccessor(string identifier, string methodName, Type[] parameterTypes, bool ignoreErrors = false) : base(identifier)
         {
             try
             {
@@ -308,12 +308,23 @@ namespace TheArchive.Utilities
                 {
                     _method = typeof(T).GetMethod(methodName, AnyBindingFlags, null, parameterTypes, null);
                 }
+                if (!ignoreErrors && _method == null) throw new Exception("Method not found!");
             }
             catch (Exception ex)
             {
                 ArchiveLogger.Error($"Method \"{methodName}\" in Type {typeof(T).FullName} could not be resolved on {ex.Source}!");
                 ArchiveLogger.Exception(ex);
+                ArchiveLogger.Debug($"Constructor debug data:\nidentifier:{identifier}\nmethodName:{methodName}\nparameterTypes:{string.Join(", ", parameterTypes.Select(p => p.FullName))}");
+                var frame = new System.Diagnostics.StackTrace().GetFrame(2);
+                ArchiveLogger.Debug($"FileName:{frame.GetFileName()} {frame.GetFileLineNumber()}\nMethod:{frame.GetMethod().DeclaringType.FullName}:{frame.GetMethod().Name}");
+                PrintDebug();
             }
+        }
+
+        private void PrintDebug()
+        {
+            if (_method == null) return;
+            ArchiveLogger.Debug($"Method debug data:\nName:{_method.Name}\nDeclaringType:{_method.DeclaringType.FullName}\nReturnType:{_method.ReturnType}\nParameter Count:{_method.GetParameters()?.Count() ?? 0}\nParameters:{string.Join(", ", _method.GetParameters().Select(p => p.ParameterType.FullName))}");
         }
 
         /// <summary>
@@ -331,6 +342,7 @@ namespace TheArchive.Utilities
             {
                 ArchiveLogger.Error($"Exception while calling {nameof(MethodAccessor<T>)} method \"{Identifier}\"!");
                 ArchiveLogger.Exception(ex);
+                PrintDebug();
             }
         }
 

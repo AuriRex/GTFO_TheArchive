@@ -316,7 +316,7 @@ namespace TheArchive.Utilities
             return false;
         }
 
-        private static readonly MethodAccessor<CellSoundPlayer> A_CellSoundPlayer_Post_sub_R5 = MethodAccessor<CellSoundPlayer>.GetAccessor("Post", new Type[] { typeof(uint) });
+        private static readonly MethodAccessor<CellSoundPlayer> A_CellSoundPlayer_Post_sub_R5 = MethodAccessor<CellSoundPlayer>.GetAccessor("Post", new Type[] { typeof(uint) }, ignoreErrors: true);
 
         public static void SafePost(this CellSoundPlayer player, uint eventId)
         {

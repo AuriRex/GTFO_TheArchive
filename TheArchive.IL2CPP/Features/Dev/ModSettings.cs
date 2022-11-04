@@ -77,7 +77,14 @@ namespace TheArchive.Features.Dev
             {
                 if (textMesh == null) return;
 
-                A_TextMeshPro_ForceMeshUpdate.Invoke(textMesh);
+                if(BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownOne.To(RundownFlags.RundownFive)))
+                {
+                    A_TextMeshPro_ForceMeshUpdate.Invoke(textMesh);
+                }
+                else
+                {
+                    A_TextMeshPro_ForceMeshUpdate.Invoke(textMesh, true, false);
+                }
             }
 
 #if IL2CPP
@@ -151,7 +158,14 @@ namespace TheArchive.Features.Dev
             LoaderWrapper.ClassInjector.RegisterTypeInIl2CppWithInterfaces<CustomStringReceiver>(true, typeof(iStringInputReceiver));
 #endif
 
-            A_TextMeshPro_ForceMeshUpdate = MethodAccessor<TMPro.TextMeshPro>.GetAccessor("ForceMeshUpdate", Array.Empty<Type>());
+            if (BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownOne.To(RundownFlags.RundownFive)))
+            {
+                A_TextMeshPro_ForceMeshUpdate = MethodAccessor<TMPro.TextMeshPro>.GetAccessor("ForceMeshUpdate", Array.Empty<Type>());
+            }
+            else
+            {
+                A_TextMeshPro_ForceMeshUpdate = MethodAccessor<TMPro.TextMeshPro>.GetAccessor("ForceMeshUpdate", new Type[] { typeof(bool), typeof(bool) });
+            }
         }
 
         public override void OnEnable()
@@ -214,11 +228,7 @@ namespace TheArchive.Features.Dev
                 Title = title;
                 ScrollWindow = SettingsCreationHelper.CreateScrollWindow(title);
 
-#if IL2CPP
-                SettingsPageInstance.m_allSettingsWindows.Add(ScrollWindow);
-#else
-                A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Add(ScrollWindow);
-#endif
+                AddToAllSettingsWindows(ScrollWindow);
             }
 
             public string Title { get; private set; }
@@ -306,6 +316,68 @@ namespace TheArchive.Features.Dev
             }
         }
 
+        public class DescriptionPanel
+        {
+            private CM_ScrollWindow _backgroundPanel;
+            private TMPro.TextMeshPro _headerText;
+            private TMPro.TextMeshPro _contentText;
+            public DescriptionPanel()
+            {
+                _backgroundPanel = CreateScrollWindow("Description");
+                _backgroundPanel.transform.position = _backgroundPanel.transform.position + new Vector3(1050, 0, 0);
+
+
+                var headerItemGO = GameObject.Instantiate(SettingsItemPrefab, _backgroundPanel.transform);
+
+                _headerText = headerItemGO.GetComponentInChildren<CM_SettingsItem>().transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
+
+                _headerText.color = ORANGE;
+
+                _headerText.SetText("Header Text");
+
+                var rectTrans = _headerText.gameObject.GetComponent<RectTransform>();
+
+                rectTrans.sizeDelta = new Vector2(rectTrans.sizeDelta.x * 2, rectTrans.sizeDelta.y);
+
+
+                var contentItemGO = GameObject.Instantiate(SettingsItemPrefab, _backgroundPanel.transform);
+
+                _contentText = contentItemGO.GetComponentInChildren<CM_SettingsItem>().transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
+
+                _contentText.color = WHITE_GRAY;
+
+                _contentText.SetText("Content Text");
+
+                var rectTransContent = _contentText.gameObject.GetComponent<RectTransform>();
+
+                rectTransContent.sizeDelta = new Vector2(rectTransContent.sizeDelta.x * 2, rectTransContent.sizeDelta.y * 10);
+
+                _backgroundPanel.SetContentItems(new List<iScrollWindowContent>()
+                    { 
+                        headerItemGO.GetComponentInChildren<iScrollWindowContent>(),
+                        contentItemGO.GetComponentInChildren<iScrollWindowContent>()
+                    }.ToIL2CPPListIfNecessary(), 5);
+
+                AddToAllSettingsWindows(_backgroundPanel);
+            }
+
+            public void Show(string title, string content)
+            {
+                _headerText.SetText(title);
+                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_headerText);
+
+                _contentText.SetText(content);
+                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_contentText);
+
+                _backgroundPanel.gameObject.SetActive(true);
+            }
+
+            public void Hide()
+            {
+                _backgroundPanel.gameObject.SetActive(false);
+            }
+        }
+
         public static class PageSettingsData
         {
             internal static GameObject SettingsItemPrefab { get; set; }
@@ -314,6 +386,7 @@ namespace TheArchive.Features.Dev
             internal static Transform MainScrollWindowTransform { get; set; }
             internal static CM_ScrollWindow PopupWindow { get; set; }
             internal static CM_PageSettings SettingsPageInstance { get; set; }
+            internal static DescriptionPanel TheDescriptionPanel { get; set; }
 
             public static MainMenuGuiLayer MMGuiLayer { get; internal set; }
             public static GameObject ScrollWindowPrefab { get; internal set; }
@@ -344,6 +417,15 @@ namespace TheArchive.Features.Dev
         public static void ShowMainModSettingsWindow(int _)
         {
             ShowScrollWindow(MainModSettingsScrollWindow);
+        }
+
+        public static void AddToAllSettingsWindows(CM_ScrollWindow scrollWindow)
+        {
+#if IL2CPP
+            SettingsPageInstance.m_allSettingsWindows.Add(scrollWindow);
+#else
+            A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Add(scrollWindow);
+#endif
         }
 
         public static void ShowScrollWindow(CM_ScrollWindow window)
@@ -458,6 +540,7 @@ namespace TheArchive.Features.Dev
 
                     JankTextMeshProUpdaterOnce.UpdateMesh(_restartInfoText);
 
+                    TheDescriptionPanel = new DescriptionPanel();
 
                     var odereredGroups = FeatureManager.Instance.GroupedFeatures.OrderBy(kvp => kvp.Key);
 
@@ -552,11 +635,8 @@ namespace TheArchive.Features.Dev
                         CreateHeader($"Last Commit Date: {ArchiveMod.GIT_COMMIT_DATE}", WHITE_GRAY, false);
                     }
 
-#if IL2CPP
-                    __instance.m_allSettingsWindows.Add(MainModSettingsScrollWindow);
-#else
-                    ___m_allSettingsWindows.Add(MainModSettingsScrollWindow);
-#endif
+                    AddToAllSettingsWindows(MainModSettingsScrollWindow);
+
                     mainModSettingsButton.SetCMItemEvents(ShowMainModSettingsWindow);
 
                     MainModSettingsScrollWindow.SetContentItems(PageSettingsData.ScrollWindowContentElements.ToIL2CPPListIfNecessary(), 5);
@@ -649,8 +729,23 @@ namespace TheArchive.Features.Dev
                                 SetFeatureItemTextAndColor(feature, sub_toggleButton_cm_item, sub_toggleButtonText);
                         };
 
-                        toggleButton_cm_item.SetCMItemEvents(del);
-                        sub_toggleButton_cm_item?.SetCMItemEvents(del);
+                        var delHover = delegate (int id, bool hovering)
+                        {
+                            if(hovering)
+                            {
+                                if(!string.IsNullOrWhiteSpace(feature.Description))
+                                    TheDescriptionPanel.Show(feature.Name, feature.Description);
+                            }
+                            else
+                            {
+                                TheDescriptionPanel.Hide();
+                            }
+                        };
+
+                        cm_settingsItem.SetCMItemEvents((_) => { }, delHover);
+                        sub_cm_settingsItem?.SetCMItemEvents((_) => { }, delHover);
+                        toggleButton_cm_item.SetCMItemEvents(del, delHover);
+                        sub_toggleButton_cm_item?.SetCMItemEvents(del, delHover);
                     }
 
                     SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
