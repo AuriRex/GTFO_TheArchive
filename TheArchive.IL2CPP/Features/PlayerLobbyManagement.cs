@@ -2,6 +2,7 @@
 using SNetwork;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
@@ -34,7 +35,7 @@ namespace TheArchive.Features
                 [FSReadOnly]
                 public ulong SteamID { get; set; }
                 [FSReadOnly]
-                public ulong Timestamp { get; set; }
+                public long Timestamp { get; set; }
             }
         }
 
@@ -73,6 +74,11 @@ namespace TheArchive.Features
                 if (collider != null)
                     collider.enabled = false;
             }
+        }
+
+        public static bool IsPlayerBanned(ulong lookup)
+        {
+            return Settings.BanList.Any(bp => bp.SteamID == lookup);
         }
 
         private static CM_ScrollWindow _popupWindow = null;
@@ -148,18 +154,41 @@ namespace TheArchive.Features
 
             FeatureLogger.Notice($"Kicking player \"{player.GetName()}\" Nick:\"{player.NickName}\" ...");
 
+            KickPlayer(player);
+        }
+
+        internal static void BanPlayerButtonPressed(int playerID)
+        {
+            if (!SNet.IsMaster) return;
+
+            if (!SharedUtils.TryGetPlayerByCharacterIndex(playerID - 1, out var player))
+            {
+                return;
+            }
+
+            FeatureLogger.Notice($"Banning player \"{player.GetName()}\" Nick:\"{player.NickName}\" ...");
+
+            if(!IsPlayerBanned(player.Lookup))
+            {
+                Settings.BanList.Add(new LobbyManagementSettings.BanListEntry
+                {
+                    Name = player.GetName(),
+                    SteamID = player.Lookup,
+                    Timestamp = DateTime.UtcNow.Ticks
+                });
+                FeatureLogger.Info($"Player has been added to list of banned players: Name:\"{player.GetName()}\" SteamID:\"{player.Lookup}\"");
+            }
+
+            KickPlayer(player);
+        }
+
+        private static void KickPlayer(SNet_Player player)
+        {
 #if IL2CPP
             SNet.Sync.EjectPlayer(player, SNet_PlayerEventReason.Kick_ByVote);
 #else
             A_SNet_SyncManager_EjectPlayer.Invoke(SNet.Sync, player, SNet_PlayerEventReason.Kick_ByVote);
 #endif
-        }
-
-        internal static void BanPlayerButtonPressed(int playerID)
-        {
-            FeatureLogger.Notice("Banning player ... (Not implemented yet!)");
-
-#warning TODO: Implement ban list or something
         }
 
         internal static CM_Item OpenSteamItem { get; set; }
@@ -231,6 +260,26 @@ namespace TheArchive.Features
             BanPlayerItem.ID = playerID;
 
             PopupWindow.SetVisible(true);
+        }
+
+        // OnPlayerJoinedSessionHub(SNet_Player player)
+        [ArchivePatch(typeof(SNet_SyncManager), "OnPlayerJoinedSessionHub")]
+        internal static class SNet_SyncManager_OnPlayerJoinedSessionHub_Patch
+        {
+            public static bool Prefix(SNet_Player player)
+            {
+                if(SNet.IsMaster)
+                {
+                    if(IsPlayerBanned(player.Lookup))
+                    {
+                        KickPlayer(player);
+                        FeatureLogger.Notice($"Banned player \"{player.GetName()}\" tried to join, they have been kicked!");
+                        return ArchivePatch.SKIP_OG;
+                    }
+                }
+
+                return ArchivePatch.RUN_OG;
+            }
         }
 
         // Lobby button
