@@ -251,6 +251,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Include="..\TheArchive.IL2CPP\Features\PlayerLobbyManagement.cs" Link="Features\PlayerLobbyManagement.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\WeaponStats.cs" Link="Features\Special\WeaponStats.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
