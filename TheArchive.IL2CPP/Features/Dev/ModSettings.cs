@@ -363,13 +363,13 @@ namespace TheArchive.Features.Dev
 
             public void Show(string title, string content)
             {
+                _backgroundPanel.gameObject.SetActive(true);
+
                 _headerText.SetText(title);
                 JankTextMeshProUpdaterOnce.ForceUpdateMesh(_headerText);
 
                 _contentText.SetText(content);
                 JankTextMeshProUpdaterOnce.ForceUpdateMesh(_contentText);
-
-                _backgroundPanel.gameObject.SetActive(true);
             }
 
             public void Hide()
