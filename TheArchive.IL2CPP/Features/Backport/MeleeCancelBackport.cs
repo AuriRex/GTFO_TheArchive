@@ -13,6 +13,8 @@ namespace TheArchive.Features.Backport
 
         public override string Group => FeatureGroups.Backport;
 
+        public override string Description => "The hammer goes back to neutral instead of shoving whenever it's charged and alt-fire is pressed.";
+
         private static readonly eMeleeWeaponState _state_idle = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.Idle));
         private static readonly eMeleeWeaponState _state_none = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.None));
         private static readonly eMeleeWeaponState _state_push = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.Push));

@@ -19,6 +19,8 @@ namespace TheArchive.Features.Accessibility
 
         public override string Group => FeatureGroups.Accessibility;
 
+        public override string Description => "Nickname related settings.";
+
         public override bool PlaceSettingsInSubMenu => true;
 
         public class NicknameSettings

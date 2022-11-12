@@ -163,7 +163,8 @@ namespace TheArchive.Utilities
 
         public static CM_Item AddCMItemEvents(this CM_Item item, Action<int> onButtonPress, Action<int, bool> onButtonHover = null)
         {
-            item.OnBtnPressCallback += onButtonPress;
+            if (onButtonPress != null)
+                item.OnBtnPressCallback += onButtonPress;
             if (onButtonHover != null)
                 item.OnBtnHoverChanged += onButtonHover;
 

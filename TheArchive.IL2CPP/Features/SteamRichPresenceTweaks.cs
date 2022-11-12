@@ -13,6 +13,7 @@ namespace TheArchive.Features
         public class SteamRPCSettings
         {
             [FSDisplayName("Disable <color=orange>ALL</color> of Steam RPC")]
+            [FSDescription("Enabling this will completely disable relaying your current in-game status as well as <b>prevent anyone from joining on you via steam</b>.")]
             public bool DisableSteamRPC { get; set; } = false;
             [FSDisplayName("Custom Status Format")]
             public string CustomSteamRPCFormat { get; set; } = "%Rundown%%Expedition% \"%ExpeditionName%\"";

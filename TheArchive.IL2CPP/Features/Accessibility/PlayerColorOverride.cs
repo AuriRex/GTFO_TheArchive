@@ -16,6 +16,8 @@ namespace TheArchive.Features.Accessibility
 
         public override string Group => FeatureGroups.Accessibility;
 
+        public override string Description => "Override the built in player colors.";
+
         public override bool PlaceSettingsInSubMenu => true;
 
         public override bool SkipInitialOnEnable => true;

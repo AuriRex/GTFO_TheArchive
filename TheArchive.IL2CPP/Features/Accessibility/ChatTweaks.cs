@@ -11,6 +11,10 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Chat Tweaks";
 
+        public override string Group => FeatureGroups.Accessibility;
+
+        public override string Description => "Use (Up/Down) arrow keys to cycle through the last sent messages.\nCTRL+C copies and CTRL+V pastes into the chat box";
+
         public static int MaxChatBacklog { get; set; } = 10;
 
         private static Stack<string> _lastPostedMessages = new Stack<string>(11);

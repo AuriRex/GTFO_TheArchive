@@ -11,6 +11,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public PropertyInfo Prop { get; }
         public RundownFlags RundownHint { get; }
         public string DisplayName { get; }
+        public string Description { get; }
         public string Identifier { get; }
         public bool Readonly { get; }
         public bool TopLevelReadonly { get; }
@@ -32,6 +33,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             DisplayName = $"> {prop?.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
             Identifier = prop?.GetCustomAttribute<FSIdentifier>()?.Identifier ?? ($"{prop.PropertyType.FullName}_{prop.Name}");
             RundownHint = prop?.GetCustomAttribute<FSRundownHint>()?.Rundowns ?? RundownFlags.None;
+            Description = prop?.GetCustomAttribute<FSDescription>()?.Description;
 
             SeparatorAbove = prop?.GetCustomAttribute<FSSeparator>() != null;
             SpacerAbove = prop?.GetCustomAttribute<FSSpacer>() != null;

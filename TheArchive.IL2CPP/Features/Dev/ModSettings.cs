@@ -985,6 +985,8 @@ namespace TheArchive.Features.Dev
 
                 StringInputSetMaxLength(cm_settingsInputField, 7);
 
+                CreateFSHoverAndSetButtonAction(setting, cm_settingsItem, null);
+
                 var bg_rt = cm_settingsInputField.m_background.GetComponent<RectTransform>();
                 bg_rt.anchoredPosition = new Vector2(-175, 0);
                 bg_rt.localScale = new Vector3(0.19f, 1, 1);
@@ -1040,6 +1042,8 @@ namespace TheArchive.Features.Dev
                 CM_SettingsInputField cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
 
                 StringInputSetMaxLength(cm_settingsInputField, setting.MaxInputLength);
+
+                CreateFSHoverAndSetButtonAction(setting, cm_settingsItem, null);
 
                 cm_settingsInputField.m_text.SetText(setting.GetValue()?.ToString() ?? string.Empty);
 
@@ -1098,7 +1102,7 @@ namespace TheArchive.Features.Dev
 
                 var toggleButtonText = toggleButton_cm_item.GetComponentInChildren<TMPro.TextMeshPro>();
 
-                toggleButton_cm_item.SetCMItemEvents(delegate (int id) {
+                CreateFSHoverAndSetButtonAction(setting, cm_settingsItem, toggleButton_cm_item, delegate (int id) {
                     var val = !(bool)setting.GetValue();
                     setting.SetValue(val);
 
@@ -1126,7 +1130,8 @@ namespace TheArchive.Features.Dev
                 var enumButton_cm_item = cm_settingsEnumDropdownButton.gameObject.AddComponent<CM_Item>();
 
                 enumButton_cm_item.Setup();
-                enumButton_cm_item.SetCMItemEvents(delegate (int _) {
+
+                CreateFSHoverAndSetButtonAction(setting, cm_settingsItem, enumButton_cm_item, delegate (int _) {
                     CreateAndShowEnumListPopup(setting, enumButton_cm_item, cm_settingsEnumDropdownButton);
                 });
 
@@ -1243,7 +1248,9 @@ namespace TheArchive.Features.Dev
                 var enumButton_cm_item = cm_settingsEnumDropdownButton.gameObject.AddComponent<CM_Item>();
 
                 enumButton_cm_item.Setup();
-                enumButton_cm_item.SetCMItemEvents(delegate (int _) {
+
+                CreateFSHoverAndSetButtonAction(setting, cm_settingsItem, enumButton_cm_item, delegate (int _)
+                {
                     CreateAndShowEnumPopup(setting, enumButton_cm_item, cm_settingsEnumDropdownButton);
                 });
 
@@ -1363,6 +1370,8 @@ namespace TheArchive.Features.Dev
 
                 StringInputSetMaxLength(cm_settingsInputField, 30);
 
+                CreateFSHoverAndSetButtonAction(setting, cm_settingsItem, null);
+
                 cm_settingsInputField.m_text.SetText(setting.GetValue()?.ToString() ?? string.Empty);
 
                 if (setting.Readonly)
@@ -1426,6 +1435,25 @@ namespace TheArchive.Features.Dev
                 }
 
                 rundownInfoTMP.color = ORANGE;
+            }
+
+            public static void CreateFSHoverAndSetButtonAction(FeatureSetting setting, CM_SettingsItem cm_settingsItem, CM_Item toggleButton_cm_item, Action<int> buttonAction = null)
+            {
+                var delHover = delegate (int id, bool hovering)
+                {
+                    if (hovering)
+                    {
+                        if (!string.IsNullOrWhiteSpace(setting.Description))
+                            TheDescriptionPanel.Show(setting.DisplayName, setting.Description);
+                    }
+                    else
+                    {
+                        TheDescriptionPanel.Hide();
+                    }
+                };
+
+                cm_settingsItem?.SetCMItemEvents((_) => { }, delHover);
+                toggleButton_cm_item?.SetCMItemEvents(buttonAction ?? ((_) => { }), delHover);
             }
 
             public static void SetFeatureItemTextAndColor(Feature feature, CM_Item buttonItem, TMPro.TextMeshPro text)

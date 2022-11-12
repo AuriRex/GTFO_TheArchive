@@ -16,6 +16,8 @@ namespace TheArchive.Features.Backport
 
         public override string Group => FeatureGroups.Backport;
 
+        public override string Description => "Adds the following text at the start of every terminal:\n\"Welcome to <b>TERMINAL_XYZ</b>, located in <b>ZONE_XY</b>\"";
+
 #if IL2CPP
         private static HashSet<IntPtr> _interpreterSet = new HashSet<IntPtr>();
 #else

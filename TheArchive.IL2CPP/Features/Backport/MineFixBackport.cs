@@ -12,6 +12,8 @@ namespace TheArchive.Features.Backport
 
         public override string Group => FeatureGroups.Backport;
 
+        public override string Description => "Change explosion code to work like after the R5 update.\nMines = more effective\n\n(Might cause desync!)";
+
         private static Collider[] _collidersNew = new Collider[300];
         private static Collider[] _collidersOld = new Collider[50];
 
