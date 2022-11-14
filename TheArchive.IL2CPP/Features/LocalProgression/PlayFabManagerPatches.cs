@@ -125,26 +125,6 @@ namespace TheArchive.Features.LocalProgression
             }
         }
 
-        [ArchivePatch(typeof(PlayFabManager), "TryGetStartupScreenData")]
-        internal class PlayFabManager_TryGetStartupScreenData_Patch
-        {
-            public static bool Prefix(eStartupScreenKey key, out StartupScreenData data, ref bool __result)
-            {
-                var startupScreenData = new StartupScreenData();
-                startupScreenData.AllowedToStartGame = true;
-
-                startupScreenData.IntroText = Utils.GetStartupTextForRundown(ArchiveMod.CurrentRundown);
-                startupScreenData.ShowDiscordButton = false;
-                startupScreenData.ShowBugReportButton = false;
-                startupScreenData.ShowRoadmapButton = false;
-                startupScreenData.ShowIntroText = true;
-
-                __result = true;
-                data = startupScreenData;
-                return ArchivePatch.SKIP_OG;
-            }
-        }
-
         [ArchivePatch(typeof(PlayFabManager), "OnGetAuthSessionTicketResponse")]
         internal class PlayFabManager_OnGetAuthSessionTicketResponse_Patch
         {
