@@ -44,6 +44,28 @@ namespace TheArchive.Features.QoL
             }
         }
 
+        public static void ShowDoesNotNeedResourcePrompt(iResourcePackReceiver receiver, eResourceContainerSpawnType packType)
+        {
+            string text = receiver.IsLocallyOwned ? "YOU DO" : (receiver.InteractionName + " DOES");
+            switch (packType)
+            {
+                case eResourceContainerSpawnType.AmmoWeapon:
+                    text += " NOT NEED WEAPON AMMUNITION";
+                    break;
+                case eResourceContainerSpawnType.AmmoTool:
+                    text += " NOT NEED TOOL AMMUNITION";
+                    break;
+                case eResourceContainerSpawnType.Health:
+                    text += " NOT NEED MEDICAL RESOURCES";
+                    break;
+                case eResourceContainerSpawnType.Disinfection:
+                    text += " NOT NEED DISINFECTION";
+                    break;
+            }
+            GuiManager.InteractionLayer.SetTimedInteractionPrompt(text, 1.4f);
+        }
+
+#if IL2CPP
         [ArchivePatch(typeof(ResourcePackFirstPerson), "UpdateInteraction")]
         internal static class ResourcePackFirstPerson_UpdateInteraction_Patch
         {
@@ -121,12 +143,12 @@ namespace TheArchive.Features.QoL
                     {
                         if (packReceiver.IsLocallyOwned)
                         {
-                            A_UpdateInteractionActionName.Invoke(__instance, "YOURSELF");
+                            A_UpdateInteractionActionName.Invoke(__instance, "YOURSELF", true);
                             timer.m_input = nextInputAction;
                         }
                         else
                         {
-                            A_UpdateInteractionActionName.Invoke(__instance, packReceiver.InteractionName);
+                            A_UpdateInteractionActionName.Invoke(__instance, packReceiver.InteractionName, false);
                             timer.m_input = nextInputAction;
                         }
                         __instance.m_lastActionReceiver = packReceiver;
@@ -163,27 +185,7 @@ namespace TheArchive.Features.QoL
                 pGenericInteractAnimation.TypeEnum type = packReceiver.IsLocallyOwned ? pGenericInteractAnimation.TypeEnum.ConsumeResource : pGenericInteractAnimation.TypeEnum.GiveResource;
                 __instance.Owner.Sync.SendGenericInteract(type, false);
             }
-
-            private static void ShowDoesNotNeedResourcePrompt(iResourcePackReceiver receiver, eResourceContainerSpawnType packType)
-            {
-                string text = receiver.IsLocallyOwned ? "YOU DO" : (receiver.InteractionName + " DOES");
-                switch (packType)
-                {
-                    case eResourceContainerSpawnType.AmmoWeapon:
-                        text += " NOT NEED WEAPON AMMUNITION";
-                        break;
-                    case eResourceContainerSpawnType.AmmoTool:
-                        text += " NOT NEED TOOL AMMUNITION";
-                        break;
-                    case eResourceContainerSpawnType.Health:
-                        text += " NOT NEED MEDICAL RESOURCES";
-                        break;
-                    case eResourceContainerSpawnType.Disinfection:
-                        text += " NOT NEED DISINFECTION";
-                        break;
-                }
-                GuiManager.InteractionLayer.SetTimedInteractionPrompt(text, 1.4f);
-            }
         }
+#endif
     }
 }

@@ -295,6 +295,7 @@ namespace TheArchive.Utilities
         private readonly MethodInfo _method;
         public bool IsMethodStatic => _method.IsStatic;
         public override bool HasMemberBeenFound => _method != null;
+        public int ParameterCount { get; private set; }
 
         private MethodAccessor(string identifier, string methodName, Type[] parameterTypes, bool ignoreErrors = false) : base(identifier)
         {
@@ -309,6 +310,11 @@ namespace TheArchive.Utilities
                     _method = typeof(T).GetMethod(methodName, AnyBindingFlags, null, parameterTypes, null);
                 }
                 if (!ignoreErrors && _method == null) throw new Exception("Method not found!");
+
+                if(_method != null)
+                {
+                    ParameterCount = _method.GetParameters().Length;
+                }
             }
             catch (Exception ex)
             {
@@ -336,6 +342,10 @@ namespace TheArchive.Utilities
         {
             try
             {
+                if(parameters != null && parameters.Length > ParameterCount)
+                {
+                    parameters = parameters.Take(ParameterCount).ToArray();
+                }
                 _method.Invoke(instance, parameters ?? NoParams);
             }
             catch(Exception ex)
