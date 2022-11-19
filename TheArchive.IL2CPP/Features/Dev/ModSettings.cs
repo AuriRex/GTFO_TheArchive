@@ -1426,11 +1426,29 @@ namespace TheArchive.Features.Dev
 
                     if (lowestId == highestId)
                     {
-                        rundownInfoTMP.SetText($"<align=right>R{(int)lowestId}</align>");
+                        var R = "R";
+                        if (lowestId >= RundownID.RundownAltOne)
+                        {
+                            R = "A";
+                            lowestId = lowestId - (int)RundownID.RundownAltOne + 1;
+                        }
+                        rundownInfoTMP.SetText($"<align=right>{R}{(int)lowestId}</align>");
                     }
                     else
                     {
-                        rundownInfoTMP.SetText($"<align=right>R{(int)lowestId}-R{(int)highestId}</align>");
+                        var RL = "R";
+                        if (lowestId >= RundownID.RundownAltOne)
+                        {
+                            RL = "A";
+                            lowestId = lowestId - (int)RundownID.RundownAltOne + 1;
+                        }
+                        var RH = "R";
+                        if (highestId >= RundownID.RundownAltOne)
+                        {
+                            RH = "A";
+                            highestId = highestId - (int)RundownID.RundownAltOne + 1;
+                        }
+                        rundownInfoTMP.SetText($"<align=right>{RL}{(int)lowestId}-{RH}{(int)highestId}</align>");
                     }
                 }
 
