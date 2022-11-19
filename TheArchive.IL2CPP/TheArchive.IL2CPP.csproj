@@ -133,6 +133,7 @@
 		<Compile Include="..\TheArchive.MONO\Features\Backport\AlarmClassOnDoors.cs">
 			<Link>Features\Backport\AlarmClassOnDoors.cs</Link>
 		</Compile>
+		<Compile Include="..\TheArchive.MONO\Features\Backport\CenterMapOnPlayer.cs" Link="Features\Backport\CenterMapOnPlayer.cs" />
 		<Compile Include="..\TheArchive.MONO\Features\Backport\R1LadderFix.cs">
 			<Link>Features\Backport\R1LadderFix.cs</Link>
 		</Compile>
