@@ -1,5 +1,6 @@
 ﻿using Gear;
 using Player;
+using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
@@ -18,11 +19,19 @@ namespace TheArchive.Features.QoL
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 
+        public static bool IsR2OrLater { get; private set; } = false;
         public static bool IsR6OrLater { get; private set; } = false;
+
+        private static MethodAccessor<InteractionGuiLayer> A_SetTimedMessage;
 
         public override void Init()
         {
+            IsR2OrLater = BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownTwo.ToLatest());
             IsR6OrLater = BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownSix.ToLatest());
+
+            if (!IsR2OrLater)
+                A_SetTimedMessage = MethodAccessor<InteractionGuiLayer>.GetAccessor("SetTimedMessage");
+            //public void SetTimedMessage(string msg, float timeVisible, ePUIMessageStyle style = ePUIMessageStyle.Message)
         }
 
         public static bool NeedsResource(iResourcePackReceiver receiver, eResourceContainerSpawnType packType)
@@ -38,11 +47,16 @@ namespace TheArchive.Features.QoL
                 case eResourceContainerSpawnType.AmmoTool:
                     return receiver.NeedToolAmmo();
                 case eResourceContainerSpawnType.Disinfection:
-                    return receiver.NeedDisinfection();
+                    if (IsR2OrLater)
+                        return NeedsDisinfect(receiver);
+                    return false;
                 default:
                     return false;
             }
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static bool NeedsDisinfect(iResourcePackReceiver receiver) => receiver.NeedDisinfection();
 
         public static void ShowDoesNotNeedResourcePrompt(iResourcePackReceiver receiver, eResourceContainerSpawnType packType)
         {
@@ -62,10 +76,174 @@ namespace TheArchive.Features.QoL
                     text += " NOT NEED DISINFECTION";
                     break;
             }
-            GuiManager.InteractionLayer.SetTimedInteractionPrompt(text, 1.4f);
+            SetTimedInteractionPrompt(text, 1.4f);
         }
 
-#if IL2CPP
+        private static void SetTimedInteractionPrompt(string text, float time)
+        {
+            if (IsR2OrLater)
+                TimedInteractionPromptR2Plus(text, time);
+            else
+                A_SetTimedMessage.Invoke(GuiManager.InteractionLayer, text, time, ePUIMessageStyle.Message);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void TimedInteractionPromptR2Plus(string text, float time)
+        {
+            GuiManager.InteractionLayer.SetTimedInteractionPrompt(text, time);
+        }
+
+#if MONO
+        [RundownConstraint(Utils.RundownFlags.RundownOne)]
+        [ArchivePatch(typeof(ResourcePackFirstPerson), "Update")]
+        internal static class ResourcePackFirstPerson_Update_Patch
+        {
+            public static bool Prefix(ResourcePackFirstPerson __instance,
+                ref bool ___m_lastSetCanInteract,
+                ref float ___m_interactTimer,
+                ref iResourcePackReceiver ___m_actionReceiver,
+                ref iResourcePackReceiver ___m_lastActionReceiver,
+                ref bool ___m_applyPress,
+                ref Interact_ManualTimedWithCallback ___m_interactApplyResource)
+            {
+                bool flag = false;
+                if (!__instance.Owner.Interaction.HasWorldInteraction && !__instance.Owner.FPItemHolder.ItemHiddenTrigger && Clock.Time > ___m_interactTimer)
+                {
+                    ResourcePackFirstPerson_UpdateApplyActionInput_Patch.Prefix(__instance, ref flag, ref ___m_actionReceiver, ref ___m_lastActionReceiver, ref ___m_applyPress, ref ___m_interactApplyResource);
+                }
+                if (!flag && ___m_lastSetCanInteract)
+                {
+                    __instance.m_interactApplyResource.SetCanInteract(false);
+                    __instance.m_interactApplyResource.SetSelected(false, __instance.Owner);
+                }
+                else if (flag && !___m_lastSetCanInteract)
+                {
+                    __instance.m_interactApplyResource.SetCanInteract(true);
+                    __instance.m_interactApplyResource.SetSelected(true, __instance.Owner);
+                }
+                ___m_lastSetCanInteract = flag;
+
+                // base.Update();
+                __instance.Sound.UpdatePosition(__instance.transform.position);
+
+                return ArchivePatch.SKIP_OG;
+            }
+        }
+
+        [RundownConstraint(Utils.RundownFlags.RundownTwo, Utils.RundownFlags.RundownThree)]
+        [ArchivePatch(typeof(ResourcePackFirstPerson), "UpdateApplyActionInput")]
+        internal static class ResourcePackFirstPerson_UpdateApplyActionInput_Patch
+        {
+            private static void UpdateInteractionAction(ResourcePackFirstPerson instance, Interact_ManualTimedWithCallback interactApplyResource, string targetName, InputAction input)
+            {
+                interactApplyResource.SetAction($"Use {instance.PublicName} on <b>{targetName}</b>", input);
+            }
+
+            public static bool Prefix(ResourcePackFirstPerson __instance,
+                ref bool __result,
+                ref iResourcePackReceiver ___m_actionReceiver,
+                ref iResourcePackReceiver ___m_lastActionReceiver,
+                ref bool ___m_applyPress,
+                ref Interact_ManualTimedWithCallback ___m_interactApplyResource)
+            {
+                ref var packReceiver = ref ___m_actionReceiver;
+
+                var packType = __instance.m_packType;
+
+                InputAction nextInputAction = InputAction.None;
+
+                __result = false;
+
+                bool anyButtonPressed = false;
+
+                if (InputMapper.GetButtonDown.Invoke(InputAction.Fire, __instance.Owner.InputFilter))
+                {
+                    anyButtonPressed = true;
+
+                    packReceiver = __instance.Owner.CastTo<iResourcePackReceiver>();
+
+                    nextInputAction = InputAction.Fire;
+                }
+
+                if (InputMapper.GetButtonDown.Invoke(InputAction.Aim, __instance.Owner.InputFilter))
+                {
+                    anyButtonPressed = true;
+
+                    if(!___m_applyPress)
+                    {
+                        if (Physics.Raycast(__instance.Owner.FPSCamera.Position, __instance.Owner.FPSCamera.Forward, out RaycastHit raycastHit, 2.4f, LayerManager.MASK_GIVE_RESOURCE_PACK))
+                        {
+                            iResourcePackReceiver componentInParent = raycastHit.collider.GetComponentInParent<iResourcePackReceiver>();
+                            if (componentInParent != null)
+                            {
+                                packReceiver = componentInParent;
+                            }
+                        }
+                    }
+
+                    if(packReceiver == null)
+                    {
+                        packReceiver = __instance.Owner.CastTo<iResourcePackReceiver>();
+                    }
+
+                    if(packReceiver.IsLocallyOwned)
+                    {
+                        nextInputAction = InputAction.Fire;
+                    }
+                    else
+                    {
+                        nextInputAction = InputAction.Aim;
+                    }
+                }
+
+                bool fireHeld = InputMapper.GetButton.Invoke(InputAction.Fire, __instance.Owner.InputFilter);
+                bool aimHeld = InputMapper.GetButton.Invoke(InputAction.Aim, __instance.Owner.InputFilter);
+
+                bool needsResource = NeedsResource(packReceiver, packType);
+
+                if(packReceiver != null && anyButtonPressed)
+                {
+                    if(packReceiver.IsLocallyOwned)
+                    {
+                        UpdateInteractionAction(__instance, ___m_interactApplyResource, "YOURSELF", nextInputAction);
+                    }
+                    else
+                    {
+                        UpdateInteractionAction(__instance, ___m_interactApplyResource, packReceiver.InteractionName, nextInputAction);
+                    }
+                    ___m_lastActionReceiver = packReceiver;
+                }
+
+                if(needsResource)
+                {
+                    ___m_applyPress = ___m_applyPress || anyButtonPressed;
+                    if (___m_applyPress && ((fireHeld && packReceiver.IsLocallyOwned) || (aimHeld && !packReceiver.IsLocallyOwned)))
+                    {
+                        ___m_interactApplyResource.DoInteract(__instance.Owner);
+                        ___m_interactApplyResource.SetCanInteract(true);
+                        ___m_interactApplyResource.SetSelected(true, __instance.Owner);
+                        __result = true;
+                    }
+                    else
+                    {
+                        if(___m_applyPress)
+                        {
+                            ___m_interactApplyResource.SetActive(false);
+                            ___m_interactApplyResource.SetActive(true);
+                        }
+                        ___m_applyPress = false;
+                    }
+                }
+                else if(anyButtonPressed)
+                {
+                    SharedUtils.SafePost(__instance.Sound, AK.EVENTS.BUTTONGENERICBLIPDENIED);
+                    ShowDoesNotNeedResourcePrompt(packReceiver, packType);
+                }
+
+                return ArchivePatch.SKIP_OG;
+            }
+        }
+#else
         [ArchivePatch(typeof(ResourcePackFirstPerson), "UpdateInteraction")]
         internal static class ResourcePackFirstPerson_UpdateInteraction_Patch
         {
