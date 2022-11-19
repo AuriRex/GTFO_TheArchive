@@ -14,6 +14,8 @@ namespace TheArchive.Features.QoL
 
         public override string Group => FeatureGroups.QualityOfLife;
 
+        public override string Description => "Allows you to unready in the lobby.";
+
         [ArchivePatch(typeof(CM_PageLoadout), "UpdateReadyButton")]
         internal static class CM_PageLoadout_UpdateReadyButtonPatch
         {

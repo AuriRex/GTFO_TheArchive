@@ -13,7 +13,7 @@ namespace TheArchive.Features.Backport
     {
         public override string Name => "Visual Ping Indicators in R1";
 
-        public override string Description => "Visualize terminal pings in R1 by abusing the local players middle mouse ping.\n(Only works as Host)";
+        public override string Description => "Visualize terminal pings in R1 by abusing the local players Middle-Mouse-Ping.\n(Only works as Host)";
 
         public override string Group => FeatureGroups.Backport;
 

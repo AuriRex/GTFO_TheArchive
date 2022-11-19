@@ -15,6 +15,8 @@ namespace TheArchive.Features.QoL
 
         public override string Group => FeatureGroups.QualityOfLife;
 
+        public override string Description => "Resource Packs will be prioritized and show up with special icons and trigger voice lines when pinged by Middle-Mouse-Pings.\n(Yes, disinfect is ammo apparently)";
+
         // prioritize resources in ping raycasts
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.RundownFive)]
         [ArchivePatch(typeof(PlayerAgent), "TriggerMarkerPing")]

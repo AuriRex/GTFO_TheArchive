@@ -15,6 +15,10 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "Mute Speak";
 
+        public override string Group => FeatureGroups.Special;
+
+        public override string Description => "Binds a few voice lines to keyboard keys.\n\nArrow keys\n[P, L, K, J, H] toggleable by hitting F8; off by default\nHold [Right Control] for alternate lines";
+
         public static bool EnableOtherVoiceBinds { get; set; } = false;
 
         private static PlayerAgent _localPlayerAgent;

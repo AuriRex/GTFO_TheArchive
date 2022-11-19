@@ -17,6 +17,10 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "Weapon FOV Adjustments";
 
+        public override string Group => FeatureGroups.Special;
+
+        public override string Description => "Adjust the Field of View of weapons, consumables and big items.";
+
         public override bool PlaceSettingsInSubMenu => true;
 
         public new static IArchiveLogger FeatureLogger { get; set; }

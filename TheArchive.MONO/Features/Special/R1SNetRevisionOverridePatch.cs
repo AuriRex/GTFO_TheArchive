@@ -13,6 +13,8 @@ namespace TheArchive.Features.Special
 
         public override string Group => FeatureGroups.Special;
 
+        public override string Description => $"Makes you able to join players who are playing on R1 build <color=orange>{RevisionOverride}</color> even though you're on <color=orange>{kOriginalRevision}</color>.";
+
         public const int kOriginalRevision = 19715;
         public static int RevisionOverride { get; set; } = 19087;
 

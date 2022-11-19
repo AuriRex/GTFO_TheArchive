@@ -11,6 +11,9 @@ namespace TheArchive.Features.Special
         public override string Name => "Mod Watermark";
 
 		public override string Group => FeatureGroups.Special;
+
+		public override string Description => $"Shows the mod version in the bottom right.\n(<#{ColorHex}>{ArchiveMod.MOD_NAME} v{ArchiveMod.VERSION_STRING}</color>)";
+
         public override bool SkipInitialOnEnable => true;
 
         public const string ColorHex = "FBF3FF";
@@ -77,7 +80,7 @@ namespace TheArchive.Features.Special
 					else
 						secondLine = ogText.Split(new string[] { "\n" }, 2, StringSplitOptions.None)[1];
 
-					var text = $"<color=#{ColorHex}>TheArchive v{ArchiveMod.VERSION_STRING}</color>\n{secondLine}";
+					var text = $"<#{ColorHex}>{ArchiveMod.MOD_NAME} v{ArchiveMod.VERSION_STRING}</color>\n{secondLine}";
 
 #if IL2CPP
 					__instance.m_watermark = text;

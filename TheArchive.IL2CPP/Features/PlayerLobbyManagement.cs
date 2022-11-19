@@ -18,6 +18,8 @@ namespace TheArchive.Features
     {
         public override string Name => "Player Lobby Management";
 
+        public override string Description => "Allows you to open a players steam profile by clicking on their name as well as kick and ban players as host.";
+
         public new static IArchiveLogger FeatureLogger { get; set; }
 
         [FeatureConfig]

@@ -9,6 +9,8 @@ namespace TheArchive.Features
     {
         public override string Name => "Hud Toggle (F1)";
 
+        public override string Description => "Keybind to toggle parts of the HUD";
+
         private static bool _hudIsVisible = true;
 
         public void Update()

@@ -16,6 +16,10 @@ namespace TheArchive.Features
     {
         public override string Name => "Copy Lobby ID Format";
 
+        public override string Description => "Customize copied lobby code from the 'Copy Lobby ID'-Button on the loadout and settings screens with a custom format.";
+
+        public override bool PlaceSettingsInSubMenu => true;
+
         public new static IArchiveLogger FeatureLogger { get; set; }
 
         public const string DefaultFormat = "LF%OpenSlots% %Rundown%%Expedition% \"%ExpeditionName%\": `%LobbyID%`";

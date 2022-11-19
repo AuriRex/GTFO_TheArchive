@@ -9,6 +9,8 @@ namespace TheArchive.Features.Special
 
         public override string Group => FeatureGroups.Special;
 
+        public override string Description => "Forces the held item to be hidden.\n(Warning! This makes you unable to use or switch items until unhidden!)";
+
         public void Update()
         {
             if (Input.GetKeyDown(KeyCode.F2))

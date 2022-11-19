@@ -14,10 +14,10 @@ namespace TheArchive.Features.Special
     public class WeaponStats : Feature
     {
         public override string Name => "Show Weapon Stats";
+        
+        public override string Group => FeatureGroups.Special;
 
         public override string Description => "Adds weapon statistics such as damage, clip size and reload speed (and more if applicable) on the weapon select screen.";
-
-        public override string Group => FeatureGroups.Special;
 
         private static PlayerDataBlock _playerDataBlock;
         public override void OnDatablocksReady()

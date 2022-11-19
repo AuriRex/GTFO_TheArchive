@@ -10,6 +10,8 @@ namespace TheArchive.Features.Special
 
         public override string Group => FeatureGroups.Special;
 
+        public override string Description => "Completely removes the 'You are dead, use TAB to check map' message.";
+
         [ArchivePatch(typeof(PLOC_Downed), nameof(PLOC_Downed.Enter))]
         public class PLOC_Downed_Enter_Patch
         {

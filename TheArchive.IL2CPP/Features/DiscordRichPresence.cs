@@ -14,6 +14,8 @@ namespace TheArchive.Features
     {
         public override string Name => "Discord Rich Presence";
 
+        public override string Description => "Show the current game state in detail on discord.";
+
         [FeatureConfig]
         public static RichPresenceSettings DiscordRPCSettings { get; set; }
 

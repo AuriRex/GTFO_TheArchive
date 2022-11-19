@@ -21,6 +21,8 @@ namespace TheArchive.Features.QoL
 
         public override string Group => FeatureGroups.QualityOfLife;
 
+        public override string Description => "Adds a Loadout Randomizer button onto the loadout screen.\nSelect which gear to randomize via the settings below.";
+
         public new static IArchiveLogger FeatureLogger { get; set; }
 
         public class LoadoutRandomizerSettings
