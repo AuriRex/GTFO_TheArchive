@@ -624,16 +624,18 @@ namespace TheArchive.Features.Dev
 
                     CreateHeader($"{ArchiveMod.MOD_NAME} <color=orange>v{ArchiveMod.VERSION_STRING}", WHITE_GRAY, false);
 
-                    if(ArchiveMod.GIT_IS_DIRTY)
+                    if (ArchiveMod.GIT_IS_DIRTY)
                     {
                         CreateHeader($"Built with uncommitted changes | <color=red>Git is dirty</color>", ORANGE, false);
                     }
 
-                    if(Feature.DevMode)
+                    if (Feature.DevMode)
                     {
                         CreateHeader($"Last Commit Hash: {ArchiveMod.GIT_COMMIT_SHORT_HASH}", WHITE_GRAY, false);
                         CreateHeader($"Last Commit Date: {ArchiveMod.GIT_COMMIT_DATE}", WHITE_GRAY, false);
                     }
+
+                    CreateHeader($"Currently running GTFO <color=orange>{BuildInfo.Rundown}</color>, build <color=orange>{BuildInfo.BuildNumber}</color>", WHITE_GRAY, false);
 
                     AddToAllSettingsWindows(MainModSettingsScrollWindow);
 
