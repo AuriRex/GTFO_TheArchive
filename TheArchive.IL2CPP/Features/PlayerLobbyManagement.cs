@@ -135,6 +135,8 @@ namespace TheArchive.Features
 
         internal static void OnNameButtonPressed(int id)
         {
+            PopupWindow.SetVisible(false);
+
             if (!SharedUtils.TryGetPlayerByCharacterIndex(id - 1, out var player))
             {
                 FeatureLogger.Debug($"No player found for index {id - 1}.");
@@ -147,6 +149,8 @@ namespace TheArchive.Features
 
         internal static void KickPlayerButtonPressed(int playerID)
         {
+            PopupWindow.SetVisible(false);
+
             if (!SNet.IsMaster) return;
 
             if (!SharedUtils.TryGetPlayerByCharacterIndex(playerID - 1, out var player))
@@ -161,6 +165,8 @@ namespace TheArchive.Features
 
         internal static void BanPlayerButtonPressed(int playerID)
         {
+            PopupWindow.SetVisible(false);
+
             if (!SNet.IsMaster) return;
 
             if (!SharedUtils.TryGetPlayerByCharacterIndex(playerID - 1, out var player))
