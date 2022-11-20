@@ -53,6 +53,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public void AddToList(object value)
         {
             GetList().Add(value);
+            FeatureManager.Instance.OnFeatureSettingChanged(this);
         }
 
         public bool RemoveFromList(object value)
@@ -61,6 +62,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             if (list.Contains(value))
             {
                 list.Remove(value);
+                FeatureManager.Instance.OnFeatureSettingChanged(this);
                 return true;
             }
             return false;
