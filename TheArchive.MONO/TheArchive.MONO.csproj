@@ -254,6 +254,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\PlayerLobbyManagement.cs" Link="Features\PlayerLobbyManagement.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\L4DStylePacks.cs" Link="Features\QoL\L4DStylePacks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\SituationalAwareWeaponSwitch.cs" Link="Features\QoL\SituationalAwareWeaponSwitch.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\EnableLegacyHammers.cs" Link="Features\Special\EnableLegacyHammers.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\WeaponStats.cs" Link="Features\Special\WeaponStats.cs" />
 	</ItemGroup>
 	<ItemGroup>
