@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using TheArchive.Interfaces;
+using TheArchive.Loader;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core.Managers
@@ -10,6 +13,9 @@ namespace TheArchive.Core.Managers
     public class DataBlockManager
     {
         public static bool HasBeenSetup { get; private set; } = false;
+
+        private static IArchiveLogger _logger;
+        private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateArSubLoggerInstance(nameof(DataBlockManager), ConsoleColor.Green);
 
         private static List<Type> _dataBlockTypes;
         public static List<Type> DataBlockTypes
@@ -47,6 +53,7 @@ namespace TheArchive.Core.Managers
 
         private static Dictionary<Type, List<Action<object>>> _transformationDictionary = new Dictionary<Type, List<Action<object>>>();
 
+        [Obsolete($"Use {nameof(RegisterTransformationForDB)} instead.")]
         public static void RegisterTransformationFor<T>(Action<object> func) where T : class
         {
             if (!_transformationDictionary.TryGetValue(typeof(T), out var list))
@@ -57,6 +64,59 @@ namespace TheArchive.Core.Managers
             }
 
             list.Add(func);
+        }
+
+        private static List<ITransformationData> _transformationDataToApply = new List<ITransformationData>();
+
+        public static void RegisterTransformationForDB<T>(Action<List<T>> action, int priority = 0) where T : class
+        {
+            if (HasBeenSetup)
+                throw new Exception("Transformations have to be registered before DataBlocks have been inited!");
+
+            var frame = new System.Diagnostics.StackTrace().GetFrame(1);
+
+            var trans = new TransformationData<T>(action, priority, originMethod: frame.GetMethod());
+
+            _transformationDataToApply.Add(trans);
+
+            Logger.Debug($"Transform Registered: '{trans.DeclaringType?.FullName ?? "Null"}', Method: '{trans.OriginMethod?.Name ?? "Null"}' (Asm:{trans.DeclaringAssembly?.GetName()?.Name ?? "Null"}) [Priority:{trans.Priority}]");
+        }
+
+        private interface ITransformationData
+        {
+            public int Priority { get; }
+            public Type DBType { get; }
+            internal void Invoke(IList list);
+
+            public MethodBase OriginMethod { get; }
+            public Type DeclaringType { get; }
+            public Assembly DeclaringAssembly { get; }
+        }
+
+        private class TransformationData<T> : ITransformationData
+        {
+            public int Priority { get; private set; } = 0;
+            public Type DBType => typeof(T);
+
+            public MethodBase OriginMethod { get; private set; }
+            public Type DeclaringType => OriginMethod.DeclaringType;
+            public Assembly DeclaringAssembly => DeclaringType.Assembly;
+
+            private readonly MethodInfo _method;
+            private readonly object _target;
+
+            public TransformationData(Action<List<T>> transform, int priority = 0, MethodBase originMethod = null)
+            {
+                _method = transform.Method;
+                _target = transform.Target;
+                OriginMethod = originMethod;
+                Priority = priority;
+            }
+
+            public void Invoke(IList list)
+            {
+                _method.Invoke(_target, new object[] { list });
+            }
         }
 
         public static object GetWrapper(Type type, out Type wrapperType)
@@ -75,15 +135,15 @@ namespace TheArchive.Core.Managers
 
         public static void Setup()
         {
-            ArchiveLogger.Msg(ConsoleColor.Green, $"{nameof(DataBlockManager)} is setting up ...");
+            Logger.Msg(ConsoleColor.Green, $"Setting up ...");
             try
             {
                 if (!ArchiveMod.IsPlayingModded)
                 {
-                    ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(DataBlockManager)}] Dumping built in DataBlocks ...");
+                    Logger.Msg(ConsoleColor.Green, $"Dumping built in DataBlocks ...");
                     foreach (var type in DataBlockTypes)
                     {
-                        ArchiveLogger.Msg(ConsoleColor.DarkGreen, $"> {type.FullName}");
+                        Logger.Msg(ConsoleColor.DarkGreen, $"> {type.FullName}");
 
                         var path = Path.Combine(LocalFiles.DataBlockDumpPath, type.Name + ".json");
 
@@ -93,12 +153,12 @@ namespace TheArchive.Core.Managers
 
                         if (string.IsNullOrWhiteSpace(fileContents))
                         {
-                            ArchiveLogger.Warning($"  X returned string is empty!!");
+                            Logger.Warning($"  X returned string is empty!!");
                         }
 
                         if (ArchiveMod.Settings.DumpDataBlocks && (ArchiveMod.Settings.AlwaysOverrideDataBlocks || !File.Exists(path)))
                         {
-                            ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"  > Writing to file: {path}");
+                            Logger.Msg(ConsoleColor.DarkYellow, $"  > Writing to file: {path}");
 
                             File.WriteAllText(path, fileContents);
                         }
@@ -107,7 +167,7 @@ namespace TheArchive.Core.Managers
                     
                 if(_transformationDictionary.Count > 0)
                 {
-                    ArchiveLogger.Msg(ConsoleColor.Green, $"[{nameof(DataBlockManager)}] Applying DataBlock transformations ...");
+                    Logger.Msg(ConsoleColor.DarkYellow, $"Applying Legacy DataBlock transformations ...");
                     foreach (var kvp in _transformationDictionary)
                     {
                         foreach (var func in kvp.Value)
@@ -121,16 +181,40 @@ namespace TheArchive.Core.Managers
                             }
                             catch(Exception ex)
                             {
-                                ArchiveLogger.Exception(ex);
+                                Logger.Exception(ex);
                             }
                         }
 
                     }
                 }
+
+                if(_transformationDataToApply.Count > 0)
+                {
+                    Logger.Msg(ConsoleColor.Green, $"Applying DataBlock transformations ...");
+
+                    var orderedTransformations = _transformationDataToApply.OrderBy(x => x.Priority);
+
+                    foreach (var trans in orderedTransformations)
+                    {
+                        try
+                        {
+                            Logger.Notice($"> Applying transform from '{trans.DeclaringType?.FullName ?? "Null"}', Method: '{trans.OriginMethod?.Name ?? "Null"}' (Asm:{trans.DeclaringAssembly?.GetName()?.Name ?? "Null"}) [Priority:{trans.Priority}]");
+                            var wrapper = GetWrapper(trans.DBType, out var wrapperType);
+                            var allBlocks = GetAllBlocksFromWrapper(wrapperType, wrapper);
+
+                            trans.Invoke(Utils.ToSystemListSlow(allBlocks, trans.DBType));
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Exception(ex);
+                        }
+                    }
+                }
+                
             }
             catch (Exception ex)
             {
-                ArchiveLogger.Exception(ex);
+                Logger.Exception(ex);
             }
             HasBeenSetup = true;
         }

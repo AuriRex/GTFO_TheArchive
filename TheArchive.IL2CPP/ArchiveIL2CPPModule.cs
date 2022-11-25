@@ -30,6 +30,7 @@ namespace TheArchive
             typeof(GameDataBlockBase<>).RegisterSelf();
             typeof(GameDataBlockWrapper<>).RegisterSelf();
             typeof(eGameStateName).RegisterSelf();
+            typeof(Il2CppSystem.Collections.Generic.List<>).RegisterForIdentifier("GenericList");
         }
 
         public void Init()

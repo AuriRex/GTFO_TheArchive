@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using TheArchive.Core.Managers;
 using TheArchive.Loader;
 
 namespace TheArchive.Utilities
@@ -194,6 +196,32 @@ namespace TheArchive.Utilities
                 }
                 return builder.ToString();
             }
+        }
+
+        public static IList ToSystemListSlow(object allBlocks, Type type)
+        {
+            if(LoaderWrapper.IsGameIL2CPP())
+            {
+                var genListType = ImplementationManager.GameTypeByIdentifier("GenericList");
+
+                var listType = genListType.MakeGenericType(type);
+
+                IList list = (IList) Activator.CreateInstance(typeof(System.Collections.Generic.List<>).MakeGenericType(type));
+
+                // Invoke to get UnhollowerBaseLib.Il2CppArrayBase<T>
+                var listAsEnumerable = (IEnumerable) listType.GetMethod("ToArray", AnyBindingFlagss).Invoke(allBlocks, Array.Empty<object>());
+
+                var enumerator = listAsEnumerable.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    list.Add(enumerator.Current);
+                }
+
+                return list;
+            }
+
+            // Mono
+            return (IList) allBlocks;
         }
 
         public const string EXTENDED_WITHOUT_TMP_TAGS = "://EXTENDED";

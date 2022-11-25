@@ -24,6 +24,7 @@ namespace TheArchive
             typeof(GameDataBlockBase<>).RegisterSelf();
             typeof(GameDataBlockWrapper<>).RegisterSelf();
             typeof(eGameStateName).RegisterSelf();
+            typeof(System.Collections.Generic.List<>).RegisterForIdentifier("GenericList");
         }
 
         public void Init()
