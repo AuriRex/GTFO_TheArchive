@@ -110,9 +110,16 @@ namespace TheArchive.Features.QoL
                 Utils.GetEnumFromName<DRAMA_State>(nameof(DRAMA_State.Alert)),
             };
 
-            public static void Prefix(ref bool preferMelee)
+            public static bool Prefix(ref bool preferMelee)
             {
-                if(Settings.LogWeaponSwitchesToConsole)
+                if (PlayerBackpackManager.LocalBackpack.HasBackpackItem(InventorySlot.InLevelCarry))
+                {
+                    FeatureLogger.Debug($"Player has {InventorySlot.InLevelCarry}, re-equipping that!");
+                    PlayerManager.GetLocalPlayerAgent().Sync.WantsToWieldSlot(InventorySlot.InLevelCarry, false);
+                    return ArchivePatch.SKIP_OG;
+                }
+
+                if (Settings.LogWeaponSwitchesToConsole)
                     FeatureLogger.Notice($"Current drama state: {DramaManager.CurrentStateEnum}");
 
                 if (preferMeleeStates.Any(state => state == DramaManager.CurrentStateEnum))
@@ -126,6 +133,8 @@ namespace TheArchive.Features.QoL
 
                 if (Settings.LogWeaponSwitchesToConsole)
                     FeatureLogger.Notice($"Prefer melee: {preferMelee}");
+
+                return ArchivePatch.RUN_OG;
             }
         }
     }
