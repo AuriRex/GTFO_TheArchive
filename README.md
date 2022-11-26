@@ -4,6 +4,9 @@ A [MelonLoader](https://github.com/LavaGang/MelonLoader) based [GTFO](https://gt
 
 Compatible with many different GTFO builds, tested on all of the latest patches for each rundown.
 
+## Status
+This project is in a Beta state at the moment, expect some bugs and unfinished features.
+
 ### Quick Links
  * [Highlighted Features](#Features)
    * [Backported Features](#Backported-Features)
@@ -48,6 +51,10 @@ Having to redo your settings whenever you switch to another Rundown is now a thi
 ### Instant Hack Release - `[R1 - R4]`
 
 Rundown 5 changed hacks a tiny bit by unlocking locked objects sooner than before, this patch backports this into R1 to R4.
+
+### Center Map on Player - `[R1 - R2]`
+
+Center the map on yourself upon opening. (Has been added officially in R3)
 
 ### Melee Cancel Backport - `[R1 - R5]`
 
@@ -94,6 +101,16 @@ Allows you to change the colors of you and your teammates.
 ---
 
 ## Quality of Life
+
+### L4D Style Resource Packs
+
+Use left and right mouse buttons to apply resource packs instead of E    
+Left mouse = yourself  
+Right mouse = other players
+
+### Situation Aware Weapon Switch
+
+Switch to either your Melee weapon or Primary depending on if you're sneaking around or in combat after depleting all of your throwables / exit a ladder.
 
 ### Prioritize Resource Pings
 
