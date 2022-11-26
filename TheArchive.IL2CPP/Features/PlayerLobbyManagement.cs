@@ -41,15 +41,6 @@ namespace TheArchive.Features
             }
         }
 
-#if MONO
-        private static MethodAccessor<SNet_SyncManager> A_SNet_SyncManager_EjectPlayer;
-
-        public override void Init()
-        {
-            A_SNet_SyncManager_EjectPlayer = MethodAccessor<SNet_SyncManager>.GetAccessor("EjectPlayer");
-        }
-#endif
-
         public override void OnEnable()
         {
             foreach (var collider in CM_PlayerLobbyBar_UpdatePlayer_Patch.colliderMap.Values)
@@ -192,11 +183,7 @@ namespace TheArchive.Features
 
         private static void KickPlayer(SNet_Player player)
         {
-#if IL2CPP
-            SNet.Sync.EjectPlayer(player, SNet_PlayerEventReason.Kick_ByVote);
-#else
-            A_SNet_SyncManager_EjectPlayer.Invoke(SNet.Sync, player, SNet_PlayerEventReason.Kick_ByVote);
-#endif
+            SNet.SessionHub.RemovePlayerFromSession(player, true);
         }
 
         internal static CM_Item OpenSteamItem { get; set; }
@@ -270,18 +257,16 @@ namespace TheArchive.Features
             PopupWindow.SetVisible(true);
         }
 
-        // OnPlayerJoinedSessionHub(SNet_Player player)
-        [ArchivePatch(typeof(SNet_SyncManager), "OnPlayerJoinedSessionHub")]
-        internal static class SNet_SyncManager_OnPlayerJoinedSessionHub_Patch
+        [ArchivePatch(typeof(SNet_SessionHub), "SlaveWantsToJoin")]
+        internal static class SNet_SessionHub_SlaveWantsToJoin_Patch
         {
             public static bool Prefix(SNet_Player player)
             {
-                if(SNet.IsMaster)
+                if (SNet.IsMaster)
                 {
-                    if(IsPlayerBanned(player.Lookup))
+                    if (IsPlayerBanned(player.Lookup))
                     {
-                        KickPlayer(player);
-                        FeatureLogger.Notice($"Banned player \"{player.GetName()}\" tried to join, they have been kicked!");
+                        FeatureLogger.Notice($"Banned player \"{player.GetName()}\" tried to join, their join request has been ignored!");
                         return ArchivePatch.SKIP_OG;
                     }
                 }
