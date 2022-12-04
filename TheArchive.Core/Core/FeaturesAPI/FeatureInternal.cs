@@ -549,6 +549,8 @@ namespace TheArchive.Core.FeaturesAPI
 
         internal void FeatureSettingChanged(FeatureSetting setting)
         {
+            if (!_feature.Enabled) return;
+
             try
             {
                 _feature.OnFeatureSettingChanged(setting);

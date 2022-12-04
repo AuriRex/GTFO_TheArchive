@@ -25,12 +25,23 @@ namespace TheArchive.Features.Accessibility
 
         public class NicknameSettings
         {
+            [FSDescription($"Modes explained using <#C21F4E>this</color> as the character color and <#404>this</color> as the custom color:\n\n<#E4A818>{nameof(NicknameMode.Normal)}</color>:\n <#C21F4E>> > Nickname</color>: Some chat message here.\n<#E4A818>{nameof(NicknameMode.Color)}</color>:\n <#C21F4E>> > <#404>Nickname</color>: Some chat message here.\n</color><#E4A818>{nameof(NicknameMode.TerminatedColor)}</color>:\n <#C21F4E>> > <#404>Nickname</color></color>: Some chat message here.")]
             public NicknameMode Mode { get; set; } = NicknameMode.Normal;
+
             [FSMaxLength(25), FSDisplayName("Nick (25) (No Color)")]
+            [FSDescription($"Un-colored nickname (use character color), max length of 25 characters.\n\nOnly used if Mode is set to <#E4A818>{nameof(NicknameMode.Normal)}</color>!")]
             public string Nick25 { get; set; }
+
             public SColor Color { get; set; } = new SColor(0f, 1f, 0.75f);
+
             [FSMaxLength(19), FSDisplayName("Nick (19) <#E4A818>(Colored)</color>")]
+            [FSDescription($"Colored nickname, max length of 19 characters.\n\nOnly used if Mode is set to <#E4A818>{nameof(NicknameMode.Color)}</color>!")]
             public string Nick19 { get; set; }
+
+            [FSMaxLength(11), FSDisplayName("Nick (11) <#E4A818>(C + Terminated)</color>")]
+            [FSDescription($"Terminated colored nickname, max length of 11 characters.\n\nOnly used if Mode is set to <#E4A818>{nameof(NicknameMode.TerminatedColor)}</color>!")]
+            public string Nick11 { get; set; }
+
             [FSHeader("Nickname :// Others")]
             [FSDisplayName("Allow Other Player Nicknames"), FSIdentifier("AllowNicks")]
             public bool AllowRemotePlayerNicknames { get; set; } = true;
@@ -57,7 +68,7 @@ namespace TheArchive.Features.Accessibility
         {
             if(state == eGameStateName.NoLobby)
             {
-                FeatureLogger.Notice("State changed, setting nickname");
+                FeatureLogger.Notice($"State changed to {eGameStateName.NoLobby}, initially setting nickname ...");
                 SetNickname();
             }
         }
@@ -124,6 +135,13 @@ namespace TheArchive.Features.Accessibility
                         return;
                     }
                     break;
+                case NicknameMode.TerminatedColor:
+                    if (!string.IsNullOrWhiteSpace(Settings.Nick11))
+                    {
+                        SNet.LocalPlayer.NickName = $"<{Settings.Color.ToShortHexString()}>{Settings.Nick11}</color>";
+                        return;
+                    }
+                    break;
             }
 
             ResetNickname();
@@ -176,7 +194,8 @@ namespace TheArchive.Features.Accessibility
         public enum NicknameMode
         {
             Normal,
-            Color
+            Color,
+            TerminatedColor,
         }
     }
 }
