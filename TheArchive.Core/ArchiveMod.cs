@@ -173,7 +173,6 @@ namespace TheArchive
 
         public static void OnApplicationQuit()
         {
-            DiscordManager.OnApplicationQuit();
             FeatureManager.Instance.OnApplicationQuit();
         }
 

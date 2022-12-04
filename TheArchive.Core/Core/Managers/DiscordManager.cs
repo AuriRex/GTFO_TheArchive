@@ -153,11 +153,6 @@ namespace TheArchive.Core.Managers
             DiscordClient.RunCallbacks();
         }
 
-        internal static void OnApplicationQuit()
-        {
-            DiscordClient.Dispose();
-        }
-
         public static class DiscordClient
         {
             public const long CLIENT_ID = 946141176338190346L;
@@ -313,9 +308,21 @@ namespace TheArchive.Core.Managers
                 if(_activityManager != null)
                 {
                     _activityManager.OnActivityJoin -= _activityManager_OnActivityJoin;
-                    _activityManager.ClearActivity((result) => ClientLogger.Debug($"Activity clear result: {result}"));
+                    _activityManager.ClearActivity((result) =>
+                    {
+                        ClientLogger.Debug($"Activity clear result: {result}");
+                        DisposeClient();
+                    });
+                    _activityManager = null;
                 }
-                
+                else
+                {
+                    DisposeClient();
+                }
+            }
+
+            private static void DisposeClient()
+            {
                 _discordClient?.Dispose();
                 _discordClient = null;
             }

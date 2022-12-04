@@ -57,10 +57,5 @@ namespace TheArchive.Features
         {
             DiscordManager.Update();
         }
-
-        public override void OnQuit()
-        {
-            DiscordManager.Disable();
-        }
     }
 }
