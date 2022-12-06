@@ -292,14 +292,14 @@ namespace TheArchive.Core.FeaturesAPI
 
         internal static void RequestRestart(Feature feature)
         {
-            Instance.FeaturesRequestingRestart.Add(feature);
-            Instance.OnFeatureRestartRequestChanged?.Invoke(feature, true);
+            if(Instance.FeaturesRequestingRestart.Add(feature))
+                Instance.OnFeatureRestartRequestChanged?.Invoke(feature, true);
         }
 
         internal static void RevokeRestartRequest(Feature feature)
         {
-            Instance.FeaturesRequestingRestart.Remove(feature);
-            Instance.OnFeatureRestartRequestChanged?.Invoke(feature, false);
+            if(Instance.FeaturesRequestingRestart.Remove(feature))
+                Instance.OnFeatureRestartRequestChanged?.Invoke(feature, false);
         }
 
         internal static Feature GetById(string featureIdentifier)
@@ -334,9 +334,13 @@ namespace TheArchive.Core.FeaturesAPI
         {
             bool enabled = (feature.AppliesToThisGameBuild && !feature.RequiresRestart) ? feature.Enabled : IsEnabledInConfig(feature);
 
-            if (feature.RequiresRestart && feature.FeatureInternal.InitialEnabledState == !enabled && !FeaturesRequestingRestart.Contains(feature))
+            if (feature.RequiresRestart)
             {
-                feature.RequestRestart();
+                // enabled hasn't been set so checking for equal is actually doing the (correct) opposite
+                if (feature.FeatureInternal.InitialEnabledState == enabled)
+                    feature.RequestRestart();
+                else
+                    feature.RevokeRestartRequest();
             }
 
             if (enabled)
