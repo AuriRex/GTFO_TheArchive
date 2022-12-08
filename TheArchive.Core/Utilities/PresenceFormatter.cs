@@ -103,7 +103,9 @@ namespace TheArchive.Utilities
 
         public static string FormatPresenceString(string formatString) => FormatPresenceString(formatString, null);
 
-        public static string FormatPresenceString(string formatString, params (string search, string replace)[] extraFormatters)
+        public static string FormatPresenceString(string formatString, params (string search, string replace)[] extraFormatters) => FormatPresenceString(formatString, true, extraFormatters);
+
+        public static string FormatPresenceString(string formatString, bool stripAllTMPTags = true, params (string search, string replace)[] extraFormatters)
         {
             string formatted = formatString;
 
@@ -121,6 +123,9 @@ namespace TheArchive.Utilities
                         formatted = formatted.ReplaceCaseInsensitive($"%{extraFormer.search}%", extraFormer.replace);
                 }
             }
+
+            if(stripAllTMPTags)
+                return Utils.StripTMPTagsRegex(formatted.Trim());
 
             return formatted.Trim();
         }
