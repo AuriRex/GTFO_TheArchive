@@ -250,6 +250,7 @@
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableHudSway.cs" Link="Features\Accessibility\DisableHudSway.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableUIParalax.cs" Link="Features\Accessibility\DisableUIParalax.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\StartupscreenOverride.cs" Link="Features\Dev\StartupscreenOverride.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\PlayerLobbyManagement.cs" Link="Features\PlayerLobbyManagement.cs" />

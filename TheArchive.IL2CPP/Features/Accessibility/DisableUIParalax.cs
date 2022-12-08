@@ -12,7 +12,7 @@ namespace TheArchive.Features.Accessibility
 
         public override string Group => FeatureGroups.Accessibility;
 
-        public override string Description => "Disables the Paralax/Moving of UI elements.\n\n<size=80%>(Only partially works on R4://EXT builds, might fix later.)</size>";
+        public override string Description => "Disables the Paralax/Moving of UI elements in menu screens.\n(Some elements might get partially or fully cut off-screen!)\n\n<size=80%>(Only partially works on R4://EXT builds, might fix later.)</size>";
 
         public override bool SkipInitialOnEnable => true;
 
