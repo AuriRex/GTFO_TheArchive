@@ -349,6 +349,8 @@ namespace TheArchive.Utilities
         /// </summary>
         public enum RundownID : int
         {
+            Latest = RundownAltTwo,
+
             RundownUnitialized = -1,
             RundownUnknown,
             RundownOne,
@@ -359,13 +361,14 @@ namespace TheArchive.Utilities
             RundownSix,
             RundownSeven,
             RundownAltOne,
-
-            Latest = RundownAltOne,
+            RundownAltTwo,
         }
 
         [Flags]
         public enum RundownFlags : int
         {
+            Latest = RundownAltTwo,
+
             None = 0,
             RundownOne = 1 << 0,
             RundownTwo = 1 << 1,
@@ -375,8 +378,10 @@ namespace TheArchive.Utilities
             RundownSix = 1 << 5,
             RundownSeven = 1 << 6,
             RundownAltOne = 1 << 7,
-            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive | RundownSix | RundownSeven | RundownAltOne,
-            Latest = RundownAltOne,
+            RundownAltTwo = 1 << 8,
+            
+            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive | RundownSix | RundownSeven
+                | RundownAltOne | RundownAltTwo,
         }
 
         public static bool FlagsContain(RundownFlags flags, RundownID id)
