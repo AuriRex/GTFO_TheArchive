@@ -1,10 +1,14 @@
-﻿using Player;
+﻿using GameData;
+using Player;
 using System;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
+using static TheArchive.Utilities.SharedUtils;
+using System.Linq;
 
 namespace TheArchive.Features.QoL
 {
@@ -16,6 +20,67 @@ namespace TheArchive.Features.QoL
         public override string Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Resource Packs will be prioritized and show up with special icons and trigger voice lines when pinged by Middle-Mouse-Pings.\n(Yes, disinfect is ammo apparently)";
+
+        public new static IArchiveLogger FeatureLogger { get; set; }
+
+#if IL2CPP
+        public static uint Sound_DisinfectHere_ID { get; private set; }
+        public static uint Sound_ToolHere_ID { get; private set; }
+
+
+        public override void OnDatablocksReady()
+        {
+            Sound_DisinfectHere_ID = SoundEventCache.Resolve(nameof(AK.EVENTS.PLAY_CL_DISINFECTIONHERE));
+            Sound_ToolHere_ID = SoundEventCache.Resolve(nameof(AK.EVENTS.PLAY_CL_TOOLREFILLHERE));
+        }
+
+        // R6+ only!
+        private static bool OverrideSoundsAndPings(Vector3 worldPos, GameObject gameObject)
+        {
+            bool shouldSkipOG = false;
+            uint soundToTrigger = 0;
+            eNavMarkerStyle navMarkerStyle = eNavMarkerStyle.PlayerInCompass;
+
+            Gear.ResourcePackPickup resourcePack = gameObject.GetComponentInChildren<Gear.ResourcePackPickup>();
+
+            if (resourcePack != null)
+            {
+                gameObject = resourcePack.gameObject;
+
+                switch (resourcePack.m_packType)
+                {
+                    case eResourceContainerSpawnType.Disinfection:
+                        soundToTrigger = Sound_DisinfectHere_ID;
+                        navMarkerStyle = eNavMarkerStyle.PlayerPingDisinfection;
+                        shouldSkipOG = true;
+                        break;
+                    case eResourceContainerSpawnType.AmmoTool:
+                        soundToTrigger = Sound_ToolHere_ID;
+                        navMarkerStyle = eNavMarkerStyle.PlayerPingAmmo;
+                        shouldSkipOG = true;
+                        break;
+                }
+            }
+
+            var localPlayer = PlayerManager.GetLocalPlayerAgent();
+
+            if (soundToTrigger != 0)
+            {
+                PlayerVoiceManager.WantToSay(localPlayer.CharacterID, soundToTrigger);
+            }
+
+            if(navMarkerStyle != eNavMarkerStyle.PlayerInCompass)
+            {
+                GuiManager.AttemptSetPlayerPingStatus(localPlayer, true, worldPos, navMarkerStyle);
+
+                localPlayer.Sync.SendGenericInteract(pGenericInteractAnimation.TypeEnum.PointForward, false);
+
+                PlayerManager.Current.OnObjectHighlighted(localPlayer.CourseNode, gameObject);
+            }
+
+            return shouldSkipOG;
+        }
+#endif
 
         // prioritize resources in ping raycasts
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.RundownFive)]
@@ -88,8 +153,7 @@ namespace TheArchive.Features.QoL
                 }
                 catch (Exception ex)
                 {
-                    ArchiveLogger.Error(ex.Message);
-                    ArchiveLogger.Error(ex.StackTrace);
+                    FeatureLogger.Exception(ex);
                 }
             }
         }
@@ -104,21 +168,21 @@ namespace TheArchive.Features.QoL
                 return typeof(LocalPlayerAgent);
             }
 
-            public static void Prefix(LocalPlayerAgent __instance, ref iPlayerPingTarget target, ref Vector3 worldPos)
+            public static bool Prefix(LocalPlayerAgent __instance, ref iPlayerPingTarget target, ref Vector3 worldPos)
             {
                 try
                 {
 
                     if (__instance == null || !__instance.IsLocallyOwned || target == null)
                     {
-                        return;
+                        return ArchivePatch.RUN_OG;
                     }
 
                     var rayCastHits = Physics.RaycastAll(__instance.CamPos, __instance.FPSCamera.Forward, 40f, LayerManager.MASK_PING_TARGET, QueryTriggerInteraction.Ignore);
 
                     if (rayCastHits == null || rayCastHits.Length == 0)
                     {
-                        return;
+                        return ArchivePatch.RUN_OG;
                     }
 
                     float distanceToLockerOrBox = -1;
@@ -136,7 +200,7 @@ namespace TheArchive.Features.QoL
 
                     if (distanceToLockerOrBox < 0)
                     {
-                        return;
+                        return ArchivePatch.RUN_OG;
                     }
 
                     foreach (var hit in rayCastHits)
@@ -154,15 +218,17 @@ namespace TheArchive.Features.QoL
                             worldPos = hit.point;
                             __instance.m_pingTarget = hitTarget;
                             __instance.m_pingPos = hit.point;
+                            if (OverrideSoundsAndPings(worldPos, hit.collider.gameObject))
+                                return ArchivePatch.SKIP_OG;
                             break;
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    ArchiveLogger.Error($"{ex}: {ex.Message}");
-                    ArchiveLogger.Error(ex.StackTrace);
+                    FeatureLogger.Exception(ex);
                 }
+                return ArchivePatch.RUN_OG;
             }
         }
 #else
@@ -257,7 +323,7 @@ namespace TheArchive.Features.QoL
                 }
                 catch (Exception ex)
                 {
-                    ArchiveLogger.Exception(ex);
+                    FeatureLogger.Exception(ex);
                 }
             }
         }

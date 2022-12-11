@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Interfaces;
+using TheArchive.Loader;
 
 namespace TheArchive.Utilities
 {
     public class SoundEventCache : IInitAfterGameDataInitialized
     {
         private static Dictionary<string, uint> SoundIdCache { get; set; } = new Dictionary<string, uint>();
+
+        private static IArchiveLogger _logger;
+        private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateLoggerInstance(nameof(SoundEventCache), ConsoleColor.DarkGreen);
 
         public static uint Resolve(string soundId, bool throwIfNotFound = false)
         {
@@ -16,7 +20,7 @@ namespace TheArchive.Utilities
                 return value;
             }
 
-            ArchiveLogger.Error($"[{nameof(SoundEventCache)}] Could not resolve sound id \"{soundId}\"!");
+            Logger.Error($"Could not resolve sound id \"{soundId}\"!");
 
             if(throwIfNotFound)
             {
@@ -44,12 +48,12 @@ namespace TheArchive.Utilities
                     SoundIdCache.Add(name, value);
                 }
 
-                ArchiveLogger.Msg(ConsoleColor.Magenta, $"[{nameof(SoundEventCache)}] Cached {SoundIdCache.Count} sound events!");
+                Logger.Msg(ConsoleColor.Magenta, $"Cached {SoundIdCache.Count} sound events!");
             }
             catch(Exception ex)
             {
-                ArchiveLogger.Error($"[{nameof(SoundEventCache)}] Threw an exception:");
-                ArchiveLogger.Exception(ex);
+                Logger.Error($"Threw an exception on {nameof(Init)}:");
+                Logger.Exception(ex);
             }
         }
     }
