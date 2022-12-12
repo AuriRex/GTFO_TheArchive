@@ -3,10 +3,10 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
-#if IL2CPP && MelonLoader
+#if Unhollower
 using UnhollowerBaseLib;
 #endif
-#if IL2CPP && BepInEx
+#if Il2CppInterop
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 #endif
 

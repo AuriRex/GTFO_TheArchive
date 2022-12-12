@@ -6,10 +6,10 @@ using System.Reflection;
 using TMPro;
 using UnityEngine;
 using GameData;
-#if IL2CPP && MelonLoader
+#if Unhollower
 using UnhollowerBaseLib;
 #endif
-#if IL2CPP && BepInEx
+#if Il2CppInterop
 using Il2CppInterop.Runtime.InteropTypes;
 #endif
 

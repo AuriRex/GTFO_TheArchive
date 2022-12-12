@@ -18,6 +18,14 @@
 		<LoaderRootPath>$(ProjectDir)..\_R_LATEST\BepInEx\core\</LoaderRootPath>
 		<DotnetPath>$(ProjectDir)..\_R_LATEST\dotnet\</DotnetPath>
 	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'R_ML' And $(DefineConstants.Contains(`IL2CPP`))">
+		<DefineConstants>$(DefineConstants);Unhollower</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'R_BIE' And $(DefineConstants.Contains(`IL2CPP`))">
+		<DefineConstants>$(DefineConstants);Il2CppInterop</DefineConstants>
+	</PropertyGroup>
 	
 	<ItemGroup Condition="'$(Configuration)' == 'R_ML'">
 		<Reference Include="0Harmony">

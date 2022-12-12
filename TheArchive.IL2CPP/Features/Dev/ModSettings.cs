@@ -15,10 +15,10 @@ using TheArchive.Interfaces;
 using TheArchive.Loader;
 using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
-#if IL2CPP && MelonLoader
+#if Unhollower
 using UnhollowerBaseLib.Attributes;
 #endif
-#if IL2CPP && BepInEx
+#if Il2CppInterop
 using Il2CppInterop.Runtime.Attributes;
 #endif
 
