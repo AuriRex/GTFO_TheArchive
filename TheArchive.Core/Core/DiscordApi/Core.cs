@@ -1883,7 +1883,14 @@ namespace Discord
         public void UpdateActivity(Activity activity, UpdateActivityHandler callback)
         {
             GCHandle wrapped = GCHandle.Alloc(callback);
-            Methods.UpdateActivity(MethodsPtr, ref activity, GCHandle.ToIntPtr(wrapped), UpdateActivityCallbackImpl);
+            try
+            {
+                Methods.UpdateActivity(MethodsPtr, ref activity, GCHandle.ToIntPtr(wrapped), UpdateActivityCallbackImpl);
+            }
+            finally
+            {
+                GC.KeepAlive(Methods.UpdateActivity);
+            }
         }
 
         [MonoPInvokeCallback]

@@ -29,5 +29,23 @@ namespace TheArchive.Features.Accessibility
                 scale = 1f;
             }
         }
+
+        [ArchivePatch(typeof(WatermarkGuiLayer), nameof(WatermarkGuiLayer.ApplyMovementSway))]
+        internal static class WatermarkGuiLayer_ApplyMovementSway_Patch
+        {
+            public static void Prefix(ref Vector3 sway)
+            {
+                sway = Vector3.zero;
+            }
+        }
+
+        [ArchivePatch(typeof(WatermarkGuiLayer), nameof(WatermarkGuiLayer.ApplyMovementScale))]
+        internal static class WatermarkGuiLayer_ApplyMovementScale_Patch
+        {
+            public static void Prefix(ref float scale)
+            {
+                scale = 1f;
+            }
+        }
     }
 }
