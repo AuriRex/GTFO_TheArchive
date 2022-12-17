@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
@@ -13,6 +9,7 @@ using TheArchive.Utilities;
 namespace TheArchive.Features.LocalProgression
 {
     [EnableFeatureByDefault, HideInModSettings, DoNotSaveToConfig]
+    [RundownConstraint(Utils.RundownFlags.Latest)]
     internal class GTFOApi_Compat : Feature
     {
         public override string Name => nameof(GTFOApi_Compat);
@@ -86,18 +83,32 @@ namespace TheArchive.Features.LocalProgression
 
             public static bool Prefix()
             {
-                GameData.GameSetupDataBlock setupDB = GameData.GameDataBlockBase<GameData.GameSetupDataBlock>.GetBlock(1);
+                var setupDB = GameData.GameSetupDataBlock.GetBlock(1);
 
                 GameData.RundownDataBlock.RemoveBlockByID(1);
 
-                /*var rundownDB = GameData.RundownDataBlock.GetBlock(setupDB.RundownIdToLoad);
+                uint newId = 1;
+                for(int i = 0; i < setupDB.RundownIdsToLoad.Count; i++)
+                {
+                    var originalIdToLoad = setupDB.RundownIdsToLoad[i];
 
-                rundownDB.persistentID = 1;
+                    if(originalIdToLoad != 1)
+                    {
+                        GameData.RundownDataBlock.RemoveBlockByID(newId);
+                        var rundownDB = GameData.RundownDataBlock.GetBlock(originalIdToLoad);
 
-                GameData.RundownDataBlock.RemoveBlockByID(setupDB.RundownIdToLoad);
-                GameData.RundownDataBlock.AddBlock(rundownDB, -1);
+                        if(rundownDB != null)
+                        {
+                            rundownDB.persistentID = newId;
+                            setupDB.RundownIdsToLoad[i] = newId;
 
-                setupDB.RundownIdToLoad = 1;*/
+                            GameData.RundownDataBlock.RemoveBlockByID(originalIdToLoad);
+                            GameData.RundownDataBlock.AddBlock(rundownDB, -1);
+
+                            newId++;
+                        }
+                    }
+                }
 
                 _invokeGameDataInit.Invoke(null, null);
 
