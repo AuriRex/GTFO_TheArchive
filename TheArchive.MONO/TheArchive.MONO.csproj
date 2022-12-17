@@ -251,6 +251,8 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableHudSway.cs" Link="Features\Accessibility\DisableHudSway.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableInfectionBreathing.cs" Link="Features\Accessibility\DisableInfectionBreathing.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableStaminaBreathing.cs" Link="Features\Accessibility\DisableStaminaBreathing.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableUIMirroring.cs" Link="Features\Accessibility\DisableUIMirroring.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableUIParalax.cs" Link="Features\Accessibility\DisableUIParalax.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\StartupscreenOverride.cs" Link="Features\Dev\StartupscreenOverride.cs" />
