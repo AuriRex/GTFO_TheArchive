@@ -6,6 +6,38 @@ using System.Reflection;
 namespace TheArchive.Utilities
 {
     /// <summary>
+    /// Globally cached reflection wrapper for fields or properties.
+    /// </summary>
+    /// <typeparam name="T">The Type that the member belongs to</typeparam>
+    /// <typeparam name="MT">The Type of the member itself</typeparam>
+    public interface IValueAccessor<T, MT>
+    {
+        /// <summary>
+        /// If setting a value is possible
+        /// </summary>
+        public bool CanGet { get; }
+
+        /// <summary>
+        /// If getting a value is possible
+        /// </summary>
+        public bool CanSet { get; }
+
+        /// <summary>
+        /// Get the value of the reflected member from an <paramref name="instance"/>.
+        /// </summary>
+        /// <param name="instance">An object instance to get the value from</param>
+        /// <returns></returns>
+        public MT Get(T instance);
+
+        /// <summary>
+        /// Set the <paramref name="value"/> of the reflected member on an <paramref name="instance"/>. 
+        /// </summary>
+        /// <param name="instance">An object instance to set the value of</param>
+        /// <param name="value">The new value</param>
+        public void Set(T instance, MT value);
+    }
+
+    /// <summary>
     /// AccessorBase, contains a static Dictionary containing all cached accessors.
     /// </summary>
     public abstract class AccessorBase
@@ -26,6 +58,41 @@ namespace TheArchive.Utilities
         {
             Identifier = identifier;
         }
+
+        /// <summary>
+        /// Finds and creates a <see cref="IValueAccessor{T, MT}"/> given a <paramref name="memberName"/>.
+        /// <br/><br/>
+        /// Handles both fields and properties on mono games as well as IL2CPP
+        /// </summary>
+        /// <typeparam name="T">The Type that the member belongs to</typeparam>
+        /// <typeparam name="MT">The Type of the member itself</typeparam>
+        /// <param name="memberName"></param>
+        /// <param name="throwOnError"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static IValueAccessor<T, MT> GetValueAccessor<T, MT>(string memberName, bool throwOnError = false)
+        {
+            if(Loader.LoaderWrapper.IsGameIL2CPP() && Loader.LoaderWrapper.IsIL2CPPType(typeof(T)))
+            {
+                // All fields are turned into properties by unhollower/interop!
+                return PropertyAccessor<T, MT>.GetAccessor(memberName);
+            }
+
+            var member = typeof(T).GetMember(memberName, Utils.AnyBindingFlagss).FirstOrDefault();
+
+            switch(member)
+            {
+                case PropertyInfo:
+                    return PropertyAccessor<T, MT>.GetAccessor(memberName);
+                case FieldInfo:
+                    return FieldAccessor<T, MT>.GetAccessor(memberName);
+            }
+
+            if (throwOnError)
+                throw new ArgumentException($"Member with name \"{memberName}\" could not be found in type \"{typeof(T).Name}\" or isn't {nameof(IValueAccessor<T, MT>)} compatible.", nameof(memberName));
+            
+            return null;
+        }
     }
 
     /// <summary>
@@ -33,7 +100,7 @@ namespace TheArchive.Utilities
     /// </summary>
     /// <typeparam name="T">The Type that the field belongs to</typeparam>
     /// <typeparam name="FT">The Type of the field itself</typeparam>
-    public class FieldAccessor<T, FT> : AccessorBase
+    public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>
     {
         /// <summary>
         /// Gets a <see cref="FieldAccessor{T, FT}"/> from the global cache or creates a new instance if there is none and adds it to the cache.
@@ -57,6 +124,10 @@ namespace TheArchive.Utilities
         private readonly FieldInfo _field;
 
         public override bool HasMemberBeenFound => _field != null;
+
+        public bool CanGet => true;
+
+        public bool CanSet => true;
 
         private FieldAccessor(string identifier, string fieldName) : base(identifier)
         {
@@ -106,7 +177,7 @@ namespace TheArchive.Utilities
     /// </summary>
     /// <typeparam name="T">The Type that the property belongs to</typeparam>
     /// <typeparam name="PT">The Type of the property itself</typeparam>
-    public class PropertyAccessor<T, PT> : AccessorBase
+    public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>
     {
         /// <summary>
         /// Gets a <see cref="PropertyAccessor{T, FT}"/> from the global cache or creates a new instance if there is none and adds it to the cache.
@@ -130,6 +201,10 @@ namespace TheArchive.Utilities
         private readonly PropertyInfo _property;
 
         public override bool HasMemberBeenFound => _property != null;
+
+        public bool CanGet => _property?.GetGetMethod(true) != null;
+
+        public bool CanSet => _property?.GetSetMethod(true) != null;
 
         private PropertyAccessor(string identifier, string propertyName) : base(identifier)
         {

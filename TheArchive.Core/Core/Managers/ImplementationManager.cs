@@ -112,8 +112,9 @@ namespace TheArchive.Core.Managers
         /// Checks if a namespace.typename contains <paramref name="typeName"/> and returns it.
         /// </summary>
         /// <param name="typeName"></param>
+        /// <param name="exactMatch"></param>
         /// <returns></returns>
-        public static Type FindTypeInCurrentAppDomain(string typeName)
+        public static Type FindTypeInCurrentAppDomain(string typeName, bool exactMatch = false)
         {
             IEnumerable<Type> types = new List<Type>();
 #if BepInEx
@@ -125,7 +126,12 @@ namespace TheArchive.Core.Managers
                     if(asm != null)
                         foreach (var type in asm.GetTypes())
                         {
-                            if (type.FullName.Contains(typeName))
+                            if (exactMatch)
+                            {
+                                if (type.FullName == typeName)
+                                    return type;
+                            }
+                            else if (type.FullName.Contains(typeName))
                                 return type;
                         }
                 }
@@ -142,7 +148,12 @@ namespace TheArchive.Core.Managers
                 {
                     foreach (var type in asm.GetTypes())
                     {
-                        if (type.FullName.Contains(typeName))
+                        if (exactMatch)
+                        {
+                            if (type.FullName == typeName)
+                                return type;
+                        } 
+                        else if (type.FullName.Contains(typeName))
                             return type;
                     }
                 }
@@ -151,6 +162,9 @@ namespace TheArchive.Core.Managers
             {
                 types = types.Concat(rtle.Types.Where(t => t != null));
             }
+
+            if(exactMatch)
+                return types.FirstOrDefault(t => t?.FullName == typeName);
 
             return types.FirstOrDefault(t => t?.FullName?.Contains(typeName) ?? false);
         }

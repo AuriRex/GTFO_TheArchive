@@ -106,6 +106,7 @@ namespace TheArchive
         private static readonly List<Type> _moduleTypes = new List<Type>();
 
         public static List<IArchiveModule> Modules { get; private set; } = new List<IArchiveModule>();
+        public static Type IL2CPP_BaseType { get; private set; } = null;
 
         private const string kArchiveSettingsFile = "TheArchive_Settings.json";
 
@@ -119,6 +120,24 @@ namespace TheArchive
             if(GIT_IS_DIRTY)
             {
                 ArchiveLogger.Warning("Git is dirty, this is a development build!");
+            }
+
+            try
+            {
+                if(LoaderWrapper.IsGameIL2CPP())
+                {
+                    IL2CPP_BaseType = ImplementationManager.FindTypeInCurrentAppDomain("Il2CppSystem.Object", exactMatch: true);
+
+                    ArchiveLogger.Debug($"IL2CPP_BaseType: {IL2CPP_BaseType?.FullName}");
+
+                    if (IL2CPP_BaseType == null)
+                        throw new Exception();
+                }
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Error("IL2CPP base type \"Il2CppSystem.Object\" could not be resolved!");
+                ArchiveLogger.Exception(ex);
             }
 
             LoadConfig();
