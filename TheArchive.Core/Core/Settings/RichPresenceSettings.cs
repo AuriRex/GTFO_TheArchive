@@ -6,16 +6,19 @@ namespace TheArchive.Core.Settings
 {
     public class RichPresenceSettings
     {
+        [FSHide]
+        public bool DEBUG_UseDefaultSettings { get; set; } = false;
+
         [FSIgnore]
         public bool DEBUG_RichPresenceLogSpam { get; set; } = false;
 
         [JsonIgnore, FSIgnore]
-        private static RichPresenceSettings Default => new RichPresenceSettings();
+        internal static RichPresenceSettings Default => new RichPresenceSettings();
 
-        public Dictionary<PresenceGameState, GSActivity> DiscordRPCFormat = new Dictionary<PresenceGameState, GSActivity>()
+        public Dictionary<PresenceGameState, GSTopActivity> DiscordRPCFormat = new Dictionary<PresenceGameState, GSTopActivity>()
         {
             {
-                PresenceGameState.Startup, new GSActivity()
+                PresenceGameState.Startup, new GSTopActivity()
                 {
                     Formats = new List<GSActivityFormat>()
                     {
@@ -34,7 +37,7 @@ namespace TheArchive.Core.Settings
 
             },
             {
-                PresenceGameState.NoLobby, new GSActivity()
+                PresenceGameState.NoLobby, new GSTopActivity()
                 {
                     Formats = new List<GSActivityFormat>()
                     {
@@ -52,7 +55,7 @@ namespace TheArchive.Core.Settings
                 }
             },
             {
-                PresenceGameState.InLobby, new GSActivity()
+                PresenceGameState.InLobby, new GSTopActivity()
                 {
                     Formats = new List<GSActivityFormat>()
                     {
@@ -73,7 +76,7 @@ namespace TheArchive.Core.Settings
                 }
             },
             {
-                PresenceGameState.Dropping, new GSActivity()
+                PresenceGameState.Dropping, new GSTopActivity()
                 {
                     MultiFormatCycleTime = 5,
                     Formats = new List<GSActivityFormat>()
@@ -115,7 +118,7 @@ namespace TheArchive.Core.Settings
                 }
             },
             {
-                PresenceGameState.LevelGenerationFinished, new GSActivity()
+                PresenceGameState.LevelGenerationFinished, new GSTopActivity()
                 {
                     Formats = new List<GSActivityFormat>()
                     {
@@ -134,7 +137,7 @@ namespace TheArchive.Core.Settings
                 }
             },
             {
-                PresenceGameState.InLevel, new GSActivity()
+                PresenceGameState.InLevel, new GSTopActivity()
                 {
                     Formats = new List<GSActivityFormat>()
                     {
@@ -190,11 +193,219 @@ namespace TheArchive.Core.Settings
                             },
                             DisplayPartyInfo = true
                         }
+                    },
+                    SubActivities = new List<GSSubActivity>()
+                    {
+                        new GSSubActivity()
+                        {
+                            // Reactor StartUP Sequence Intro Normal
+                            DisplayConditions = new List<string>()
+                            {
+                                "%IsReactorActive%",
+                                "%IsReactorInIntro%",
+                                "%IsReactorTypeStartup%",
+                                "!%IsReactorInVerifyFailState%"
+                            },
+                            Formats = new List<GSActivityFormat>()
+                            {
+                                new GSActivityFormat()
+                                {
+                                    Details = "Reactor %ReactorType% (%ReactorWaveCountCurrent%/%ReactorWaveCountMax%)",
+                                    Status = "Warming Up!",
+                                    Assets = new GSActivityAssets
+                                    {
+                                        LargeImageKey = DRPIcons.Expedition.Reactor,
+                                        LargeTooltip = "%Rundown% %Expedition% \"%ExpeditionName%\"",
+                                    },
+                                    DisplayPartyInfo = true,
+                                    DisplayStateTimeElapsed = false,
+                                    CustomTimeProvider = "%ReactorWaveEndTime%",
+                                }
+                            }
+                        },
+                        new GSSubActivity()
+                        {
+                            // Reactor StartUP Sequence Intro Failed Verification
+                            DisplayConditions = new List<string>()
+                            {
+                                "%IsReactorActive%",
+                                "%IsReactorInIntro%",
+                                "%IsReactorTypeStartup%",
+                                "%IsReactorInVerifyFailState%"
+                            },
+                            Formats = new List<GSActivityFormat>()
+                            {
+                                new GSActivityFormat()
+                                {
+                                    Details = "%ReactorType% Sequence Failed! (%ReactorWaveCountCurrent%/%ReactorWaveCountMax%)",
+                                    Status = "Warming Up!",
+                                    Assets = new GSActivityAssets
+                                    {
+                                        LargeImageKey = DRPIcons.Expedition.Reactor,
+                                        LargeTooltip = "%Rundown% %Expedition% \"%ExpeditionName%\"",
+                                    },
+                                    DisplayPartyInfo = true,
+                                    DisplayStateTimeElapsed = false,
+                                    CustomTimeProvider = "%ReactorWaveEndTime%",
+                                }
+                            }
+                        },
+                        new GSSubActivity()
+                        {
+                            // Reactor ShutDOWN Sequence Intro
+                            DisplayConditions = new List<string>()
+                            {
+                                "%IsReactorActive%",
+                                "%IsReactorInIntro%",
+                                "!%IsReactorTypeStartup%"
+                            },
+                            Formats = new List<GSActivityFormat>()
+                            {
+                                new GSActivityFormat()
+                                {
+                                    Details = "Reactor %ReactorType% Sequence",
+                                    Status = "Warning!",
+                                    Assets = new GSActivityAssets
+                                    {
+                                        LargeImageKey = DRPIcons.Expedition.Reactor,
+                                        LargeTooltip = "%Rundown% %Expedition% \"%ExpeditionName%\"",
+                                    },
+                                    DisplayPartyInfo = true,
+                                }
+                            }
+                        },
+                        new GSSubActivity()
+                        {
+                            // Reactor StartUP Wave
+                            DisplayConditions = new List<string>()
+                            {
+                                "%IsReactorActive%",
+                                "%IsReactorWaveOrChaosActive%",
+                                "%IsReactorTypeStartup%"
+                            },
+                            Formats = new List<GSActivityFormat>()
+                            {
+                                new GSActivityFormat()
+                                {
+                                    Details = "Reactor Wave (%ReactorWaveCountCurrent%/%ReactorWaveCountMax%)",
+                                    Status = "High Intensive Test",
+                                    Assets = new GSActivityAssets
+                                    {
+                                        LargeImageKey = DRPIcons.Expedition.Reactor,
+                                        LargeTooltip = "%Rundown% %Expedition% \"%ExpeditionName%\"",
+                                        SmallImageKey = DRPIcons.EnemyPing,
+                                        SmallTooltip = "Heavy Reactor Load"
+                                    },
+                                    DisplayPartyInfo = true,
+                                    DisplayStateTimeElapsed = false,
+                                    CustomTimeProvider = "%ReactorWaveEndTime%",
+                                }
+                            }
+                        },
+                        new GSSubActivity()
+                        {
+                            // Reactor ShutDOWN Puzzle / Chaos
+                            DisplayConditions = new List<string>()
+                            {
+                                "%IsReactorActive%",
+                                "%IsReactorWaveOrChaosActive%",
+                                "!%IsReactorTypeStartup%"
+                            },
+                            Formats = new List<GSActivityFormat>()
+                            {
+                                new GSActivityFormat()
+                                {
+                                    Details = "Reactor Shutdown Failure!",
+                                    Status = "Alarm triggered!",
+                                    Assets = new GSActivityAssets
+                                    {
+                                        LargeImageKey = DRPIcons.Expedition.Reactor,
+                                        LargeTooltip = "%Rundown% %Expedition% \"%ExpeditionName%\"",
+                                        SmallImageKey = DRPIcons.EnemyPing,
+                                        SmallTooltip = "Security System Malfunctioning"
+                                    },
+                                    DisplayPartyInfo = true,
+                                }
+                            }
+                        },
+                        new GSSubActivity()
+                        {
+                            // Reactor StartUP Sequence Awaiting Verify
+                            DisplayConditions = new List<string>()
+                            {
+                                "%IsReactorActive%",
+                                "%IsReactorAwaitingVerify%",
+                                "%IsReactorTypeStartup%"
+                            },
+                            Formats = new List<GSActivityFormat>()
+                            {
+                                new GSActivityFormat()
+                                {
+                                    Details = "%ReactorVerificationString%",
+                                    Status = "Verification Required!",
+                                    Assets = new GSActivityAssets
+                                    {
+                                        LargeImageKey = DRPIcons.Expedition.Reactor,
+                                        LargeTooltip = "%Rundown% %Expedition% \"%ExpeditionName%\"",
+                                    },
+                                    DisplayPartyInfo = true,
+                                    DisplayStateTimeElapsed = false,
+                                    CustomTimeProvider = "%ReactorWaveEndTime%",
+                                }
+                            }
+                        },
+                        new GSSubActivity()
+                        {
+                            // Reactor ShutDOWN Sequence Awaiting Verify
+                            DisplayConditions = new List<string>()
+                            {
+                                "%IsReactorActive%",
+                                "%IsReactorAwaitingVerify%",
+                                "!%IsReactorTypeStartup%"
+                            },
+                            Formats = new List<GSActivityFormat>()
+                            {
+                                new GSActivityFormat()
+                                {
+                                    Details = "Initiating Shutdown Sequence ...",
+                                    Status = "Verification Required!",
+                                    Assets = new GSActivityAssets
+                                    {
+                                        LargeImageKey = DRPIcons.Expedition.Reactor,
+                                        LargeTooltip = "%Rundown% %Expedition% \"%ExpeditionName%\"",
+                                    },
+                                    DisplayPartyInfo = true,
+                                }
+                            }
+                        },
+                        new GSSubActivity()
+                        {
+                            // Reactor Sequence Completed
+                            DisplayConditions = new List<string>()
+                            {
+                                "%IsReactorActive%",
+                                "%IsReactorCompleted%"
+                            },
+                            Formats = new List<GSActivityFormat>()
+                            {
+                                new GSActivityFormat()
+                                {
+                                    Details = "Reactor %ReactorType% Sequence",
+                                    Status = "Complete!",
+                                    Assets = new GSActivityAssets
+                                    {
+                                        LargeImageKey = DRPIcons.Expedition.Reactor,
+                                        LargeTooltip = "%Rundown% %Expedition% \"%ExpeditionName%\"",
+                                    },
+                                    DisplayPartyInfo = true,
+                                }
+                            }
+                        }
                     }
                 }
             },
             {
-                PresenceGameState.ExpeditionFailed, new GSActivity()
+                PresenceGameState.ExpeditionFailed, new GSTopActivity()
                 {
                     Formats = new List<GSActivityFormat>()
                     {
@@ -215,7 +426,7 @@ namespace TheArchive.Core.Settings
                 }
             },
             {
-                PresenceGameState.ExpeditionSuccess, new GSActivity()
+                PresenceGameState.ExpeditionSuccess, new GSTopActivity()
                 {
                     Formats = new List<GSActivityFormat>()
                     {
@@ -258,8 +469,46 @@ namespace TheArchive.Core.Settings
             return this;
         }
 
+        public class GSTopActivity : GSActivity
+        {
+            [JsonIgnore]
+            public bool HasSubActivities => (SubActivities?.Count ?? 0) > 0;
+
+            public List<GSSubActivity> SubActivities = new List<GSSubActivity>();
+
+            public GSTopActivity FillDefaultDictValues(PresenceGameState state)
+            {
+                var defaultSettings = RichPresenceSettings.Default;
+                if (!this.HasActivities)
+                {
+                    defaultSettings.DiscordRPCFormat.TryGetValue(state, out var defaultActivity);
+                    Formats = defaultActivity.Formats;
+
+                    if(!this.HasSubActivities && defaultActivity.HasSubActivities)
+                    {
+                        foreach(var subAct in defaultActivity.SubActivities)
+                        {
+                            SubActivities.Add(subAct);
+                        }
+                    }
+                }
+                return this;
+            }
+        }
+
+        public class GSSubActivity : GSActivity
+        {
+            /// <summary>
+            /// Bool variables to check for sub activity entry
+            /// </summary>
+            public List<string> DisplayConditions = new List<string>();
+            public bool DisplayConditionsAnyMode = false;
+        }
+
         public class GSActivity
         {
+            [JsonIgnore]
+            public bool HasActivities => Formats?.Count > 0;
             [JsonIgnore]
             public bool IsMultiFormat => Formats?.Count > 1;
             [JsonIgnore]
@@ -268,6 +517,7 @@ namespace TheArchive.Core.Settings
             public int MultiIndex { get; private set; } = 0;
             [JsonIgnore]
             public int CurrentMultiCycleCurrency { get; private set; } = 10;
+            
 
             public int MultiFormatCycleTime { get; set; } = 10;
             public List<GSActivityFormat> Formats = new List<GSActivityFormat>();
@@ -290,17 +540,6 @@ namespace TheArchive.Core.Settings
 
                 return next;
             }
-
-            public GSActivity FillDefaultDictValues(PresenceGameState state)
-            {
-                var other = RichPresenceSettings.Default;
-                if((Formats?.Count ?? 0) == 0)
-                {
-                    other.DiscordRPCFormat.TryGetValue(state, out var gsaOther);
-                    Formats = gsaOther.Formats;
-                }
-                return this;
-            }
         }
 
         public class GSActivityFormat
@@ -308,7 +547,9 @@ namespace TheArchive.Core.Settings
             public string Details { get; set; } = "DefaultDetailsFormatString";
             public string Status { get; set; } = "DefaultStatusFormatString";
             public GSActivityAssets Assets { get; set; } = null;
-            public bool DisplayTimeElapsed { get; set; } = true;
+            public bool DisplayStateTimeElapsed { get; set; } = true;
+            public string CustomTimeProvider { get; set; } = "";
+            public bool CustomProviderIsEndTime { get; set; } = true;
             public bool DisplayPartyInfo { get; set; } = false;
         }
 

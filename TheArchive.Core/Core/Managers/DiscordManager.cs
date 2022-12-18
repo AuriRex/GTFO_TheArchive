@@ -52,7 +52,15 @@ namespace TheArchive.Core.Managers
         {
             if (_internalDisabled) return;
             if (rpcSettings == null) throw new ArgumentNullException($"{nameof(rpcSettings)}");
-            _settings = rpcSettings;
+
+            if (rpcSettings.DEBUG_UseDefaultSettings)
+            {
+                _settings = RichPresenceSettings.Default;
+            }
+            else
+            {
+                _settings = rpcSettings;
+            }
             
             if(!_hasDiscordDllBeenLoaded)
             {
@@ -223,19 +231,12 @@ namespace TheArchive.Core.Managers
                 };
             }
 
-            public static ActivityTimestamps GetTimestamp(DateTimeOffset startTime, DateTimeOffset? endTime = null)
+            public static ActivityTimestamps GetTimestamp(long startTime = 0, long endTime = 0)
             {
-                if (endTime.HasValue)
-                {
-                    return new ActivityTimestamps
-                    {
-                        Start = startTime.ToUnixTimeSeconds(),
-                        End = endTime.Value.ToUnixTimeSeconds()
-                    };
-                }
                 return new ActivityTimestamps
                 {
-                    Start = startTime.ToUnixTimeSeconds()
+                    Start = startTime,
+                    End = endTime
                 };
             }
 
@@ -243,7 +244,45 @@ namespace TheArchive.Core.Managers
             {
                 if(_settings.DiscordRPCFormat.TryGetValue(state, out var format))
                 {
-                    return ActivityFromFormat(format.GetNext(), state, startTime);
+                    RichPresenceSettings.GSActivity nextActivityFormat = format;
+
+                    // Check for sub activities!
+                    if(format.HasSubActivities)
+                    {
+                        foreach(var subAct in format.SubActivities)
+                        {
+                            try
+                            {
+                                if (subAct.DisplayConditionsAnyMode)
+                                {
+                                    // Any condition true to enter
+                                    bool anyTrue = false;
+                                    foreach (var dCond in subAct.DisplayConditions)
+                                    {
+                                        var value = dCond.Format();
+                                        if (value == "True" || value == "!False")
+                                            anyTrue = true;
+                                    }
+                                    if (!anyTrue)
+                                        throw null;
+                                }
+                                else
+                                {
+                                    foreach (var dCond in subAct.DisplayConditions)
+                                    {
+                                        var value = dCond.Format();
+                                        if (value != "True" && value != "!False")
+                                            throw null;
+                                    }
+                                }
+                                // Use sub activity instead
+                                nextActivityFormat = subAct;
+                                break;
+                            } catch { }
+                        }
+                    }
+
+                    return ActivityFromFormat(nextActivityFormat.GetNext(), state, startTime);
                 }
                 return DefaultFallbackActivity;
             }
@@ -269,9 +308,23 @@ namespace TheArchive.Core.Managers
                     SmallText = format.Assets.SmallTooltip?.Format(extra)
                 };
 
-                if (format.DisplayTimeElapsed)
+                if (format.DisplayStateTimeElapsed)
                 {
-                    activity.Timestamps = GetTimestamp(startTime);
+                    activity.Timestamps = GetTimestamp(startTime.ToUnixTimeSeconds());
+                }
+                else
+                {
+                    if(!string.IsNullOrWhiteSpace(format.CustomTimeProvider) && long.TryParse(format.CustomTimeProvider.Format(), out var unixTime))
+                    {
+                        if(format.CustomProviderIsEndTime)
+                        {
+                            activity.Timestamps = GetTimestamp(endTime: unixTime);
+                        }
+                        else
+                        {
+                            activity.Timestamps = GetTimestamp(startTime: unixTime);
+                        }
+                    }
                 }
 
                 if (format.DisplayPartyInfo)
