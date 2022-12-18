@@ -40,8 +40,6 @@ namespace TheArchive
             CrashReportHandler.SetUserMetadata("Modded", "true");
             CrashReportHandler.enableCaptureExceptions = false;
 
-            typeof(Features.RichPresenceCore).RegisterAllPresenceFormatProviders();
-
             ArchiveMod.GameStateChanged += (eGameStateName_state) => OnGameStateChanged?.Invoke((eGameStateName) eGameStateName_state);
         }
 

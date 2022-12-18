@@ -19,6 +19,11 @@ namespace TheArchive.Features
 
         public override string Description => "Updates the Presence Game State and provides some values via patches.";
 
+        public override void Init()
+        {
+            typeof(RichPresenceCore).RegisterAllPresenceFormatProviders();
+        }
+
         public void OnGameStateChanged(eGameStateName nextState)
         {
             switch (nextState)
