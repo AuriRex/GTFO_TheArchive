@@ -26,6 +26,7 @@ namespace TheArchive.Features
         private static IValueAccessor<LG_WardenObjective_Reactor, int> A_m_currentWaveCount;
         private static IValueAccessor<LG_WardenObjective_Reactor, int> A_m_waveCountMax;
 
+        private static IValueAccessor<LG_WardenObjective_Reactor, string> A_m_itemKey;
         private static IValueAccessor<LG_WardenObjective_Reactor, ReactorWaveData> A_m_currentWaveData;
         private static IValueAccessor<LG_WardenObjective_Reactor, pReactorState> A_m_currentState;
 
@@ -49,6 +50,7 @@ namespace TheArchive.Features
                 A_m_waveCountMax = AccessorBase.GetValueAccessor<LG_WardenObjective_Reactor, int>("m_waveCountMax");
             }
 
+            A_m_itemKey = AccessorBase.GetValueAccessor<LG_WardenObjective_Reactor, string>("m_itemKey");
             A_m_currentWaveData = AccessorBase.GetValueAccessor<LG_WardenObjective_Reactor, ReactorWaveData>("m_currentWaveData");
             A_m_currentState = AccessorBase.GetValueAccessor<LG_WardenObjective_Reactor, pReactorState>("m_currentState");
 
@@ -262,24 +264,29 @@ namespace TheArchive.Features
             return activeReactor != null;
         }
 
+        public static string GetReactorItemKey(LG_WardenObjective_Reactor reactor)
+        {
+            return A_m_itemKey.Get(reactor);
+        }
+
         [ArchivePatch(typeof(LG_WardenObjective_Reactor), nameof(LG_WardenObjective_Reactor.Start))]
         internal static class LG_WardenObjective_Reactor_Start_Patch
         {
             public static void Postfix(LG_WardenObjective_Reactor __instance)
             {
                 ReactorsInLevel.Add(__instance); 
-                FeatureLogger.Success($"Added Reactor: {__instance.PublicName}");
+                FeatureLogger.Debug($"Added Reactor to Set: {GetReactorItemKey(__instance)}");
             }
         }
 
-        [ArchivePatch(typeof(LG_WardenObjective_Reactor), nameof(LG_WardenObjective_Reactor.OnDestroy))]
+        [ArchivePatch(typeof(LG_WardenObjective_Reactor), "OnDestroy")]
         internal static class LG_WardenObjective_Reactor_OnDestroy_Patch
         {
             public static void Postfix(LG_WardenObjective_Reactor __instance)
             {
-                var reactorToRemove = ReactorsInLevel.FirstOrDefault(reactor => reactor.PublicName == __instance.PublicName);
+                var reactorToRemove = ReactorsInLevel.FirstOrDefault(reactor => GetReactorItemKey(reactor) == GetReactorItemKey(__instance));
                 ReactorsInLevel.Remove(reactorToRemove);
-                FeatureLogger.Fail($"Removed Reactor: {reactorToRemove.PublicName}");
+                FeatureLogger.Debug($"Removed Reactor from Set: {GetReactorItemKey(reactorToRemove)}");
             }
         }
     }

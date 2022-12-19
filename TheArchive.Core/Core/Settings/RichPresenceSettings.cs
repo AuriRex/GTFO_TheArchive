@@ -341,7 +341,7 @@ namespace TheArchive.Core.Settings
                             {
                                 new GSActivityFormat()
                                 {
-                                    Details = "%ReactorVerificationString%",
+                                    Details = "%ReactorVerificationString% (%ReactorWaveCountCurrent%/%ReactorWaveCountMax%)",
                                     Status = "Verification Required!",
                                     Assets = new GSActivityAssets
                                     {
