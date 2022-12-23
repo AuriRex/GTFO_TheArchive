@@ -433,5 +433,12 @@ namespace TheArchive.Core.FeaturesAPI
 
             featureSet.Add(feature);
         }
+
+        public static void InvokeButtonPressed(Feature feature, ButtonSetting setting)
+        {
+            if (feature == null || setting == null) return;
+
+            feature.FeatureInternal.OnButtonPressed(setting);
+        }
     }
 }

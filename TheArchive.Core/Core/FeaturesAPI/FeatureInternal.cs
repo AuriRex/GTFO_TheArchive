@@ -584,6 +584,23 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
+        internal void OnButtonPressed(ButtonSetting setting)
+        {
+            if (InternalDisabled) return;
+
+            if (!_feature.Enabled) return;
+
+            try
+            {
+                _feature.OnButtonPressed(setting);
+            }
+            catch (Exception ex)
+            {
+                _FILogger.Error($"Exception thrown during {nameof(Feature.OnButtonPressed)} in Feature {_feature.Identifier}!");
+                _FILogger.Exception(ex);
+            }
+        }
+
         internal void Quit()
         {
             try

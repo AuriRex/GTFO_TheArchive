@@ -42,6 +42,7 @@ namespace TheArchive
                         Formatting = Formatting.Indented,
                     };
                     _jsonSerializerSettings.Converters.Add(new JsonLib.Converters.StringEnumConverter());
+                    _jsonSerializerSettings.Converters.Add(new Core.FeaturesAPI.Components.FButton.FButtonConverter());
                 }
                 return _jsonSerializerSettings;
             }

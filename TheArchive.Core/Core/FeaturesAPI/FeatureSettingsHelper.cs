@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using TheArchive.Core.Attributes.Feature.Settings;
+using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
@@ -50,14 +51,23 @@ namespace TheArchive.Core.FeaturesAPI
                 var propPath = $"{path}.{prop.Name}";
                 var type = prop?.GetMethod?.ReturnType;
 
-                if (prop?.SetMethod == null) continue;
-                if (prop?.GetCustomAttribute<FSIgnore>() != null) continue;
+                if (type == null || prop == null) continue;
+
+                if (prop.GetCustomAttribute<FSIgnore>() != null) continue;
+
+                if (prop.SetMethod == null)
+                {
+                    if (type != typeof(FButton))
+                        continue;
+                }
+
 
                 if (!type.IsValueType
                     && !typeof(IList).IsAssignableFrom(type)
                     && !typeof(IDictionary).IsAssignableFrom(type)
                     && type != typeof(string)
-                    && type.GenericTypeArguments.Length <= 1)
+                    && type.GenericTypeArguments.Length <= 1
+                    && type != typeof(FButton))
                 {
                     PopulateSettings(type, prop.GetValue(instance), propPath);
                     continue;
@@ -66,6 +76,9 @@ namespace TheArchive.Core.FeaturesAPI
                 FeatureSetting setting;
                 switch(type.Name)
                 {
+                    case nameof(FButton):
+                        setting = new ButtonSetting(this, prop, instance, propPath);
+                        break;
                     case nameof(SColor):
                         setting = new ColorSetting(this, prop, instance, propPath);
                         break;

@@ -822,6 +822,9 @@ namespace TheArchive.Features.Dev
                         case NumberSetting ns:
                             CreateNumberSetting(ns, placeIntoMenu);
                             break;
+                        case ButtonSetting bs:
+                            CreateButton(bs, placeIntoMenu);
+                            break;
                         default:
                             CreateHeader(setting.DEBUG_Path, subMenu: placeIntoMenu);
                             break;
@@ -841,16 +844,21 @@ namespace TheArchive.Features.Dev
                 return scrollWindow;
             }
 
-            public static void CreateSimpleButton(string labelText, string buttonText, Action onPress, SubMenu placeIntoMenu = null)
+            public static void CreateSimpleButton(string labelText, string buttonText, Action onPress, out CM_SettingsItem cmItem, SubMenu placeIntoMenu = null)
             {
-                CreateSettingsItem(labelText, out var buttonSettingsItem, subMenu: placeIntoMenu);
-                buttonSettingsItem.ForcePopupLayer(true);
-                SetupToggleButton(buttonSettingsItem, out var buttonCMItem, out var buttonTmp);
+                CreateSettingsItem(labelText, out cmItem, subMenu: placeIntoMenu);
+                cmItem.ForcePopupLayer(true);
+                SetupToggleButton(cmItem, out var buttonCMItem, out var buttonTmp);
                 buttonTmp.SetText($"[ {buttonText} ]");
                 JankTextMeshProUpdaterOnce.Apply(buttonTmp);
                 buttonCMItem.SetCMItemEvents((_) => {
                     onPress?.Invoke();
                 });
+            }
+
+            public static void CreateSimpleButton(string labelText, string buttonText, Action onPress, SubMenu placeIntoMenu = null)
+            {
+                CreateSimpleButton(labelText, buttonText, onPress, out _, placeIntoMenu);
             }
 
             public static void CreateSpacer(SubMenu subMenu = null)
@@ -963,7 +971,6 @@ namespace TheArchive.Features.Dev
                 SharedUtils.ChangeColorCMItem(into_sub_toggleButton_cm_item, ORANGE);
 
                 into_sub_toggleButton_cm_item.SetCMItemEvents(delegate (int id) {
-                    FeatureLogger.Debug($"Submenu opened: \"{subMenu.Title}\"");
                     subMenu.Show();
                 });
 
@@ -1403,6 +1410,17 @@ namespace TheArchive.Features.Dev
 #endif
 
                 cm_settingsItem.ForcePopupLayer(true);
+            }
+
+            public static void CreateButton(ButtonSetting setting, SubMenu subMenu)
+            {
+                CreateSimpleButton(GetNameForSetting(setting), setting.ButtonText, () => {
+                    FeatureManager.InvokeButtonPressed(setting.Helper.Feature, setting);
+                }, out var cm_settingsItem, subMenu);
+
+                CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
+
+                CreateFSHoverAndSetButtonAction(setting, cm_settingsItem, null);
             }
 
             public static void CreateRundownInfoTextForItem(CM_SettingsItem cm_settingsItem, RundownFlags rundowns)

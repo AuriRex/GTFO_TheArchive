@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using static TheArchive.Utilities.Utils;
@@ -156,6 +157,15 @@ namespace TheArchive.Core.FeaturesAPI
         /// </summary>
         /// <param name="state">The state</param>
         public virtual void OnGameStateChanged(int state)
+        {
+
+        }
+
+        /// <summary>
+        /// Called whenever a <see cref="FButton"/> from this <see cref="Feature"/>s mod settings menu has been pressed.
+        /// </summary>
+        /// <param name="setting"></param>
+        public virtual void OnButtonPressed(ButtonSetting setting)
         {
 
         }
