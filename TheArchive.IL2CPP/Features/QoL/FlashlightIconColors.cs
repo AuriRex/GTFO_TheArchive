@@ -16,6 +16,8 @@ namespace TheArchive.Features.QoL
 
         public override string Description => "Customize the flashlight on/off indicator colors.";
 
+        public override bool SkipInitialOnEnable => true;
+
 #if IL2CPP
         public override void OnEnable()
         {
