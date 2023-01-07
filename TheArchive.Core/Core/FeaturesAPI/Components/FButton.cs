@@ -13,6 +13,11 @@ namespace TheArchive.Core.FeaturesAPI.Components
 
         public FButton() { }
 
+        /// <summary>
+        /// Creates a button
+        /// </summary>
+        /// <param name="buttonText">The button text</param>
+        /// <param name="buttonId">The buttons ID, default is the property name</param>
         public FButton(string buttonText, string buttonId = null)
         {
             ButtonText = buttonText;
@@ -28,13 +33,16 @@ namespace TheArchive.Core.FeaturesAPI.Components
 
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
+                JObject.Load(reader);
                 return new FButton();
             }
 
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
-                return;
+                throw new NotImplementedException();
             }
+
+            public override bool CanWrite => false;
         }
     }
 }
