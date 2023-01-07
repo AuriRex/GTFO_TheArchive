@@ -13,6 +13,12 @@ namespace TheArchive.Utilities
         private static IArchiveLogger _logger;
         private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateLoggerInstance(nameof(SoundEventCache), ConsoleColor.DarkGreen);
 
+        public static bool TryResolve(string soundEvent, out uint soundId)
+        {
+            soundId = Resolve(soundEvent);
+            return soundId != 0;
+        }
+
         public static uint Resolve(string soundId, bool throwIfNotFound = false)
         {
             if(SoundIdCache.TryGetValue(soundId, out var value))
@@ -55,6 +61,20 @@ namespace TheArchive.Utilities
                 Logger.Error($"Threw an exception on {nameof(Init)}:");
                 Logger.Exception(ex);
             }
+        }
+
+        /// <summary>
+        /// Prints all cached sound events to the supplied <paramref name="logger"/>
+        /// </summary>
+        /// <param name="logger"></param>
+        public static void DebugLog(IArchiveLogger logger)
+        {
+            logger.Notice($"Logging all cached sound events! ({SoundIdCache.Count})");
+            foreach(var entry in SoundIdCache.Keys)
+            {
+                logger.Info(entry);
+            }
+            logger.Notice($"Done logging all cached sound events! ({SoundIdCache.Count})");
         }
     }
 }
