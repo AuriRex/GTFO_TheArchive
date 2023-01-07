@@ -54,6 +54,9 @@ namespace TheArchive.Features.Special
 
             if (Input.GetKey(KeyCode.RightControl))
             {
+                // Very important when playing as Dauda!
+                IfKeySay(KeyCode.RightShift, SoundEventCache.Resolve(nameof(AK.EVENTS.PLAY_BIGSPACEENTER01)));
+
                 IfKeySay(KeyCode.UpArrow, SoundEventCache.Resolve(nameof(AK.EVENTS.PLAY_CL_NORTH)));
                 IfKeySay(KeyCode.RightArrow, SoundEventCache.Resolve(nameof(AK.EVENTS.PLAY_CL_EAST)));
                 IfKeySay(KeyCode.DownArrow, SoundEventCache.Resolve(nameof(AK.EVENTS.PLAY_CL_SOUTH)));
