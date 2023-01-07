@@ -13,7 +13,7 @@ namespace TheArchive.Features
 
         private static bool _hudIsVisible = true;
 
-        public void Update()
+        public override void Update()
         {
             if (Input.GetKeyDown(KeyCode.F1))
             {

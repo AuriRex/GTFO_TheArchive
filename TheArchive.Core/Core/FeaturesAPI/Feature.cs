@@ -143,6 +143,22 @@ namespace TheArchive.Core.FeaturesAPI
         }
 
         /// <summary>
+        /// Called once every frame whenever the feature is enabled
+        /// </summary>
+        public virtual void Update()
+        {
+
+        }
+
+        /// <summary>
+        /// Called once every frame whenever the feature is enabled after all <see cref="Update"/>s have been called
+        /// </summary>
+        public virtual void LateUpdate()
+        {
+
+        }
+
+        /// <summary>
         /// Called everytime after a setting has been changed
         /// </summary>
         /// <param name="setting">The changed setting</param>

@@ -40,7 +40,7 @@ namespace TheArchive.Features.Special
         }
 
 #if IL2CPP
-        public void Update()
+        public override void Update()
         {
             if (Input.GetKeyDown(KeyCode.F8))
             {

@@ -31,7 +31,7 @@ namespace TheArchive.Features.Accessibility
         }
 #endif
 
-        public void Update()
+        public override void Update()
         {
             if (!PlayerChatManager.InChatMode) return;
             

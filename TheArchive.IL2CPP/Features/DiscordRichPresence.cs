@@ -53,7 +53,7 @@ namespace TheArchive.Features
             DiscordManager.Disable();
         }
 
-        public void Update()
+        public override void Update()
         {
             DiscordManager.Update();
         }

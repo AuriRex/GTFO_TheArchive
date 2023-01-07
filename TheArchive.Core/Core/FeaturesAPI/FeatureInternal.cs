@@ -135,6 +135,7 @@ namespace TheArchive.Core.FeaturesAPI
                 .FirstOrDefault(mi => (mi.Name == "Update" || mi.GetCustomAttribute<IsUpdate>() != null)
                     && mi.GetParameters().Length == 0
                     && !mi.IsStatic
+                    && mi.DeclaringType != typeof(Feature)
                     && AnyRundownConstraintMatches(mi)
                     && AnyBuildConstraintMatches(mi));
 
@@ -149,6 +150,7 @@ namespace TheArchive.Core.FeaturesAPI
                 .FirstOrDefault(mi => (mi.Name == "LateUpdate" || mi.GetCustomAttribute<IsLateUpdate>() != null)
                     && mi.GetParameters().Length == 0
                     && !mi.IsStatic
+                    && mi.DeclaringType != typeof(Feature)
                     && AnyRundownConstraintMatches(mi)
                     && AnyBuildConstraintMatches(mi));
 
