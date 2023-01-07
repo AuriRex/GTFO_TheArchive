@@ -9,56 +9,60 @@ namespace TheArchive.Features.Backport
     [RundownConstraint(Utils.RundownFlags.RundownOne, Utils.RundownFlags.RundownFive)]
     public class MeleeCancelBackport : Feature
     {
-        public override string Name => "Modern Melee Cancel";
+        public override string Name => "Modern Melee Charge Cancel";
 
         public override string Group => FeatureGroups.Backport;
 
-        public override string Description => "The hammer goes back to neutral instead of shoving whenever it's charged and alt-fire is pressed.";
+        public override string Description => "Returns the hammer back to neutral instead of shoving whenever you're charging and alt-fire is pressed.";
 
         private static readonly eMeleeWeaponState _state_idle = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.Idle));
         private static readonly eMeleeWeaponState _state_none = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.None));
         private static readonly eMeleeWeaponState _state_push = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.Push));
+        private static readonly eMeleeWeaponState _state_attackChargeUpLeft = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.AttackChargeUpLeft));
+        private static readonly eMeleeWeaponState _state_attackChargeUpRight = Utils.GetEnumFromName<eMeleeWeaponState>(nameof(eMeleeWeaponState.AttackChargeUpRight));
 
         [RundownConstraint(Utils.RundownFlags.RundownOne, Utils.RundownFlags.RundownFive)]
         [ArchivePatch(typeof(MeleeWeaponFirstPerson), nameof(MeleeWeaponFirstPerson.ChangeState))]
-        internal static class MeleeWeaponFirstPerson_ChangeStatePatch
+        internal static class MeleeWeaponFirstPerson_ChangeState_Patch
         {
-            private static MethodAccessor<MeleeWeaponFirstPerson> _A_PlayAnim = MethodAccessor<MeleeWeaponFirstPerson>.GetAccessor(nameof(MeleeWeaponFirstPerson.PlayAnim));
-            private static FieldAccessor<MWS_Base, MeleeAttackData> _A_FI_m_data;
+            private static MethodAccessor<MeleeWeaponFirstPerson> _A_PlayAnim;
+            private static IValueAccessor<MWS_Base, MeleeAttackData> _A_m_data;
 
-            [RundownConstraint(Utils.RundownFlags.RundownOne, Utils.RundownFlags.RundownThree)]
             public static void Init()
             {
-                _A_FI_m_data = FieldAccessor<MWS_Base, MeleeAttackData>.GetAccessor("m_data");
+                _A_PlayAnim = MethodAccessor<MeleeWeaponFirstPerson>.GetAccessor(nameof(MeleeWeaponFirstPerson.PlayAnim));
+                _A_m_data = AccessorBase.GetValueAccessor<MWS_Base, MeleeAttackData>("m_data");
             }
 
-#if IL2CPP
             [IsPrefix, RundownConstraint(Utils.RundownFlags.RundownFour, Utils.RundownFlags.RundownFive)]
-            public static bool PrefixNew(MeleeWeaponFirstPerson __instance, eMeleeWeaponState newState)
+            public static bool PrefixR4_5(MeleeWeaponFirstPerson __instance, eMeleeWeaponState newState)
             {
                 if (newState == _state_push)
                 {
-                    if (__instance.CurrentStateName == _state_idle
-                        || __instance.CurrentStateName == _state_none)
+                    var currentStateName = __instance.CurrentStateName;
+
+                    if (currentStateName != _state_attackChargeUpLeft
+                        && currentStateName != _state_attackChargeUpRight)
                     {
                         return ArchivePatch.RUN_OG;
                     }
 
                     __instance.ChangeState(_state_idle);
-                    _A_PlayAnim.Invoke(__instance, __instance.CurrentState.m_data.m_animHash, 0f, 0.5f);
+                    var m_data = _A_m_data.Get(__instance.CurrentState);
+                    _A_PlayAnim.Invoke(__instance, m_data.m_animHash, 0f, 0.5f);
                     return ArchivePatch.SKIP_OG;
                 }
 
                 return ArchivePatch.RUN_OG;
             }
-#endif
 
 #if MONO
             private static eMeleeWeaponState _lastState = eMeleeWeaponState.None;
 
             // kinda janky but it works
+            // MWS_ChargeUp changes state to idle first, resulting in two state changes (in R3 and below)
             [IsPrefix, RundownConstraint(Utils.RundownFlags.RundownOne, Utils.RundownFlags.RundownThree)]
-            public static bool PrefixOld(MeleeWeaponFirstPerson __instance, eMeleeWeaponState newState)
+            public static bool PrefixMonoR3(MeleeWeaponFirstPerson __instance, eMeleeWeaponState newState)
             {
                 if (newState == _state_push)
                 {
@@ -71,7 +75,7 @@ namespace TheArchive.Features.Backport
                     }
 
                     __instance.ChangeState(_state_idle);
-                    var m_data = _A_FI_m_data.Get(__instance.CurrentState);
+                    var m_data = _A_m_data.Get(__instance.CurrentState);
                     _A_PlayAnim.Invoke(__instance, m_data.m_animHash, 0f, 0.5f);
                     _lastState = _state_idle;
                     return ArchivePatch.SKIP_OG;
