@@ -53,6 +53,10 @@
 			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\PlayFab-ASM.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="Plugins-ASM">
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Plugins-ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
 		<Reference Include="SNet_ASM, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
 			<SpecificVersion>False</SpecificVersion>
 			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\SNet_ASM.dll</HintPath>

@@ -586,6 +586,23 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
+        internal void ApplicationFocusChanged(bool focus)
+        {
+            if (InternalDisabled) return;
+
+            if (!_feature.Enabled) return;
+
+            try
+            {
+                _feature.OnApplicationFocusChanged(focus);
+            }
+            catch (Exception ex)
+            {
+                _FILogger.Error($"Exception thrown during {nameof(Feature.OnApplicationFocusChanged)} in Feature {_feature.Identifier}!");
+                _FILogger.Exception(ex);
+            }
+        }
+
         internal void OnButtonPressed(ButtonSetting setting)
         {
             if (InternalDisabled) return;

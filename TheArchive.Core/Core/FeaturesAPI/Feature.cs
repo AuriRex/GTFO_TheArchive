@@ -5,6 +5,7 @@ using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using static TheArchive.Utilities.Utils;
+using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI
 {
@@ -135,6 +136,15 @@ namespace TheArchive.Core.FeaturesAPI
         }
 
         /// <summary>
+        /// Called everytime the game is focused or unfocused
+        /// </summary>
+        /// <param name="focus"></param>
+        public virtual void OnApplicationFocusChanged(bool focus)
+        {
+            
+        }
+
+        /// <summary>
         /// Called once after datablocks have been loaded
         /// </summary>
         public virtual void OnDatablocksReady()
@@ -216,6 +226,57 @@ namespace TheArchive.Core.FeaturesAPI
         public static bool IsPlayingModded => ArchiveMod.IsPlayingModded;
         public static bool DevMode => ArchiveMod.Settings.FeatureDevMode;
         public static bool GameDataInited { get; internal set; } = false;
+        public static bool IsApplicationFocused { get; internal set; } = false;
         public static bool DataBlocksReady { get; internal set; } = false;
+
+
+        internal static void SetupIs()
+        {
+            Is.R1 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownOne);
+            Is.R1OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownOne.ToLatest());
+            Is.R2 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownTwo);
+            Is.R2OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownTwo.ToLatest());
+            Is.R3 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownThree);
+            Is.R3OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownThree.ToLatest());
+            Is.R4 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownFour);
+            Is.R4OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownFour.ToLatest());
+            Is.R5 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownFive);
+            Is.R5OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownFive.ToLatest());
+            Is.R6 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownSix);
+            Is.R6OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownSix.ToLatest());
+            Is.R7 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownSeven);
+            Is.R7OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownSeven.ToLatest());
+            Is.A1 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltOne);
+            Is.A1OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltOne.ToLatest());
+            Is.A1 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltTwo);
+            Is.A1OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltTwo.ToLatest());
+        }
+
+        /// <summary>
+        /// If the current game version is [...]
+        /// </summary>
+        public static class Is
+        {
+            public static bool R1 { get; internal set; }
+            public static bool R1OrLater { get; internal set; }
+            public static bool R2 { get; internal set; }
+            public static bool R2OrLater { get; internal set; }
+            public static bool R3 { get; internal set; }
+            public static bool R3OrLater { get; internal set; }
+            public static bool R4 { get; internal set; }
+            public static bool R4OrLater { get; internal set; }
+            public static bool R5 { get; internal set; }
+            public static bool R5OrLater { get; internal set; }
+            public static bool R6 { get; internal set; }
+            public static bool R6OrLater { get; internal set; }
+            public static bool R7 { get; internal set; }
+            public static bool R7OrLater { get; internal set; }
+            public static bool A1 { get; internal set; }
+            public static bool A1OrLater { get; internal set; }
+            public static bool A2 { get; internal set; }
+            public static bool A2OrLater { get; internal set; }
+        }
+
+        
     }
 }

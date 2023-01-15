@@ -93,6 +93,7 @@ namespace TheArchive
         public static event Action<RundownID> GameDataInitialized;
         public static event Action DataBlocksReady;
         public static event Action<int> GameStateChanged;
+        public static event Action<bool> ApplicationFocusStateChanged;
 
         internal static event Action<IArchiveModule> OnNewModuleRegistered;
 
@@ -430,6 +431,11 @@ namespace TheArchive
             GameStateChanged?.Invoke(eGameState_state);
         }
 
+        [Obsolete("Do not call!")]
+        public static void InvokeApplicationFocusChanged(bool focus)
+        {
+            ApplicationFocusStateChanged?.Invoke(focus);
+        }
 
 
         public static void InjectInstanceIntoModules(object instance)

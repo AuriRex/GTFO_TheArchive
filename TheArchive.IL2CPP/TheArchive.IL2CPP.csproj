@@ -74,6 +74,10 @@
 			<HintPath>$(LatestGeneratedGameAssembliesPath)PlayFab-ASM.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="Plugins-ASM">
+			<HintPath>$(LatestGeneratedGameAssembliesPath)Plugins-ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
 		<Reference Include="SNet_ASM">
 			<HintPath>$(LatestGeneratedGameAssembliesPath)SNet_ASM.dll</HintPath>
 			<Private>False</Private>

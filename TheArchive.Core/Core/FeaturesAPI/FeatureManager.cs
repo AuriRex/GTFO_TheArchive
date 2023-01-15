@@ -52,6 +52,9 @@ namespace TheArchive.Core.FeaturesAPI
             Feature.BuildInfo = ArchiveMod.CurrentBuildInfo;
             _enabledFeatures = LocalFiles.LoadConfig<EnabledFeatures>();
             ArchiveMod.GameStateChanged += OnGameStateChanged;
+            ArchiveMod.ApplicationFocusStateChanged += OnApplicationFocusChanged;
+
+            Feature.SetupIs();
         }
 
         internal void OnGameDataInitialized()
@@ -178,6 +181,18 @@ namespace TheArchive.Core.FeaturesAPI
                 if (!feature.Enabled) continue;
 
                 feature.FeatureInternal.GameStateChanged(state);
+            }
+        }
+
+        internal void OnApplicationFocusChanged(bool focus)
+        {
+            Feature.IsApplicationFocused = focus;
+
+            foreach (var feature in RegisteredFeatures)
+            {
+                if (!feature.Enabled) continue;
+
+                feature.FeatureInternal.ApplicationFocusChanged(focus);
             }
         }
 

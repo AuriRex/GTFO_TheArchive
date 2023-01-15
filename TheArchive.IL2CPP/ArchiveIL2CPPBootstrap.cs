@@ -114,5 +114,16 @@ namespace TheArchive
                 });
             }
         }
+
+        [ArchivePatch(typeof(InControl.InControlManager), UnityMessages.OnApplicationFocus)]
+        internal static class EventSystem_OnApplicationFocus_Patch
+        {
+            public static void Postfix(bool focusState)
+            {
+#pragma warning disable CS0618 // Type or member is obsolete
+                ArchiveMod.InvokeApplicationFocusChanged(focusState);
+#pragma warning restore CS0618 // Type or member is obsolete
+            }
+        }
     }
 }
