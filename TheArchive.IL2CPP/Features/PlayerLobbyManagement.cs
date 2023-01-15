@@ -27,6 +27,10 @@ namespace TheArchive.Features
 
         public class LobbyManagementSettings
         {
+            [FSDisplayName("Names on Map open Steam Profile")]
+            [FSDescription("If clicking a players name on the map screen should open their Steam Profile in your default browser.")]
+            public bool NamesOnMapOpenSteamProfile { get; set; } = false;
+
             [FSDisplayName("Banned Players")]
             public List<BanListEntry> BanList { get; set; } = new List<BanListEntry>();
 
@@ -122,6 +126,14 @@ namespace TheArchive.Features
                 }
                 return _popupWindow;
             }
+        }
+
+        internal static void OnMapNameButtonPressed(int id)
+        {
+            if (!Settings.NamesOnMapOpenSteamProfile)
+                return;
+
+            OnNameButtonPressed(id);
         }
 
         internal static void OnNameButtonPressed(int id)
@@ -349,7 +361,7 @@ namespace TheArchive.Features
                     CM_Item = headerRootGO.AddComponent<CM_Item>();
                     CM_Item.ID = player.CharacterSlot.index + 1; // +1
 
-                    CM_Item.SetCMItemEvents(OnNameButtonPressed);
+                    CM_Item.SetCMItemEvents(OnMapNameButtonPressed);
                 }
             }
         }
