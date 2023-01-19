@@ -17,6 +17,8 @@ namespace TheArchive.Features.Special
 
         public override string Description => "Set all vanity items (clothes) dirt amount.";
 
+        public override bool SkipInitialOnEnable => true;
+
         [FeatureConfig]
         public static VanityDirtControlSettings Settings { get; set; }
 
@@ -60,6 +62,9 @@ namespace TheArchive.Features.Special
 
         private static void UpdateAllAgentsMaterials(float dirtValue)
         {
+            if (SNetwork.SNet.Slots == null)
+                return;
+
             var players = SNetwork.SNet.Slots.PlayersSynchedWithGame;
 
             if (players == null)
