@@ -270,6 +270,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\SkipElevatorAnimation.cs" Link="Features\QoL\SkipElevatorAnimation.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\ReactorDiscordRPC.cs" Link="Features\ReactorDiscordRPC.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\EnableLegacyHammers.cs" Link="Features\Special\EnableLegacyHammers.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\VanityDirtControl.cs" Link="Features\Special\VanityDirtControl.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\WeaponStats.cs" Link="Features\Special\WeaponStats.cs" />
 	</ItemGroup>
 	<ItemGroup>
