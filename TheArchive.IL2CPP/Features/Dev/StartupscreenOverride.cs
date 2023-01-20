@@ -5,7 +5,7 @@ using TheArchive.Utilities;
 namespace TheArchive.Features.Dev
 {
     [EnableFeatureByDefault, HideInModSettings]
-    [RundownConstraint(Utils.RundownFlags.RundownOne, Utils.RundownFlags.RundownFive)]
+    [RundownConstraint(Utils.RundownFlags.RundownOne, Utils.RundownFlags.Latest)]
     internal class StartupscreenOverride : Feature
     {
         public override string Name => nameof(StartupscreenOverride);
