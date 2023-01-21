@@ -122,11 +122,15 @@ namespace TheArchive.Features.LocalProgression
                 return PatchInfo.Type.GetMethods(AnyBindingFlagss).FirstOrDefault(m => m.Name.Contains(nameof(DropServerManager.GetRundownProgressionAsync)))?.Name;
             }
 
-            public static bool Prefix(ref IL2Tasks.Task<RundownProgression> __result)
+            public static bool Prefix(object __instance, ref IL2Tasks.Task<RundownProgression> __result)
             {
-                FeatureLogger.Msg(ConsoleColor.Magenta, "Getting RundownProgression from local files ...");
+                var rundownName = PatchInfo.Type.GetProperty("rundownName").GetValue(__instance).ToString();
 
-                __result = IL2Tasks.Task.FromResult(LocalProgressionManager.LocalRundownProgression.ToBaseGameProgression());
+                FeatureLogger.Msg(ConsoleColor.Magenta, $"Getting RundownProgression for {rundownName} from local files ...");
+
+                var localProgression = LocalProgressionManager.Instance.LoadOrGetAndSaveCurrentFile(rundownName);
+
+                __result = IL2Tasks.Task.FromResult(localProgression.ToBaseGameProgression());
 
                 return ArchivePatch.SKIP_OG;
             }

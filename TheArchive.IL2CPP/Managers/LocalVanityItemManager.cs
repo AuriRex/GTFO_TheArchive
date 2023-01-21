@@ -79,7 +79,7 @@ namespace TheArchive.Managers
 
                     string key = $"{vilddb.name}:{layer}_{count}_{isAll}";
 
-                    if (LocalProgressionManager.LocalRundownProgression.GetUniqueExpeditionLayersStateCount(layer) >= count)
+                    if (LocalProgressionManager.Instance.CurrentLoadedLocalProgressionData.GetUniqueExpeditionLayersStateCount(layer) >= count)
                     {
                         if (!AlreadyAcquiredLayerDrops.HasBeenClaimed(key))
                         {

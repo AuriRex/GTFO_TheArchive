@@ -268,14 +268,19 @@ namespace TheArchive.Utilities
         }
 
         private static string _progressionPath = null;
-        public static string LocalProgressionPath
+        private static string LocalProgressionBasePathNoExtension
         {
             get
             {
                 if (string.IsNullOrEmpty(_progressionPath))
-                    _progressionPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"RundownProgression_Data.json");
+                    _progressionPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"RundownProgression_Data");
                 return _progressionPath;
             }
+        }
+
+        public static string GetLocalProgressionPathForKey(string rundownKey)
+        {
+            return $"{LocalProgressionBasePathNoExtension}_{rundownKey}.json";
         }
 
         public static void SaveToFilesDir(string filename, string jsonOrSomething)

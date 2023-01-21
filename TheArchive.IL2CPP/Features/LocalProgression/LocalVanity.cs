@@ -25,7 +25,7 @@ namespace TheArchive.Features.LocalProgression
 
 #if IL2CPP
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetInventoryPlayerDataAsync))]
-        public static class DropServerClientAPI_GetInventoryPlayerDataAsyncPatch
+        public static class DropServerClientAPI_GetInventoryPlayerDataAsync_Patch
         {
             private static PropertyInfo Boosters;
             private static PropertyInfo VanityItems;
@@ -53,23 +53,23 @@ namespace TheArchive.Features.LocalProgression
         }
 
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.UpdateVanityItemPlayerDataAsync))]
-        public static class DropServerClientAPI_UpdateVanityItemPlayerDataAsyncPatch
+        public static class DropServerClientAPI_UpdateVanityItemPlayerDataAsync_Patch
         {
-            private static PropertyInfo VanityItems;
+            private static PropertyInfo Data;
             public static void Init()
             {
-                VanityItems = typeof(GetInventoryPlayerDataResult).GetProperty(nameof(GetInventoryPlayerDataResult.VanityItems), AnyBindingFlagss);
+                Data = typeof(UpdateVanityItemPlayerDataResult).GetProperty(nameof(UpdateVanityItemPlayerDataResult.Data), AnyBindingFlagss);
             }
 
             public static bool Prefix(UpdateVanityItemPlayerDataRequest request, ref IL2Tasks.Task<UpdateVanityItemPlayerDataResult> __result)
             {
-                ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(GetInventoryPlayerDataRequest)}: EntityToken:{request.EntityToken}, MaxBackendTemplateId:{request.BuildRev}");
+                ArchiveLogger.Msg(ConsoleColor.DarkBlue, $"{nameof(DropServerClientAPIViaPlayFab)} -> requested {nameof(UpdateVanityItemPlayerDataResult)}: EntityToken:{request.EntityToken}, MaxBackendTemplateId:{request.BuildRev}");
 
                 var vipd = (VanityItemPlayerData)LocalVanityItemManager.Instance.ProcessTransaction(request.Transaction);
 
                 var result = new UpdateVanityItemPlayerDataResult();
 
-                VanityItems.SetValue(result, vipd);
+                Data.SetValue(result, vipd);
 
                 __result = IL2Tasks.Task.FromResult(result);
                 return ArchivePatch.SKIP_OG;
