@@ -17,10 +17,13 @@ namespace TheArchive.Features.Special
 
         public override string Description => "Adds the current Rundown Number into the Header as well as onto the Map and Objectives screens on OG builds.";
 
+#if BepInEx
+        // Remove once the patches in here don't cause the runtime to shit itself. 
         public override bool ShouldInit()
         {
-            return !IsPlayingModded;
+            return false;
         }
+#endif
 
         public static bool IsOGBuild { get; private set; }
 
@@ -110,7 +113,7 @@ namespace TheArchive.Features.Special
 
 #if IL2CPP
             [IsPostfix, RundownConstraint(RundownFlags.RundownSeven)]
-            public static void PostfixR7(PlayerGuiLayer __instance, ref Il2CppSystem.Func<string> header)
+            public static void PostfixR7(PlayerGuiLayer __instance)
             {
                 var headerText = __instance.m_wardenObjective.m_header.text;
 
@@ -118,7 +121,7 @@ namespace TheArchive.Features.Special
             }
 
             [IsPostfix, RundownConstraint(RundownFlags.RundownAltOne, RundownFlags.Latest)]
-            public static void PostfixAlt(PlayerGuiLayer __instance, ref Il2CppSystem.Func<string> header)
+            public static void PostfixAlt(PlayerGuiLayer __instance)
             {
                 var headerText = __instance.m_wardenObjective.m_header.text;
 
