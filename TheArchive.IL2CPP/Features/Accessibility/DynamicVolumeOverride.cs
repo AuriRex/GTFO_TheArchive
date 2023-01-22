@@ -19,11 +19,12 @@ namespace TheArchive.Features.Accessibility
 
         public override string Group => FeatureGroups.Accessibility;
 
-        public override string Description => "Lower the game volume during loud sections:\n- game intro\n-elevator drop";
+        public override string Description => "Lower the game volume during loud sections:\n- game intro\n- elevator drop";
 
         public override bool PlaceSettingsInSubMenu => true;
 
         public static bool IsOverrideActive { get; private set; } = false;
+        public static bool IsLerpActive { get; private set; } = false;
 
         public new static IArchiveLogger FeatureLogger { get; set; }
 
@@ -64,6 +65,7 @@ namespace TheArchive.Features.Accessibility
             if(setting.ButtonID == nameof(DynamicVolumeSettings.OopsMySoundSomehowBrokePleaseReset))
             {
                 ResetAllVolume();
+                IsOverrideActive = false;
             }
         }
 
@@ -73,6 +75,11 @@ namespace TheArchive.Features.Accessibility
             {
                 ResetAllVolume();
             }
+        }
+
+        public override void OnDisable()
+        {
+            ResetAllVolume();
         }
 
         public override void OnApplicationFocusChanged(bool focus)
@@ -143,8 +150,9 @@ namespace TheArchive.Features.Accessibility
             CellSound.SetGlobalRTPCValue(AK.GAME_PARAMETERS.VOLUME_SETTING_DIALOG, CellSettingsManager.SettingsData.Audio.DialogVolume.Value * 100f);
         }
 
-        private static eGameStateName _eGameStateName_Offline = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.Offline));
-        private static eGameStateName _eGameStateName_StopElevatorRide = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.StopElevatorRide));
+        private static readonly eGameStateName _eGameStateName_Offline = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.Offline));
+        private static readonly eGameStateName _eGameStateName_StopElevatorRide = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.StopElevatorRide));
+        private static readonly eGameStateName _eGameStateName_InLevel = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.InLevel));
 
         public void OnGameStateChanged(eGameStateName state)
         {
@@ -158,10 +166,15 @@ namespace TheArchive.Features.Accessibility
             if(state == _eGameStateName_StopElevatorRide)
             {
                 // Lerp to game settings on elevator ride stop
-                LerpVolume(Settings.VolumeOverride, GetPlayerSFXSettings(), Settings.LerpTime, () =>
+                LerpVolume(Settings.VolumeOverride, GetPlayerSFXSettings(), Settings.LerpTime, onDone: () =>
                 {
                     IsOverrideActive = false;
                 });
+            }
+
+            if (state == _eGameStateName_InLevel && !IsLerpActive)
+            {
+                IsOverrideActive = false;
             }
         }
 
@@ -177,6 +190,8 @@ namespace TheArchive.Features.Accessibility
                 SetSFXVolume(to, "Lerp Aborted, duration <= 0");
                 yield break;
             }
+
+            IsLerpActive = true;
 
             var timePassed = 0f;
 
@@ -198,6 +213,7 @@ namespace TheArchive.Features.Accessibility
             }
 
             SetSFXVolume(to, "Lerp End");
+            IsLerpActive = false;
             onDone?.Invoke();
             yield break;
         }
@@ -214,7 +230,7 @@ namespace TheArchive.Features.Accessibility
                     // And a second time later once enabled for real (also everytime you switch in the menu)
                     if (_state == 1)
                     {
-                        LerpVolume(Settings.VolumeOverride, GetPlayerSFXSettings(), Settings.LerpTime, () =>
+                        LerpVolume(Settings.VolumeOverride, GetPlayerSFXSettings(), Settings.LerpTime, onDone: () =>
                         {
                             IsOverrideActive = false;
                         });
