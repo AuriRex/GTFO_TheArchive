@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -541,6 +542,9 @@ namespace TheArchive
         {
             if (moduleType == null) throw new ArgumentException($"Parameter {nameof(moduleType)} can not be null!");
 
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             _moduleTypes.Add(moduleType);
             ArchiveLogger.Info($"Initializing module \"{moduleType.FullName}\" ...");
             var module = (IArchiveModule) Activator.CreateInstance(moduleType);
@@ -572,6 +576,10 @@ namespace TheArchive
             }
 
             Modules.Add(module);
+
+            stopwatch.Stop();
+            ArchiveLogger.Debug($"Creation of \"{moduleType.FullName}\" took {stopwatch.Elapsed:ss\\.fff} seconds.");
+
             return module;
         }
 

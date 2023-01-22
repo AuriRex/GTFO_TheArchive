@@ -11,7 +11,7 @@ using TheArchive.Loader;
 
 namespace TheArchive.Core.FeaturesAPI
 {
-    public class FeatureSettingsHelper
+    public partial class FeatureSettingsHelper
     {
         internal PropertyInfo Property { get; private set; }
         public string DisplayName { get; private set; }
@@ -29,7 +29,7 @@ namespace TheArchive.Core.FeaturesAPI
         {
             Feature = feature;
             Property = settingsProperty;
-            SettingType = settingsProperty?.GetMethod?.ReturnType ?? throw new ArgumentNullException($"Settings Property must implement a get method!");
+            SettingType = settingsProperty?.GetMethod?.ReturnType ?? throw new ArgumentNullException(nameof(settingsProperty), $"Settings Property must implement a get method!");
             DisplayName = settingsProperty.GetCustomAttribute<FSDisplayName>()?.DisplayName;
         }
 
@@ -142,44 +142,6 @@ namespace TheArchive.Core.FeaturesAPI
         public virtual object GetInstance()
         {
             return Instance ?? Property.GetValue(Feature);
-        }
-    }
-
-    public class DynamicFeatureSettingsHelper : FeatureSettingsHelper
-    {
-        public DynamicFeatureSettingsHelper(Feature feature)
-        {
-            Feature = feature;
-        }
-
-        /// <summary>
-        /// Initialize the <see cref="FeatureSettingsHelper.Settings"/> list and returns itself.
-        /// </summary>
-        /// <param name="typeToCheck"></param>
-        /// <param name="instance"></param>
-        /// <returns></returns>
-        public DynamicFeatureSettingsHelper Initialize(Type typeToCheck, object instance)
-        {
-            PopulateSettings(typeToCheck, instance, string.Empty);
-            return this;
-        }
-
-        public void SetInstanceForAllSettings(object instance)
-        {
-            foreach(var setting in Settings)
-            {
-                setting.WrappedInstance = instance;
-            }
-        }
-
-        internal override void SetupViaInstance(object objectInstance)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override object GetInstance()
-        {
-            throw new NotImplementedException();
         }
     }
 }

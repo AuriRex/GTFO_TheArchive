@@ -15,6 +15,7 @@ using TheArchive.Interfaces;
 using TheArchive.Loader;
 using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
+using System.Diagnostics;
 #if Unhollower
 using UnhollowerBaseLib.Attributes;
 #endif
@@ -452,6 +453,8 @@ namespace TheArchive.Features.Dev
         [ArchivePatch(typeof(CM_PageSettings), "Setup")]
         public class CM_PageSettings_SetupPatch
         {
+            private static Stopwatch _setupStopwatch;
+
             private static TMPro.TextMeshPro _restartInfoText;
 
             public static void SetRestartInfoText(bool value)
@@ -492,6 +495,10 @@ namespace TheArchive.Features.Dev
                 try
                 {
 #endif
+                    FeatureLogger.Debug("Starting Setup Stopwatch.");
+                    _setupStopwatch = new Stopwatch();
+                    _setupStopwatch.Start();
+
                     SettingsPageInstance = __instance;
                     PopupWindow = __instance.m_popupWindow;
                     SettingsItemPrefab = __instance.m_settingsItemPrefab;
@@ -656,6 +663,9 @@ namespace TheArchive.Features.Dev
                 {
                     FeatureLogger.Exception(ex);
                 }
+
+                _setupStopwatch.Stop();
+                FeatureLogger.Debug($"It took {_setupStopwatch.Elapsed:ss\\.fff} seconds to run {nameof(ModSettings)} setup!");
             }
 
             private static void SetupEntriesForFeature(Feature feature)
