@@ -176,6 +176,8 @@ namespace TheArchive.Core.FeaturesAPI
 
         private void OnGameStateChanged(int state)
         {
+            Feature.PreviousGameState = Feature.CurrentGameState;
+            Feature.CurrentGameState = state;
             foreach(var feature in RegisteredFeatures)
             {
                 if (!feature.Enabled) continue;

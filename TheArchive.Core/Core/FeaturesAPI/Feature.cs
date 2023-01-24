@@ -228,6 +228,10 @@ namespace TheArchive.Core.FeaturesAPI
         public static bool GameDataInited { get; internal set; } = false;
         public static bool IsApplicationFocused { get; internal set; } = false;
         public static bool DataBlocksReady { get; internal set; } = false;
+        /// <summary>Cast to eGameStateName</summary>
+        public static int CurrentGameState { get; internal set; } = 0;
+        /// <summary>Cast to eGameStateName</summary>
+        public static int PreviousGameState { get; internal set; } = 0;
 
 
         internal static void SetupIs()
