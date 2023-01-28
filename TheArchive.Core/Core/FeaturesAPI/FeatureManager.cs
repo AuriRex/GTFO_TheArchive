@@ -57,6 +57,16 @@ namespace TheArchive.Core.FeaturesAPI
             Feature.SetupIs();
         }
 
+        public static bool IsFeatureEnabled(string featureId)
+        {
+            var feature = Instance.RegisteredFeatures.FirstOrDefault(f => f.Identifier == featureId);
+
+            if (feature == null)
+                return false;
+
+            return feature.Enabled;
+        }
+
         internal void OnGameDataInitialized()
         {
             _logger.Debug($"{nameof(OnGameDataInitialized)}()");

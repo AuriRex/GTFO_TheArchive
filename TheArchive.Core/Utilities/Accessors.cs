@@ -38,6 +38,31 @@ namespace TheArchive.Utilities
     }
 
     /// <summary>
+    /// Globally cached reflection wrapper for fields or properties (static edition!).
+    /// </summary>
+    /// <typeparam name="T">The Type that the member belongs to</typeparam>
+    /// <typeparam name="MT">The Type of the member itself</typeparam>
+    public interface IStaticValueAccessor<T, MT> : IValueAccessor<T, MT>
+    {
+        /// <summary>
+        /// If the reflected member is static.
+        /// </summary>
+        public bool IsStatic { get; }
+
+        /// <summary>
+        /// Get the value of the reflected static member
+        /// </summary>
+        /// <returns></returns>
+        public MT GetStaticValue();
+
+        /// <summary>
+        /// Set the <paramref name="value"/> of the reflected member on a static member
+        /// </summary>
+        /// <param name="value">The new value</param>
+        public void SetStaticValue(MT value);
+    }
+
+    /// <summary>
     /// AccessorBase, contains a static Dictionary containing all cached accessors.
     /// </summary>
     public abstract class AccessorBase
@@ -93,6 +118,34 @@ namespace TheArchive.Utilities
             
             return null;
         }
+
+        /// <summary>
+        /// Finds and creates a <see cref="IValueAccessor{T, MT}"/> given a <paramref name="memberName"/> (static edition!).
+        /// <br/><br/>
+        /// Handles both fields and properties on mono games as well as IL2CPP
+        /// </summary>
+        /// <typeparam name="T">The Type that the member belongs to</typeparam>
+        /// <typeparam name="MT">The Type of the member itself</typeparam>
+        /// <param name="memberName"></param>
+        /// <param name="throwOnError"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static IStaticValueAccessor<T, MT> GetStaticValueAccessor<T, MT>(string memberName, bool throwOnError = false)
+        {
+            var accessor = GetValueAccessor<T, MT>(memberName, throwOnError);
+
+            if(accessor != null)
+            {
+                var staticAccessor = accessor as IStaticValueAccessor<T, MT>;
+
+                if (throwOnError && !staticAccessor.IsStatic)
+                    throw new ArgumentException($"Member with name \"{memberName}\" is not static!", nameof(memberName));
+
+                return staticAccessor;
+            }
+
+            return null;
+        }
     }
 
     /// <summary>
@@ -100,7 +153,7 @@ namespace TheArchive.Utilities
     /// </summary>
     /// <typeparam name="T">The Type that the field belongs to</typeparam>
     /// <typeparam name="FT">The Type of the field itself</typeparam>
-    public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>
+    public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>, IStaticValueAccessor<T, FT>
     {
         /// <summary>
         /// Gets a <see cref="FieldAccessor{T, FT}"/> from the global cache or creates a new instance if there is none and adds it to the cache.
@@ -128,6 +181,8 @@ namespace TheArchive.Utilities
         public bool CanGet => true;
 
         public bool CanSet => true;
+
+        public bool IsStatic => _field?.IsStatic ?? false;
 
         private FieldAccessor(string identifier, string fieldName) : base(identifier)
         {
@@ -170,6 +225,16 @@ namespace TheArchive.Utilities
                 ArchiveLogger.Exception(ex);
             }
         }
+
+        public FT GetStaticValue()
+        {
+            return Get(default);
+        }
+
+        public void SetStaticValue(FT value)
+        {
+            Set(default, value);
+        }
     }
 
     /// <summary>
@@ -177,7 +242,7 @@ namespace TheArchive.Utilities
     /// </summary>
     /// <typeparam name="T">The Type that the property belongs to</typeparam>
     /// <typeparam name="PT">The Type of the property itself</typeparam>
-    public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>
+    public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>, IStaticValueAccessor<T, PT>
     {
         /// <summary>
         /// Gets a <see cref="PropertyAccessor{T, FT}"/> from the global cache or creates a new instance if there is none and adds it to the cache.
@@ -205,6 +270,8 @@ namespace TheArchive.Utilities
         public bool CanGet => _property?.GetGetMethod(true) != null;
 
         public bool CanSet => _property?.GetSetMethod(true) != null;
+
+        public bool IsStatic => (_property?.GetGetMethod(true) ?? _property?.GetSetMethod(true))?.IsStatic ?? false;
 
         private PropertyAccessor(string identifier, string propertyName) : base(identifier)
         {
@@ -246,6 +313,16 @@ namespace TheArchive.Utilities
                 ArchiveLogger.Error($"Exception while setting {nameof(FieldAccessor<T, PT>)} property \"{Identifier}\"!");
                 ArchiveLogger.Exception(ex);
             }
+        }
+
+        public PT GetStaticValue()
+        {
+            return Get(default);
+        }
+
+        public void SetStaticValue(PT value)
+        {
+            Set(default, value);
         }
     }
 
