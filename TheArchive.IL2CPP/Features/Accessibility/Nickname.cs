@@ -61,6 +61,9 @@ namespace TheArchive.Features.Accessibility
 
         public override void OnDisable()
         {
+            if (IsApplicationQuitting)
+                return;
+            
             ResetNickname();
         }
 

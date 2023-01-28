@@ -198,6 +198,8 @@ namespace TheArchive.Core.FeaturesAPI
 
         /// <summary>
         /// Called whenever the application quits
+        /// <br/>
+        /// Gets executed right before <seealso cref="OnDisable"/> is called
         /// </summary>
         public virtual void OnQuit()
         {
@@ -227,12 +229,12 @@ namespace TheArchive.Core.FeaturesAPI
         public static bool DevMode => ArchiveMod.Settings.FeatureDevMode;
         public static bool GameDataInited { get; internal set; } = false;
         public static bool IsApplicationFocused { get; internal set; } = false;
+        public static bool IsApplicationQuitting { get; internal set; } = false;
         public static bool DataBlocksReady { get; internal set; } = false;
         /// <summary>Cast to eGameStateName</summary>
         public static int CurrentGameState { get; internal set; } = 0;
         /// <summary>Cast to eGameStateName</summary>
         public static int PreviousGameState { get; internal set; } = 0;
-
 
         internal static void SetupIs()
         {

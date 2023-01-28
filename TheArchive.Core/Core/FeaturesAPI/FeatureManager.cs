@@ -108,6 +108,8 @@ namespace TheArchive.Core.FeaturesAPI
             _logger.Info($"{nameof(OnApplicationQuit)}()");
             try
             {
+                Feature.IsApplicationQuitting = true;
+
                 _logger.Info($"Saving settings ... ");
 
                 SaveConfig();
