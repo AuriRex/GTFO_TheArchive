@@ -9,13 +9,13 @@ using static TheArchive.Utilities.Utils;
 namespace TheArchive.Features.Special
 {
     [EnableFeatureByDefault]
-    public class RundownInHeader : Feature
+    public class DetailedExpeditionDisplay : Feature
     {
-        public override string Name => "Rundown # in Header";
+        public override string Name => "Detailed Expedition Display";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override string Group => FeatureGroups.Special;
 
-        public override string Description => "Adds the current Rundown Number into the Header as well as onto the Map and Objectives screens on OG builds.";
+        public override string Description => "Adds the current Rundown Number into the Header as well as onto the Map, Objectives and Success screens.";
 
 #if BepInEx
         // Remove once the patches in here don't cause the runtime to shit itself. 
@@ -37,7 +37,8 @@ namespace TheArchive.Features.Special
 
         public class RundownInHeaderSettings
         {
-            [FSDisplayName($"Add {ALTText} and {OGText} prefixes")]
+            [FSDisplayName($"{ALTText} and {OGText} prefixes")]
+            [FSDescription($"Adds {ALTText} or {OGText} before any mention of the expedition.\n\n{OGText} for the original releases\n{ALTText} for the re-releases")]
             public bool IncludeALTorOGText { get; set; } = true;
         }
 
@@ -55,6 +56,35 @@ namespace TheArchive.Features.Special
             }
 
             return false;
+        }
+
+        [ArchivePatch(typeof(CM_PageExpeditionSuccess), nameof(UnityMessages.OnEnable))]
+        internal static class CM_PageExpeditionSuccess_OnEnable_Patch
+        {
+            public static void Postfix(CM_PageExpeditionSuccess __instance)
+            {
+                
+                var text = __instance.m_expeditionName.text;
+
+                if (IsOGBuild && !Is.R2 && !Is.R3)
+                {
+                    text = $"R{(int)BuildInfo.Rundown}{text}";
+                }
+
+                if (Settings.IncludeALTorOGText)
+                {
+                    if (!IsAlt(text))
+                    {
+                        text = $"{OGText}{text}";
+                    }
+                    else
+                    {
+                        text = $"{ALTText}{text}";
+                    }
+                }
+
+                __instance.m_expeditionName.text = text;
+            }
         }
 
         // No references to the objectives screen type on mono build so reflection it is

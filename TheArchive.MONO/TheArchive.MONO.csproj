@@ -228,9 +228,6 @@
 		<Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveDownedMessage.cs">
 			<Link>Features\Special\RemoveDownedMessage.cs</Link>
 		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\Special\RundownInHeader.cs">
-			<Link>Features\Special\RundownInHeader.cs</Link>
-		</Compile>
 		<Compile Include="..\TheArchive.IL2CPP\Features\Special\UnityRandomOverrider.cs">
 			<Link>Features\Special\UnityRandomOverrider.cs</Link>
 		</Compile>
@@ -269,6 +266,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\SituationalAwareWeaponSwitch.cs" Link="Features\QoL\SituationalAwareWeaponSwitch.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\SkipElevatorAnimation.cs" Link="Features\QoL\SkipElevatorAnimation.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\ReactorDiscordRPC.cs" Link="Features\ReactorDiscordRPC.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\DetailedExpeditionDisplay.cs" Link="Features\Special\DetailedExpeditionDisplay.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\EnableLegacyHammers.cs" Link="Features\Special\EnableLegacyHammers.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\ExpeditionResultsScreenTweaks.cs" Link="Features\Special\ExpeditionResultsScreenTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\VanityDirtControl.cs" Link="Features\Special\VanityDirtControl.cs" />
