@@ -260,6 +260,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\StartupscreenOverride.cs" Link="Features\Dev\StartupscreenOverride.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\PlayerLobbyManagement.cs" Link="Features\PlayerLobbyManagement.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\FlashlightIconColors.cs" Link="Features\QoL\FlashlightIconColors.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\InteractionFix.cs" Link="Features\QoL\InteractionFix.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\L4DStylePacks.cs" Link="Features\QoL\L4DStylePacks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoNavMarkerHideInChat.cs" Link="Features\QoL\NoNavMarkerHideInChat.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\ReloadSoundCue.cs" Link="Features\QoL\ReloadSoundCue.cs" />
