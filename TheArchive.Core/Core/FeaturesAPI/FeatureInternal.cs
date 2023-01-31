@@ -334,6 +334,8 @@ namespace TheArchive.Core.FeaturesAPI
                         throw new ArchivePatchNoOriginalMethodException($"{archivePatchInfo.MethodType} with name \"{archivePatchInfo.MethodName}\" couldn't be found in type \"{archivePatchInfo.Type.FullName}\", PatchClass: {patchType.FullName}.");
                     }
 
+                    var originalMethodIsNative = LoaderWrapper.IsIL2CPPType(original.DeclaringType);
+
                     var prefixMethodInfo = patchTypeMethods
                             .FirstOrDefault(mi => (mi.Name == "Prefix" || mi.GetCustomAttribute<IsPrefix>() != null)
                                 && AnyRundownConstraintMatches(mi)
@@ -344,12 +346,47 @@ namespace TheArchive.Core.FeaturesAPI
                                 && AnyRundownConstraintMatches(mi)
                                 && AnyBuildConstraintMatches(mi));
 
-                    if (prefixMethodInfo == null && postfixMethodInfo == null)
+                    var finalizerMethodInfo = patchTypeMethods
+                            .FirstOrDefault(mi => (mi.Name == "Finalizer" || mi.GetCustomAttribute<IsFinalizer>() != null)
+                                && AnyRundownConstraintMatches(mi)
+                                && AnyBuildConstraintMatches(mi));
+
+                    var transpilerMethodInfo = patchTypeMethods
+                            .FirstOrDefault(mi => (mi.Name == "Transpiler" || mi.GetCustomAttribute<IsTranspiler>() != null)
+                                && AnyRundownConstraintMatches(mi)
+                                && AnyBuildConstraintMatches(mi));
+
+                    var ilManipulatorMethodInfo = patchTypeMethods
+                            .FirstOrDefault(mi => (mi.Name == "ILManipulator" || mi.GetCustomAttribute<IsILManipulator>() != null)
+                                && AnyRundownConstraintMatches(mi)
+                                && AnyBuildConstraintMatches(mi));
+
+                    if (transpilerMethodInfo != null && originalMethodIsNative)
                     {
-                        throw new ArchivePatchNoPatchMethodException($"Patch class \"{patchType.FullName}\" doesn't contain a Prefix or Postfix method, at least one is required!");
+                        _FILogger.Error($"Can't apply Transpiler \"{transpilerMethodInfo.Name}\" on native method \"{original.Name}\" from IL2CPP Type \"{original.DeclaringType.FullName}\"!");
+                        _FILogger.Warning("This Transpiler is going to be skipped, things might break!");
+                        transpilerMethodInfo = null;
                     }
 
-                    _patchInfos.Add(new FeaturePatchInfo(original, prefixMethodInfo, postfixMethodInfo, archivePatchInfo));
+                    if(ilManipulatorMethodInfo != null && originalMethodIsNative)
+                    {
+                        _FILogger.Error($"Can't apply ILManipulator \"{ilManipulatorMethodInfo.Name}\" on native method \"{original.Name}\" from IL2CPP Type \"{original.DeclaringType.FullName}\"!");
+                        _FILogger.Warning("This ILManipulator is going to be skipped, things might break!");
+                        ilManipulatorMethodInfo = null;
+                    }
+
+                    if (prefixMethodInfo == null && postfixMethodInfo == null && transpilerMethodInfo == null)
+                    {
+                        throw new ArchivePatchNoPatchMethodException($"Patch class \"{patchType.FullName}\" doesn't contain a Prefix, Postfix or Transpiler method, at least one is required!");
+                    }
+
+                    _patchInfos.Add(new FeaturePatchInfo(original,
+                        prefixMethodInfo,
+                        postfixMethodInfo,
+                        transpilerMethodInfo,
+                        finalizerMethodInfo,
+                        ilManipulatorMethodInfo,
+                        archivePatchInfo));
 
                     try
                     {
@@ -458,7 +495,12 @@ namespace TheArchive.Core.FeaturesAPI
                 try
                 {
                     _FILogger.Msg(ConsoleColor.DarkBlue, $"Patching {_feature.Identifier} : {patchInfo.ArchivePatchInfo.Type.FullName}.{patchInfo.ArchivePatchInfo.MethodName}()");
-                    _harmonyInstance.Patch(patchInfo.OriginalMethod, patchInfo.HarmonyPrefixMethod, patchInfo.HarmonyPostfixMethod);
+                    _harmonyInstance.Patch(patchInfo.OriginalMethod,
+                        prefix: patchInfo.HarmonyPrefixMethod,
+                        postfix: patchInfo.HarmonyPostfixMethod,
+                        transpiler: patchInfo.HarmonyTranspilerMethod,
+                        finalizer: patchInfo.HarmonyFinalizerMethod,
+                        ilmanipulator: patchInfo.HarmonyILManipulatorMethod);
                 }
                 catch(Exception ex)
                 {
@@ -639,15 +681,24 @@ namespace TheArchive.Core.FeaturesAPI
             internal MethodInfo OriginalMethod { get; private set; }
             internal HarmonyLib.HarmonyMethod HarmonyPrefixMethod { get; private set; }
             internal HarmonyLib.HarmonyMethod HarmonyPostfixMethod { get; private set; }
+            internal HarmonyLib.HarmonyMethod HarmonyTranspilerMethod { get; private set; }
+            internal HarmonyLib.HarmonyMethod HarmonyFinalizerMethod { get; private set; }
+            internal HarmonyLib.HarmonyMethod HarmonyILManipulatorMethod { get; private set; }
             internal MethodInfo PrefixPatchMethod { get; private set; }
             internal MethodInfo PostfixPatchMethod { get; private set; }
+            internal MethodInfo TranspilerPatchMethod { get; private set; }
+            internal MethodInfo FinalizerPatchMethod { get; private set; }
+            internal MethodInfo ILManipulatorPatchMethod { get; private set; }
 
-            public FeaturePatchInfo(MethodInfo original, MethodInfo prefix, MethodInfo postfix, ArchivePatch archivePatch, bool wrapTryCatch = true)
+            public FeaturePatchInfo(MethodInfo original, MethodInfo prefix, MethodInfo postfix, MethodInfo transpiler, MethodInfo finalizer, MethodInfo ilManipulator, ArchivePatch archivePatch, bool wrapTryCatch = true)
             {
                 OriginalMethod = original;
 
                 PrefixPatchMethod = prefix;
                 PostfixPatchMethod = postfix;
+                TranspilerPatchMethod = transpiler;
+                FinalizerPatchMethod = finalizer;
+                ILManipulatorPatchMethod = ilManipulator;
 
                 ArchivePatchInfo = archivePatch;
 
@@ -656,8 +707,23 @@ namespace TheArchive.Core.FeaturesAPI
                     {
                         wrapTryCatch = wrapTryCatch
                     };
-                if(postfix != null)
+                if (postfix != null)
                     HarmonyPostfixMethod = new HarmonyLib.HarmonyMethod(postfix)
+                    {
+                        wrapTryCatch = wrapTryCatch
+                    };
+                if (transpiler != null)
+                    HarmonyTranspilerMethod = new HarmonyLib.HarmonyMethod(transpiler)
+                    {
+                        wrapTryCatch = wrapTryCatch
+                    };
+                if (finalizer != null)
+                    HarmonyFinalizerMethod = new HarmonyLib.HarmonyMethod(finalizer)
+                    {
+                        wrapTryCatch = wrapTryCatch
+                    };
+                if (ilManipulator != null)
+                    HarmonyILManipulatorMethod = new HarmonyLib.HarmonyMethod(ilManipulator)
                     {
                         wrapTryCatch = wrapTryCatch
                     };
