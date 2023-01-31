@@ -6,6 +6,9 @@ using System.Reflection;
 using TMPro;
 using UnityEngine;
 using GameData;
+using TheArchive.Core.FeaturesAPI;
+using System.Runtime.CompilerServices;
+using TheArchive.Loader;
 #if Unhollower
 using UnhollowerBaseLib;
 #endif
@@ -317,11 +320,48 @@ namespace TheArchive.Utilities
             return false;
         }
 
+        public static bool SafeContains<T>(this IList<T> list, T item) where T : class, new()
+        {
+            if (LoaderWrapper.IsIL2CPPType(typeof(T)))
+            {
+#if IL2CPP
+                foreach(var listItem in list)
+                {
+                    Il2CppSystem.Object il2Object = listItem as Il2CppSystem.Object;
+                    if (il2Object.Pointer == (item as Il2CppSystem.Object).Pointer)
+                        return true;
+                }
+                return false;
+#else
+                throw new InvalidOperationException("This should never be called!");
+#endif
+            }
+
+            return list.Contains(item);
+        }
+
+        public static bool SafeIsBot(SNetwork.SNet_Player player)
+        {
+            if (Feature.Is.R6OrLater)
+                return IsBotR6(player);
+            return false;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static bool IsBotR6(SNetwork.SNet_Player player)
+        {
+#if IL2CPP
+            return player.IsBot;
+#else
+            return false;
+#endif
+        }
+
         private static readonly MethodAccessor<CellSoundPlayer> A_CellSoundPlayer_Post_sub_R5 = MethodAccessor<CellSoundPlayer>.GetAccessor("Post", new Type[] { typeof(uint) }, ignoreErrors: true);
 
         public static void SafePost(this CellSoundPlayer player, uint eventId)
         {
-            if (ArchiveMod.CurrentRundown.IsIncludedIn(Utils.RundownFlags.RundownSix.ToLatest()))
+            if (Feature.Is.R6OrLater)
             {
                 SafePostR6Plus(player, eventId);
                 return;
