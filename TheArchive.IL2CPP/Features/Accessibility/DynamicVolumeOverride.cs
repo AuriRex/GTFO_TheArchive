@@ -163,18 +163,13 @@ namespace TheArchive.Features.Accessibility
                 SetSFXVolume(Settings.VolumeOverride, "OnGameStateChanged, Offline");
             }
 
-            if(state == _eGameStateName_StopElevatorRide)
+            if(state == _eGameStateName_StopElevatorRide || (state == _eGameStateName_InLevel && !IsLerpActive && IsOverrideActive))
             {
                 // Lerp to game settings on elevator ride stop
                 LerpVolume(Settings.VolumeOverride, GetPlayerSFXSettings(), Settings.LerpTime, onDone: () =>
                 {
                     IsOverrideActive = false;
                 });
-            }
-
-            if (state == _eGameStateName_InLevel && !IsLerpActive)
-            {
-                IsOverrideActive = false;
             }
         }
 
