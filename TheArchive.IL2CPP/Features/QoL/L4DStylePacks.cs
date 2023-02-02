@@ -19,19 +19,12 @@ namespace TheArchive.Features.QoL
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 
-        public static bool IsR2OrLater { get; private set; } = false;
-        public static bool IsR6OrLater { get; private set; } = false;
-
         private static MethodAccessor<InteractionGuiLayer> A_SetTimedMessage;
 
         public override void Init()
         {
-            IsR2OrLater = BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownTwo.ToLatest());
-            IsR6OrLater = BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownSix.ToLatest());
-
-            if (!IsR2OrLater)
+            if (!Is.R2OrLater)
                 A_SetTimedMessage = MethodAccessor<InteractionGuiLayer>.GetAccessor("SetTimedMessage");
-            //public void SetTimedMessage(string msg, float timeVisible, ePUIMessageStyle style = ePUIMessageStyle.Message)
         }
 
         public static bool NeedsResource(iResourcePackReceiver receiver, eResourceContainerSpawnType packType)
@@ -47,7 +40,7 @@ namespace TheArchive.Features.QoL
                 case eResourceContainerSpawnType.AmmoTool:
                     return receiver.NeedToolAmmo();
                 case eResourceContainerSpawnType.Disinfection:
-                    if (IsR2OrLater)
+                    if (Is.R2OrLater)
                         return NeedsDisinfect(receiver);
                     return false;
                 default:
@@ -81,7 +74,7 @@ namespace TheArchive.Features.QoL
 
         private static void SetTimedInteractionPrompt(string text, float time)
         {
-            if (IsR2OrLater)
+            if (Is.R2OrLater)
                 TimedInteractionPromptR2Plus(text, time);
             else
                 A_SetTimedMessage.Invoke(GuiManager.InteractionLayer, text, time, ePUIMessageStyle.Message);
@@ -341,7 +334,7 @@ namespace TheArchive.Features.QoL
 
                 if (!timerActiveBefore && timerActiveAfter)
                 {
-                    if(IsR6OrLater)
+                    if(Is.R6OrLater)
                     {
                         SendGenericInteractR6Plus(__instance, packReceiver);
                     }

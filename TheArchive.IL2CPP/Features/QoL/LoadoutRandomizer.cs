@@ -84,7 +84,7 @@ namespace TheArchive.Features.QoL
             {
                 SetupViaInstance(CM_PageLoadout.Current);
             }
-            if (SharedUtils.GetGameState() == _eGameStateName_Lobby)
+            if (((eGameStateName) CurrentGameState) == _eGameStateName_Lobby)
             {
                 SetButtonActive();
             }
