@@ -36,6 +36,8 @@ namespace TheArchive.Managers
             if (rundownKeyToLoad == _loadedRundownKey)
                 return CurrentLoadedLocalProgressionData;
 
+            Logger.Debug($"{nameof(LoadOrGetAndSaveCurrentFile)}() {nameof(rundownKeyToLoad)} changed. ({_loadedRundownKey} -> {rundownKeyToLoad})");
+
             SaveToProgressionFile(CurrentLoadedLocalProgressionData);
             
             CurrentLoadedLocalProgressionData = LoadFromProgressionFile(rundownKeyToLoad);
@@ -90,6 +92,8 @@ namespace TheArchive.Managers
         public void EndCurrentExpeditionSession(bool success)
         {
             CurrentActiveSession?.OnExpeditionCompleted(success);
+
+            LoadOrGetAndSaveCurrentFile(CurrentActiveSession.RundownId);
 
             var hasCompletionData = CurrentLoadedLocalProgressionData.AddSessionResults(CurrentActiveSession, out var completionData);
 
