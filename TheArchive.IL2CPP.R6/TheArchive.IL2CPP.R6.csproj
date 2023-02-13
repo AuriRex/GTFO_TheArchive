@@ -13,26 +13,6 @@
 		<Configurations>R_ML;R_BIE</Configurations>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
-		<TargetFramework>net472</TargetFramework>
-		<OutputPath>bin\R_ML\</OutputPath>
-		<DefineConstants>TRACE</DefineConstants>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<LangVersion>9.0</LangVersion>
-		<ErrorReport>prompt</ErrorReport>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='R_BIE|AnyCPU'">
-		<TargetFramework>net6.0</TargetFramework>
-		<OutputPath>bin\R_BIE\</OutputPath>
-		<DefineConstants>TRACE</DefineConstants>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<LangVersion>9.0</LangVersion>
-		<ErrorReport>prompt</ErrorReport>
-	</PropertyGroup>
 	
 	<Import Project="../Loader.props" />
 	
@@ -103,7 +83,7 @@
 	<PropertyGroup>
 		<PostBuildEvent>
 			cd $(MSBuildProjectDirectory)
-			copy /y bin\$(Configuration)\TheArchive.IL2CPP.R6.dll ..\TheArchive.IL2CPP\Resources\TheArchive.IL2CPP.R6.dll
+			:: copy /y bin\$(Configuration)\TheArchive.IL2CPP.R6.dll ..\out\Modules\TheArchive.IL2CPP.R6.dll
 		</PostBuildEvent>
 	</PropertyGroup>
 </Project>

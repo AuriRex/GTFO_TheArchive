@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">R_ML</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+
 		<ProjectGuid>{907C68FA-DF5A-42B8-9762-7363B2A499E9}</ProjectGuid>
 		<OutputType>Library</OutputType>
 		<AppDesignerFolder>Properties</AppDesignerFolder>
@@ -12,25 +11,11 @@
 		<FileAlignment>512</FileAlignment>
 		<Deterministic>true</Deterministic> 
 		<Configurations>R_ML;R_BIE</Configurations>
+
+		<DefineConstants>$(DefineConstants);MONO</DefineConstants>
+		<TargetFrameworks>net472</TargetFrameworks>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
-		<TargetFramework>net472</TargetFramework>
-		<OutputPath>bin\R_ML\</OutputPath>
-		<DefineConstants>TRACE;MONO</DefineConstants>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<ErrorReport>prompt</ErrorReport>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='R_BIE|AnyCPU'">
-		<TargetFramework>net6.0</TargetFramework>
-		<OutputPath>bin\R_BIE\</OutputPath>
-		<DefineConstants>TRACE;MONO</DefineConstants>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<ErrorReport>prompt</ErrorReport>
-	</PropertyGroup>
+
 	<PropertyGroup>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
@@ -286,18 +271,19 @@
 		<Folder Include="Properties\" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="GitInfo" Version="2.2.0" />
+	  <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.7.0" />
 	</ItemGroup>
+
 	<ItemGroup>
 	  <Reference Include="0Harmony">
-	    <HintPath>..\_R_LATEST\MelonLoader\0Harmony.dll</HintPath>
+	    <HintPath>..\_R_LATEST\MelonLoader\net35\0Harmony.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 	
 	<PropertyGroup>
 		<PostBuildEvent>
 			cd $(MSBuildProjectDirectory)
-			copy /y bin\$(Configuration)\TheArchive.MONO.dll ..\TheArchive.Core\Resources\TheArchive.MONO.dll
+			copy /y bin\$(Configuration)\TheArchive.MONO.dll ..\out\Modules\TheArchive.MONO.dll
 		</PostBuildEvent>
 	</PropertyGroup>
 </Project>

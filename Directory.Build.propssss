@@ -18,7 +18,7 @@
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net472'">
 		<FrameworkText>net472</FrameworkText>
 	</PropertyGroup>
-	
+
 	<PropertyGroup Condition="'$(Configuration)' == 'R_ML'">
 		<DefineConstants>$(DefineConstants);MelonLoader</DefineConstants>
 		<LoaderText>ML</LoaderText>

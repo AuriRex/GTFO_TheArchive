@@ -117,31 +117,15 @@ namespace TheArchive
 
         public static void OnApplicationStart(IArchiveLogger logger, HarmonyLib.Harmony harmonyInstance)
         {
-            ArchiveLogger.logger = logger;
+            
+            ArchiveLogger.logger = LoaderWrapper.CreateLoggerInstance(MOD_NAME, ConsoleColor.DarkMagenta);
             _harmonyInstance = harmonyInstance;
 
-            if(GIT_IS_DIRTY)
-            {
-                ArchiveLogger.Warning("Git is dirty, this is a development build!");
-            }
+            PrintVersion();
 
-            try
-            {
-                if(LoaderWrapper.IsGameIL2CPP())
-                {
-                    IL2CPP_BaseType = ImplementationManager.FindTypeInCurrentAppDomain("Il2CppSystem.Object", exactMatch: true);
-
-                    ArchiveLogger.Debug($"IL2CPP_BaseType: {IL2CPP_BaseType?.FullName}");
-
-                    if (IL2CPP_BaseType == null)
-                        throw new Exception();
-                }
-            }
-            catch (Exception ex)
-            {
-                ArchiveLogger.Error("IL2CPP base type \"Il2CppSystem.Object\" could not be resolved!");
-                ArchiveLogger.Exception(ex);
-            }
+#if IL2CPP
+            IL2CPP_BaseType = typeof(Il2CppSystem.Object);
+#endif
 
             LoadConfig();
 
@@ -191,6 +175,20 @@ namespace TheArchive
             {
                 ArchiveLogger.Exception(ex);
             }
+        }
+
+        private static void PrintVersion()
+        {
+            ArchiveLogger.Info("--------------------------------------");
+            ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"{MOD_NAME}");
+            ArchiveLogger.Msg(ConsoleColor.DarkYellow, $"v{VERSION_STRING}");
+            ArchiveLogger.Msg(ConsoleColor.Green, $"Commit-Hash: {GIT_COMMIT_SHORT_HASH}");
+            ArchiveLogger.Msg(ConsoleColor.Cyan, $"Commit-Date: {GIT_COMMIT_DATE}");
+            if (GIT_IS_DIRTY)
+            {
+                ArchiveLogger.Warning("Git is dirty, this is a development build!");
+            }
+            ArchiveLogger.Info("--------------------------------------");
         }
 
         public static void OnApplicationQuit()
@@ -682,14 +680,20 @@ namespace TheArchive
                 if(isIl2Cpp)
                 {
                     ArchiveLogger.Notice("Loading IL2CPP module ...");
-                    bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.IL2CPP.dll");
+                    bytes = File.ReadAllBytes(Path.Combine(LocalFiles.ModulesPath, "TheArchive.IL2CPP.dll"));
+
+                    //bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.IL2CPP.dll");
                     if (bytes.Length < 100) throw new BadImageFormatException("IL2CPP Module is too small, this version might not contain the module build but a dummy dll!");
                     return Assembly.Load(bytes);
                 }
 
                 ArchiveLogger.Notice("Loading MONO module ...");
-                bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.MONO.dll");
+
+                //bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.MONO.dll");
+                bytes = File.ReadAllBytes(Path.Combine(LocalFiles.ModulesPath, "TheArchive.MONO.dll"));
                 if (bytes.Length < 100) throw new BadImageFormatException("MONO Module is too small, this version might not contain the module build but a dummy dll!");
+                
+                
                 return Assembly.Load(bytes);
             }
             catch (Exception ex)

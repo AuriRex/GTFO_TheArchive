@@ -11,9 +11,16 @@
 *.sln.docstates
 
 # Special Stuff
-out/*
+out/*.dll
+out/*.pdb
+out/*/*.dll
+out/*/*.pdb
 
 _localKeepForLater/*
+_localKeepForLater/*/*
+_localKeepForLater/*/*/*
+_localKeepForLater/*/*/*/*
+_localKeepForLater/*/*/*/*/*
 
 _R_LATEST/*
 _R_LATEST/MelonLoader/*

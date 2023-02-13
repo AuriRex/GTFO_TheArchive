@@ -29,12 +29,69 @@
 
 	<Import Project="../Loader.props" />
 
+	<PropertyGroup>
+		<LoaderProject>..\TheArchive.Loader\TheArchive.Loader.csproj</LoaderProject>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<IL2CPPProjects Include="..\TheArchive.Core\TheArchive.Core.csproj" />
+		<IL2CPPProjects Include="..\TheArchive.IL2CPP\TheArchive.IL2CPP.csproj" />
+		<IL2CPPProjects Include="..\TheArchive.IL2CPP.R5\TheArchive.IL2CPP.R5.csproj" />
+		<IL2CPPProjects Include="..\TheArchive.IL2CPP.R6\TheArchive.IL2CPP.R6.csproj" />
+
+
+		<MONOProjects Include="..\TheArchive.Core\TheArchive.Core.csproj" />
+		<MONOProjects Include="..\TheArchive.MONO\TheArchive.MONO.csproj" />
+	</ItemGroup>
+
 	<Target Name="Buildthing" AfterTargets="Build">
+
+		<!-- Build net472 first -->
+		<!--<MSBuild Projects="$(MSBuildProjectDirectory)\..\TheArchive.Core\TheArchive.Core.csproj" ContinueOnError="false" BuildInParallel="false" />
+		-->
+
+		<Message Importance="High" Text="----------------------------" />
+		<Message Importance="High" Text="IL2CPPProjects --&gt; @(IL2CPPProjects)" />
+		<Message Importance="High" Text="MONOProjects --&gt; @(MONOProjects)" />
+		<Message Importance="High" Text="----------------------------" />
+
+		<PropertyGroup>
+			<DefineConstants>MONO</DefineConstants>
+			<TargetFramework>net472</TargetFramework>
+		</PropertyGroup>
+
+		
+		<!--Properties="TargetFramework=$(TargetFramework);DefineConstants=$(DefineConstants)"-->
+		<MSBuild Projects="@(MONOProjects)" Properties="TargetFramework=$(TargetFramework);DefineConstants=$(DefineConstants)" ContinueOnError="false" BuildInParallel="false" />
+
+		<!--Properties="TargetFramework=$(TargetFramework)"-->
+		<MSBuild Projects="$(LoaderProject)" ContinueOnError="false" BuildInParallel="false" />
+
+		<!-- Build net6.0 second -->
+		<PropertyGroup>
+			<DefineConstants>IL2CPP</DefineConstants>
+			<TargetFramework>net6.0</TargetFramework>
+		</PropertyGroup>
+
+		<MSBuild Projects="@(IL2CPPProjects)" Properties="TargetFramework=$(TargetFramework)" ContinueOnError="false" BuildInParallel="false" />
+
+		<MSBuild Projects="LoaderProject" Properties="TargetFramework=$(TargetFramework)" ContinueOnError="false" BuildInParallel="false" />
+
+		<!--
+		<Exec Command="ECHO Cleaning Core mod
+			  cd $(MSBuildProjectDirectory)\..\TheArchive.Core\
+			  dotnet clean -f $(TargetFramework) -c $(Configuration)" />
+
+		<MSBuild Projects="$(MSBuildProjectDirectory)\..\TheArchive.Core\TheArchive.Core.csproj" ContinueOnError="false" BuildInParallel="false" />
+		-->
+		
+		<!--
 		<Message Importance="High" Text="[#0] Cleaning out directory" />
 		<Exec Command="REM&#xD;&#xA;		  if exist $(MSBuildProjectDirectory)\..\out\TheArchive.Core.dll del $(MSBuildProjectDirectory)\..\out\TheArchive.Core.dll&#xD;&#xA;		  if exist $(MSBuildProjectDirectory)\..\out\TheArchive.Core.pdb del $(MSBuildProjectDirectory)\..\out\TheArchive.Core.pdb" />
 
 		<Message Importance="High" Text="[#0.1] Building Core Mod" />
 		<MSBuild Projects="$(MSBuildProjectDirectory)\..\TheArchive.Core\TheArchive.Core.csproj" ContinueOnError="false" BuildInParallel="false" />
+		
 		<Message Importance="High" Text="[#0.2] Building IL2CPP Support-Module ..." />
 		<MSBuild Projects="$(MSBuildProjectDirectory)\..\TheArchive.IL2CPP\TheArchive.IL2CPP.csproj" ContinueOnError="false" BuildInParallel="false" />
 
@@ -46,7 +103,7 @@
 		
 		<Message Importance="High" Text="[#1.2] Building R6 Sub-Module ..." />
 		<MSBuild Projects="$(MSBuildProjectDirectory)\..\TheArchive.IL2CPP.R6\TheArchive.IL2CPP.R6.csproj" ContinueOnError="false" BuildInParallel="false" />
-		
+		-->
 		<!--<Message Importance="High" Text="[#2] Building IL2CPP/MONO Support-Modules ..." />
 		
 		<Message Importance="High" Text="[#2.1] Building IL2CPP Support-Module ..." />
@@ -66,6 +123,7 @@
 	</Target>
 
 	<!-- Frankenstein build smh -->
+	<!--
 	<Target Name="BuildLastSteps" AfterTargets="Buildthing" >
 		<Exec Command="ECHO [#2] Building IL2CPP/MONO Support-Modules ...
 			  cd $(MSBuildProjectDirectory)\..\TheArchive.IL2CPP\
@@ -91,6 +149,7 @@
 			  if exist $(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb copy /y $(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb $(MSBuildProjectDirectory)\..\out\TheArchive.Core.pdb" />
 		
 	</Target>
+	-->
 	
 	<PropertyGroup>
 		<RunPostBuildEvent>Always</RunPostBuildEvent>

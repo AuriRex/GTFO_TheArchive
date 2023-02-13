@@ -25,6 +25,8 @@ namespace TheArchive.Core.Managers
 
         private static IntPtr _discordLibPointer;
 
+        public const string DISCORD_GAME_SDK = "discord_game_sdk.dll";
+
         public static bool HasBeenSetup => _settings != null;
 
         private static Discord.Activity _lastActivity;
@@ -67,8 +69,9 @@ namespace TheArchive.Core.Managers
                 try
                 {
                     //Environment.SetEnvironmentVariable("PATH", Environment.GetEnvironmentVariable("PATH") + ";" + LocalFiles.ModLocalLowPath);
-                    var path = Path.Combine(LocalFiles.ModLocalLowPath, "discord_game_sdk.dll");
-                    string hashExisting = null;
+                    var path = Path.Combine(LocalFiles.ModLocalLowPath, DISCORD_GAME_SDK);
+
+                    /*string hashExisting = null;
                     if(File.Exists(path))
                     {
                         hashExisting = Utilities.Utils.GetHash(File.ReadAllBytes(path)).ToUpper();
@@ -91,6 +94,14 @@ namespace TheArchive.Core.Managers
                             File.WriteAllBytes(path, discord_game_sdk_bytes);
                         }
                         
+                    }*/
+
+#warning Discord things; TODO!!!
+                    if(!File.Exists(path))
+                    {
+                        Logger.Notice($"{DISCORD_GAME_SDK} could not be found, Discord features are unavailable.");
+                        _internalDisabled = true;
+                        return;
                     }
                     
                     _discordLibPointer = LoadLibrary(path);

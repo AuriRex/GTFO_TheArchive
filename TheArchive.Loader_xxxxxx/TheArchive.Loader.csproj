@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="../Loader.props" />
+
+	
+	<PropertyGroup>
+		<AssemblyName>TheArchive.Loader.$(FrameworkText).$(LoaderText)</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<PreBuildEvent>
+			echo MSB-Path: $(MSBuildToolsPath)
+			echo ASM-Name: $(AssemblyName)
+			echo .NET: $(TargetFramework)
+			cd $(MSBuildProjectDirectory)
+			dotnet restore
+		</PreBuildEvent>
+	</PropertyGroup>
+</Project>

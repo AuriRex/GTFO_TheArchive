@@ -5,14 +5,20 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Loader
 {
-    public static partial class LoaderWrapper
+    public partial class BIE_LoaderWrapper
     {
 #if BepInEx
-        public static string GameDirectory => BepInEx.Paths.GameRootPath;
+        public static string GameDirectory => CoreModLoader.GameRootDirectory;
 
         public static string UserDataDirectory => System.IO.Path.Combine(GameDirectory, "UserData");
 
-        public static bool IsGameIL2CPP() => true;
+
+        public static bool IsGameIL2CPP()
+#if IL2CPP
+            => true;
+#else
+            => false;
+#endif
 
         public static IArchiveLogger CreateLoggerInstance(string name, ConsoleColor col = ConsoleColor.White)
         {
@@ -46,36 +52,6 @@ namespace TheArchive.Loader
             BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Plugins.TryGetValue(guid, out var plugin);
 
             return plugin != null;
-        }
-
-        public static class ClassInjector
-        {
-            public static IntPtr DerivedConstructorPointer<T>()
-            {
-                return Il2CppInterop.Runtime.Injection.ClassInjector.DerivedConstructorPointer<T>();
-            }
-
-            public static void DerivedConstructorBody(Il2CppInterop.Runtime.InteropTypes.Il2CppObjectBase objectBase)
-            {
-                Il2CppInterop.Runtime.Injection.ClassInjector.DerivedConstructorBody(objectBase);
-            }
-
-            public static void RegisterTypeInIl2Cpp<T>(bool logSuccess = false) where T : class
-            {
-                Il2CppInterop.Runtime.Injection.ClassInjector.RegisterTypeInIl2Cpp<T>(new Il2CppInterop.Runtime.Injection.RegisterTypeOptions
-                {
-                    LogSuccess = logSuccess
-                });
-            }
-
-            public static void RegisterTypeInIl2CppWithInterfaces<T>(bool logSuccess = false, params Type[] interfaces) where T : class
-            {
-                Il2CppInterop.Runtime.Injection.ClassInjector.RegisterTypeInIl2Cpp<T>(new Il2CppInterop.Runtime.Injection.RegisterTypeOptions
-                {
-                    Interfaces = interfaces,
-                    LogSuccess = logSuccess
-                });
-            }
         }
 #endif
     }

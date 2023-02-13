@@ -10,33 +10,21 @@
 		<LangVersion>10.0</LangVersion>
 		<FileAlignment>512</FileAlignment>
 		<Deterministic>true</Deterministic>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<NuGetPackageImportStamp>
 		</NuGetPackageImportStamp>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
-		<TargetFramework>net472</TargetFramework>
-		<DefineConstants>TRACE;IL2CPP</DefineConstants>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<ErrorReport>prompt</ErrorReport>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_BIE|AnyCPU'">
-		<TargetFramework>net6.0</TargetFramework>
-		<DefineConstants>TRACE;IL2CPP</DefineConstants>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<ErrorReport>prompt</ErrorReport>
-	</PropertyGroup>
+
 	<Import Project="../Loader.props" />
-	<PropertyGroup>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	</PropertyGroup>
+
 	<ItemGroup>
+
+		<!--
+		<Reference Include="Newtonsoft.Json">
+			<HintPath>$(LatestGeneratedGameAssembliesPath)Newtonsoft.Json.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		-->
+		
 		<Reference Include="CellSound-ASM">
 			<HintPath>$(LatestGeneratedGameAssembliesPath)CellSound-ASM.dll</HintPath>
 			<Private>False</Private>
@@ -51,23 +39,19 @@
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="Il2Cppmscorlib">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Il2Cppmscorlib.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)Il2Cppmscorlib.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="Il2CppSystem">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Il2CppSystem.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)Il2CppSystem.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="Il2CppSystem.Core">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Il2CppSystem.Core.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)Il2CppSystem.Core.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="Modules-ASM">
 			<HintPath>$(LatestGeneratedGameAssembliesPath)Modules-ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Newtonsoft.Json">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Newtonsoft.Json.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="PlayFab-ASM">
@@ -87,40 +71,40 @@
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="Unity.TextMeshPro">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Unity.TextMeshPro.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)Unity.TextMeshPro.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.AudioModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.AudioModule.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)UnityEngine.AudioModule.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.CrashReportingModule">
 			<SpecificVersion>False</SpecificVersion>
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.CrashReportingModule.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)UnityEngine.CrashReportingModule.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.IMGUIModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.IMGUIModule.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)UnityEngine.IMGUIModule.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.InputLegacyModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.InputLegacyModule.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)UnityEngine.InputLegacyModule.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.Physics2DModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.Physics2DModule.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)UnityEngine.Physics2DModule.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.PhysicsModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.PhysicsModule.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)UnityEngine.PhysicsModule.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.UI">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.UI.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)UnityEngine.UI.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.UnityAnalyticsModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.UnityAnalyticsModule.dll</HintPath>
+			<HintPath>$(LatestGeneratedGameAssembliesNoIl2CppPath)UnityEngine.UnityAnalyticsModule.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="Utils-ASM">
@@ -172,24 +156,8 @@
 	<PropertyGroup>
 		<PostBuildEvent>
 			cd $(MSBuildProjectDirectory)
-			copy /y bin\$(Configuration)\TheArchive.IL2CPP.dll ..\TheArchive.Core\Resources\TheArchive.IL2CPP.dll
+			copy /y bin\$(Configuration)\TheArchive.IL2CPP.dll ..\out\Modules\TheArchive.IL2CPP.dll
 		</PostBuildEvent>
 	</PropertyGroup>
-	<PropertyGroup>
-		<PreBuildEvent>
-			cd $(MSBuildProjectDirectory)\Resources\
-			if exist TheArchive.IL2CPP.R5.dll (
-			ECHO Not generating IL2CPP.R5 dummy dll
-			) else (
-			ECHO Generating IL2CPP.R5 dummy dll ...
-			ECHO DUMMY &gt; TheArchive.IL2CPP.R5.dll
-			)
-			if exist TheArchive.IL2CPP.R6.dll (
-			ECHO Not generating IL2CPP.R6 dummy dll
-			) else (
-			ECHO Generating IL2CPP.R6 dummy dll ...
-			ECHO DUMMY &gt; TheArchive.IL2CPP.R6.dll
-			)
-		</PreBuildEvent>
-	</PropertyGroup>
+
 </Project>

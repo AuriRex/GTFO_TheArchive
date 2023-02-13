@@ -4,8 +4,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using TheArchive.Loader;
 using TheArchive.Utilities;
-#if MelonLoader
-using UnhollowerBaseLib;
+#if Unhollower
+using static UnhollowerBaseLib.UnhollowerUtils;
+#endif
+#if Il2CppInterop
+using static Il2CppInterop.Common.Il2CppInteropUtils;
 #endif
 using static TheArchive.Core.ArchiveLegacyPatcher;
 using static TheArchive.Utilities.Utils;
@@ -207,10 +210,10 @@ namespace TheArchive.Core
 
                 DelegateType = NativeDelegates.Get(nativePatchInfo);
 
-#if MelonLoader
+#if Il2CppInterop || Unhollower
                 unsafe
                 {
-                    var ptr = *(IntPtr*) (IntPtr) UnhollowerUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(originalMethodInfo).GetValue(null);
+                    var ptr = *(IntPtr*) (IntPtr) GetIl2CppMethodInfoPointerFieldForGeneratedMethod(originalMethodInfo).GetValue(null);
 
                     // Create a dynamic assembly, type and static method with our parameters maybe?? + the delegate type
                     // and use that to provide a better experience for native patches (similar to how harmony does it with Pre & Postfix)

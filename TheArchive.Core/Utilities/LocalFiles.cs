@@ -8,6 +8,8 @@ namespace TheArchive.Utilities
 {
     public class LocalFiles
     {
+        public static string ModulesPath => Path.Combine(LoaderWrapper.BaseInstallPath, "Modules");
+
         private static string _modLocalLowPath = null;
         public static string ModLocalLowPath
         {
@@ -51,6 +53,21 @@ namespace TheArchive.Utilities
                         Directory.CreateDirectory(_modLocalLowPath);
                 }
                 return _modDefaultSaveDataPath;
+            }
+        }
+
+        private static string _modDefaultmodulesPath = null;
+        public static string ModDefaultModulesPath
+        {
+            get
+            {
+                if (_modDefaultmodulesPath == null)
+                {
+                    _modDefaultmodulesPath = Path.Combine(ModLocalLowPath, "Modules");
+                    if (!Directory.Exists(_modLocalLowPath))
+                        Directory.CreateDirectory(_modLocalLowPath);
+                }
+                return _modDefaultmodulesPath;
             }
         }
 

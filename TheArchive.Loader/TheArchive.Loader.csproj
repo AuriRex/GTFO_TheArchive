@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+
+	</PropertyGroup>
+
+	<Import Project="../Loader.props"/>
+		
+	<ItemGroup>
+	  <ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="Interfaces\" />
+	</ItemGroup>
+
+</Project>

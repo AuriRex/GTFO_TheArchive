@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TheArchive.Core.Managers;
 using TheArchive.Loader;
+using UnityEngine;
 
 namespace TheArchive.Utilities
 {
@@ -158,7 +159,7 @@ namespace TheArchive.Utilities
 
         public static object StartCoroutine(System.Collections.IEnumerator routine) => LoaderWrapper.StartCoroutine(routine);
 
-        public static void StopCoroutine(object coroutineToken) => LoaderWrapper.StopCoroutine(coroutineToken);
+        public static void StopCoroutine(Coroutine coroutineToken) => LoaderWrapper.StopCoroutine(coroutineToken);
 
         public static string GetRundownTitle() => GetRundownTitle(ArchiveMod.CurrentRundown);
         public static string GetRundownTitle(RundownID rundown)

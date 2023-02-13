@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="../Loader.props"/>
+
+	<ItemGroup>
+		<ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj" />
+		<ProjectReference Include="..\TheArchive.Loader\TheArchive.Loader.csproj" />
+	</ItemGroup>
+</Project>

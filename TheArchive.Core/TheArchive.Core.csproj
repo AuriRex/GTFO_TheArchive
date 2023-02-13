@@ -2,6 +2,7 @@
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">R_ML</Configuration>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		
 
 		<RootNamespace>TheArchive</RootNamespace>
 		<AssemblyName>TheArchive.Core</AssemblyName>
@@ -9,37 +10,17 @@
 		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
 		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
 		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-		
-		<NuGetPackageImportStamp>
-		</NuGetPackageImportStamp>
 	</PropertyGroup>
 	
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
-		<TargetFramework>net472</TargetFramework>
-		<DefineConstants>TRACE</DefineConstants>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<ErrorReport>prompt</ErrorReport>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_BIE|AnyCPU'">
-		<TargetFramework>net6.0</TargetFramework>
-		<DefineConstants>TRACE</DefineConstants>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-	</PropertyGroup>
-	<!-- -->
-	<Import Project="../Loader.props" />
-	<PropertyGroup>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	</PropertyGroup>
+	<!-- <Import Project="../Loader.props" /> -->
+	<Import Project="../Loader.props"/>
+	
+	
 	<ItemGroup>
 		<Compile Include="..\GlobalUsings.cs" Link="GlobalUsings.cs" />
 	</ItemGroup>
 	<!-- -->
+	<!-- 
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\TheArchive.IL2CPP.dll" />
 	</ItemGroup>
@@ -49,6 +30,7 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\discord_game_sdk.dll" />
 	</ItemGroup>
+	-->
 	<ItemGroup>
 		<EmbeddedResource Include="..\README.md">
 			<Link>Resources\README.md</Link>
@@ -63,24 +45,19 @@
 		<None Include="packages.config" />
 	</ItemGroup>
 
-	<PropertyGroup>
-		<PreBuildEvent>
-			cd $(MSBuildProjectDirectory)\Resources\
-			if exist TheArchive.IL2CPP.dll (
-			ECHO Not generating IL2CPP dummy dll
-			) else (
-			ECHO Generating IL2CPP dummy dll ...
-			ECHO DUMMY &gt; TheArchive.IL2CPP.dll
-				)
-				if exist TheArchive.MONO.dll (
-				ECHO Not generating MONO dummy dll
-				) else (
-				ECHO Generating MONO dummy dll ...
-				ECHO DUMMY &gt; TheArchive.MONO.dll
-			)
-		</PreBuildEvent>
-	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="GitInfo" Version="2.2.0" />
 	</ItemGroup>
+
+	<PropertyGroup>
+		<PreBuildEvent>
+			echo Building with constants: $(DefineConstants)
+			echo Building for .NET: $(TargetFramework)
+		</PreBuildEvent>
+		<PostBuildEvent>
+			if not exist "$(MSBuildProjectDirectory)\..\out\discord_game_sdk.dll" copy /y "$(MSBuildProjectDirectory)\Resources\discord_game_sdk.dll" "$(MSBuildProjectDirectory)\..\out\discord_game_sdk.dll"
+			if exist "$(MSBuildProjectDirectory)\bin\$(Configuration)\TheArchive.Core.dll" copy /y "$(MSBuildProjectDirectory)\bin\$(Configuration)\TheArchive.Core.dll" "$(MSBuildProjectDirectory)\..\out\TheArchive.Core.dll"
+			:: if exist "$(MSBuildProjectDirectory)\bin\$(Configuration)\TheArchive.Core.pdb" copy /y "$(MSBuildProjectDirectory)\bin\$(Configuration)\TheArchive.Core.pdb" "$(MSBuildProjectDirectory)\..\out\TheArchive.Core.pdb"
+		</PostBuildEvent>
+	</PropertyGroup>
 </Project>
