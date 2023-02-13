@@ -169,6 +169,8 @@ namespace TheArchive.Features.Accessibility
                 LerpVolume(Settings.VolumeOverride, GetPlayerSFXSettings(), Settings.LerpTime, onDone: () =>
                 {
                     IsOverrideActive = false;
+                    if (IsApplicationFocused)
+                        ResetAllVolume();
                 });
             }
         }
@@ -190,7 +192,8 @@ namespace TheArchive.Features.Accessibility
 
             var timePassed = 0f;
 
-            SetSFXVolume(from, "Lerp Start");
+            if (IsApplicationFocused)
+                SetSFXVolume(from, "Lerp Start");
 
             while (timePassed < duration)
             {
@@ -198,8 +201,7 @@ namespace TheArchive.Features.Accessibility
 
                 var volume = Mathf.Lerp(from, to, factor);
 
-                if(Settings.FocusChangeBehaviour != DynamicVolumeSettings.FocusChangeMode.MuteInBackground
-                    || IsApplicationFocused)
+                if(IsApplicationFocused)
                     SetSFXVolume(volume);
 
                 timePassed += Mathf.Min(Time.deltaTime, duration - timePassed);
@@ -207,7 +209,8 @@ namespace TheArchive.Features.Accessibility
                 yield return null;
             }
 
-            SetSFXVolume(to, "Lerp End");
+            if (IsApplicationFocused)
+                SetSFXVolume(to, "Lerp End");
             IsLerpActive = false;
             onDone?.Invoke();
             yield break;
@@ -228,6 +231,8 @@ namespace TheArchive.Features.Accessibility
                         LerpVolume(Settings.VolumeOverride, GetPlayerSFXSettings(), Settings.LerpTime, onDone: () =>
                         {
                             IsOverrideActive = false;
+                            if (IsApplicationFocused)
+                                ResetAllVolume();
                         });
                     }
 
