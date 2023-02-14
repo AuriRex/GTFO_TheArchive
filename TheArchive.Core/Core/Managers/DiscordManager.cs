@@ -111,9 +111,9 @@ namespace TheArchive.Core.Managers
             {
                 DiscordClient.Initialize();
 
-                if (_lastCheckedTime + 5 <= Utils.Time)
+                if (_lastCheckedTime + 5 <= Utils.Unity_Time)
                 {
-                    _lastCheckedTime = Utils.Time;
+                    _lastCheckedTime = Utils.Unity_Time;
                     var activity = DiscordClient.BuildActivity(PresenceManager.CurrentState, PresenceManager.CurrentStateStartTime);
                     if (DiscordClient.TryUpdateActivity(activity))
                     {
@@ -143,9 +143,9 @@ namespace TheArchive.Core.Managers
         {
             if (_internalDisabled) return;
 
-            if(_lastCheckedTime + 5 <= Utils.Time)
+            if(_lastCheckedTime + 5 <= Utils.Unity_Time)
             {
-                _lastCheckedTime = Utils.Time;
+                _lastCheckedTime = Utils.Unity_Time;
 
                 Discord.Activity activity = DiscordClient.BuildActivity(PresenceManager.CurrentState, PresenceManager.CurrentStateStartTime);
 

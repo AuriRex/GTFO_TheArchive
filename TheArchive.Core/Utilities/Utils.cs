@@ -37,7 +37,7 @@ namespace TheArchive.Utilities
         private static Type _UnityEngine_Time = Type.GetType("UnityEngine.Time, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         private static PropertyInfo _UnityEngine_time_PI = _UnityEngine_Time.GetProperty("time");
 
-        internal static float Time
+        internal static float Unity_Time
         {
             get
             {
