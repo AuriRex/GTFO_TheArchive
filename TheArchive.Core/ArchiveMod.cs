@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using TheArchive.Core;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
@@ -13,6 +14,8 @@ using TheArchive.Loader;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
+[assembly: InternalsVisibleTo("TheArchive.IL2CPP")]
+[assembly: InternalsVisibleTo("TheArchive.MONO")]
 namespace TheArchive
 {
     public static class ArchiveMod

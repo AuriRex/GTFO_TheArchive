@@ -188,6 +188,17 @@ namespace TheArchive.Core.FeaturesAPI
         }
 
         /// <summary>
+        /// Called whenever an area is culled / unculled<br />
+        /// Cast to the first parameter to <c>LG_Area</c> or define a new instance method <c>OnAreaCull(LG_Area area, bool active)</c>
+        /// </summary>
+        /// <param name="lgArea">LG_Area that is affected</param>
+        /// <param name="active">if rendered or not</param>
+        public virtual void OnAreaCull(object lgArea, bool active)
+        {
+
+        }
+
+        /// <summary>
         /// Called whenever a <see cref="FButton"/> from this <see cref="Feature"/>s mod settings menu has been pressed.
         /// </summary>
         /// <param name="setting"></param>

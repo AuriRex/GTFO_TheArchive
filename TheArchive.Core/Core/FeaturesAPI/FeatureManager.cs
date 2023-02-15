@@ -198,6 +198,16 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
+        internal void OnLGAreaCullUpdate(object lg_area, bool active)
+        {
+            foreach (var feature in RegisteredFeatures)
+            {
+                if (!feature.Enabled) continue;
+
+                feature.FeatureInternal.OnLGAreaCullUpdate(lg_area, active);
+            }
+        }
+
         internal void OnApplicationFocusChanged(bool focus)
         {
             Feature.IsApplicationFocused = focus;

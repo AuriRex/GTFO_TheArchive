@@ -1,4 +1,5 @@
 ﻿using GameData;
+using LevelGeneration;
 using System;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
@@ -24,6 +25,7 @@ namespace TheArchive
             typeof(GameDataBlockBase<>).RegisterSelf();
             typeof(GameDataBlockWrapper<>).RegisterSelf();
             typeof(eGameStateName).RegisterSelf();
+            typeof(LG_Area).RegisterSelf();
             typeof(System.Collections.Generic.List<>).RegisterForIdentifier("GenericList");
         }
 

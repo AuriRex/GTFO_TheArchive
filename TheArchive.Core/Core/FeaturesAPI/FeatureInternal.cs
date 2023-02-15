@@ -42,11 +42,13 @@ namespace TheArchive.Core.FeaturesAPI
         private PropertyInfo _isEnabledPropertyInfo;
         private bool _onGameStateChangedMethodUsesGameEnum = false;
         private MethodInfo _onGameStateChangedMethodInfo;
+        private MethodInfo _onLGAreaCullUpdateMethodInfo;
 
         private static readonly HashSet<string> _usedIdentifiers = new HashSet<string>();
         private static readonly IArchiveLogger _FILogger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureInternal), ConsoleColor.DarkYellow);
 
         private static Type _gameStateType;
+        private static Type _lgAreaType;
 
         private FeatureInternal() { }
 
@@ -55,6 +57,10 @@ namespace TheArchive.Core.FeaturesAPI
             if(_gameStateType == null)
             {
                 _gameStateType = ImplementationManager.GameTypeByIdentifier("eGameStateName");
+            }
+            if(_lgAreaType == null)
+            {
+                _lgAreaType = ImplementationManager.GameTypeByIdentifier("LG_Area");
             }
             var fi = new FeatureInternal();
             feature.FeatureInternal = fi;
@@ -203,6 +209,14 @@ namespace TheArchive.Core.FeaturesAPI
                     _onGameStateChangedMethodUsesGameEnum = true;
                 _FILogger.Debug($"Found {nameof(Feature.OnGameStateChanged)} method \"{_onGameStateChangedMethodInfo.Name}\" on Feature {_feature.Identifier}. (Uses {(_onGameStateChangedMethodUsesGameEnum ? "eGameStateName" : "int")})");
             }
+
+            _onLGAreaCullUpdateMethodInfo = featureMethods
+                .FirstOrDefault(mi => (mi.Name == "OnAreaCull" || mi.GetCustomAttribute<IsAreaCullUpdateMethod>() != null)
+                    && !mi.IsStatic
+                    && mi.DeclaringType != typeof(Feature)
+                    && mi.GetParameters().Length == 2
+                    && (mi.GetParameters()[0].ParameterType == _lgAreaType || mi.GetParameters()[0].ParameterType == typeof(object))
+                    && mi.GetParameters()[1].ParameterType == typeof(bool));
 
             foreach (var prop in settingsProps)
             {
@@ -641,6 +655,23 @@ namespace TheArchive.Core.FeaturesAPI
             catch (Exception ex)
             {
                 _FILogger.Error($"Exception thrown during {nameof(Feature.OnApplicationFocusChanged)} in Feature {_feature.Identifier}!");
+                _FILogger.Exception(ex);
+            }
+        }
+
+        internal void OnLGAreaCullUpdate(object lg_area, bool active)
+        {
+            if (InternalDisabled) return;
+
+            if (!_feature.Enabled) return;
+
+            try
+            {
+                _onLGAreaCullUpdateMethodInfo?.Invoke(_feature, new object[] { lg_area, active });
+            }
+            catch (Exception ex)
+            {
+                _FILogger.Error($"Exception thrown during {nameof(Feature.OnAreaCull)} in Feature {_feature.Identifier}!");
                 _FILogger.Exception(ex);
             }
         }
