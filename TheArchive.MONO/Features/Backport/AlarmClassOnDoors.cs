@@ -22,7 +22,8 @@ namespace TheArchive.Features.Backport
         [ArchivePatch(typeof(LG_SecurityDoor_Locks), "OnDoorState")]
         internal static class LG_SecurityDoor_Locks_OnDoorStatePatch
         {
-            static FieldAccessor<ChainedPuzzleInstance, iChainedPuzzleCore[]> A_ChainedPuzzleInstance_m_chainedPuzzleCores = FieldAccessor<ChainedPuzzleInstance, iChainedPuzzleCore[]>.GetAccessor("m_chainedPuzzleCores");
+            static readonly IValueAccessor<ChainedPuzzleInstance, iChainedPuzzleCore[]> A_ChainedPuzzleInstance_m_chainedPuzzleCores = AccessorBase.GetValueAccessor<ChainedPuzzleInstance, iChainedPuzzleCore[]>("m_chainedPuzzleCores");
+            static readonly IValueAccessor<Interact_Timed, string> A_Interact_Timed_m_interactMessage = AccessorBase.GetValueAccessor<Interact_Timed, string>("m_interactMessage");
 
             public static void Postfix(LG_SecurityDoor_Locks __instance, pDoorState state, ref Interact_Timed ___m_intOpenDoor)
             {
@@ -31,7 +32,9 @@ namespace TheArchive.Features.Backport
                     switch (state.status)
                     {
                         case eDoorStatus.Closed_LockedWithChainedPuzzle_Alarm:
+                            if (A_Interact_Timed_m_interactMessage.Get(___m_intOpenDoor).ToLower().Contains("error")) break;
                             if (__instance.ChainedPuzzleToSolve == null) break;
+
                             var puzzles = A_ChainedPuzzleInstance_m_chainedPuzzleCores.Get(__instance.ChainedPuzzleToSolve);
 
                             if (puzzles == null) break;
