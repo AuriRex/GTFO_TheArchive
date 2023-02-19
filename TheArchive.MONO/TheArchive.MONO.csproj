@@ -265,6 +265,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\InteractionFix.cs" Link="Features\QoL\InteractionFix.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\L4DStylePacks.cs" Link="Features\QoL\L4DStylePacks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoNavMarkerHideInChat.cs" Link="Features\QoL\NoNavMarkerHideInChat.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\ReloadMinusOneBugFix.cs" Link="Features\QoL\ReloadMinusOneBugFix.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\ReloadSoundCue.cs" Link="Features\QoL\ReloadSoundCue.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\SituationalAwareWeaponSwitch.cs" Link="Features\QoL\SituationalAwareWeaponSwitch.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\SkipElevatorAnimation.cs" Link="Features\QoL\SkipElevatorAnimation.cs" />
