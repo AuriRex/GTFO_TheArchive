@@ -61,13 +61,19 @@ namespace TheArchive.Core.Attributes
             MethodName = methodName;
             ParameterTypes = parameterTypes;
             MethodType = patchMethodType;
+
+            if(patchMethodType == PatchMethodType.Constructor)
+            {
+                MethodName = ".ctor";
+            }
         }
 
         public enum PatchMethodType
         {
             Method,
             Getter,
-            Setter
+            Setter,
+            Constructor
         }
     }
 }

@@ -319,7 +319,7 @@ namespace TheArchive.Core.FeaturesAPI
                         archivePatchInfo.MethodName = (string) methodNameMethod.Invoke(null, null);
                     }
 
-                    MethodInfo original;
+                    MethodBase original;
 
                     switch(archivePatchInfo.MethodType)
                     {
@@ -340,12 +340,15 @@ namespace TheArchive.Core.FeaturesAPI
                         case ArchivePatch.PatchMethodType.Setter:
                             original = archivePatchInfo.Type.GetProperty(archivePatchInfo.MethodName, Utils.AnyBindingFlagss)?.SetMethod;
                             break;
+                        case ArchivePatch.PatchMethodType.Constructor:
+                            original = archivePatchInfo.Type.GetConstructor(Utils.AnyBindingFlagss, null, archivePatchInfo.ParameterTypes, null);
+                            break;
                     }
                     
 
                     if (original == null)
                     {
-                        throw new ArchivePatchNoOriginalMethodException($"{archivePatchInfo.MethodType} with name \"{archivePatchInfo.MethodName}\" couldn't be found in type \"{archivePatchInfo.Type.FullName}\", PatchClass: {patchType.FullName}.");
+                        throw new ArchivePatchNoOriginalMethodException($"{archivePatchInfo.MethodType} with name \"{archivePatchInfo.MethodName}\"{(archivePatchInfo.ParameterTypes != null ? $" with parameters [{string.Join(", ", archivePatchInfo.ParameterTypes.Select(type => type.Name))}]" : string.Empty)} couldn't be found in type \"{archivePatchInfo.Type.FullName}\", PatchClass: {patchType.FullName}.");
                     }
 
                     var originalMethodIsNative = LoaderWrapper.IsIL2CPPType(original.DeclaringType);
@@ -709,7 +712,7 @@ namespace TheArchive.Core.FeaturesAPI
         private class FeaturePatchInfo
         {
             internal ArchivePatch ArchivePatchInfo { get; private set; }
-            internal MethodInfo OriginalMethod { get; private set; }
+            internal MethodBase OriginalMethod { get; private set; }
             internal HarmonyLib.HarmonyMethod HarmonyPrefixMethod { get; private set; }
             internal HarmonyLib.HarmonyMethod HarmonyPostfixMethod { get; private set; }
             internal HarmonyLib.HarmonyMethod HarmonyTranspilerMethod { get; private set; }
@@ -721,7 +724,7 @@ namespace TheArchive.Core.FeaturesAPI
             internal MethodInfo FinalizerPatchMethod { get; private set; }
             internal MethodInfo ILManipulatorPatchMethod { get; private set; }
 
-            public FeaturePatchInfo(MethodInfo original, MethodInfo prefix, MethodInfo postfix, MethodInfo transpiler, MethodInfo finalizer, MethodInfo ilManipulator, ArchivePatch archivePatch, bool wrapTryCatch = true)
+            public FeaturePatchInfo(MethodBase original, MethodInfo prefix, MethodInfo postfix, MethodInfo transpiler, MethodInfo finalizer, MethodInfo ilManipulator, ArchivePatch archivePatch, bool wrapTryCatch = true)
             {
                 OriginalMethod = original;
 
