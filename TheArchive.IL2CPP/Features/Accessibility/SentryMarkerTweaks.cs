@@ -15,7 +15,7 @@ namespace TheArchive.Features.Accessibility
 
         public override string Group => FeatureGroups.Accessibility;
 
-        public override string Description => "Tweak how sentry markers are shown for you.";
+        public override string Description => "Add hud markers onto placed down sentry guns and tweak how those are shown.";
 
         public override bool PlaceSettingsInSubMenu => true;
 
@@ -39,6 +39,10 @@ namespace TheArchive.Features.Accessibility
             [FSDescription("Colors the markers according to the players color.")]
             public bool UsePlayerColorForMarkers { get; set; } = true;
 
+            [FSDisplayName("Show Sentry Type")]
+            [FSDescription("Displayes the sentries type below the players name.")]
+            public bool ShowSentryArchetype { get; set; } = true;
+
             [FSHeader("Marker Toggles")]
             [FSDisplayName("Show your own marker")]
             [FSDescription("Don't forget where you placed it down!")]
@@ -51,7 +55,7 @@ namespace TheArchive.Features.Accessibility
             public bool ShowBotMarkers { get; set; } = true;
         }
 
-        public static Color MARKER_GREEN => new Color(0.341f, 0.576f, 0.137f);
+        public static readonly Color MARKER_GREEN = new Color(0.341f, 0.576f, 0.137f);
 
         private static readonly eGameStateName _eGameStateName_InLevel = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.InLevel));
 
@@ -162,16 +166,24 @@ namespace TheArchive.Features.Accessibility
                 if (Settings.UsePlayerColorForMarkers)
                 {
                     col = snetPlayer.PlayerColor;
+                    name = $"<#{ColorUtility.ToHtmlStringRGB(snetPlayer.PlayerColor)}>{name}</color>";
                 }
                 else
                 {
                     name = $"<color=white>{name}</color>";
                 }
 
+                var sentryArch = string.Empty;
+
+                if (Settings.ShowSentryArchetype)
+                {
+                    sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%>{__instance.ArchetypeName}</size></color>";
+                }
+
                 navMarkerPlacer.PlaceMarker(null);
                 navMarkerPlacer.SetMarkerVisible(true);
 
-                navMarkerPlacer.UpdateName(name, string.Empty);
+                navMarkerPlacer.UpdateName(name, sentryArch);
                 navMarkerPlacer.UpdatePlayerColor(col);
             }
 
