@@ -273,6 +273,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\DetailedExpeditionDisplay.cs" Link="Features\Special\DetailedExpeditionDisplay.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\EnableLegacyHammers.cs" Link="Features\Special\EnableLegacyHammers.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\ExpeditionResultsScreenTweaks.cs" Link="Features\Special\ExpeditionResultsScreenTweaks.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\LoadingIndicator.cs" Link="Features\Special\LoadingIndicator.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\VanityDirtControl.cs" Link="Features\Special\VanityDirtControl.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\WeaponStats.cs" Link="Features\Special\WeaponStats.cs" />
 	</ItemGroup>
