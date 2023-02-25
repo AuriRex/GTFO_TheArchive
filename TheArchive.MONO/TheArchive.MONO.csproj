@@ -251,6 +251,7 @@
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableAmbientParticles.cs" Link="Features\Accessibility\DisableAmbientParticles.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableHudSway.cs" Link="Features\Accessibility\DisableHudSway.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableInfectionBreathing.cs" Link="Features\Accessibility\DisableInfectionBreathing.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableStaminaBreathing.cs" Link="Features\Accessibility\DisableStaminaBreathing.cs" />
