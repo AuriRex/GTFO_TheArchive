@@ -254,6 +254,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableAmbientParticles.cs" Link="Features\Accessibility\DisableAmbientParticles.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableHudSway.cs" Link="Features\Accessibility\DisableHudSway.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableInfectionBreathing.cs" Link="Features\Accessibility\DisableInfectionBreathing.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableInfectionCoughing.cs" Link="Features\Accessibility\DisableInfectionCoughing.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableStaminaBreathing.cs" Link="Features\Accessibility\DisableStaminaBreathing.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableUIMirroring.cs" Link="Features\Accessibility\DisableUIMirroring.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableUIParalax.cs" Link="Features\Accessibility\DisableUIParalax.cs" />
@@ -275,6 +276,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\EnableLegacyHammers.cs" Link="Features\Special\EnableLegacyHammers.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\ExpeditionResultsScreenTweaks.cs" Link="Features\Special\ExpeditionResultsScreenTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\LoadingIndicator.cs" Link="Features\Special\LoadingIndicator.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\PlayerDialogFilter.cs" Link="Features\Special\PlayerDialogFilter.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\VanityDirtControl.cs" Link="Features\Special\VanityDirtControl.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\WeaponStats.cs" Link="Features\Special\WeaponStats.cs" />
 	</ItemGroup>

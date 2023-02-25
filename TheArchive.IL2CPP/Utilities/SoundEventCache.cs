@@ -8,6 +8,8 @@ namespace TheArchive.Utilities
 {
     public class SoundEventCache : IInitAfterGameDataInitialized
     {
+        public static bool IsReady { get; private set; } = false;
+
         private static Dictionary<string, uint> SoundIdCache { get; set; } = new Dictionary<string, uint>();
 
         private static IArchiveLogger _logger;
@@ -21,6 +23,12 @@ namespace TheArchive.Utilities
 
         public static uint Resolve(string soundId, bool throwIfNotFound = false)
         {
+            if(!IsReady)
+            {
+                Logger.Error($"{nameof(SoundEventCache)} isn't ready yet! Try resolving sound events a little later (after GameDataInit for example)!");
+                return 0;
+            }
+
             if(SoundIdCache.TryGetValue(soundId, out var value))
             {
                 return value;
@@ -40,6 +48,8 @@ namespace TheArchive.Utilities
         {
             try
             {
+                Logger.Msg(ConsoleColor.Magenta, $"Initializing ...");
+
                 var fieldOrProps = typeof(AK.EVENTS)
 #if IL2CPP
                     .GetProperties().Where(p => p.GetMethod?.ReturnType == typeof(uint));
@@ -61,6 +71,8 @@ namespace TheArchive.Utilities
                 Logger.Error($"Threw an exception on {nameof(Init)}:");
                 Logger.Exception(ex);
             }
+
+            IsReady = true;
         }
 
         /// <summary>
