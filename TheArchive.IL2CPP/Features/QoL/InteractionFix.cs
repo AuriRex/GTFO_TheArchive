@@ -140,16 +140,6 @@ namespace TheArchive.Features.QoL
         [ArchivePatch(typeof(ResourcePackFirstPerson), nameof(UnityMessages.Update))]
         internal static class ResourcePackFirstPerson_Update_Patch
         {
-            private static float _triggerDurationConsideredActive = 0;
-
-            public static void Init()
-            {
-                if(Is.R1)
-                {
-                    _triggerDurationConsideredActive = 0.125f;
-                }
-            }
-
             public static void Prefix(ResourcePackFirstPerson __instance)
             {
                 var interaction = __instance.Owner.Interaction;
@@ -178,7 +168,7 @@ namespace TheArchive.Features.QoL
 
 #if IL2CPP
                         timedInteract.OnSelectedChange(true, __instance.Owner, true);
-                        timedInteract.OnTimerUpdate(timedInteract.m_timerProgressRel);
+                        timedInteract.OnTimerUpdate(timedInteract.InteractionTimerRel);
 #endif
                     }
 
