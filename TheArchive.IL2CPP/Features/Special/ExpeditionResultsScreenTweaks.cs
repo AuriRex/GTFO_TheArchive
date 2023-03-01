@@ -8,6 +8,7 @@ using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
+using TMPro;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
 
@@ -41,6 +42,10 @@ namespace TheArchive.Features.Special
             [FSDescription("Replaces the default timer with the enhanced version.\n(Adds a timer to R1-R3)\n\n<color=orange>(Requires Enhanced Expedition Timer to be enabled!)</color>")]
             public bool OverrideEnhancedTimerOnSuccessScreen { get; set; } = true;
 
+            [FSDisplayName("Show Level Seed")]
+            [FSDescription("Adds the 'session seed' to the fail and success screens.\n\n(This is the seed used for boxes, enemy count and alarm scan locations.")]
+            public bool ShowSessionSeed { get; set; } = true;
+
             [FSDisplayName("Disable Success Background")]
             [FSDescription("Removes the background image on the <b>Expedition Success Screen</b>.\n(background turns black instead)")]
             [FSRundownHint(RundownFlags.RundownSix, RundownFlags.Latest)]
@@ -72,14 +77,16 @@ namespace TheArchive.Features.Special
                 SetSuccessMaskActive(false);
             if (Settings.DisableFailSkull)
                 SetFailMaskActive(false);
-            ShowTimerOnExpdFailScreen(true);
+            ShowExtraUIOnExpdFailScreen(true);
+            ShowExtraUIOnExpdSuccessScreen(true);
         }
 
         public override void OnDisable()
         {
             SetSuccessMaskActive(true);
             SetFailMaskActive(true);
-            ShowTimerOnExpdFailScreen(false);
+            ShowExtraUIOnExpdFailScreen(false);
+            ShowExtraUIOnExpdSuccessScreen(false);
         }
 
         private static IStaticValueAccessor<MainMenuGuiLayer, MainMenuGuiLayer> A_MainMenuGuiLayer_Current;
@@ -89,27 +96,56 @@ namespace TheArchive.Features.Special
             A_MainMenuGuiLayer_Current = AccessorBase.GetStaticValueAccessor<MainMenuGuiLayer, MainMenuGuiLayer>("Current");
         }
 
+        private static TextMeshPro GetOrCreateNewTextFromFailedTextPrefab(string goName, Vector3 offset, CM_PageExpeditionFail fail = null)
+        {
+            var instance = fail ?? A_MainMenuGuiLayer_Current.GetStaticValue()?.PageExpeditionFail;
+
+            var newTextTrans = instance.m_missionFailed_text.transform.parent.GetChildWithExactName(goName);
+
+            var newTextMeshPro = newTextTrans?.GetComponent<TextMeshPro>();
+
+            if (newTextTrans == null)
+            {
+                newTextMeshPro = GameObject.Instantiate(instance.m_missionFailed_text, instance.m_missionFailed_text.transform.parent);
+                newTextMeshPro.name = goName;
+                newTextTrans = newTextMeshPro.transform;
+                newTextTrans.position += offset;
+            }
+
+            return newTextMeshPro;
+        }
+
+        private static TextMeshPro GetOrCreateNewTextFromSuccessTextPrefab(string goName, Vector3 offset, CM_PageExpeditionSuccess success = null)
+        {
+            var instance = success ?? A_MainMenuGuiLayer_Current.GetStaticValue()?.PageExpeditionSuccess;
+
+            var newTextTrans = instance.m_expeditionName.transform.parent.GetChildWithExactName(goName);
+
+            var newTextMeshPro = newTextTrans?.GetComponent<TextMeshPro>();
+
+            if (newTextTrans == null)
+            {
+                newTextMeshPro = GameObject.Instantiate(instance.m_expeditionName, instance.m_expeditionName.transform.parent);
+                newTextMeshPro.name = goName;
+                newTextTrans = newTextMeshPro.transform;
+                newTextTrans.position += offset;
+            }
+
+            return newTextMeshPro;
+        }
+
+        public const string SESSION_SEED_GO_NAME = "SessionSeed";
         public const string EXPEDITION_TIMER_GO_NAME = "ExpeditionTimer";
         public const string EXPEDITION_TIMER_UNVERIFIED = "<#aaa>(Unverified)</color>";
 
-        private static void ShowTimerOnExpdFailScreen(bool show, CM_PageExpeditionFail fail = null)
+        private static void ShowExtraUIOnExpdFailScreen(bool show, CM_PageExpeditionFail fail = null)
         {
             var instance = fail ?? A_MainMenuGuiLayer_Current.GetStaticValue()?.PageExpeditionFail;
 
             if (instance == null)
                 return;
 
-            var expdTimerTrans = instance.m_missionFailed_text.transform.parent.GetChildWithExactName(EXPEDITION_TIMER_GO_NAME);
-
-            var expdTimerTMP = expdTimerTrans?.GetComponent<TMPro.TextMeshPro>();
-
-            if (expdTimerTrans == null)
-            {
-                expdTimerTMP = GameObject.Instantiate(instance.m_missionFailed_text, instance.m_missionFailed_text.transform.parent);
-                expdTimerTMP.name = EXPEDITION_TIMER_GO_NAME;
-                expdTimerTrans = expdTimerTMP.transform;
-                expdTimerTrans.position += new Vector3(0, 130, 0);
-            }
+            var expdTimerTMP = GetOrCreateNewTextFromFailedTextPrefab(EXPEDITION_TIMER_GO_NAME, new Vector3(0, 130, 0), instance);
 
             expdTimerTMP.gameObject.SetActive(false);
 
@@ -117,9 +153,45 @@ namespace TheArchive.Features.Special
             {
                 Loader.LoaderWrapper.StartCoroutine(ShowTimerDelayed(expdTimerTMP));
             }
+
+            var sessionSeedTMP = GetOrCreateNewTextFromFailedTextPrefab(SESSION_SEED_GO_NAME, new Vector3(0, 200, 0), instance);
+
+            sessionSeedTMP.gameObject.SetActive(false);
+
+            if (show && Settings.ShowSessionSeed)
+            {
+                Loader.LoaderWrapper.StartCoroutine(ShowSessionSeedCoroutine(sessionSeedTMP));
+            }
         }
 
-        private static IEnumerator ShowTimerDelayed(TMPro.TextMeshPro tmp)
+        private static void ShowExtraUIOnExpdSuccessScreen(bool show, CM_PageExpeditionSuccess success = null)
+        {
+            var instance = success ?? A_MainMenuGuiLayer_Current.GetStaticValue()?.PageExpeditionSuccess;
+
+            if (instance == null)
+                return;
+
+            var sessionSeedTMP = GetOrCreateNewTextFromSuccessTextPrefab(SESSION_SEED_GO_NAME, Is.R4OrLater ? new Vector3(1240, 0, 0) : new Vector3(0, -100, 0), instance);
+
+            sessionSeedTMP.gameObject.SetActive(false);
+
+            if (show && Settings.ShowSessionSeed)
+            {
+                Loader.LoaderWrapper.StartCoroutine(ShowSessionSeedCoroutine(sessionSeedTMP));
+            }
+        }
+
+        private static IEnumerator ShowSessionSeedCoroutine(TextMeshPro tmp)
+        {
+            
+            tmp.text = $"<size={(Is.R4OrLater ? "70%" : "30%")}><color=white>SessionSeed: {RundownManager.GetActiveExpeditionData().sessionSeed}</color></size>";
+            Dev.ModSettings.JankTextMeshProUpdaterOnce.UpdateMesh(tmp);
+
+            yield return CoroutineManager.BlinkIn(tmp.gameObject, 1.25f);
+            yield break;
+        }
+
+        private static IEnumerator ShowTimerDelayed(TextMeshPro tmp)
         {
             yield return new WaitForSeconds(1f);
 
@@ -150,7 +222,7 @@ namespace TheArchive.Features.Special
         {
             public static void Postfix(CM_PageExpeditionFail __instance)
             {
-                ShowTimerOnExpdFailScreen(true, __instance);
+                ShowExtraUIOnExpdFailScreen(true, __instance);
             }
         }
 
@@ -159,6 +231,8 @@ namespace TheArchive.Features.Special
         {
             public static void Postfix(CM_PageExpeditionSuccess __instance)
             {
+                ShowExtraUIOnExpdSuccessScreen(true, __instance);
+
                 if (!Settings.OverrideEnhancedTimerOnSuccessScreen)
                     return;
 
@@ -205,11 +279,20 @@ namespace TheArchive.Features.Special
         private static string GetFallbackExpeditionTime()
         {
 #if IL2CPP
-            return TimeSpan.FromSeconds(Clock.ExpeditionProgressionTime + Clock.ExpeditionCheckpointWastedTime).ToString("hh':'mm':'ss");
+            var add = Is.R6OrLater ? CheckpointWastedTimeR6Plus() : 0;
+            return TimeSpan.FromSeconds(Clock.ExpeditionProgressionTime + add).ToString("hh':'mm':'ss");
 #else
             return string.Empty;
 #endif
         }
+
+#if IL2CPP
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static float CheckpointWastedTimeR6Plus()
+        {
+            return Clock.ExpeditionCheckpointWastedTime;
+        }
+#endif
 
         public static void SetSuccessMaskActive(bool active) => SetMaskBackgroundActive(A_MainMenuGuiLayer_Current.Get(null)?.PageExpeditionSuccess?.transform, active);
 
