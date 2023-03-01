@@ -8,6 +8,12 @@ namespace TheArchive.Utilities
 {
     public class LocalFiles
     {
+
+        public const string GTFO_SETTINGS_JSON = "GTFO_Settings.json";
+        public const string GTFO_FAVORITES_JSON = "GTFO_Favorites.json";
+        public const string GTFO_BOT_FAVORITES_JSON = "GTFO_BotFavorites.json";
+
+
         private static string _modLocalLowPath = null;
         public static string ModLocalLowPath
         {
@@ -134,7 +140,47 @@ namespace TheArchive.Utilities
                         _versionSpecificSavePath = GetVersionSpecificSaveDirectoryPath(ArchiveMod.CurrentRundown);
                     }
                     if (!Directory.Exists(_versionSpecificSavePath))
+                    {
                         Directory.CreateDirectory(_versionSpecificSavePath);
+                        try
+                        {
+                            var olderSettingsFile = GetSettingsPath(ArchiveMod.CurrentRundown - 1);
+
+                            if (File.Exists(olderSettingsFile))
+                            {
+                                var newSettingsFile = Path.Combine(_versionSpecificSavePath, GTFO_SETTINGS_JSON);
+                                ArchiveLogger.Debug($"Copying most recent settings file! (\"{olderSettingsFile}\" -> \"{newSettingsFile}\")");
+                                File.Copy(olderSettingsFile, newSettingsFile);
+                            }
+
+                            if (!ArchiveMod.IsPlayingModded)
+                            {
+                                var newFavs = GetFavoritesPath(ArchiveMod.CurrentRundown);
+                                var oldFavs = GetFavoritesPath(ArchiveMod.CurrentRundown - 1);
+
+                                if (File.Exists(oldFavs))
+                                {
+                                    ArchiveLogger.Debug($"Copying most recent favorites file! (\"{newFavs}\" -> \"{oldFavs}\")");
+                                    File.Copy(oldFavs, newFavs);
+                                }
+
+                                var newBotFavs = GetBotFavoritesPath(ArchiveMod.CurrentRundown);
+                                var oldBotFavs = GetBotFavoritesPath(ArchiveMod.CurrentRundown - 1);
+
+                                if (File.Exists(oldBotFavs))
+                                {
+                                    ArchiveLogger.Debug($"Copying most recent bot favorites file! (\"{newBotFavs}\" -> \"{oldBotFavs}\")");
+                                    File.Copy(oldBotFavs, newBotFavs);
+                                }
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            ArchiveLogger.Warning($"Caught an exception while trying to copy over older settings files: {ex}: {ex.Message}");
+                            ArchiveLogger.Debug(ex.StackTrace);
+                        }
+                    }
+                        
                 }
 
                 return _versionSpecificSavePath;
@@ -199,12 +245,12 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_settingsPath))
-                    _settingsPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"GTFO_Settings.json");
+                    _settingsPath = Path.Combine(VersionSpecificSaveDirectoryPath, GTFO_SETTINGS_JSON);
                 return _settingsPath;
             }
         }
 
-        public static string GetSettingsPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), $"GTFO_Settings.json");
+        public static string GetSettingsPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_SETTINGS_JSON);
 
         private static string _favoritesPath = null;
         public static string FavoritesPath
@@ -212,12 +258,12 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_favoritesPath))
-                    _favoritesPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"GTFO_Favorites.json");
+                    _favoritesPath = Path.Combine(VersionSpecificSaveDirectoryPath, GTFO_FAVORITES_JSON);
                 return _favoritesPath;
             }
         }
 
-        public static string GetFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), $"GTFO_Favorites.json");
+        public static string GetFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_FAVORITES_JSON);
 
 
         private static string _botFavoritesPath = null;
@@ -226,12 +272,12 @@ namespace TheArchive.Utilities
             get
             {
                 if (string.IsNullOrEmpty(_botFavoritesPath))
-                    _botFavoritesPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"GTFO_BotFavorites.json");
+                    _botFavoritesPath = Path.Combine(VersionSpecificSaveDirectoryPath, GTFO_BOT_FAVORITES_JSON);
                 return _botFavoritesPath;
             }
         }
 
-        public static string GetBotFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), $"GTFO_BotFavorites.json");
+        public static string GetBotFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_BOT_FAVORITES_JSON);
 
 
         private static string _boostersPath = null;
