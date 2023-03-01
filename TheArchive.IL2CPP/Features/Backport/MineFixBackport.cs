@@ -12,10 +12,10 @@ namespace TheArchive.Features.Backport
 
         public override string Group => FeatureGroups.Backport;
 
-        public override string Description => "Change explosion code to work like after the R5 update.\nMines = more effective\n\n(Might cause desync!)";
+        public override string Description => "Change explosion code to work like after the R5 update.\nMines = more effective\n\n<#f00>(Might cause desync!)</color>";
 
-        private static Collider[] _collidersNew = new Collider[300];
-        private static Collider[] _collidersOld = new Collider[50];
+        private static readonly Collider[] _collidersNew = new Collider[300];
+        private static readonly Collider[] _collidersOld = new Collider[50];
 
 #if MONO
         private static FieldAccessor<DamageUtil, Collider[]> A_DamageUtil_s_tempColliders;
