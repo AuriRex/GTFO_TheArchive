@@ -7,9 +7,11 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Features.Dev
 {
-    [EnableFeatureByDefault]
+    //[EnableFeatureByDefault]
     [HideInModSettings]
     [DoNotSaveToConfig]
+    [ForceDisable]
+#warning TODO: Rework "Special" Features system, include this one.
     public class CullingHook : Feature
     {
         public override string Name => nameof(CullingHook);
