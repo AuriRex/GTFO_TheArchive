@@ -5,6 +5,7 @@ using System.Collections;
 using System.Diagnostics;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -19,13 +20,18 @@ namespace TheArchive.Features.Special
 
         public override string Description => "Displays a little indicator that shows if other players have finished loading yet.";
 
+        public static new IArchiveLogger FeatureLogger { get; set; }
+
 
         public static Color Cutscene = new Color(0.2f, 0.2f, 1);
         public static Color Loading = new Color(1, 0, 0);
         public static Color Ready = new Color(0, 1, 0);
 
+        public static IValueAccessor<PlaceNavMarkerOnGO, NavMarker> A_NavMarker;
+
         public override void Init()
         {
+            A_NavMarker = AccessorBase.GetValueAccessor<PlaceNavMarkerOnGO, NavMarker>("m_marker");
 #if IL2CPP
             LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<LoadTimerInfo>();
 #endif
@@ -63,10 +69,15 @@ namespace TheArchive.Features.Special
 
             var agent = player.PlayerAgent.CastTo<PlayerAgent>();
 
-            var navMarker = agent.gameObject.GetComponent<PlaceNavMarkerOnGO>() ?? agent.gameObject.AddComponent<PlaceNavMarkerOnGO>();
+            var navMarker = agent.gameObject.GetComponent<PlaceNavMarkerOnGO>();
 
-            navMarker.type = PlaceNavMarkerOnGO.eMarkerType.Waypoint;
-            navMarker.PlaceMarker(agent.gameObject);
+            if(navMarker == null)
+            {
+                navMarker = agent.gameObject.AddComponent<PlaceNavMarkerOnGO>();
+                navMarker.type = PlaceNavMarkerOnGO.eMarkerType.Waypoint;
+                navMarker.PlaceMarker(agent.gameObject);
+                navMarker.SetMarkerVisible(false);
+            }
 
             return navMarker;
         }
@@ -74,6 +85,12 @@ namespace TheArchive.Features.Special
         public static PlaceNavMarkerOnGO SetMarkerState(SNet_Player player, LoadMarkerState state)
         {
             var navMarker = GetOrCreateMarker(player);
+
+            if(navMarker == null)
+            {
+                FeatureLogger.Warning("NavMarker is null!!");
+                return null;
+            }
 
             if(state == LoadMarkerState.Hide)
             {
@@ -89,6 +106,8 @@ namespace TheArchive.Features.Special
                     navMarker.SetMarkerVisible(false);
                     return navMarker;
                 case LoadMarkerState.Cutscene:
+                    if (A_NavMarker.Get(navMarker).IsVisible)
+                        return navMarker;
                     color = Cutscene;
                     break;
                 default:
@@ -99,7 +118,7 @@ namespace TheArchive.Features.Special
                 case LoadMarkerState.Ready:
                     color = Ready;
                     var timerResult = LoadTimerInfo.GetOrAdd(navMarker.gameObject).StopTimer();
-                    timerInfo = $"{timerResult:hh\\:mm\\:ss\\.ffffff}";
+                    timerInfo = $"{timerResult:mm\\:ss\\.fff}";
                     break;
             }
 
@@ -205,12 +224,13 @@ namespace TheArchive.Features.Special
                 if (players == null)
                     return;
 
+                GuiManager.NavMarkerLayer.SetVisible(true);
+
                 foreach (var player in players)
                 {
                     if (player == null) continue;
                     if (player.IsLocal) continue;
                     if (!player.HasPlayerAgent) continue;
-                    if (player.IsInGame) continue;
 
                     SetMarkerState(player, LoadMarkerState.Cutscene);
                 }
