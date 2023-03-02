@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Harmony;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TheArchive.Core.Managers;
@@ -65,6 +66,7 @@ namespace TheArchive.Core
             { 29742, RundownID.RundownSix },
             { 31994, RundownID.RundownSeven },
             { 32283, RundownID.RundownAltOne },
+            { 32416, RundownID.RundownAltTwo },
         };
 
         public static RundownID GetCurrentRundownID(int buildNumber)

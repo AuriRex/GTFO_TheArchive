@@ -349,7 +349,7 @@ namespace TheArchive.Utilities
         /// </summary>
         public enum RundownID : int
         {
-            Latest = RundownAltTwo,
+            Latest = RundownAltThree,
 
             RundownUnitialized = -1,
             RundownUnknown,
@@ -362,13 +362,12 @@ namespace TheArchive.Utilities
             RundownSeven,
             RundownAltOne,
             RundownAltTwo,
+            RundownAltThree,
         }
 
         [Flags]
         public enum RundownFlags : int
         {
-            Latest = RundownAltTwo,
-
             None = 0,
             RundownOne = 1 << 0,
             RundownTwo = 1 << 1,
@@ -379,9 +378,13 @@ namespace TheArchive.Utilities
             RundownSeven = 1 << 6,
             RundownAltOne = 1 << 7,
             RundownAltTwo = 1 << 8,
+            RundownAltThree = 1 << 9,
             
             All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive | RundownSix | RundownSeven
-                | RundownAltOne | RundownAltTwo,
+                | RundownAltOne | RundownAltTwo | RundownAltThree,
+
+            Latest = RundownAltThree,
+#warning TODO: Latest as external constant because alias behave weird with ToString() depending on the amount of enum entries
         }
 
         public static bool FlagsContain(RundownFlags flags, RundownID id)
