@@ -5,7 +5,6 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
-using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Special
@@ -39,7 +38,7 @@ namespace TheArchive.Features.Special
 
         public static void Transform(List<PlayerOfflineGearDataBlock> allPlayerOfflineGearDataBlocks)
         {
-            if(BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltTwo))
+            if(Is.A2OrLater)
             {
                 // The OG hammers have been removed from the DataBlocks.
 

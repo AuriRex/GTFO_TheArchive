@@ -265,8 +265,10 @@ namespace TheArchive.Core.FeaturesAPI
             Is.R7OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownSeven.ToLatest());
             Is.A1 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltOne);
             Is.A1OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltOne.ToLatest());
-            Is.A1 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltTwo);
-            Is.A1OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltTwo.ToLatest());
+            Is.A2 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltTwo);
+            Is.A2OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltTwo.ToLatest());
+            Is.A3 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltThree);
+            Is.A3OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltThree.ToLatest());
         }
 
         /// <summary>
@@ -292,6 +294,8 @@ namespace TheArchive.Core.FeaturesAPI
             public static bool A1OrLater { get; internal set; }
             public static bool A2 { get; internal set; }
             public static bool A2OrLater { get; internal set; }
+            public static bool A3 { get; internal set; }
+            public static bool A3OrLater { get; internal set; }
         }
 
         
