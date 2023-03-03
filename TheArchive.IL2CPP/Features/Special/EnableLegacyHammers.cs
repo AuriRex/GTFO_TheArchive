@@ -25,7 +25,7 @@ namespace TheArchive.Features.Special
 #if IL2CPP
         public override void OnEnable()
         {
-            DataBlockManager.RegisterTransformationForDB<PlayerOfflineGearDataBlock>(Transform, -10);
+            DataBlockManager.RegisterTransformationFor<PlayerOfflineGearDataBlock>(Transform, -10);
         }
 
         private static readonly Dictionary<string, string> _oldHammers = new Dictionary<string, string>

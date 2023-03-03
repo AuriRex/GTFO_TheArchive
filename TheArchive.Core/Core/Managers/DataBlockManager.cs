@@ -51,24 +51,10 @@ namespace TheArchive.Core.Managers
             _dataBlockTypes = AllTypesOfGameDataBlockBase.ToList();
         }
 
-        private static Dictionary<Type, List<Action<object>>> _transformationDictionary = new Dictionary<Type, List<Action<object>>>();
-
-        [Obsolete($"Use {nameof(RegisterTransformationForDB)} instead.")]
-        public static void RegisterTransformationFor<T>(Action<object> func) where T : class
-        {
-            if (!_transformationDictionary.TryGetValue(typeof(T), out var list))
-            {
-                list = new List<Action<object>>();
-
-                _transformationDictionary.Add(typeof(T), list);
-            }
-
-            list.Add(func);
-        }
 
         private static List<ITransformationData> _transformationDataToApply = new List<ITransformationData>();
 
-        public static void RegisterTransformationForDB<T>(Action<List<T>> action, int priority = 0) where T : class
+        public static void RegisterTransformationFor<T>(Action<List<T>> action, int priority = 0) where T : class
         {
             if (HasBeenSetup)
                 throw new Exception("Transformations have to be registered before DataBlocks have been inited!");
@@ -79,7 +65,7 @@ namespace TheArchive.Core.Managers
 
             _transformationDataToApply.Add(trans);
 
-            Logger.Debug($"Transform Registered: '{trans.DeclaringType?.FullName ?? "Null"}', Method: '{trans.OriginMethod?.Name ?? "Null"}' (Asm:{trans.DeclaringAssembly?.GetName()?.Name ?? "Null"}) [Priority:{trans.Priority}]");
+            Logger.Debug($"Transform for {typeof(T).Name} Registered: '{trans.DeclaringType?.FullName ?? "Null"}', Method: '{trans.OriginMethod?.Name ?? "Null"}' (Asm:{trans.DeclaringAssembly?.GetName()?.Name ?? "Null"}) [Priority:{trans.Priority}]");
         }
 
         private interface ITransformationData
@@ -164,29 +150,6 @@ namespace TheArchive.Core.Managers
                         }
                     }
                 }
-                    
-                if(_transformationDictionary.Count > 0)
-                {
-                    Logger.Msg(ConsoleColor.DarkYellow, $"Applying Legacy DataBlock transformations ...");
-                    foreach (var kvp in _transformationDictionary)
-                    {
-                        foreach (var func in kvp.Value)
-                        {
-                            try
-                            {
-                                var wrapper = GetWrapper(kvp.Key, out var wrapperType);
-                                var allBlocks = GetAllBlocksFromWrapper(wrapperType, wrapper);
-                                
-                                func?.Invoke(allBlocks);
-                            }
-                            catch(Exception ex)
-                            {
-                                Logger.Exception(ex);
-                            }
-                        }
-
-                    }
-                }
 
                 if(_transformationDataToApply.Count > 0)
                 {
@@ -198,7 +161,7 @@ namespace TheArchive.Core.Managers
                     {
                         try
                         {
-                            Logger.Notice($"> Applying transform from '{trans.DeclaringType?.FullName ?? "Null"}', Method: '{trans.OriginMethod?.Name ?? "Null"}' (Asm:{trans.DeclaringAssembly?.GetName()?.Name ?? "Null"}) [Priority:{trans.Priority}]");
+                            Logger.Notice($"> Applying transform for {trans.DBType.Name} from '{trans.DeclaringType?.FullName ?? "Null"}', Method: '{trans.OriginMethod?.Name ?? "Null"}' (Asm:{trans.DeclaringAssembly?.GetName()?.Name ?? "Null"}) [Priority:{trans.Priority}]");
                             var wrapper = GetWrapper(trans.DBType, out var wrapperType);
                             var allBlocks = GetAllBlocksFromWrapper(wrapperType, wrapper);
 
