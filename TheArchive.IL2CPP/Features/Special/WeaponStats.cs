@@ -42,11 +42,28 @@ namespace TheArchive.Features.Special
             return -1;
         }
 
-        public static int GetTotalAmmo(ArchetypeDataBlock archetypeDataBlock, ItemDataBlock itemDataBlock)
+        public static int GetTotalAmmo(ArchetypeDataBlock archetypeDataBlock, ItemDataBlock itemDataBlock, bool isSentryGun = false)
         {
             var max = GetAmmoMax(itemDataBlock);
 
-            return ((int)(max / archetypeDataBlock.CostOfBullet)) + archetypeDataBlock.DefaultClipSize;
+            var costOfBullet = archetypeDataBlock.CostOfBullet;
+
+            if(isSentryGun)
+            {
+                costOfBullet = costOfBullet * itemDataBlock.ClassAmmoCostFactor;
+
+                if (archetypeDataBlock.ShotgunBulletCount > 0f)
+                {
+                    costOfBullet *= archetypeDataBlock.ShotgunBulletCount;
+                }
+            }
+
+            var maxBullets = (int)(max / costOfBullet);
+
+            if (isSentryGun)
+                return maxBullets;
+
+            return maxBullets + archetypeDataBlock.DefaultClipSize;
         }
 
         public const string DIVIDER = " | ";
@@ -95,11 +112,15 @@ namespace TheArchive.Features.Special
                 {
                     eWeaponFireMode weaponFireMode = (eWeaponFireMode)idRange.GetCompID(eGearComponent.FireMode);
 
-                    ArchetypeDataBlock archetypeDataBlock = (categoryID != 12)
-                        ? ArchetypeDataBlock.GetBlock(GearBuilder.GetArchetypeID(gearCatBlock, weaponFireMode))
-                        : SentryGunInstance_Firing_Bullets.GetArchetypeDataForFireMode(weaponFireMode);
+                    bool isSentryGun = categoryID == 12; // => PersistentID of the Sentry Gun Category
 
-                    __instance.GearDescription = __instance.GearDescription + "\n\n" + GetFormatedWeaponStats(archetypeDataBlock, itemDataBlock);
+                    ArchetypeDataBlock archetypeDataBlock = isSentryGun
+                        ? SentryGunInstance_Firing_Bullets.GetArchetypeDataForFireMode(weaponFireMode) 
+                        : ArchetypeDataBlock.GetBlock(GearBuilder.GetArchetypeID(gearCatBlock, weaponFireMode));
+
+
+
+                    __instance.GearDescription = __instance.GearDescription + "\n\n" + GetFormatedWeaponStats(archetypeDataBlock, itemDataBlock, isSentryGun);
                 }
             }
 
@@ -250,7 +271,7 @@ namespace TheArchive.Features.Special
 #endif
         }
 
-        public static string GetFormatedWeaponStats(ArchetypeDataBlock archeTypeDataBlock, ItemDataBlock itemDataBlock)
+        public static string GetFormatedWeaponStats(ArchetypeDataBlock archeTypeDataBlock, ItemDataBlock itemDataBlock, bool isSentryGun = false)
         {
             if (archeTypeDataBlock == null) return string.Empty;
 
@@ -261,26 +282,32 @@ namespace TheArchive.Features.Special
             builder.Append(archeTypeDataBlock.Damage);
             builder.Append(CLOSE_COLOR_TAG);
 
-            builder.Append(DIVIDER);
+            if(!isSentryGun)
+            {
+                builder.Append(DIVIDER);
 
-            builder.Append("<color=orange>");
-            builder.Append($"{Short_Clip} ");
-            builder.Append(archeTypeDataBlock.DefaultClipSize);
-            builder.Append(CLOSE_COLOR_TAG);
+                builder.Append("<color=orange>");
+                builder.Append($"{Short_Clip} ");
+                builder.Append(archeTypeDataBlock.DefaultClipSize);
+                builder.Append(CLOSE_COLOR_TAG);
+            }
 
             builder.Append(DIVIDER);
 
             builder.Append("<#FFD306>");
             builder.Append($"{Short_MaxAmmo} ");
-            builder.Append(GetTotalAmmo(archeTypeDataBlock, itemDataBlock));
+            builder.Append(GetTotalAmmo(archeTypeDataBlock, itemDataBlock, isSentryGun));
             builder.Append(CLOSE_COLOR_TAG);
 
-            builder.Append(DIVIDER);
+            if (!isSentryGun)
+            {
+                builder.Append(DIVIDER);
 
-            builder.Append("<#C0FF00>");
-            builder.Append($"{Short_Reload} ");
-            builder.Append(archeTypeDataBlock.DefaultReloadTime);
-            builder.Append(CLOSE_COLOR_TAG);
+                builder.Append("<#C0FF00>");
+                builder.Append($"{Short_Reload} ");
+                builder.Append(archeTypeDataBlock.DefaultReloadTime);
+                builder.Append(CLOSE_COLOR_TAG);
+            }
 
             builder.Append("\n");
 
