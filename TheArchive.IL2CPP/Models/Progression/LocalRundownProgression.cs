@@ -37,7 +37,7 @@ namespace TheArchive.Models
 				return false;
 			}
 
-			if (Expeditions == null) Expeditions = new Dictionary<string, Expedition>();
+			Expeditions ??= new Dictionary<string, Expedition>();
 
 			Expedition expeditionEntry = GetOrAdd(Expeditions, session.ExpeditionId);
 
@@ -48,12 +48,18 @@ namespace TheArchive.Models
 				Layers layer = stateKvp.Key;
 				LayerState state = stateKvp.Value;
 
+				if(!session.ExpeditionSurvived && state == LayerState.Completed)
+				{
+					// If expedition was failed, do not award completion
+					state = LayerState.Entered;
+				}
+
 				Expedition.Layer expeditionLayer = expeditionEntry.Layers.GetOrAddLayer(layer);
 
 				expeditionLayer.IncreaseStateAndCompletion(state);
 			}
 
-			if (session.PrisonerEfficiencyCompleted)
+			if (session.ExpeditionSurvived && session.PrisonerEfficiencyCompleted)
 			{
 				expeditionEntry.AllLayerCompletionCount++;
 			}

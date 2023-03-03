@@ -4,6 +4,7 @@ namespace TheArchive.Models.Progression
 {
     public struct ExpeditionCompletionData
     {
+        public bool Success => RawSessionData.ExpeditionSurvived;
         public string RundownIdString => RawSessionData.RundownId;
         public uint RundownId { get; internal set; }
         public string ExpeditionId => RawSessionData.ExpeditionId;

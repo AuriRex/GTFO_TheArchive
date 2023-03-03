@@ -51,6 +51,9 @@ namespace TheArchive.Managers
 
         public void OnExpeditionCompleted(ExpeditionCompletionData data)
         {
+            if (!data.Success)
+                return;
+
             CheckFirstTimeExpeditionCompletion(data);
             CheckTotalUniqueCompletionsRequirementMet(data);
         }
@@ -65,9 +68,21 @@ namespace TheArchive.Managers
                     return;
                 }
 
-                var vanityItemLayerDropDataBlockPersistentID = RundownDataBlock.GetBlock(data.RundownId).VanityItemLayerDropDataBlock;
+                var vanityItemLayerDropDataBlockPersistentID = RundownDataBlock.GetBlock(data.RundownId)?.VanityItemLayerDropDataBlock;
 
-                VanityItemsLayerDropsDataBlock vilddb = VanityItemsLayerDropsDataBlock.GetBlock(vanityItemLayerDropDataBlockPersistentID);
+                if (!vanityItemLayerDropDataBlockPersistentID.HasValue)
+                {
+                    Logger.Error($"[{nameof(CheckTotalUniqueCompletionsRequirementMet)}] {nameof(vanityItemLayerDropDataBlockPersistentID)} has no value!");
+                    return;
+                }
+
+                VanityItemsLayerDropsDataBlock vilddb = VanityItemsLayerDropsDataBlock.GetBlock(vanityItemLayerDropDataBlockPersistentID.Value);
+
+                if (vilddb == null)
+                {
+                    Logger.Error($"[{nameof(CheckTotalUniqueCompletionsRequirementMet)}] {nameof(VanityItemsLayerDropsDataBlock)} with persistent ID {vanityItemLayerDropDataBlockPersistentID} could not be found!");
+                    return;
+                }
 
                 bool anyDropped = false;
 
