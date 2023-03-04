@@ -160,7 +160,7 @@ namespace TheArchive.Features.Special
 
             if (show && Settings.ShowSessionSeed)
             {
-                Loader.LoaderWrapper.StartCoroutine(ShowSessionSeedCoroutine(sessionSeedTMP));
+                Loader.LoaderWrapper.StartCoroutine(ShowSessionSeedCoroutine(sessionSeedTMP, isFail: true));
             }
         }
 
@@ -181,10 +181,12 @@ namespace TheArchive.Features.Special
             }
         }
 
-        private static IEnumerator ShowSessionSeedCoroutine(TextMeshPro tmp)
+        private static IEnumerator ShowSessionSeedCoroutine(TextMeshPro tmp, bool isFail = false)
         {
-            
-            tmp.text = $"<size={(Is.R4OrLater ? "70%" : "30%")}><color=white>SessionSeed: {RundownManager.GetActiveExpeditionData().sessionSeed}</color></size>";
+            // idk lol
+            var size = isFail ? 30 : (Is.R4OrLater ? 70 : 30);
+
+            tmp.text = $"<size={size}%><color=white>SessionSeed: {RundownManager.GetActiveExpeditionData().sessionSeed}</color></size>";
             Dev.ModSettings.JankTextMeshProUpdaterOnce.UpdateMesh(tmp);
 
             yield return CoroutineManager.BlinkIn(tmp.gameObject, 1.25f);
