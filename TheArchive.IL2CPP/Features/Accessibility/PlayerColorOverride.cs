@@ -12,6 +12,7 @@ using UnityEngine;
 
 namespace TheArchive.Features.Accessibility
 {
+    [EnableFeatureByDefault]
     public class PlayerColorOverride : Feature
     {
         public override string Name => "Player Color Override";
@@ -29,7 +30,7 @@ namespace TheArchive.Features.Accessibility
 
         public class PlayerColorOverrideSettings
         {
-            public ColorizationMode Mode { get; set; } = ColorizationMode.Character;
+            public ColorizationMode Mode { get; set; } = ColorizationMode.NicknameOnly;
 
             [FSDisplayName("Your Color")]
             public SColor LocalPlayer { get; set; } = SColorExtensions.FromHexString("#44D2CD");
@@ -61,6 +62,8 @@ namespace TheArchive.Features.Accessibility
 
             public enum ColorizationMode
             {
+                /// <summary>Only use nickname colors if applicable</summary>
+                NicknameOnly,
                 /// <summary>Only set the local players color, uses <seealso cref="LocalPlayer"/> as color source</summary>
                 LocalOnly,
                 /// <summary>Use character values as custom color source</summary> 
@@ -160,6 +163,12 @@ namespace TheArchive.Features.Accessibility
 
             public static bool TryGetColor(int playerIndex, out Color col)
             {
+                if (Settings.Mode == PlayerColorOverrideSettings.ColorizationMode.NicknameOnly)
+                {
+                    col = Color.white;
+                    return false;
+                }
+
                 if (Settings.Mode == PlayerColorOverrideSettings.ColorizationMode.LocalOnly)
                 {
                     if (PlayerManager.GetLocalPlayerAgent().CharacterID == playerIndex)
@@ -238,15 +247,34 @@ namespace TheArchive.Features.Accessibility
             if (!GetColorFromNickname(nick, out color))
                 return false;
 
-            if (!nick.StartsWith("<#"))
-                return false;
-
-            if (nick.Contains("</color>"))
+            if(Settings.OnlyColorIfWholeNameIsColored)
             {
-                if (nick.EndsWith("</color>"))
-                    return true;
+                var i = nick.IndexOf("<#");
+                if(i > 0)
+                {
+                    var preString = nick.Substring(0, i);
 
-                return false;
+                    switch (preString)
+                    {
+                        case "<i>":
+                        case "<b>":
+                        case "<s>":
+                        case "<u>":
+                            break;
+                        default:
+                            return false;
+                    }
+                }
+                else if (!nick.StartsWith("<#"))
+                    return false;
+
+                if (nick.Contains("</color>"))
+                {
+                    if (nick.EndsWith("</color>"))
+                        return true;
+
+                    return false;
+                }
             }
 
             return true;
