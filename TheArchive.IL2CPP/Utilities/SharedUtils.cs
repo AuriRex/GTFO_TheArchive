@@ -359,19 +359,22 @@ namespace TheArchive.Utilities
 
         private static readonly MethodAccessor<CellSoundPlayer> A_CellSoundPlayer_Post_sub_R5 = MethodAccessor<CellSoundPlayer>.GetAccessor("Post", new Type[] { typeof(uint) }, ignoreErrors: true);
 
-        public static void SafePost(this CellSoundPlayer player, uint eventId)
+        public static void SafePost(this CellSoundPlayer player, uint eventId, bool isGlobal = true)
         {
             if (Feature.Is.R6OrLater)
             {
-                SafePostR6Plus(player, eventId);
+                SafePostR6Plus(player, eventId, isGlobal);
                 return;
             }
             A_CellSoundPlayer_Post_sub_R5.Invoke(player, eventId);
         }
 
-        private static void SafePostR6Plus(CellSoundPlayer player, uint eventId)
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void SafePostR6Plus(CellSoundPlayer player, uint eventId, bool isGlobal = true)
         {
-            player.Post(eventId);
+#if IL2CPP
+            player.Post(eventId, isGlobal);
+#endif
         }
 
 #if IL2CPP
