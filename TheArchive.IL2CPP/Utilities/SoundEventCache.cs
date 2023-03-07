@@ -10,7 +10,8 @@ namespace TheArchive.Utilities
     {
         public static bool IsReady { get; private set; } = false;
 
-        private static Dictionary<string, uint> SoundIdCache { get; set; } = new Dictionary<string, uint>();
+        private static readonly Dictionary<string, uint> _soundIdCache = new Dictionary<string, uint>();
+        private static readonly Dictionary<uint, string> _reverseSoundIdCache = new Dictionary<uint, string>();
 
         private static IArchiveLogger _logger;
         private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateLoggerInstance(nameof(SoundEventCache), ConsoleColor.DarkGreen);
@@ -21,7 +22,7 @@ namespace TheArchive.Utilities
             return soundId != 0;
         }
 
-        public static uint Resolve(string soundId, bool throwIfNotFound = false)
+        public static uint Resolve(string soundEvent, bool throwIfNotFound = false)
         {
             if(!IsReady)
             {
@@ -29,19 +30,46 @@ namespace TheArchive.Utilities
                 return 0;
             }
 
-            if(SoundIdCache.TryGetValue(soundId, out var value))
+            if(_soundIdCache.TryGetValue(soundEvent, out var value))
             {
                 return value;
             }
 
-            Logger.Error($"Could not resolve sound id \"{soundId}\"!");
-
-            if(throwIfNotFound)
-            {
-                throw new ArgumentException($"SoundID \"{soundId}\" could not be found!");
-            }
+            var msg = $"Sound event \"{soundEvent}\" could not be resolved!";
+            if (throwIfNotFound)
+                throw new SoundEventNotFoundException(msg);
+            else
+                Logger.Error(msg);
 
             return 0;
+        }
+
+        public static bool TryReverseResolve(uint id, out string eventName)
+        {
+            eventName = ReverseResolve(id);
+            return !string.IsNullOrEmpty(eventName);
+        }
+
+        public static string ReverseResolve(uint soundId, bool throwIfNotFound = false)
+        {
+            if (!IsReady)
+            {
+                Logger.Error($"{nameof(SoundEventCache)} isn't ready yet! Try resolving sound events a little later (after GameDataInit for example)!");
+                return null;
+            }
+
+            if (_reverseSoundIdCache.TryGetValue(soundId, out var value))
+            {
+                return value;
+            }
+
+            var msg = $"Sound id \"{soundId}\" could not be resolved!";
+            if (throwIfNotFound)
+                throw new SoundEventNotFoundException(msg);
+            else
+                Logger.Error(msg);
+
+            return null;
         }
 
         public void Init()
@@ -61,10 +89,11 @@ namespace TheArchive.Utilities
                 {
                     var name = fp.Name;
                     uint value = (uint)fp.GetValue(null);
-                    SoundIdCache.Add(name, value);
+                    _soundIdCache.Add(name, value);
+                    _reverseSoundIdCache.Add(value, name);
                 }
 
-                Logger.Msg(ConsoleColor.Magenta, $"Cached {SoundIdCache.Count} sound events!");
+                Logger.Msg(ConsoleColor.Magenta, $"Cached {_soundIdCache.Count} sound events!");
             }
             catch(Exception ex)
             {
@@ -75,18 +104,23 @@ namespace TheArchive.Utilities
             IsReady = true;
         }
 
+        public class SoundEventNotFoundException : Exception
+        {
+            public SoundEventNotFoundException(string message) : base(message) { }
+        }
+
         /// <summary>
         /// Prints all cached sound events to the supplied <paramref name="logger"/>
         /// </summary>
         /// <param name="logger"></param>
         public static void DebugLog(IArchiveLogger logger)
         {
-            logger.Notice($"Logging all cached sound events! ({SoundIdCache.Count})");
-            foreach(var entry in SoundIdCache.Keys)
+            logger.Notice($"Logging all cached sound events! ({_soundIdCache.Count})");
+            foreach(var entry in _soundIdCache.Keys)
             {
                 logger.Info(entry);
             }
-            logger.Notice($"Done logging all cached sound events! ({SoundIdCache.Count})");
+            logger.Notice($"Done logging all cached sound events! ({_soundIdCache.Count})");
         }
     }
 }

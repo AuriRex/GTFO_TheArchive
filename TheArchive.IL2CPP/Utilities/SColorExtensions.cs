@@ -54,7 +54,12 @@ namespace TheArchive.Utilities
 
         public static string ToHexString(this SColor col)
         {
-            return $"#{ColorUtility.ToHtmlStringRGB(col.ToUnityColor())}";
+            return ToHexString(col.ToUnityColor());
+        }
+
+        public static string ToHexString(this Color col)
+        {
+            return $"#{ColorUtility.ToHtmlStringRGB(col)}";
         }
 
         public static string ToShortHexString(this SColor col)
@@ -62,9 +67,14 @@ namespace TheArchive.Utilities
             return $"#{ComponentToHex(col.R)}{ComponentToHex(col.G)}{ComponentToHex(col.B)}";
         }
 
+        public static string ToShortHexString(this Color col)
+        {
+            return $"#{ComponentToHex(col.r)}{ComponentToHex(col.g)}{ComponentToHex(col.b)}";
+        }
+
         public static string ComponentToHex(float component)
         {
-            return string.Format("{0:X1}", Mathf.Clamp((int)(component * 16f), 0, 16));
+            return string.Format("{0:X1}", Mathf.Clamp((int)(component * 16f), 0, 15));
         }
     }
 }
