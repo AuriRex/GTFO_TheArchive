@@ -8,20 +8,6 @@ namespace TheArchive.Utilities
     public static class MonoUtils
     {
 
-        // https://gamedev.stackexchange.com/a/183962
-        public static Bounds GetMaxBounds(GameObject g)
-        {
-            var renderers = g.GetComponentsInChildren<Renderer>();
-            if (renderers.Length == 0) return new Bounds(g.transform.position, Vector3.zero);
-            var b = renderers[0].bounds;
-            foreach (Renderer r in renderers)
-            {
-                b.Encapsulate(r.bounds);
-            }
-            return b;
-        }
-
-
         public static IEnumerator DoAfter(float time, Action action)
         {
             float start = Time.fixedTime;

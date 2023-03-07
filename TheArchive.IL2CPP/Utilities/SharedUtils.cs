@@ -320,6 +320,19 @@ namespace TheArchive.Utilities
             return false;
         }
 
+        // https://gamedev.stackexchange.com/a/183962
+        public static Bounds GetMaxBounds(this GameObject go)
+        {
+            var renderers = go.GetComponentsInChildren<Renderer>();
+            if (renderers.Length == 0) return new Bounds(go.transform.position, Vector3.zero);
+            var bounds = renderers[0].bounds;
+            foreach (Renderer renderer in renderers)
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+            return bounds;
+        }
+
         public static bool SafeContains<T>(this IList<T> list, T item) where T : class, new()
         {
             if (LoaderWrapper.IsIL2CPPType(typeof(T)))

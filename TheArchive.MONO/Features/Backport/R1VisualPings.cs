@@ -43,7 +43,7 @@ namespace TheArchive.Features.Backport
 
                 try
                 {
-                    var bounds = MonoUtils.GetMaxBounds(__instance.gameObject);
+                    var bounds = __instance.gameObject.GetMaxBounds();
 
                     A_PlayerAgent_TriggerMarkerPing.Invoke(localPlayerAgent, (iPlayerPingTarget)CustomTerminalPingQoLInstance, bounds.center);
                 }
