@@ -64,7 +64,19 @@ namespace TheArchive.Core.FeaturesAPI
             }
             var fi = new FeatureInternal();
             feature.FeatureInternal = fi;
-            fi.Init(feature);
+            try
+            {
+                fi.Init(feature);
+            }
+            catch(TypeLoadException tle)
+            {
+                _FILogger.Error($"Initialization of {fi._feature.Identifier} failed! - {tle.GetType().FullName}");
+                _FILogger.Warning($"!!! PLEASE FIX THIS !!!");
+                _FILogger.Debug($"StackTrace:\n{tle.Message}\n{tle.StackTrace}");
+                fi.InternalyDisableFeature(InternalDisabledReason.TypeLoadException);
+                _FILogger.Msg(ConsoleColor.Magenta, $"Feature \"{fi._feature.Identifier}\" has been disabled internally! ({fi.DisabledReason})");
+                return;
+            }
             fi.AfterInit();
         }
 
@@ -844,6 +856,7 @@ namespace TheArchive.Core.FeaturesAPI
             ForceDisabled,
             DisabledViaShouldInit,
             DisabledByRequest,
+            TypeLoadException,
             Other,
         }
     }
