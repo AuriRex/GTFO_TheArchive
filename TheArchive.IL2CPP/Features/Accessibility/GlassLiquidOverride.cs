@@ -130,7 +130,7 @@ namespace TheArchive.Features.Accessibility
         private static void SetCollectCommandsScreenLiquidR6(FPSCamera camera, bool value)
         {
 #if IL2CPP
-            camera.CollectCommandsClustered = value;
+            camera.CollectCommandsScreenLiquid = value;
 #endif
         }
 
