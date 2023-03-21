@@ -16,6 +16,7 @@ This project is in a Beta state at the moment, expect some bugs and unfinished f
  * [How to Install](#Installation)
  * [Where are my saves?](#Where-are-my-saves)
  * [Building the project](#Technical-stuffs)
+ * [Contributing & License](#Contributing)
 
 # Features
 
@@ -232,6 +233,11 @@ The location of this `SaveData` folder can be customized by editing `TheArchive_
 ## Building the project (On Linux)
 
 Have fun, you'll figure it out.
+
+# Contributing
+
+Feel free to create issues and pull requests to help me improve this massive project.  
+⚠ **By submitting a pull request you agree to add your code under the projects license.** (see [below](#License))
 
 # License
 
