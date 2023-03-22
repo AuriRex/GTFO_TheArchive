@@ -189,9 +189,6 @@ The location of this `SaveData` folder can be customized by editing `TheArchive_
 * Latest Game Version
     * Install [MelonLoader](https://github.com/LavaGang/MelonLoader) and run the game once
     * Copy the `MelonLoader` folder from the game directory into `_R_LATEST/`
-* R5 (steam manifest: `2154682358008197814`)
-    * Obtain the last Rundown 5 build, install [MelonLoader](https://github.com/LavaGang/MelonLoader) and run the game once.
-    * Copy the `MelonLoader` folder from the game directory into `_R_RD005/`
 * R3 (steam manifest: `1993854016152145129`)
     * Obtain the last Rundown 3 build, install [MelonLoader](https://github.com/LavaGang/MelonLoader) and run the game once.
     * Copy the `MelonLoader` folder from the game directory into `_R_RD003/`
@@ -215,13 +212,6 @@ The location of this `SaveData` folder can be customized by editing `TheArchive_
 │   │       ├── Addons-ASM.dll
 │   │       └── ...
 │   └── MelonLoader/
-│       └── MelonLoader.dll
-├── _R_RD005/                               # Rundown 5 Assemblies go here
-│   └── MelonLoader/
-│       ├── Managed/
-│       │   ├── Accessibility.dll
-│       │   ├── Addons-ASM.dll
-│       │   └── ...
 │       └── MelonLoader.dll
 └── .../                                    # Other Project Folders / Files
 ```

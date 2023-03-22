@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core.Managers
 {
@@ -80,7 +81,10 @@ namespace TheArchive.Core.Managers
                     var asm = module.GetType().Assembly;
                     foreach (Type type in asm.GetTypes())
                     {
-                        if (typeof(T).IsAssignableFrom(type) && typeof(T) != type)
+                        if (typeof(T).IsAssignableFrom(type)
+                            && typeof(T) != type
+                            && AnyRundownConstraintMatches(type)
+                            && AnyBuildConstraintMatches(type))
                         {
                             ArchiveLogger.Debug($"Found implementation \"{type.FullName}\" for \"{typeof(T).FullName}\"!");
                             var instance = Activator.CreateInstance(type);
@@ -95,7 +99,12 @@ namespace TheArchive.Core.Managers
                 ArchiveLogger.Error($"{nameof(ReflectionTypeLoadException)} was thrown! This should not happen! Falling back to loaded types ... (Ignore stack trace if no {nameof(ArgumentException)} is thrown afterwards)");
                 ArchiveLogger.Exception(tlex);
 
-                var type = tlex.Types.FirstOrDefault(type => typeof(T).IsAssignableFrom(type) && typeof(T) != type);
+                var type = tlex.Types.FirstOrDefault(type =>
+                    typeof(T).IsAssignableFrom(type)
+                    && typeof(T) != type
+                    && AnyRundownConstraintMatches(type)
+                    && AnyBuildConstraintMatches(type));
+
                 if (type != null)
                 {
                     ArchiveLogger.Debug($"Found implementation \"{type.FullName}\" for \"{typeof(T).FullName}\"!");

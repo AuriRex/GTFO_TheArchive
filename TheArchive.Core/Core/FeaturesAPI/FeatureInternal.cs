@@ -10,6 +10,7 @@ using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core.FeaturesAPI
 {
@@ -808,40 +809,6 @@ namespace TheArchive.Core.FeaturesAPI
             InternalDisabled = true;
             DisabledReason |= reason;
             FeatureManager.Instance.DisableFeature(_feature);
-        }
-
-        private bool AnyRundownConstraintMatches(MemberInfo memberInfo)
-        {
-            var constraints = memberInfo.GetCustomAttributes<RundownConstraint>().ToArray();
-
-            if (constraints.Length == 0)
-                return true;
-
-            var rundown = BuildInfo.Rundown;
-            foreach (var constraint in constraints)
-            {
-                if (constraint.Matches(rundown))
-                    return true;
-            }
-
-            return false;
-        }
-
-        private bool AnyBuildConstraintMatches(MemberInfo memberInfo)
-        {
-            var constraints = memberInfo.GetCustomAttributes<BuildConstraint>().ToArray();
-
-            if (constraints.Length == 0)
-                return true;
-
-            int buildNumber = BuildInfo.BuildNumber;
-            foreach (var constraint in constraints)
-            {
-                if (constraint.Matches(buildNumber))
-                    return true;
-            }
-
-            return false;
         }
 
         [Flags]

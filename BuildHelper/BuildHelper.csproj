@@ -35,9 +35,11 @@
 
 		<Message Importance="High" Text="[#0.1] Building Core Mod" />
 		<MSBuild Projects="$(MSBuildProjectDirectory)\..\TheArchive.Core\TheArchive.Core.csproj" ContinueOnError="false" BuildInParallel="false" />
+
+		<!--
 		<Message Importance="High" Text="[#0.2] Building IL2CPP Support-Module ..." />
 		<MSBuild Projects="$(MSBuildProjectDirectory)\..\TheArchive.IL2CPP\TheArchive.IL2CPP.csproj" ContinueOnError="false" BuildInParallel="false" />
-
+		
 		<Message Importance="High" Text="[#1] Building Sub-Modules ..." />
 		
 		<Message Importance="High" Text="[#1.1] Building R5 Sub-Module ..." Condition="'$(Configuration)' == 'R_ML'" />
@@ -46,6 +48,7 @@
 		
 		<Message Importance="High" Text="[#1.2] Building R6 Sub-Module ..." />
 		<MSBuild Projects="$(MSBuildProjectDirectory)\..\TheArchive.IL2CPP.R6\TheArchive.IL2CPP.R6.csproj" ContinueOnError="false" BuildInParallel="false" />
+		-->
 		
 		<!--<Message Importance="High" Text="[#2] Building IL2CPP/MONO Support-Modules ..." />
 		

@@ -20,11 +20,6 @@ namespace TheArchive
 
         public ArchiveLegacyPatcher Patcher { get; set; }
 
-        [SubModule(Utils.RundownFlags.RundownFour, Utils.RundownFlags.RundownFive)]
-        public static string R5SubModule => "TheArchive.Resources.TheArchive.IL2CPP.R5.dll";
-        [SubModule(Utils.RundownFlags.RundownSix, Utils.RundownFlags.Latest)]
-        public static string R6SubModule => "TheArchive.Resources.TheArchive.IL2CPP.R6.dll";
-
         static ArchiveIL2CPPModule()
         {
             typeof(EnemyDataBlock).RegisterSelf();

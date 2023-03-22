@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MelonLoader;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using TheArchive.Core.Attributes;
 using TheArchive.Core.Managers;
 using TheArchive.Loader;
 
@@ -422,6 +424,40 @@ namespace TheArchive.Utilities
             }
 
             return flags.Value;
+        }
+
+        public static bool AnyRundownConstraintMatches(MemberInfo memberInfo)
+        {
+            var constraints = memberInfo.GetCustomAttributes<RundownConstraint>();
+
+            if (constraints.Count() == 0)
+                return true;
+
+            var rundown = ArchiveMod.CurrentBuildInfo.Rundown;
+            foreach (var constraint in constraints)
+            {
+                if (constraint.Matches(rundown))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public static bool AnyBuildConstraintMatches(MemberInfo memberInfo)
+        {
+            var constraints = memberInfo.GetCustomAttributes<BuildConstraint>();
+
+            if (constraints.Count() == 0)
+                return true;
+
+            int buildNumber = ArchiveMod.CurrentBuildInfo.BuildNumber;
+            foreach (var constraint in constraints)
+            {
+                if (constraint.Matches(buildNumber))
+                    return true;
+            }
+
+            return false;
         }
 
         public static bool TryGetMethodByName(Type type, string name, out MethodInfo methodInfo)
