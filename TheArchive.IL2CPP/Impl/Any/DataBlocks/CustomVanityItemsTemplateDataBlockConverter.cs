@@ -7,7 +7,7 @@ using static TheArchive.Models.DataBlocks.CustomVanityItemsTemplateDataBlock;
 
 namespace TheArchive.Impl.Any.DataBlocks
 {
-    public class CustomVanityItemsTemplateDataBlockFactory : IBaseGameConverter<CustomVanityItemsTemplateDataBlock>
+    public class CustomVanityItemsTemplateDataBlockConverter : IBaseGameConverter<CustomVanityItemsTemplateDataBlock>
     {
         public CustomVanityItemsTemplateDataBlock FromBaseGame(object baseGame, CustomVanityItemsTemplateDataBlock existingCT = null)
         {

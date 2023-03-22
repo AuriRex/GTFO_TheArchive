@@ -8,7 +8,7 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Impl.Any.DataBlocks
 {
-    public class CustomVanityItemsGroupDataBlockFactory : IBaseGameConverter<CustomVanityItemsGroupDataBlock>
+    public class CustomVanityItemsGroupDataBlockConverter : IBaseGameConverter<CustomVanityItemsGroupDataBlock>
     {
         public CustomVanityItemsGroupDataBlock FromBaseGame(object baseGame, CustomVanityItemsGroupDataBlock existingCT = null)
         {

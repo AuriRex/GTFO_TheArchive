@@ -8,7 +8,7 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Impl.Any.DataBlocks
 {
-    public class CustomVanityItemsLayerDropsDataBlockFactory : IBaseGameConverter<CustomVanityItemsLayerDropsDataBlock>
+    public class CustomVanityItemsLayerDropsDataBlockConverter : IBaseGameConverter<CustomVanityItemsLayerDropsDataBlock>
     {
         public CustomVanityItemsLayerDropsDataBlock FromBaseGame(object baseGame, CustomVanityItemsLayerDropsDataBlock existingCT = null)
         {
