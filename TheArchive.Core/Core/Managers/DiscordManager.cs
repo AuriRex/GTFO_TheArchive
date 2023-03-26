@@ -32,7 +32,7 @@ namespace TheArchive.Core.Managers
         private static bool _hasDiscordDllBeenLoaded = false;
         private static float _lastCheckedTime = 0f;
 
-        public static Guid PartyGuid { get; private set; } = new Guid();
+        public static Guid PartyGuid { get; private set; } = Guid.NewGuid();
 
         private static RichPresenceSettings _settings = null;
         private static bool _internalDisabled = false;

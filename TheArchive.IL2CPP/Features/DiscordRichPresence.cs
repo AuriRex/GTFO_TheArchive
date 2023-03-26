@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CellMenu;
+using System;
+using System.Collections;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
@@ -15,6 +17,8 @@ namespace TheArchive.Features
         public override string Name => "Discord Rich Presence";
 
         public override string Description => "Show the current game state in detail on discord.";
+
+        public override bool SkipInitialOnEnable => true;
 
         [FeatureConfig]
         public static RichPresenceSettings DiscordRPCSettings { get; set; }
@@ -39,12 +43,17 @@ namespace TheArchive.Features
             }
         }
 
+        public override void OnGameDataInitialized()
+        {
+            OnEnable();
+        }
+
         private void DiscordManager_OnActivityJoin(string secret)
         {
             ulong.TryParse(secret, out ulong value);
             if (value == 0) return;
 
-            SNetwork.SNet.Lobbies.JoinLobby(value);
+            CM_Utils.JoinLobby(value, new Action(() => FeatureLogger.Success($"Successfully joined lobby \"{secret}\"!")), new Action(() => FeatureLogger.Fail($"Failed to join lobby \"{secret}\".")));
         }
 
         public override void OnDisable()
