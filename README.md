@@ -4,6 +4,8 @@ A [MelonLoader](https://github.com/LavaGang/MelonLoader) based [GTFO](https://gt
 
 Compatible with many different GTFO builds, tested on all of the latest patches for each rundown.
 
+*Also adds a bunch of neat Quality of Life features I guess ...*
+
 ## Status
 This project is in a Beta state at the moment, expect some bugs and unfinished features.
 
@@ -29,7 +31,9 @@ The implementation should be as close to the original game whenever a specific (
 An in-game mod settings menu for easy feature customization.  
 Most Features are toggleable mid game and some even have extra options to mess with!
 
-![Mod Settings](https://user-images.githubusercontent.com/37329066/190881761-1c0550c3-2d2e-4e74-9904-d0f439b96f24.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/37329066/190881761-1c0550c3-2d2e-4e74-9904-d0f439b96f24.png" alt="Mod Settings"/>
+</p>
 
 ## Discord Rich presence
 
@@ -84,8 +88,8 @@ Always shows the alarm class on security doors, this was not the case in R1 to R
 
 ### R1 Visual Pings - `[R1]`
 
-Rundown 1 does not have a visual ping indicator that shows up nowadays after using the `PING` command inside of a terminal but merely the ping sound.  
-This allows the lobby host to enable a visual indicator by abusing their middle mouse ping.
+On Rundown 1 builds there is no visual ping indicator that shows up after using the `PING` command inside of a terminal, there's only the sound that plays.  
+This feature allows the lobby host to display a visual indicator by abusing their middle mouse ping.
 
 ---
 
@@ -97,17 +101,107 @@ Change your name in game, includes a color option.
 
 ### Player Color Override
 
-Allows you to change the colors of you and your teammates.
+Allows you to change the colors of you and your teammates.  
+Additionally allows you to colorize other players based on their nickname color.
+
+### Loud Volume Override
+
+Lower or mute the game during the intro sequence and while dropping down with the elevator.  
+Also allows you to adjust what happens with audio whenever you tab outside of the game:
+* Continue playing
+* Lower Volume
+* Mute
+
+### Glass Liquid System Override
+
+Change the resolution of the system that renders the blood splatters and other liquids on your visor or disable it entirely.
+
+<details>
+<summary>📷 Glass Liquid Override Quality Settings Overview:</summary>
+
+### Default Quality:
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/37329066/227805471-00d214a2-7f56-4409-86f1-39ba147f909b.png" alt="GLSQualityDefault"/>
+</p>
+
+### Worst Quality: (`VeryBad`)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/37329066/227805489-12613b41-8d98-4f2f-9d68-fe1298fe66ad.png" alt="GLSQualityVeryBad"/>
+</p>
+
+### Best Quality: (`Extraordinary`)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/37329066/227805447-95aff551-2e71-4dc6-a414-f4b316cbb750.png" alt="GLSQualityExtraordinary"/>
+</p>
+</details>
+
+### Sentry Markers
+
+Adds a player colored marker on placed down sentry guns, with who placed it and the sentries type above it.
+
+<details>
+<summary>📷 Example:</summary>
+
+![SentryMarkers](https://user-images.githubusercontent.com/37329066/227806849-933e2a23-7bb3-4352-b028-8c35974b4e26.png)
+</details>
+
+### Disable Breathing (Infection) - `[R2 - RL]`
+
+Removes the sound effect than can only be described as "sucking up liquid through a straw" that playes while having high infection.
+
+### Disable Breathing (Stamina)
+
+Removes the players breathing and panting sounds while running around.
+
+### Disable Coughing (Infection) - `[R2 - RL]`
+
+Removes the coughing sound effect whenever someone looses HP due to infection.
+
+### Disable Hud Sway
+
+Makes the in-game hud stay in place while running, jumping and looking around.
+
+### Disable UI Mirroring
+
+Removes the mirroring effect on UI elements.
+
+### Disable UI Paralax
+
+Stops the movement of UI elements in menu screens (Loadout, Rundown, ...) whenever you move your cursor around.  
+(Some elements might get partially or fully cut off-screen!)
 
 ---
 
 ## Quality of Life
 
+### Carry Item Marker
+
+Big pickups (like `CELL`s or `FOG_TURBINE`s) get their own color as well as the item name above it.  
+Also shows a marker on whoever is carrying a big pickup.
+
+<details>
+<summary>📷 All the different color variations: (Big Pickup spoilers!!)</summary>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/37329066/227804227-207d47a7-54cb-49f7-936f-76e4d0c5068d.png" alt="CarryItemMarker"/>
+</p>
+</details>
+
+<details>
+<summary>📷 Example of someone carrying a CELL:</summary>
+
+![CarryMarker](https://user-images.githubusercontent.com/37329066/227804434-22e8de81-6884-4830-9ff6-a5a8c4616cc2.png)
+</details>
+
+### 99% Reload Fix
+
+Fixes the bug that leaves you with one bullet short in the mag even though enough ammo is available.
+
 ### L4D Style Resource Packs
 
-Use left and right mouse buttons to apply resource packs instead of E    
+Use left and right mouse buttons to apply resource packs instead of `E`  
 Left mouse = yourself  
-Right mouse = other players
+Right mouse = other players (can be held down + hovered over a player to start the interaction)
 
 ### Situation Aware Weapon Switch
 
@@ -128,6 +222,28 @@ Adds a button onto the loadout screen that allows you to randomize your current 
 Ever tried typing on the map screen only to be taken to the objectives screen after hitting the `o` key on your keyboard?  
 This has been fixed.
 
+### No Dead Pings
+
+Fixes pings (red triangles, doritos) staying on dead enemies as a result of high ping.
+
+### No Magazine Drop Sound
+
+Removes the *globally audible* sound that playes whenever a magazine drops on the floor after a reload.
+
+### Reload Sound Cue
+
+Play a sound the moment your gun has reloaded. (= bullets have entered the gun)
+
+### Remove Story Dialog
+
+Prevents all level-based voice events that have subtitles assigned from playing.  
+(Goodbye Schaefer & Co 😥)
+
+### Skip Elevator Animation
+
+Automatically skips the cutscene after initiating a cage drop.  
+This leads to faster load times as the game only starts building the level once the cutscene is over.  
+
 ### Unready Button - `[R1 - R5]`
 
 Adds an unready button into the older game versions.
@@ -136,13 +252,24 @@ Adds an unready button into the older game versions.
 
 ## Misc / Other
 
-### Player Info
+### Player Lobby Management
 
-Allows you to click a players name in the lobby or the map screen which opens up their steam profile page in your default browser.
+Open up players Steam profile or, if you're the host, kick them out of your lobby.
+
+![PlayerLobbyManagement](https://user-images.githubusercontent.com/37329066/227807583-03305c00-323c-446c-94df-43f9aa7595cd.png)
+
+### Loading Indicator
+
+Displays a little indicator that shows if other players have finished loading yet.
+
+### Show Weapon Stats
+
+Displayes the weapons stats on the weapon select screen.  
+Damage, clip size, max ammo and more
 
 ### Hud Toggle
 
-Toggle your Hud via a key press.
+Toggle your Hud via a key press. `(F1)`
 
 ### Process Priority
 
@@ -161,6 +288,10 @@ Tries to always aim your shots into the center of your crosshair, therefore not 
 
 Allows you to connect to R1 build `19087` games even though you're playing on R1 build `19715`.  
 Build `19087` is/was a commonly redistributed version of Rundown 1
+
+### Other things not mentioned
+
+Yes, there's more! (smaller things)
 
 ---
 
