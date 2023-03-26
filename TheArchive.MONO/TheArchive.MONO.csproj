@@ -268,6 +268,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\FlashlightIconColors.cs" Link="Features\QoL\FlashlightIconColors.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\InteractionFix.cs" Link="Features\QoL\InteractionFix.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\L4DStylePacks.cs" Link="Features\QoL\L4DStylePacks.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoDeadPings.cs" Link="Features\QoL\NoDeadPings.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoDroppedMagazineSounds.cs" Link="Features\QoL\NoDroppedMagazineSounds.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoNavMarkerHideInChat.cs" Link="Features\QoL\NoNavMarkerHideInChat.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoStoryDialog.cs" Link="Features\QoL\NoStoryDialog.cs" />
