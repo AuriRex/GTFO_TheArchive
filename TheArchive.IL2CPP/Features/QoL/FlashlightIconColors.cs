@@ -1,6 +1,9 @@
-﻿using System;
+﻿using CellMenu;
+using System;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -18,46 +21,70 @@ namespace TheArchive.Features.QoL
 
         public override bool SkipInitialOnEnable => true;
 
-#if IL2CPP
-        public override void OnEnable()
-        {
-            SetCustomColors();
-        }
-
-        public override void OnDisable()
-        {
-            if(_defaultsSet)
-            {
-                SetFlashlightIconColors(_default_Enabled, _default_Disabled);
-            }
-        }
+        public override bool PlaceSettingsInSubMenu => true;
 
         [FeatureConfig]
         public static FlashlightIconColorsSettings Settings { get; set; }
 
         public class FlashlightIconColorsSettings
         {
+            [FSDisplayName("Color Flashlight On")]
             public SColor ColorEnabled { get; set; } = new SColor(1f, 0.9206f, 0.7206f, 0.6137f);
+
+            [FSDisplayName("Color Flashlight Off")]
             public SColor ColorDisabled { get; set; } = new SColor(0.7216f, 0.7216f, 0.7216f, 0.3137f);
         }
+
+#if IL2CPP
+        public override void OnEnable()
+        {
+            SetCustomColors(GuiManager.PlayerLayer?.Inventory);
+
+            SetMapFlashlightIcons(defaultColors: false);
+        }
+
+        public override void OnFeatureSettingChanged(FeatureSetting setting)
+        {
+            OnEnable();
+        }
+
+        public override void OnDisable()
+        {
+            if(_defaultsSet)
+            {
+                SetFlashlightIconColors(GuiManager.PlayerLayer?.Inventory, _default_Enabled, _default_Disabled);
+
+                SetMapFlashlightIcons(defaultColors: true);
+            }
+        }
+
+        private void SetMapFlashlightIcons(bool defaultColors)
+        {
+            if (CM_PageMap.Current == null)
+                return;
+
+            foreach(var inv in CM_PageMap.Current.m_inventory)
+            {
+                if (defaultColors)
+                    SetFlashlightIconColors(inv, _default_Enabled, _default_Disabled);
+                else
+                    SetCustomColors(inv);
+            }
+        }
+
 
         private static bool _defaultsSet = false;
         private static Color _default_Enabled;
         private static Color _default_Disabled;
 
-        public static void SetCustomColors()
+        public static void SetCustomColors(PUI_Inventory inventory)
         {
-            SetFlashlightIconColors(Settings.ColorEnabled.ToUnityColor(), Settings.ColorDisabled.ToUnityColor());
+            SetFlashlightIconColors(inventory, Settings.ColorEnabled.ToUnityColor(), Settings.ColorDisabled.ToUnityColor());
         }
 
-        public static void SetFlashlightIconColors(Color colorEnabled, Color colorDisabled)
+        public static void SetFlashlightIconColors(PUI_Inventory inventory, Color colorEnabled, Color colorDisabled)
         {
-            var icons = GuiManager.PlayerLayer?.Inventory?.m_iconDisplay;
-
-            if (icons == null)
-                return;
-
-            var flashlightIcon = icons?.FlashLightIcon;
+            var flashlightIcon = inventory?.m_iconDisplay?.FlashLightIcon;
 
             if (flashlightIcon == null)
                 return;
@@ -76,9 +103,9 @@ namespace TheArchive.Features.QoL
         [ArchivePatch(typeof(PUI_Inventory), nameof(PUI_Inventory.Setup), new Type[] { typeof(GuiLayer) })]
         internal static class PUI_Inventory_Setup_Patch
         {
-            public static void Postfix()
+            public static void Postfix(PUI_Inventory __instance)
             {
-                SetCustomColors();
+                SetCustomColors(__instance);
             }
         }
 #endif
