@@ -97,6 +97,11 @@ namespace TheArchive.Features
                     SharedUtils.ChangeColorCMItem(OpenSteamItem, ModSettings.GREEN);
                     OpenSteamItem.TryCastTo<CM_TimedButton>().SetHoldDuration(.5f);
 
+                    IsFriendItem = CreatePopupItem(" Friends on Steam", (_) => { });
+                    SharedUtils.ChangeColorCMItem(IsFriendItem, Color.yellow);
+                    IsFriendItem.TryCastTo<CM_TimedButton>().SetHoldDuration(100f);
+                    IsFriendItem.GetComponent<Collider2D>().enabled = false;
+
                     KickPlayerItem = CreatePopupItem(" Kick player", KickPlayerButtonPressed);
                     SharedUtils.ChangeColorCMItem(KickPlayerItem, ModSettings.ORANGE);
                     KickPlayerItem.TryCastTo<CM_TimedButton>().SetHoldDuration(2);
@@ -111,6 +116,7 @@ namespace TheArchive.Features
                     var list = SharedUtils.NewListForGame<iScrollWindowContent>();
 
                     list.Add(OpenSteamItem.GetComponentInChildren<iScrollWindowContent>());
+                    list.Add(IsFriendItem.GetComponentInChildren<iScrollWindowContent>());
                     list.Add(spacer1.GetComponentInChildren<iScrollWindowContent>());
                     list.Add(KickPlayerItem.GetComponentInChildren<iScrollWindowContent>());
                     list.Add(BanPlayerItem.GetComponentInChildren<iScrollWindowContent>());
@@ -120,7 +126,7 @@ namespace TheArchive.Features
                     spacer1.gameObject.SetActive(false);
                     spacer1.transform.position = new Vector3(-5000, 0, 0);
 
-                    PopupWindow.SetSize(new Vector2(350, 240));
+                    PopupWindow.SetSize(new Vector2(350, 58 * list.Count /*240*/));
                     PopupWindow.SetVisible(false);
                     PopupWindow.SetHeader("Player options");
                 }
@@ -199,6 +205,7 @@ namespace TheArchive.Features
         }
 
         internal static CM_Item OpenSteamItem { get; set; }
+        internal static CM_Item IsFriendItem { get; set; }
         internal static CM_Item KickPlayerItem { get; set; }
         internal static CM_Item BanPlayerItem { get; set; }
 
@@ -236,6 +243,10 @@ namespace TheArchive.Features
 #else
             PopupWindow.SetupFromButton(CM_PageLoadout.Current, CM_PageLoadout.Current);
 #endif
+
+            bool isFriend = SNet.Friends.TryGetFriend(player.Lookup, out _);
+
+            IsFriendItem.gameObject.SetActive(isFriend);
 
             KickPlayerItem.SetText($" Kick {name}");
             BanPlayerItem.SetText($" Ban {name}");
