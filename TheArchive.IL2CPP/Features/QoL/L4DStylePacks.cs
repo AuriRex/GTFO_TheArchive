@@ -15,7 +15,7 @@ namespace TheArchive.Features.QoL
 
         public override string Group => FeatureGroups.QualityOfLife;
 
-        public override string Description => "Use left and right mouse buttons to apply resource packs instead of E.\n\nLeft mouse = yourself\nRight mouse = other players";
+        public override string Description => "Use left and right mouse buttons to apply resource packs instead of E.\n\nLeft mouse = yourself\nRight mouse = other players\n\n<color=orange>[R4+]</color> You're able to hold down M2 and it will start applying to a receiver under your croshair if in range automatically";
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 
@@ -242,9 +242,17 @@ namespace TheArchive.Features.QoL
         {
             private static MethodAccessor<ResourcePackFirstPerson> A_UpdateInteractionActionName;
 
+            private static IValueAccessor<Interact_Timed, PlayerAgent> A_m_interactionSourceAgent;
+            private static IValueAccessor<Interact_Timed, float> A_m_interactionTimer;
             public static void Init()
             {
                 A_UpdateInteractionActionName = MethodAccessor<ResourcePackFirstPerson>.GetAccessor("UpdateInteractionActionName");
+
+                if(!Is.R6OrLater)
+                {
+                    A_m_interactionSourceAgent = AccessorBase.GetValueAccessor<Interact_Timed, PlayerAgent>("m_interactionSourceAgent");
+                    A_m_interactionTimer = AccessorBase.GetValueAccessor<Interact_Timed, float>("m_interactionTimer");
+                }
             }
 
             public static bool Prefix(ResourcePackFirstPerson __instance)
@@ -256,6 +264,7 @@ namespace TheArchive.Features.QoL
                 var timer = __instance.m_interactApplyResource;
 
                 bool anyButtonDown = false;
+                bool aimButtonHeld = false;
                 InputAction nextInputAction = InputAction.None;
 
                 if (InputMapper.GetButtonDown.Invoke(InputAction.Fire, __instance.Owner.InputFilter))
@@ -273,10 +282,10 @@ namespace TheArchive.Features.QoL
                     nextInputAction = InputAction.Fire;
                 }
 
-                if (InputMapper.GetButtonDown.Invoke(InputAction.Aim, __instance.Owner.InputFilter))
+                if (InputMapper.GetButton.Invoke(InputAction.Aim, __instance.Owner.InputFilter))
                 {
                     // Give Pack to others (Aim / Right Mouse Button)
-
+                    aimButtonHeld = true;
                     anyButtonDown = true;
 
                     if (!timer.TimerIsActive)
@@ -306,7 +315,12 @@ namespace TheArchive.Features.QoL
                 {
                     packReceiver = __instance.Owner.CastTo<iResourcePackReceiver>();
                     __instance.m_actionReceiver = packReceiver;
+                    if (Is.R6OrLater)
+                        OnInteractorStateChangedR6Plus(timer, __instance.Owner, false);
+                    timer.PlayerSetSelected(false, __instance.Owner);
                 }
+
+                bool needsResources = NeedsResource(packReceiver, packType);
 
                 if (!timer.TimerIsActive)
                 {
@@ -321,12 +335,21 @@ namespace TheArchive.Features.QoL
                         {
                             A_UpdateInteractionActionName.Invoke(__instance, packReceiver.InteractionName, false);
                             timer.m_input = nextInputAction;
+                            if (needsResources)
+                            {
+                                if(Is.R6OrLater)
+                                {
+                                    OnInteractorStateChangedR6Plus(timer, __instance.Owner, true);
+                                }
+                                else
+                                {
+                                    ActivateTimerR5AndBelow(timer, __instance.Owner);
+                                }
+                            }
                         }
                         __instance.m_lastActionReceiver = packReceiver;
                     }
                 }
-
-                bool needsResources = NeedsResource(packReceiver, packType);
 
                 bool timerActiveBefore = timer.TimerIsActive;
                 timer.ManualUpdateWithCondition(needsResources, __instance.Owner, needsResources && !packReceiver.IsLocallyOwned);
@@ -340,7 +363,15 @@ namespace TheArchive.Features.QoL
                     }
                 }
 
-                if(!needsResources && anyButtonDown && __instance.m_lastButtonDown != anyButtonDown)
+                if(timerActiveBefore && !timerActiveAfter)
+                {
+                    __instance.m_actionReceiver = __instance.Owner?.CastTo<iResourcePackReceiver>();
+                }
+
+                if(!needsResources
+                    && anyButtonDown
+                    && __instance.m_lastButtonDown != anyButtonDown
+                    && !(aimButtonHeld && packReceiver.IsLocallyOwned))
                 {
                     SharedUtils.SafePost(__instance.Sound, AK.EVENTS.BUTTONGENERICBLIPDENIED);
                     ShowDoesNotNeedResourcePrompt(packReceiver, packType);
@@ -351,10 +382,24 @@ namespace TheArchive.Features.QoL
                 return ArchivePatch.SKIP_OG;
             }
 
+            private static void ActivateTimerR5AndBelow(Interact_ManualTimedWithCallback timer, PlayerAgent agent)
+            {
+                A_m_interactionSourceAgent.Set(timer, agent);
+                timer.SetTimerActive(true);
+                A_m_interactionTimer.Set(timer, Clock.Delta);
+            }
+
+            [MethodImpl(MethodImplOptions.NoInlining)]
             private static void SendGenericInteractR6Plus(ResourcePackFirstPerson __instance, iResourcePackReceiver packReceiver)
             {
                 pGenericInteractAnimation.TypeEnum type = packReceiver.IsLocallyOwned ? pGenericInteractAnimation.TypeEnum.ConsumeResource : pGenericInteractAnimation.TypeEnum.GiveResource;
                 __instance.Owner.Sync.SendGenericInteract(type, false);
+            }
+
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            private static void OnInteractorStateChangedR6Plus(Interact_ManualTimedWithCallback timer, PlayerAgent sourceAgent, bool state)
+            {
+                timer.OnInteractorStateChanged(sourceAgent, state);
             }
         }
 #endif
