@@ -258,76 +258,10 @@ namespace TheArchive
             if (CurrentRundown != RundownID.RundownUnitialized)
             {
                 module.Patcher?.PatchRundownSpecificMethods(module.GetType().Assembly);
-                LoadSubModulesFrom(moduleType);
                 return true;
             }
 
             return false;
-        }
-
-
-        private static void LoadSubModules()
-        {
-            ArchiveLogger.Info("Loading all SubModules ...");
-            foreach (var moduleType in new List<Type>(_moduleTypes))
-            {
-                LoadSubModulesFrom(moduleType);
-            }
-        }
-
-        private static HashSet<Type> _submodulesLoadedFrom = new HashSet<Type>();
-
-        private static void LoadSubModulesFrom(Type moduleType)
-        {
-            if (_submodulesLoadedFrom.Contains(moduleType))
-                return;
-
-            foreach (var prop in moduleType.GetProperties())
-            {
-                if (prop.PropertyType != typeof(string) || !prop.GetMethod.IsStatic) continue;
-
-                var subModuleAttribute = prop.GetCustomAttribute<SubModuleAttribute>();
-
-                if (subModuleAttribute == null) continue;
-
-                if (FlagsContain(subModuleAttribute.Rundowns, CurrentRundown))
-                {
-                    string subModuleResourcePath = (string) prop.GetValue(null);
-
-                    byte[] subModule = null;
-                    try
-                    {
-                        subModule = GetResource(moduleType.Assembly, subModuleResourcePath);
-                    }
-                    catch (Exception ex)
-                    {
-                        ArchiveLogger.Error($"Module \"{moduleType.FullName}\" ({moduleType.Assembly.GetName().Name}) has invalid SubModule at path \"{subModuleResourcePath}\": {ex}: {ex.Message}\n{ex.StackTrace}");
-                        continue;
-                    }
-
-                    if (subModule == null || subModule.Length < 100)
-                    {
-                        ArchiveLogger.Error($"Module \"{moduleType.FullName}\" ({moduleType.Assembly.GetName().Name}) has invalid SubModule at path \"{subModuleResourcePath}\"!");
-                        continue;
-                    }
-
-                    try
-                    {
-                        var subModuleAssembly = Assembly.Load(subModule);
-
-                        var subModuleType = subModuleAssembly.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
-
-                        RegisterModule(subModuleType);
-                    }
-                    catch(Exception ex)
-                    {
-                        ArchiveLogger.Error($"Loading of sub-module at resource path \"{subModuleResourcePath}\" from module \"{moduleType.FullName}\" failed! {ex}: {ex.Message}\n{ex.StackTrace}");
-                    }
-
-                    break;
-                }
-            }
-            _submodulesLoadedFrom.Add(moduleType);
         }
 
         [Obsolete("Do not call!")]
@@ -594,7 +528,6 @@ namespace TheArchive
                 {
                     module.Patcher?.PatchRundownSpecificMethods(module.GetType().Assembly);
                 }
-                LoadSubModules();
             }
         }
 
