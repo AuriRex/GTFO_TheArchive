@@ -1,5 +1,4 @@
-﻿using MelonLoader;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -312,10 +311,10 @@ namespace TheArchive.Utilities
                     return "<color=red>Rundown #??? Yo Waddup?!</color>\n\nThis shouldn't happen unless you somehow modified the datablocks in R1 to R5 builds ...\nAnyways, things are probably gonna break :)";
             }
 
-            if(false)
+            /*if(false)
             {
                 sb.Append("<color=orange>://Extended</color>");
-            }
+            }*/
 
             sb.Append("\n");
 

@@ -81,7 +81,7 @@
 			  ECHO [#2.2] Building MONO Support-Module ...
 			  dotnet build -f $(TargetFramework) -c $(Configuration)
 			  ) ELSE (
-			  if exist $(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\TheArchive.MONO.dll del /F  $(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\TheArchive.MONO.dll
+			  if exist $(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\TheArchive.MONO.dll del /F $(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\TheArchive.MONO.dll
 			  ECHO DUMMY >  $(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\TheArchive.MONO.dll
 			  )
 			  ECHO [#3] Building Core Mod

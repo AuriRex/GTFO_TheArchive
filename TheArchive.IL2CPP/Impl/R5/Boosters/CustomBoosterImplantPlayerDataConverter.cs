@@ -11,7 +11,7 @@ using TheArchive.Utilities;
 using UnhollowerBaseLib;
 #endif
 #if Il2CppInterop
-using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 #endif
 using static TheArchive.Models.Boosters.LocalBoosterImplant;
 
