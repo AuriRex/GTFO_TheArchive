@@ -297,9 +297,15 @@ Yes, there's more! (smaller things)
 
 # Installation
 
-1. Install [MelonLoader](https://github.com/LavaGang/MelonLoader#how-to-use-the-installer) into your game folder.
-2. Download the latest mod version from [here](https://github.com/AuriRex/GTFO_TheArchive/releases/latest)
-3. Put the dll into the `Mods` folder inside of your GTFO directory
+1. Install [MelonLoader](https://github.com/LavaGang/MelonLoader#how-to-use-the-installer) into your game folder.  
+   Make sure to install **MelonLoader version `0.5.7`**, not anything older or newer (for now!)
+2. **Launch the game once to generate files & folders** and once in the main menu close it again.  
+   (This could take a little longer the first time around)
+3. Download the latest mod version from [here](https://github.com/AuriRex/GTFO_TheArchive/releases/latest). (it's called `TheArchive.Core.dll`)
+4. Put the dll into the `Mods` folder inside of your GTFO directory  
+   (In Steam: `[Right Click on GTFO]` > `[Manage >]` > `[Browse local files]`)
+5. Launch the game again, you're done!  
+   (Check if the mod is installed by navigating to the games `Settings` menu, there should be a button labeled `Mod Settings` in the bottom left.)
 
 ---
 
