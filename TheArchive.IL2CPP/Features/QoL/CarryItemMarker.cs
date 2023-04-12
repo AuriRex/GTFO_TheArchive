@@ -170,6 +170,12 @@ namespace TheArchive.Features.QoL
         #endregion ColorThings
 
         public const string MARKER_GO_NAME = $"{nameof(CarryItemMarker)}_MarkerHolder";
+        public static bool TryGetOrAddMarkerPlacer(PlayerAgent playerAgent, out PlaceNavMarkerOnGO markerPlacer)
+        {
+            markerPlacer = GetOrAddMarkerPlacer(playerAgent);
+            return markerPlacer != null;
+        }
+
         private static PlaceNavMarkerOnGO GetOrAddMarkerPlacer(PlayerAgent playerAgent)
         {
             var markerHolderTrans = playerAgent.transform.GetChildWithExactName(MARKER_GO_NAME);
@@ -232,7 +238,11 @@ namespace TheArchive.Features.QoL
                 pickupCore.m_navMarkerPlacer.UpdateName(markerText);
                 pickupCore.m_navMarkerPlacer.UpdatePlayerColor(markerColor);
 
-                var playerCarryMarkerPlacer = GetOrAddMarkerPlacer(player);
+                if (player == null)
+                    return;
+
+                if (!TryGetOrAddMarkerPlacer(player, out var playerCarryMarkerPlacer))
+                    return;
 
                 if (!Settings.ShowIsCarryingMarker)
                 {
