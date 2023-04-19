@@ -107,14 +107,15 @@ namespace TheArchive.Features.Special
                 if (meshRenderer == null)
                     continue;
 
-                var mat = meshRenderer.sharedMaterial;
-
-                if (mat == null)
-                    continue;
-
-                if (mat.HasProperty(_shaderPropertyID))
+                foreach(var mat in meshRenderer.sharedMaterials)
                 {
-                    mat.SetFloat(_shaderPropertyID, dirtValue);
+                    if (mat == null)
+                        continue;
+
+                    if (mat.HasProperty(_shaderPropertyID))
+                    {
+                        mat.SetFloat(_shaderPropertyID, dirtValue);
+                    }
                 }
             }
         }
