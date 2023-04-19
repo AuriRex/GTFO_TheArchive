@@ -1,18 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using TheArchive.Core.Attributes.Feature.Settings;
+using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI.Settings
 {
     public class NumberSetting : FeatureSetting
     {
+        public FSTimestamp Timestamp { get; private set; } = null;
         public NumberFormat Format { get; private set; }
         public NumberSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
         {
-            switch(Type.Name)
+            Timestamp = prop.GetCustomAttribute<FSTimestamp>();
+
+            switch (Type.Name)
             {
                 case nameof(Int64):
                     Format = NumberFormat.Int64;
@@ -77,8 +78,26 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             }
         }
 
+        public override object GetValue()
+        {
+            var value = base.GetValue();
+
+            if(Timestamp != null && long.TryParse(value.ToString(), out long ticks))
+            {
+                value = new DateTime(ticks).ToString(Timestamp.Format);
+            }
+
+            return value;
+        }
+
         public override object SetValue(object value)
         {
+            if(Timestamp != null)
+            {
+                ArchiveLogger.Warning($"Can't set backing value of {nameof(NumberSetting)} \"{DEBUG_Path}\" with {nameof(FSTimestamp)} attribute!");
+                return value;
+            }
+
             var val = value.ToString();
             if(string.IsNullOrWhiteSpace(val))
             {
