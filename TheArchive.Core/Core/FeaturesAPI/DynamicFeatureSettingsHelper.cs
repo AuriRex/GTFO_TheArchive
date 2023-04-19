@@ -21,12 +21,12 @@ namespace TheArchive.Core.FeaturesAPI
             return this;
         }
 
-        internal override void SetupViaInstance(object objectInstance)
+        internal override void SetupViaFeatureInstance(object objectInstance)
         {
             throw new NotImplementedException();
         }
 
-        public override object GetInstance()
+        public override object GetFeatureInstance()
         {
             throw new NotImplementedException();
         }

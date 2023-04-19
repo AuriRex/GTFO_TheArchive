@@ -835,6 +835,12 @@ namespace TheArchive.Features.Dev
                         case ButtonSetting bs:
                             CreateButton(bs, placeIntoMenu);
                             break;
+                        case SubmenuSetting ss:
+                            var subMenu = new SubMenu(ss.DisplayName);
+                            CreateSubMenuControls(subMenu, menuEntryLabelText: ss.DisplayName, placeIntoMenu: placeIntoMenu);
+                            SetupItemsForSettingsHelper(ss.SettingsHelper, subMenu);
+                            subMenu.Build();
+                            break;
                         default:
                             CreateHeader(setting.DEBUG_Path, subMenu: placeIntoMenu);
                             break;

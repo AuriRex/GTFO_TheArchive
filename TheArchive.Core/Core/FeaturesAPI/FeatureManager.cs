@@ -346,6 +346,17 @@ namespace TheArchive.Core.FeaturesAPI
             return Instance.RegisteredFeatures.FirstOrDefault(f => f.Identifier == featureIdentifier);
         }
 
+        internal static Feature GetByType<T>() where T : Feature
+        {
+            return Instance.RegisteredFeatures.FirstOrDefault(f => f.GetType() == typeof(T));
+        }
+
+        public static bool IsFeatureEnabled<T>() where T : Feature
+        {
+            var feature = GetByType<T>();
+            return feature != null && feature.Enabled;
+        }
+
         public static void SaveFeatureConfig(Feature feature)
         {
             feature.FeatureInternal.SaveFeatureSettings();

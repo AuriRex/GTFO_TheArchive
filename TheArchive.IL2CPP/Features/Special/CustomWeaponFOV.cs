@@ -159,6 +159,7 @@ namespace TheArchive.Features.Special
             [FSHeader("Add to all"), FSHide, FSReadOnly]
             public string IGNORE_EMPTY { get; set; } = string.Empty;
 
+            [FSInline]
             public CustomItemFPSSettingsEntry GlobalAddition { get; set; } = new CustomItemFPSSettingsEntry();
         }
 

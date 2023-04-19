@@ -498,7 +498,7 @@ namespace TheArchive.Core.FeaturesAPI
 
                 var configInstance = LocalFiles.LoadFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
 
-                settingsHelper.SetupViaInstance(configInstance);
+                settingsHelper.SetupViaFeatureInstance(configInstance);
             }
         }
 
@@ -510,7 +510,7 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 _FILogger.Info($"Saving config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
 
-                var configInstance = settingsHelper.GetInstance();
+                var configInstance = settingsHelper.GetFeatureInstance();
 
                 LocalFiles.SaveFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType, configInstance);
             }

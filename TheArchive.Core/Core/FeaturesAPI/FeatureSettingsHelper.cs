@@ -61,13 +61,15 @@ namespace TheArchive.Core.FeaturesAPI
                         continue;
                 }
 
+                bool shouldInline = prop.GetCustomAttribute<FSInline>() != null;
 
                 if (!type.IsValueType
                     && !typeof(IList).IsAssignableFrom(type)
                     && !typeof(IDictionary).IsAssignableFrom(type)
                     && type != typeof(string)
                     && type.GenericTypeArguments.Length <= 1
-                    && type != typeof(FButton))
+                    && type != typeof(FButton)
+                    && shouldInline)
                 {
                     PopulateSettings(type, prop.GetValue(instance), propPath);
                     continue;
@@ -121,6 +123,11 @@ namespace TheArchive.Core.FeaturesAPI
                             setting = new EnumSetting(this, prop, instance, propPath);
                             break;
                         }
+                        if(!shouldInline)
+                        {
+                            setting = new SubmenuSetting(this, prop, instance /* = Host */, propPath);
+                            break;
+                        }
                         setting = new FeatureSetting(this, prop, instance, propPath);
                         break;
                 }
@@ -131,17 +138,28 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        internal virtual void SetupViaInstance(object configInstance)
+        internal virtual void SetupViaFeatureInstance(object configInstance)
+        {
+            SetupViaInstanceOnHost(Feature, configInstance);
+            /*Instance = configInstance;
+            Property.SetValue(Feature, configInstance);
+            Settings.Clear();
+            PopulateSettings(SettingType, Instance, string.Empty);*/
+        }
+
+        internal virtual void SetupViaInstanceOnHost(object host, object configInstance)
         {
             Instance = configInstance;
-            Property.SetValue(Feature, configInstance);
+            Property.SetValue(host, configInstance);
             Settings.Clear();
             PopulateSettings(SettingType, Instance, string.Empty);
         }
 
-        public virtual object GetInstance()
+        public virtual object GetFeatureInstance() => GetInstanceOnHost(Feature);
+
+        public virtual object GetInstanceOnHost(object host)
         {
-            return Instance ?? Property.GetValue(Feature);
+            return Instance ?? Property.GetValue(host);
         }
     }
 }
