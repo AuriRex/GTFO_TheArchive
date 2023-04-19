@@ -23,6 +23,8 @@ namespace TheArchive.Core.FeaturesAPI
 
         private static readonly IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureSettingsHelper), ConsoleColor.DarkYellow);
 
+        internal static bool ForceEnableDebugLogging { get; set; } = false;
+
         public HashSet<FeatureSetting> Settings { get; private set; } = new HashSet<FeatureSetting>();
 
         internal FeatureSettingsHelper(Feature feature, PropertyInfo settingsProperty)
@@ -44,7 +46,7 @@ namespace TheArchive.Core.FeaturesAPI
                 path = typeToCheck.FullName;
             }
 
-            _logger.Debug($"Populate: {path}");
+            DebugLog($"Populate: {path}");
 
             foreach (var prop in typeToCheck.GetProperties())
             {
@@ -134,18 +136,17 @@ namespace TheArchive.Core.FeaturesAPI
 
                 Settings.Add(setting);
 
-                _logger.Debug($"Setting Added: {propPath} | {setting.GetType().Name}");
+                DebugLog($"Setting Added: {propPath} | {setting.GetType().Name}");
             }
         }
 
-        internal virtual void SetupViaFeatureInstance(object configInstance)
+        protected void DebugLog(string msg)
         {
-            SetupViaInstanceOnHost(Feature, configInstance);
-            /*Instance = configInstance;
-            Property.SetValue(Feature, configInstance);
-            Settings.Clear();
-            PopulateSettings(SettingType, Instance, string.Empty);*/
+            if(ForceEnableDebugLogging || !Feature.GameDataInited)
+                _logger.Debug(msg);
         }
+
+        internal virtual void SetupViaFeatureInstance(object configInstance) => SetupViaInstanceOnHost(Feature, configInstance);
 
         internal virtual void SetupViaInstanceOnHost(object host, object configInstance)
         {
