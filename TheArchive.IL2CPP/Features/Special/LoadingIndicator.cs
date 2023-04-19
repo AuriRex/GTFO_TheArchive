@@ -62,6 +62,8 @@ namespace TheArchive.Features.Special
             }
         }
 
+        public const string LOADING_MARKER_GO_NAME = nameof(LoadingIndicator);
+
         public static PlaceNavMarkerOnGO GetOrCreateMarker(SNet_Player player)
         {
             if (player == null) return null;
@@ -69,17 +71,28 @@ namespace TheArchive.Features.Special
 
             var agent = player.PlayerAgent.CastTo<PlayerAgent>();
 
-            var navMarker = agent.gameObject.GetComponent<PlaceNavMarkerOnGO>();
+            var markerHolderTrans = agent.transform.GetChildWithExactName(LOADING_MARKER_GO_NAME);
 
-            if(navMarker == null)
+            PlaceNavMarkerOnGO markerPlacer;
+
+            if (markerHolderTrans == null)
             {
-                navMarker = agent.gameObject.AddComponent<PlaceNavMarkerOnGO>();
-                navMarker.type = PlaceNavMarkerOnGO.eMarkerType.Waypoint;
-                navMarker.PlaceMarker(agent.gameObject);
-                navMarker.SetMarkerVisible(false);
+                markerHolderTrans = new GameObject(LOADING_MARKER_GO_NAME).transform;
+                markerHolderTrans.SetParent(agent.transform);
+                markerHolderTrans.localPosition = Vector3.up;
+                markerHolderTrans.rotation = Quaternion.identity;
+
+                markerPlacer = markerHolderTrans.gameObject.AddComponent<PlaceNavMarkerOnGO>();
+                markerPlacer.type = PlaceNavMarkerOnGO.eMarkerType.Waypoint;
+                markerPlacer.PlaceMarker(markerHolderTrans.gameObject);
+                markerPlacer.SetMarkerVisible(false);
+            }
+            else
+            {
+                markerPlacer = markerHolderTrans.GetComponent<PlaceNavMarkerOnGO>();
             }
 
-            return navMarker;
+            return markerPlacer;
         }
 
         public static PlaceNavMarkerOnGO SetMarkerState(SNet_Player player, LoadMarkerState state)
