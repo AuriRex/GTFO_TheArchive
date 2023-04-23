@@ -143,9 +143,9 @@ namespace TheArchive.Features.Accessibility
 
             public static void SetupColor(SNet_Player player, int characterID)
             {
-                if(player.IsLocal && Settings.LocalUseNicknameColorAsPlayerColor)
+                if(player.IsLocal && Settings.LocalUseNicknameColorAsPlayerColor && FeatureManager.IsFeatureEnabled<Nickname>() && Nickname.IsNicknameColorEnabled)
                 {
-                    player.PlayerColor = Nickname.Settings.Color.ToUnityColor();
+                    player.PlayerColor = Nickname.CurrentNicknameColor;
                     return;
                 }
 

@@ -1,4 +1,5 @@
 ﻿using CellMenu;
+using Player;
 using SNetwork;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,9 @@ using System.Linq;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Models;
+using TheArchive.Features.Accessibility;
 using TheArchive.Features.Dev;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -20,6 +24,8 @@ namespace TheArchive.Features
 
         public override string Description => "Allows you to open a players steam profile by clicking on their name as well as kick and ban players as host.";
 
+        public override bool PlaceSettingsInSubMenu => true;
+
         public new static IArchiveLogger FeatureLogger { get; set; }
 
         [FeatureConfig]
@@ -31,18 +37,82 @@ namespace TheArchive.Features
             [FSDescription("If clicking a players name on the map screen should open their Steam Profile in your default browser.")]
             public bool NamesOnMapOpenSteamProfile { get; set; } = false;
 
+            [FSHeader("Lobby Color Settings")]
+            public LobbyColorSettings LobbyColors { get; set; } = new LobbyColorSettings();
+
+            [FSHeader("Other")]
+            [FSDisplayName("Recently Played With")]
+            public List<RecentlyPlayedWithEntry> RecentlyPlayedWith { get; set; } = new List<RecentlyPlayedWithEntry>();
+
             [FSDisplayName("Banned Players")]
+            [FSDescription("Players who are on this list will not be able to join any games <b>you host</b>.")]
             public List<BanListEntry> BanList { get; set; } = new List<BanListEntry>();
+
+            public class LobbyColorSettings
+            {
+                [FSDisplayName("Color the Square")]
+                [FSDescription("Use the colors/settings below to color the square on the loadout screen next to the player names.")]
+                public bool ColorizeLobbyBullet { get; set; } = true;
+
+                [FSDisplayName("Use Nickname Color for Self")]
+                public bool UseNicknameColorForSelf { get; set; } = true;
+
+                // [FSDisplayName("Use Nickname Color for Others")]
+                // public bool UseNicknameColorForOthers { get; set; } = false;
+
+                [FSDisplayName("Random Colors for Self")]
+                public bool RainbowPukeSelf { get; set; } = false;
+
+                [FSDisplayName("Random Colors for Others")]
+                public bool RainbowPukeFriends { get; set; } = false;
+
+                [FSHeader("Colors")]
+                public SColor Default { get; set; } = new SColor(1, 1, 1);
+                public SColor Friends { get; set; } = new SColor(0.964f, 0.921f, 0.227f);
+                public SColor Bots { get; set; } = new SColor(0.949f, 0.58f, 0f);
+                public SColor Banned { get; set; } = new SColor(0.545f, 0f, 0f);
+                public SColor Self { get; set; } = new SColor(1, 1, 1);
+
+            }
 
             public class BanListEntry
             {
+                [FSSeparator]
                 [FSReadOnly]
                 public string Name { get; set; }
                 [FSReadOnly]
                 public ulong SteamID { get; set; }
                 [FSReadOnly]
+                [FSTimestamp]
+                [FSDisplayName("Banned on:")]
                 public long Timestamp { get; set; }
             }
+
+            public class RecentlyPlayedWithEntry
+            {
+                [FSSeparator]
+                [FSReadOnly]
+                public string Name { get; set; }
+                [FSReadOnly]
+                public ulong SteamID { get; set; }
+                [FSReadOnly]
+                [FSTimestamp]
+                [FSDisplayName("First time played with:")]
+                public long TimestampFirst { get; set; }
+                [FSReadOnly]
+                [FSTimestamp]
+                [FSDisplayName("Last time played with:")]
+                public long TimestampLast { get; set; }
+            }
+        }
+
+        public enum PlayerRelationShip
+        {
+            None,
+            Self,
+            Friend,
+            Banned,
+            Bot,
         }
 
         public override void OnEnable()
@@ -57,19 +127,85 @@ namespace TheArchive.Features
                 if (collider != null)
                     collider.enabled = true;
             }
+
+            SetupColorMap();
         }
 
         public override void OnDisable()
         {
-            foreach(var collider in CM_PlayerLobbyBar_UpdatePlayer_Patch.colliderMap.Values)
+            foreach (var collider in CM_PlayerLobbyBar_UpdatePlayer_Patch.colliderMap.Values)
             {
-                if(collider != null)
+                if (collider != null)
                     collider.enabled = false;
             }
             foreach (var collider in PUI_Inventory_UpdateAllSlots_Patch.colliderMap.Values)
             {
                 if (collider != null)
                     collider.enabled = false;
+            }
+        }
+
+        public override void OnFeatureSettingChanged(FeatureSetting setting)
+        {
+            SetupColorMap();
+        }
+
+        private static Dictionary<PlayerRelationShip, Color> _colorMap = new Dictionary<PlayerRelationShip, Color>();
+
+        public static void SetupColorMap()
+        {
+            _colorMap.Clear();
+
+            var rels = Enum.GetValues(typeof(PlayerRelationShip)) as PlayerRelationShip[];
+
+            foreach (var rel in rels)
+            {
+                _colorMap.Add(rel, GetRelationshipColor(rel));
+            }
+        }
+
+        public static PlayerRelationShip GetRelationship(PlayerAgent player) => GetRelationship(player?.Owner);
+        public static PlayerRelationShip GetRelationship(SNet_Player player)
+        {
+            if (player == null)
+                return PlayerRelationShip.None;
+
+            if (player.SafeIsBot())
+                return PlayerRelationShip.Bot;
+
+            if (player.IsLocal)
+                return PlayerRelationShip.Self;
+
+            if (IsPlayerBanned(player.Lookup))
+                return PlayerRelationShip.Banned;
+
+            if (SNet.Friends.TryGetFriend(player.Lookup, out _))
+                return PlayerRelationShip.Friend;
+
+            return PlayerRelationShip.None;
+        }
+
+        public static Color GetRelationshipColor(PlayerRelationShip rel)
+        {
+            if (_colorMap.TryGetValue(rel, out var color))
+            {
+                return color;
+            }
+
+            switch (rel)
+            {
+                default:
+                case PlayerRelationShip.None:
+                    return Settings.LobbyColors.Default.ToUnityColor();
+                case PlayerRelationShip.Self:
+                    return Settings.LobbyColors.Self.ToUnityColor();
+                case PlayerRelationShip.Bot:
+                    return Settings.LobbyColors.Bots.ToUnityColor();
+                case PlayerRelationShip.Friend:
+                    return Settings.LobbyColors.Friends.ToUnityColor();
+                case PlayerRelationShip.Banned:
+                    return Settings.LobbyColors.Banned.ToUnityColor();
+
             }
         }
 
@@ -83,7 +219,7 @@ namespace TheArchive.Features
         {
             get
             {
-                if(_popupWindow == null)
+                if (_popupWindow == null)
                 {
                     FeatureLogger.Debug("Creating PopupWindow ...");
 
@@ -98,7 +234,7 @@ namespace TheArchive.Features
                     OpenSteamItem.TryCastTo<CM_TimedButton>().SetHoldDuration(.5f);
 
                     IsFriendItem = CreatePopupItem(" Friends on Steam", (_) => { });
-                    SharedUtils.ChangeColorCMItem(IsFriendItem, Color.yellow);
+                    SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Friend));
                     IsFriendItem.TryCastTo<CM_TimedButton>().SetHoldDuration(100f);
                     IsFriendItem.GetComponent<Collider2D>().enabled = false;
 
@@ -174,18 +310,20 @@ namespace TheArchive.Features
 
         internal static void BanPlayerButtonPressed(int playerID)
         {
-            PopupWindow.SetVisible(false);
-
-            if (!SNet.IsMaster) return;
-
             if (!SharedUtils.TryGetPlayerByCharacterIndex(playerID - 1, out var player))
             {
                 return;
             }
 
-            FeatureLogger.Notice($"Banning player \"{player.GetName()}\" Nick:\"{player.NickName}\" ...");
+            if (player.IsLocal)
+            {
+                BanPlayerItem.SetText($" You can't ban yourself, silly!");
+                return;
+            }
 
-            if(!IsPlayerBanned(player.Lookup))
+            PopupWindow.SetVisible(false);
+
+            if (!IsPlayerBanned(player.Lookup))
             {
                 Settings.BanList.Add(new LobbyManagementSettings.BanListEntry
                 {
@@ -193,15 +331,28 @@ namespace TheArchive.Features
                     SteamID = player.Lookup,
                     Timestamp = DateTime.UtcNow.Ticks
                 });
-                FeatureLogger.Info($"Player has been added to list of banned players: Name:\"{player.GetName()}\" SteamID:\"{player.Lookup}\"");
-            }
+                FeatureLogger.Fail($"Player has been added to list of banned players: Name:\"{player.GetName()}\" SteamID:\"{player.Lookup}\"");
 
-            KickPlayer(player);
+                KickPlayer(player);
+            }
+            else
+            {
+                var playerToUnban = Settings.BanList.FirstOrDefault(entry => entry.SteamID == player.Lookup);
+                if (playerToUnban != null)
+                {
+                    Settings.BanList.Remove(playerToUnban);
+                    FeatureLogger.Success($"Player has been removed from the list of banned players: Name:\"{player.GetName()}\" SteamID:\"{player.Lookup}\"");
+                }
+            }
         }
 
         private static void KickPlayer(SNet_Player player)
         {
-            SNet.SessionHub.RemovePlayerFromSession(player, true);
+            if (!SNet.IsMaster)
+                return;
+
+            SNet.Sync.KickPlayer(player, SNet_PlayerEventReason.Kick_ByVote);
+            //SNet.SessionHub.RemovePlayerFromSession(player, true);
         }
 
         internal static CM_Item OpenSteamItem { get; set; }
@@ -245,27 +396,56 @@ namespace TheArchive.Features
 #endif
 
             bool isFriend = SNet.Friends.TryGetFriend(player.Lookup, out _);
+            bool isBanned = IsPlayerBanned(player.Lookup);
 
-            IsFriendItem.gameObject.SetActive(isFriend);
+            IsFriendItem.gameObject.SetActive(isFriend || isBanned);
+
+            if (isBanned)
+            {
+                IsFriendItem.SetText(" On Banned Players List");
+                SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Banned));
+            }
+            else if (isFriend)
+            {
+                IsFriendItem.SetText(" Friends on Steam");
+                SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Friend));
+            }
+
 
             KickPlayerItem.SetText($" Kick {name}");
-            BanPlayerItem.SetText($" Ban {name}");
+
+
 
             if (player.IsMaster || !SNet.IsMaster)
             {
                 KickPlayerItem.GetComponent<Collider2D>().enabled = false;
                 SharedUtils.ChangeColorCMItem(KickPlayerItem, ModSettings.DISABLED);
 
-                BanPlayerItem.GetComponent<Collider2D>().enabled = false;
-                SharedUtils.ChangeColorCMItem(BanPlayerItem, ModSettings.DISABLED);
+                BanPlayerItem.SetText($" Ban {name}");
             }
             else
             {
                 KickPlayerItem.GetComponent<Collider2D>().enabled = true;
                 SharedUtils.ChangeColorCMItem(KickPlayerItem, ModSettings.ORANGE);
 
-                BanPlayerItem.GetComponent<Collider2D>().enabled = true;
-                SharedUtils.ChangeColorCMItem(BanPlayerItem, ModSettings.RED);
+                BanPlayerItem.SetText($" Ban and kick {name}");
+            }
+
+            if (player.IsLocal)
+            {
+                SharedUtils.ChangeColorCMItem(BanPlayerItem, ModSettings.DISABLED);
+            }
+            else
+            {
+                if (isBanned)
+                {
+                    BanPlayerItem.SetText($" Unban {name}");
+                    SharedUtils.ChangeColorCMItem(BanPlayerItem, ModSettings.GREEN);
+                }
+                else
+                {
+                    SharedUtils.ChangeColorCMItem(BanPlayerItem, ModSettings.RED);
+                }
             }
 
             PopupWindow.SetHeader(name);
@@ -280,6 +460,26 @@ namespace TheArchive.Features
             PopupWindow.SetVisible(true);
         }
 
+        private static void AddRecentlyPlayedWith(SNet_Player player)
+        {
+            var entry = Settings.RecentlyPlayedWith.FirstOrDefault(entry => entry.SteamID == player.Lookup);
+            if (entry != null)
+            {
+                FeatureLogger.Notice($"{player.NickName} joined Session, last time played with them {(DateTime.UtcNow - new DateTime(entry.TimestampLast)):d' day(s) and 'hh':'mm':'ss} ago.");
+                entry.TimestampLast = DateTime.UtcNow.Ticks;
+                return;
+            }
+
+            var ticks = DateTime.UtcNow.Ticks;
+            Settings.RecentlyPlayedWith.Add(new LobbyManagementSettings.RecentlyPlayedWithEntry
+            {
+                Name = player.NickName,
+                SteamID = player.Lookup,
+                TimestampFirst = ticks,
+                TimestampLast = ticks,
+            });
+        }
+
         [ArchivePatch(typeof(SNet_SessionHub), "SlaveWantsToJoin")]
         internal static class SNet_SessionHub_SlaveWantsToJoin_Patch
         {
@@ -290,6 +490,7 @@ namespace TheArchive.Features
                     if (IsPlayerBanned(player.Lookup))
                     {
                         FeatureLogger.Notice($"Banned player \"{player.GetName()}\" tried to join, their join request has been ignored!");
+                        KickPlayer(player);
                         return ArchivePatch.SKIP_OG;
                     }
                 }
@@ -298,11 +499,85 @@ namespace TheArchive.Features
             }
         }
 
+        [ArchivePatch(typeof(SNet_SyncManager), nameof(SNet_SyncManager.OnPlayerJoinedSessionHub))]
+        internal static class SNet_OnPlayerJoinedSessionHub_Patch
+        {
+            public static void Postfix(SNet_Player player)
+            {
+                AddRecentlyPlayedWith(player);
+            }
+        }
+
         // Lobby button
         [ArchivePatch(typeof(CM_PlayerLobbyBar), nameof(CM_PlayerLobbyBar.UpdatePlayer))]
         internal static class CM_PlayerLobbyBar_UpdatePlayer_Patch
         {
             internal static Dictionary<int, BoxCollider2D> colliderMap = new Dictionary<int, BoxCollider2D>();
+
+            private static MethodAccessor<GUIX_ElementSprite> A_Unregister;
+            private static MethodAccessor<GUIX_ElementSprite> A_Start;
+            private static IValueAccessor<GUIX_ElementSprite, GUIX_Layer> A_layer;
+
+            public static void Init()
+            {
+                A_Start = MethodAccessor<GUIX_ElementSprite>.GetAccessor(UnityMessages.Start);
+                A_Unregister = MethodAccessor<GUIX_ElementSprite>.GetAccessor("Unregister");
+                A_layer = AccessorBase.GetValueAccessor<GUIX_ElementSprite, GUIX_Layer>("layer");
+            }
+
+            public static void ColorizeNickNameGUIX(GameObject nickNameGuix, PlayerRelationShip rel = PlayerRelationShip.None)
+            {
+                if (nickNameGuix == null)
+                    return;
+
+                foreach(var child in nickNameGuix.transform.DirectChildren())
+                {
+                    var guix = child.GetComponent<GUIX_ElementSprite>();
+                    var spriteRenderer = child.GetComponent<SpriteRenderer>();
+                    if(spriteRenderer != null)
+                    {
+                        if(!Settings.LobbyColors.ColorizeLobbyBullet)
+                        {
+                            spriteRenderer.color = Color.white;
+                        }
+                        else switch(rel)
+                        {
+                            case PlayerRelationShip.Self:
+                                if(Settings.LobbyColors.RainbowPukeSelf)
+                                {
+                                    spriteRenderer.color = UnityEngine.Random.ColorHSV();
+                                    break;
+                                }
+                                if(Settings.LobbyColors.UseNicknameColorForSelf && FeatureManager.IsFeatureEnabled<Nickname>() && Nickname.IsNicknameColorEnabled)
+                                {
+                                    spriteRenderer.color = Nickname.CurrentNicknameColor;
+                                    break;
+                                }
+                                goto default;
+                            case PlayerRelationShip.Friend:
+                                if(Settings.LobbyColors.RainbowPukeFriends)
+                                {
+                                    spriteRenderer.color = UnityEngine.Random.ColorHSV();
+                                    break;
+                                }
+                                // TODO: Settings.LobbyColors.UseNicknameColorForOthers
+                                goto default;
+                            default:
+                                spriteRenderer.color = GetRelationshipColor(rel);
+                                break;
+                        }
+                    }
+
+                    if (A_layer.Get(guix) == null || !guix.gameObject.activeInHierarchy)
+                        continue;
+
+                    // Unregister and invoke Start again to re-grab the sprite renderers color
+                    A_Unregister.Invoke(guix);
+                    guix.DynamicIndex = -1;
+                    A_layer.Set(guix, null);
+                    A_Start.Invoke(guix);
+                }
+            }
 
             public static void Postfix(CM_PlayerLobbyBar __instance, SNet_Player player)
             {
@@ -340,6 +615,8 @@ namespace TheArchive.Features
                     });
 
                 }
+
+                ColorizeNickNameGUIX(__instance.m_nickNameGuix, GetRelationship(player));
             }
         }
 

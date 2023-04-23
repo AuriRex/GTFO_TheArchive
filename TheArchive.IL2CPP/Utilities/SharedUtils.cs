@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using TMPro;
 using UnityEngine;
 using GameData;
@@ -253,6 +252,14 @@ namespace TheArchive.Utilities
             }
         }
 
+        public static IEnumerable<Transform> DirectChildren(this Transform trans)
+        {
+            for (int i = 0; i < trans.childCount; i++)
+            {
+                yield return trans.GetChild(i);
+            }
+        }
+
         public static Transform GetChildWithExactName(this Transform trans, string name)
         {
             for (int i = 0; i < trans.childCount; i++)
@@ -353,7 +360,7 @@ namespace TheArchive.Utilities
             return list.Contains(item);
         }
 
-        public static bool SafeIsBot(SNetwork.SNet_Player player)
+        public static bool SafeIsBot(this SNetwork.SNet_Player player)
         {
             if (Feature.Is.R6OrLater)
                 return IsBotR6(player);

@@ -48,6 +48,11 @@
 			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\Modules-ASM.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="GUIX-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\GUIX-ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
 		<Reference Include="PlayFab-ASM, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 			<SpecificVersion>False</SpecificVersion>
 			<HintPath>$(ProjectDir)..\_R_RD003\GTFO_Data\Managed\PlayFab-ASM.dll</HintPath>

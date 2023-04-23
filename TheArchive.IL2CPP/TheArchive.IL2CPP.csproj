@@ -50,6 +50,10 @@
 			<HintPath>$(LatestGeneratedGameAssembliesPath)GlobalFramework-ASM.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="GUIX-ASM">
+			<HintPath>$(LatestGeneratedGameAssembliesPath)GUIX-ASM.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
 		<Reference Include="Il2Cppmscorlib">
 			<HintPath>$(LatestGeneratedGameAssembliesPath)Il2Cppmscorlib.dll</HintPath>
 			<Private>False</Private>

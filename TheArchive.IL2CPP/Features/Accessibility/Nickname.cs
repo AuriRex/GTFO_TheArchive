@@ -10,6 +10,7 @@ using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
+using UnityEngine;
 
 namespace TheArchive.Features.Accessibility
 {
@@ -54,6 +55,34 @@ namespace TheArchive.Features.Accessibility
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 
+        private static Color? _currentNicknameColor;
+        public static Color CurrentNicknameColor
+        {
+            get
+            {
+                if(_currentNicknameColor == null)
+                {
+                    _currentNicknameColor = Settings.Color.ToUnityColor();
+                }
+                return _currentNicknameColor.Value;
+            }
+        }
+
+        public static bool IsNicknameColorEnabled
+        {
+            get
+            {
+                switch(Settings.Mode)
+                {
+                    case NicknameMode.Color:
+                    case NicknameMode.TerminatedColor:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        }
+
         public override void OnEnable()
         {
             SetNickname();
@@ -78,7 +107,9 @@ namespace TheArchive.Features.Accessibility
 
         public override void OnFeatureSettingChanged(FeatureSetting setting)
         {
-            if(setting.Identifier.StartsWith("Allow"))
+            _currentNicknameColor = Settings.Color.ToUnityColor();
+
+            if (setting.Identifier.StartsWith("Allow"))
             {
                 foreach(var player in SNet.LobbyPlayers)
                 {
