@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -506,20 +508,26 @@ namespace Discord
 
         internal IntPtr MethodsPtr;
 
-        internal Object MethodsStructure;
+        //internal Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public void SetType(LobbyType type)
         {
@@ -613,20 +621,26 @@ namespace Discord
 
         internal IntPtr MethodsPtr;
 
-        internal Object MethodsStructure;
+        //internal Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public void SetMetadata(string key, string value)
         {
@@ -682,20 +696,26 @@ namespace Discord
 
         internal IntPtr MethodsPtr;
 
-        internal Object MethodsStructure;
+        //internal Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public void Filter(string key, LobbySearchComparison comparison, LobbySearchCast cast, string value)
         {
@@ -743,6 +763,69 @@ namespace Discord
                     throw new ResultException(res);
                 }
             }
+        }
+    }
+
+    public class FFIMethodsWrapper<T> : IDisposable
+    {
+        private readonly IntPtr _ptr;
+        private readonly GCHandle _gcHandle;
+
+
+        public static FFIMethodsWrapper<T> instance;
+        private bool _isDisposed = false;
+
+        internal T MethodsStructure { get; private set; }
+
+        internal static FieldInfo[] fields;
+
+        internal static List<object> rootedDelegates = new List<object>();
+
+        public FFIMethodsWrapper(IntPtr MethodsPtr)
+        {
+            _ptr = MethodsPtr;
+
+            instance = this;
+
+            MethodsStructure = (T)Marshal.PtrToStructure(MethodsPtr, typeof(T));
+            _gcHandle = GCHandle.Alloc(MethodsStructure);
+
+            fields ??= typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+
+            rootedDelegates.Clear();
+            foreach (var field in fields)
+            {
+                rootedDelegates.Add(field.GetValue(MethodsStructure));
+            }
+        }
+
+        ~FFIMethodsWrapper()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+                return;
+
+            _isDisposed = true;
+
+
+            if(instance == this)
+                instance = null;
+
+            foreach(var field in fields)
+            {
+                if(field.Name == "Destroy")
+                {
+                    Delegate d = (Delegate) field.GetValue(MethodsStructure);
+                    d.DynamicInvoke(_ptr);
+                    return;
+                }
+            }
+
+            _gcHandle.Free();
         }
     }
 
@@ -990,20 +1073,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if(_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         private GCHandle? setLogHook;
 
@@ -1083,7 +1172,9 @@ namespace Discord
         {
             if (MethodsPtr != IntPtr.Zero)
             {
-                Methods.Destroy(MethodsPtr);
+                MethodsWrapper.Dispose();
+                MethodsWrapper = null;
+                //Methods.Destroy(MethodsPtr);
             }
             SelfHandle.Free();
             Marshal.FreeHGlobal(EventsPtr);
@@ -1334,20 +1425,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         internal ApplicationManager(IntPtr ptr, IntPtr eventsPtr, ref FFIEvents events)
         {
@@ -1491,20 +1588,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public event CurrentUserUpdateHandler OnCurrentUserUpdate;
 
@@ -1627,20 +1730,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         internal ImageManager(IntPtr ptr, IntPtr eventsPtr, ref FFIEvents events)
         {
@@ -1802,20 +1911,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public event ActivityJoinHandler OnActivityJoin;
 
@@ -1824,6 +1939,20 @@ namespace Discord
         public event ActivityJoinRequestHandler OnActivityJoinRequest;
 
         public event ActivityInviteHandler OnActivityInvite;
+
+
+        private static FFIMethods.UpdateActivityCallback _UpdateActivity_Callback;
+
+        private static FFIMethods.ClearActivityCallback _ClearActivity_Callback;
+
+        private static FFIMethods.SendRequestReplyCallback _SendRequestReply_Callback;
+
+        private static FFIMethods.SendInviteCallback _SendInvite_Callback;
+
+        private static FFIMethods.AcceptInviteCallback _AcceptInvite_Callback;
+
+
+        private static readonly Dictionary<object, Delegate> _antiGarbaceCollectionCollection = new Dictionary<object, Delegate>();
 
         internal ActivityManager(IntPtr ptr, IntPtr eventsPtr, ref FFIEvents events)
         {
@@ -1877,6 +2006,7 @@ namespace Discord
             finally
             {
                 h.Free();
+                _antiGarbaceCollectionCollection.Remove(callback);
             }
         }
 
@@ -1885,7 +2015,10 @@ namespace Discord
             GCHandle wrapped = GCHandle.Alloc(callback);
             try
             {
-                Methods.UpdateActivity(MethodsPtr, ref activity, GCHandle.ToIntPtr(wrapped), UpdateActivityCallbackImpl);
+                _UpdateActivity_Callback = UpdateActivityCallbackImpl;
+                _antiGarbaceCollectionCollection.Add(callback, _UpdateActivity_Callback);
+
+                Methods.UpdateActivity(MethodsPtr, ref activity, GCHandle.ToIntPtr(wrapped), _UpdateActivity_Callback);
             }
             finally
             {
@@ -1912,7 +2045,8 @@ namespace Discord
         public void ClearActivity(ClearActivityHandler callback)
         {
             GCHandle wrapped = GCHandle.Alloc(callback);
-            Methods.ClearActivity(MethodsPtr, GCHandle.ToIntPtr(wrapped), ClearActivityCallbackImpl);
+            _ClearActivity_Callback = ClearActivityCallbackImpl;
+            Methods.ClearActivity(MethodsPtr, GCHandle.ToIntPtr(wrapped), _ClearActivity_Callback);
         }
 
         [MonoPInvokeCallback]
@@ -1934,7 +2068,8 @@ namespace Discord
         public void SendRequestReply(Int64 userId, ActivityJoinRequestReply reply, SendRequestReplyHandler callback)
         {
             GCHandle wrapped = GCHandle.Alloc(callback);
-            Methods.SendRequestReply(MethodsPtr, userId, reply, GCHandle.ToIntPtr(wrapped), SendRequestReplyCallbackImpl);
+            _SendRequestReply_Callback = SendRequestReplyCallbackImpl;
+            Methods.SendRequestReply(MethodsPtr, userId, reply, GCHandle.ToIntPtr(wrapped), _SendRequestReply_Callback);
         }
 
         [MonoPInvokeCallback]
@@ -1956,7 +2091,8 @@ namespace Discord
         public void SendInvite(Int64 userId, ActivityActionType type, string content, SendInviteHandler callback)
         {
             GCHandle wrapped = GCHandle.Alloc(callback);
-            Methods.SendInvite(MethodsPtr, userId, type, content, GCHandle.ToIntPtr(wrapped), SendInviteCallbackImpl);
+            _SendInvite_Callback = SendInviteCallbackImpl;
+            Methods.SendInvite(MethodsPtr, userId, type, content, GCHandle.ToIntPtr(wrapped), _SendInvite_Callback);
         }
 
         [MonoPInvokeCallback]
@@ -1978,7 +2114,8 @@ namespace Discord
         public void AcceptInvite(Int64 userId, AcceptInviteHandler callback)
         {
             GCHandle wrapped = GCHandle.Alloc(callback);
-            Methods.AcceptInvite(MethodsPtr, userId, GCHandle.ToIntPtr(wrapped), AcceptInviteCallbackImpl);
+            _AcceptInvite_Callback = AcceptInviteCallbackImpl;
+            Methods.AcceptInvite(MethodsPtr, userId, GCHandle.ToIntPtr(wrapped), _AcceptInvite_Callback);
         }
 
         [MonoPInvokeCallback]
@@ -2077,20 +2214,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public event RefreshHandler OnRefresh;
 
@@ -2474,20 +2617,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public event LobbyUpdateHandler OnLobbyUpdate;
 
@@ -3163,20 +3312,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public event MessageHandler OnMessage;
 
@@ -3464,20 +3619,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public event ToggleHandler OnToggle;
 
@@ -3800,20 +3961,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         internal StorageManager(IntPtr ptr, IntPtr eventsPtr, ref FFIEvents events)
         {
@@ -4074,20 +4241,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public event EntitlementCreateHandler OnEntitlementCreate;
 
@@ -4344,20 +4517,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public event SettingsUpdateHandler OnSettingsUpdate;
 
@@ -4558,20 +4737,26 @@ namespace Discord
 
         private IntPtr MethodsPtr;
 
-        private Object MethodsStructure;
+        //private Object MethodsStructure;
 
-        private FFIMethods Methods
+        private FFIMethodsWrapper<FFIMethods> _FFIMethodsWrapper;
+        private FFIMethodsWrapper<FFIMethods> MethodsWrapper
         {
             get
             {
-                if (MethodsStructure == null)
+                if (_FFIMethodsWrapper == null)
                 {
-                    MethodsStructure = Marshal.PtrToStructure(MethodsPtr, typeof(FFIMethods));
+                    _FFIMethodsWrapper = new FFIMethodsWrapper<FFIMethods>(MethodsPtr);
                 }
-                return (FFIMethods)MethodsStructure;
+                return _FFIMethodsWrapper;
             }
-
+            set
+            {
+                _FFIMethodsWrapper = value;
+            }
         }
+
+        private FFIMethods Methods => MethodsWrapper.MethodsStructure;
 
         public event UserAchievementUpdateHandler OnUserAchievementUpdate;
 
