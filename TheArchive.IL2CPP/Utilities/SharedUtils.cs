@@ -367,6 +367,13 @@ namespace TheArchive.Utilities
             return false;
         }
 
+        public static bool IsFriend(this SNetwork.SNet_Player player)
+        {
+            if (player == null)
+                return false;
+            return SNetwork.SNet.Friends.TryGetFriend(player.Lookup, out _);
+        }
+
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool IsBotR6(SNetwork.SNet_Player player)
         {

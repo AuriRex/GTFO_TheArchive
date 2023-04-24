@@ -179,7 +179,7 @@ namespace TheArchive.Features
             if (IsPlayerBanned(player.Lookup))
                 return PlayerRelationShip.Banned;
 
-            if (SNet.Friends.TryGetFriend(player.Lookup, out _))
+            if (player.IsFriend())
                 return PlayerRelationShip.Friend;
 
             return PlayerRelationShip.None;
@@ -325,6 +325,21 @@ namespace TheArchive.Features
 
             if (!IsPlayerBanned(player.Lookup))
             {
+                BanPlayer(player);
+            }
+            else
+            {
+                UnbanPlayer(player);
+            }
+        }
+
+        public static bool BanPlayer(SNet_Player player, bool kickPlayer = true)
+        {
+            if (player == null)
+                return false;
+
+            if (!IsPlayerBanned(player.Lookup))
+            {
                 Settings.BanList.Add(new LobbyManagementSettings.BanListEntry
                 {
                     Name = player.GetName(),
@@ -333,20 +348,33 @@ namespace TheArchive.Features
                 });
                 FeatureLogger.Fail($"Player has been added to list of banned players: Name:\"{player.GetName()}\" SteamID:\"{player.Lookup}\"");
 
-                KickPlayer(player);
+                if (kickPlayer)
+                    KickPlayer(player);
+                return true;
             }
-            else
-            {
-                var playerToUnban = Settings.BanList.FirstOrDefault(entry => entry.SteamID == player.Lookup);
-                if (playerToUnban != null)
-                {
-                    Settings.BanList.Remove(playerToUnban);
-                    FeatureLogger.Success($"Player has been removed from the list of banned players: Name:\"{player.GetName()}\" SteamID:\"{player.Lookup}\"");
-                }
-            }
+
+            return false;
         }
 
-        private static void KickPlayer(SNet_Player player)
+        public static bool UnbanPlayer(SNet_Player player) => UnbanPlayer(player?.Lookup ?? ulong.MaxValue);
+
+        public static bool UnbanPlayer(ulong playerID)
+        {
+            if (playerID == ulong.MaxValue)
+                return false;
+
+            var playerToUnban = Settings.BanList.FirstOrDefault(entry => entry.SteamID == playerID);
+            if (playerToUnban != null)
+            {
+                Settings.BanList.Remove(playerToUnban);
+                FeatureLogger.Success($"Player has been removed from the list of banned players: Name:\"{playerToUnban.Name}\" SteamID:\"{playerToUnban.SteamID}\"");
+                return true;
+            }
+
+            return false;
+        }
+
+        public static void KickPlayer(SNet_Player player)
         {
             if (!SNet.IsMaster)
                 return;
