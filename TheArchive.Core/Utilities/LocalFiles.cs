@@ -139,39 +139,15 @@ namespace TheArchive.Utilities
                     {
                         _versionSpecificSavePath = GetVersionSpecificSaveDirectoryPath(ArchiveMod.CurrentRundown);
                     }
+
                     if (!Directory.Exists(_versionSpecificSavePath))
                     {
                         Directory.CreateDirectory(_versionSpecificSavePath);
                         try
                         {
-                            var olderSettingsFile = GetSettingsPath(ArchiveMod.CurrentRundown - 1);
-
-                            if (File.Exists(olderSettingsFile))
+                            if(!CopyMostRecentSaveFiles(ArchiveMod.CurrentRundown - 1, ArchiveMod.CurrentRundown))
                             {
-                                var newSettingsFile = Path.Combine(_versionSpecificSavePath, GTFO_SETTINGS_JSON);
-                                ArchiveLogger.Debug($"Copying most recent settings file! (\"{olderSettingsFile}\" -> \"{newSettingsFile}\")");
-                                File.Copy(olderSettingsFile, newSettingsFile);
-                            }
-
-                            if (!ArchiveMod.IsPlayingModded)
-                            {
-                                var newFavs = GetFavoritesPath(ArchiveMod.CurrentRundown);
-                                var oldFavs = GetFavoritesPath(ArchiveMod.CurrentRundown - 1);
-
-                                if (File.Exists(oldFavs))
-                                {
-                                    ArchiveLogger.Debug($"Copying most recent favorites file! (\"{newFavs}\" -> \"{oldFavs}\")");
-                                    File.Copy(oldFavs, newFavs);
-                                }
-
-                                var newBotFavs = GetBotFavoritesPath(ArchiveMod.CurrentRundown);
-                                var oldBotFavs = GetBotFavoritesPath(ArchiveMod.CurrentRundown - 1);
-
-                                if (File.Exists(oldBotFavs))
-                                {
-                                    ArchiveLogger.Debug($"Copying most recent bot favorites file! (\"{newBotFavs}\" -> \"{oldBotFavs}\")");
-                                    File.Copy(oldBotFavs, newBotFavs);
-                                }
+                                ArchiveLogger.Notice("Creating new game settings file(s)!");
                             }
                         }
                         catch(Exception ex)
@@ -180,11 +156,55 @@ namespace TheArchive.Utilities
                             ArchiveLogger.Debug(ex.StackTrace);
                         }
                     }
-                        
                 }
 
                 return _versionSpecificSavePath;
             }
+        }
+
+        internal static bool CopyMostRecentSaveFiles(RundownID copyFrom, RundownID copyTo, int maxStep = 3)
+        {
+            if (copyFrom < RundownID.RundownOne)
+                return false;
+
+            var olderSettingsFile = GetSettingsPath(copyFrom);
+
+            if (!File.Exists(olderSettingsFile))
+            {
+                if (maxStep <= 1)
+                {
+                    return false;
+                }
+
+                return CopyMostRecentSaveFiles(copyFrom - 1, copyTo, maxStep - 1);
+            }
+
+            var newSettingsFile = GetSettingsPath(copyTo);
+            ArchiveLogger.Debug($"Copying most recent settings file! (\"{olderSettingsFile}\" -> \"{newSettingsFile}\")");
+            File.Copy(olderSettingsFile, newSettingsFile);
+
+            if (!ArchiveMod.IsPlayingModded)
+            {
+                var newFavs = GetFavoritesPath(copyTo);
+                var oldFavs = GetFavoritesPath(copyFrom);
+
+                if (File.Exists(oldFavs))
+                {
+                    ArchiveLogger.Debug($"Copying most recent favorites file! (\"{oldFavs}\" -> \"{newFavs}\")");
+                    File.Copy(oldFavs, newFavs);
+                }
+
+                var newBotFavs = GetBotFavoritesPath(copyTo);
+                var oldBotFavs = GetBotFavoritesPath(copyFrom);
+
+                if (File.Exists(oldBotFavs))
+                {
+                    ArchiveLogger.Debug($"Copying most recent bot favorites file! (\"{oldBotFavs}\" -> \"{newBotFavs}\")");
+                    File.Copy(oldBotFavs, newBotFavs);
+                }
+            }
+
+            return true;
         }
 
         public static string GetVersionSpecificSaveDirectoryPath(RundownID rundown)
