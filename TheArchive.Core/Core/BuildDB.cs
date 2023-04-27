@@ -66,6 +66,7 @@ namespace TheArchive.Core
             { 31994, RundownID.RundownSeven },
             { 32283, RundownID.RundownAltOne },
             { 32416, RundownID.RundownAltTwo },
+            { 32577, RundownID.RundownAltThree },
         };
 
         public static RundownID GetCurrentRundownID(int buildNumber)

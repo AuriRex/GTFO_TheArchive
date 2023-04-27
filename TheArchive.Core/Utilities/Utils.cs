@@ -350,7 +350,7 @@ namespace TheArchive.Utilities
         /// </summary>
         public enum RundownID : int
         {
-            Latest = RundownAltThree,
+            Latest = RundownAltFour,
 
             RundownUnitialized = -1,
             RundownUnknown,
@@ -364,11 +364,14 @@ namespace TheArchive.Utilities
             RundownAltOne,
             RundownAltTwo,
             RundownAltThree,
+            RundownAltFour,
         }
 
         [Flags]
         public enum RundownFlags : int
         {
+            Latest = RundownAltFour,
+
             None = 0,
             RundownOne = 1 << 0,
             RundownTwo = 1 << 1,
@@ -380,11 +383,11 @@ namespace TheArchive.Utilities
             RundownAltOne = 1 << 7,
             RundownAltTwo = 1 << 8,
             RundownAltThree = 1 << 9,
-            
-            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive | RundownSix | RundownSeven
-                | RundownAltOne | RundownAltTwo | RundownAltThree,
+            RundownAltFour = 1 << 10,
 
-            Latest = RundownAltThree,
+            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive | RundownSix | RundownSeven
+                | RundownAltOne | RundownAltTwo | RundownAltThree | RundownAltFour,
+
 #warning TODO: Latest as external constant because alias behave weird with ToString() depending on the amount of enum entries
         }
 
