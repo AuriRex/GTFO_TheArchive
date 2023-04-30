@@ -92,6 +92,7 @@ namespace TheArchive.Features.Accessibility
             foreach(PlayerAgent player in GetAllPlayers())
             {
                 if (player == null) continue;
+                if (player?.Owner == null) continue;
                 PlayerAgent_Setup_Patch.SetupColor(player.Owner, player.Owner.CharacterIndex);
             }
         }
@@ -101,6 +102,7 @@ namespace TheArchive.Features.Accessibility
             foreach (PlayerAgent player in GetAllPlayers())
             {
                 if (player == null) continue;
+                if (player?.Owner == null) continue;
                 var color = PlayerManager.GetStaticPlayerColor(player.Owner.CharacterIndex);
                 player.Owner.PlayerColor = color;
             }
@@ -169,9 +171,11 @@ namespace TheArchive.Features.Accessibility
                     return false;
                 }
 
+                var localPlayerCharacterId = PlayerManager.GetLocalPlayerAgent()?.CharacterID ?? -1;
+
                 if (Settings.Mode == PlayerColorOverrideSettings.ColorizationMode.LocalOnly)
                 {
-                    if (PlayerManager.GetLocalPlayerAgent().CharacterID == playerIndex)
+                    if (localPlayerCharacterId == playerIndex)
                     {
                         col = Settings.LocalPlayer.ToUnityColor();
                         return true;
@@ -181,7 +185,7 @@ namespace TheArchive.Features.Accessibility
                 }
 
                 if (Settings.Mode == PlayerColorOverrideSettings.ColorizationMode.CharacterAndLocal
-                    && PlayerManager.GetLocalPlayerAgent().CharacterID == playerIndex)
+                    && localPlayerCharacterId == playerIndex)
                 {
                     col = Settings.LocalPlayer.ToUnityColor();
                     return true;
@@ -211,7 +215,7 @@ namespace TheArchive.Features.Accessibility
                         break;
     
                     case PlayerColorOverrideSettings.ColorizationMode.OtherAndLocal:
-                        if(PlayerManager.GetLocalPlayerAgent().CharacterID == playerIndex)
+                        if(localPlayerCharacterId == playerIndex)
                         {
                             col = Settings.LocalPlayer.ToUnityColor();
                             break;
