@@ -287,6 +287,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\EnableLegacyHammers.cs" Link="Features\Special\EnableLegacyHammers.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\ExpeditionResultsScreenTweaks.cs" Link="Features\Special\ExpeditionResultsScreenTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\LoadingIndicator.cs" Link="Features\Special\LoadingIndicator.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\NamedBots.cs" Link="Features\Special\NamedBots.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\PlayerDialogFilter.cs" Link="Features\Special\PlayerDialogFilter.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\VanityDirtControl.cs" Link="Features\Special\VanityDirtControl.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\WeaponStats.cs" Link="Features\Special\WeaponStats.cs" />
