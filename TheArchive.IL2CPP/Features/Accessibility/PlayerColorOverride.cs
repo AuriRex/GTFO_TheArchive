@@ -151,7 +151,7 @@ namespace TheArchive.Features.Accessibility
                     return;
                 }
 
-                if (Settings.RemoteUseNicknameColorAsPlayerColor && ShouldApplyNickNameColor(player.Profile.nick.data, out var colNick))
+                if (!player.IsLocal && Settings.RemoteUseNicknameColorAsPlayerColor && ShouldApplyNickNameColor(player.Profile.nick.data, out var colNick))
                 {
                     player.PlayerColor = colNick;
                     return;

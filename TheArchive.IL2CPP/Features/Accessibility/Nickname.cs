@@ -131,7 +131,7 @@ namespace TheArchive.Features.Accessibility
 
             try
             {
-                var data = PlayerManager.GetLocalPlayerAgent()?.Owner?.PlatformData?.TryCastTo<SNet_SteamPlayerData>();
+                var data = player?.PlatformData?.TryCastTo<SNet_SteamPlayerData>();
                 if (data != null)
                 {
                     var personaName = SteamFriends.GetFriendPersonaName(data.SteamID);
