@@ -48,6 +48,9 @@ namespace TheArchive.Features.Special
 
         public override void OnDisable()
         {
+            if (IsApplicationQuitting)
+                return;
+
             SetAllBotNames(setToDefault: true);
         }
 
