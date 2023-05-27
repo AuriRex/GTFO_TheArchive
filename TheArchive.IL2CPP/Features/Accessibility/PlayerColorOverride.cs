@@ -228,7 +228,7 @@ namespace TheArchive.Features.Accessibility
             }
         }
 
-        private static readonly Regex _ShortColorTagRegex = new Regex(@"\<\#([1-9a-fA-F]{3})\>");
+        private static readonly Regex _ShortColorTagRegex = new Regex(@"\<\#([0-9a-fA-F]{3})\>");
 
         public static bool GetColorFromNickname(string nick, out Color color)
         {
