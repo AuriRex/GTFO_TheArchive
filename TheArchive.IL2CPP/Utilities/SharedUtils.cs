@@ -362,6 +362,8 @@ namespace TheArchive.Utilities
 
         public static bool SafeIsBot(this SNetwork.SNet_Player player)
         {
+            if (player == null)
+                return false;
             if (Feature.Is.R6OrLater)
                 return IsBotR6(player);
             return false;
