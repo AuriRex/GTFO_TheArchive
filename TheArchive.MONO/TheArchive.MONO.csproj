@@ -285,6 +285,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\ReactorDiscordRPC.cs" Link="Features\ReactorDiscordRPC.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\BotCustomization.cs" Link="Features\Special\BotCustomization.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\DetailedExpeditionDisplay.cs" Link="Features\Special\DetailedExpeditionDisplay.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\DontHideLoadoutUI.cs" Link="Features\Special\DontHideLoadoutUI.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\EnableLegacyHammers.cs" Link="Features\Special\EnableLegacyHammers.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\ExpeditionResultsScreenTweaks.cs" Link="Features\Special\ExpeditionResultsScreenTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\LoadingIndicator.cs" Link="Features\Special\LoadingIndicator.cs" />
