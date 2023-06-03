@@ -1,16 +1,13 @@
 ﻿using CellMenu;
-using Enemies;
 using Gear;
 using Player;
 using SNetwork;
 using System;
-using System.Runtime.InteropServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Interfaces;
-using TheArchive.Loader;
 using TheArchive.Utilities;
 using UnityEngine;
 
@@ -44,12 +41,91 @@ namespace TheArchive.Features.Special
             public string Hackett { get; set; } = nameof(Hackett);
             [FSMaxLength(25)]
             public string Bishop { get; set; } = nameof(Bishop);
+
+            [FSHide]
+            public VanitySettings VanityWoods { get; set; } = new VanitySettings();
+            [FSHide]
+            public VanitySettings VanityDauda { get; set; } = new VanitySettings();
+            [FSHide]
+            public VanitySettings VanityHackett { get; set; } = new VanitySettings();
+            [FSHide]
+            public VanitySettings VanityBishop { get; set; } = new VanitySettings();
+
+            public VanitySettings GetVanity(int characterIndex)
+            {
+                switch(characterIndex % 4)
+                {
+                    default:
+                    case 0:
+                        return VanityWoods;
+                    case 1:
+                        return VanityDauda;
+                    case 2:
+                        return VanityHackett;
+                    case 3:
+                        return VanityBishop;
+                }
+            }
+
+            public class VanitySettings
+            {
+                public uint Helmet { get; set; } = 0;
+                public uint Torso { get; set; } = 0;
+                public uint Legs { get; set; } = 0;
+                public uint Backpack { get; set; } = 0;
+                public uint Palette { get; set; } = 0;
+
+#if IL2CPP
+                public uint Get(ClothesType type)
+                {
+                    switch(type)
+                    {
+                        default:
+                            return 0;
+                        case ClothesType.Helmet:
+                            return Helmet;
+                        case ClothesType.Torso:
+                            return Torso;
+                        case ClothesType.Legs:
+                            return Legs;
+                        case ClothesType.Backpack:
+                            return Backpack;
+                        case ClothesType.Palette:
+                            return Palette;
+                    }
+                }
+
+                public void Set(ClothesType type, uint id)
+                {
+                    switch (type)
+                    {
+                        default:
+                            return;
+                        case ClothesType.Helmet:
+                            Helmet = id;
+                            return;
+                        case ClothesType.Torso:
+                            Torso = id;
+                            return;
+                        case ClothesType.Legs:
+                            Legs = id;
+                            return;
+                        case ClothesType.Backpack:
+                            Backpack = id;
+                            return;
+                        case ClothesType.Palette:
+                            Palette = id;
+                            return;
+                    }
+                }
+#endif
+            }
         }
 
 #if IL2CPP
         public override void OnEnable()
         {
-            SetAllBotNames();
+            SetAllBotNamesAndVanity();
         }
 
         public override void OnDisable()
@@ -57,15 +133,15 @@ namespace TheArchive.Features.Special
             if (IsApplicationQuitting)
                 return;
 
-            SetAllBotNames(setToDefault: true);
+            SetAllBotNamesAndVanity(setToDefault: true);
         }
 
         public override void OnFeatureSettingChanged(FeatureSetting setting)
         {
-            SetAllBotNames();
+            SetAllBotNamesAndVanity();
         }
 
-        public static void SetAllBotNames(bool setToDefault = false)
+        public static void SetAllBotNamesAndVanity(bool setToDefault = false)
         {
             if (!SNet.IsInLobby)
                 return;
@@ -80,6 +156,7 @@ namespace TheArchive.Features.Special
                 var agent = player.PlayerAgent.TryCastTo<PlayerAgent>();
 
                 SetBotName(agent, setToDefault);
+                SetVanity(agent, setToDefault);
             }
         }
 
@@ -111,6 +188,34 @@ namespace TheArchive.Features.Special
 
             if(agent.Owner.NickName != name)
                 agent.Owner.NickName = name;
+        }
+
+        private static ClothesType[] _vanity = new ClothesType[] {
+            ClothesType.Helmet,
+            ClothesType.Torso,
+            ClothesType.Legs,
+            ClothesType.Backpack,
+            ClothesType.Palette
+        };
+
+        public static void SetVanity(PlayerAgent agent, bool setToDefault = false)
+        {
+            if (!SNet.IsMaster)
+                return;
+
+            if (!agent.Owner.SafeIsBot())
+                return;
+
+            if (!PlayerBackpackManager.TryGetBackpack(agent.Owner, out var backpack))
+                return;
+
+            var vanity = Settings.GetVanity(agent.Owner.CharacterIndex);
+
+            foreach(var type in _vanity)
+            {
+                // ItemID 0 is considered default
+                backpack.EquipVanityItem(type, setToDefault ? 0 : vanity.Get(type));
+            }
         }
 
         public const string CLOTHES_BUTTON_NAME = $"{nameof(BotCustomization)}_ClothesButton";
@@ -147,6 +252,7 @@ namespace TheArchive.Features.Special
             public static void Postfix(PlayerAIBot __instance, PlayerAgent agent)
             {
                 SetBotName(agent);
+                SetVanity(agent);
             }
         }
 
@@ -405,12 +511,12 @@ namespace TheArchive.Features.Special
         [ArchivePatch(typeof(GearManager), nameof(GearManager.RegisterVanityItemAsEquipped))]
         internal static class GearManager_RegisterVanityItemAsEquipped_Patch
         {
-            public static bool Prefix()
+            public static bool Prefix(uint vanityItemId, ClothesType type)
             {
                 if (CM_PlayerLobbyBar_ShowClothesSelect_Patch.PreventVanityItemFavoritesSaving)
                 {
-                    // We're setting a bots vanity slot right now so we send the changes to other players
-                    // PlayerBackpackManager.ForceSyncAllBotInventories();
+                    var botPlayer = PlayerBackpackManager_GetLocalVanityItem_Patch.PlayerToGetApparelSelectVanityFor;
+                    Settings.GetVanity(botPlayer.CharacterIndex).Set(type, vanityItemId);
 
                     return ArchivePatch.SKIP_OG;
                 }
