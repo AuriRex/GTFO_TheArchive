@@ -162,10 +162,45 @@ namespace TheArchive.Utilities
             }
         }
 
+        internal static bool CopyFromBaseGameLocation(RundownID copyTo)
+        {
+            var defaultBasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "10 Chambers Collective", "GTFO");
+
+            var baseSettings = Path.Combine(defaultBasePath, "GTFO_Settings.txt");
+            var baseFavorites = Path.Combine(defaultBasePath, "GTFO_Favorites.txt");
+            var baseBotFavorites = Path.Combine(defaultBasePath, "GTFO_BotFavorites.txt");
+
+            if (File.Exists(baseSettings))
+            {
+                var newSettingsFile = GetSettingsPath(copyTo);
+                ArchiveLogger.Debug($"Copying vanilla game settings file! (\"{baseSettings}\" -> \"{newSettingsFile}\")");
+                File.Copy(baseSettings, newSettingsFile);
+
+                var newFavs = GetFavoritesPath(copyTo);
+                var newBotFavs = GetBotFavoritesPath(copyTo);
+
+                if (File.Exists(baseFavorites))
+                {
+                    ArchiveLogger.Debug($"Copying vanilla game favorites file! (\"{baseFavorites}\" -> \"{newFavs}\")");
+                    File.Copy(baseFavorites, newFavs);
+                }
+
+                if (File.Exists(baseBotFavorites))
+                {
+                    ArchiveLogger.Debug($"Copying vanilla game bot favorites file! (\"{baseBotFavorites}\" -> \"{newBotFavs}\")");
+                    File.Copy(baseBotFavorites, newBotFavs);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         internal static bool CopyMostRecentSaveFiles(RundownID copyFrom, RundownID copyTo, int maxStep = 3)
         {
             if (copyFrom < RundownID.RundownOne)
-                return false;
+                return CopyFromBaseGameLocation(copyTo);
 
             var olderSettingsFile = GetSettingsPath(copyFrom);
 
@@ -173,7 +208,7 @@ namespace TheArchive.Utilities
             {
                 if (maxStep <= 1)
                 {
-                    return false;
+                    return CopyFromBaseGameLocation(copyTo);
                 }
 
                 return CopyMostRecentSaveFiles(copyFrom - 1, copyTo, maxStep - 1);
