@@ -267,6 +267,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\GlassLiquidOverride.cs" Link="Features\Accessibility\GlassLiquidOverride.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\SentryMarkerTweaks.cs" Link="Features\Accessibility\SentryMarkerTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\CullingHook.cs" Link="Features\Dev\CullingHook.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\DamageLog.cs" Link="Features\Dev\DamageLog.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\StartupscreenOverride.cs" Link="Features\Dev\StartupscreenOverride.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\PlayerLobbyManagement.cs" Link="Features\PlayerLobbyManagement.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\CarryItemMarker.cs" Link="Features\QoL\CarryItemMarker.cs" />
