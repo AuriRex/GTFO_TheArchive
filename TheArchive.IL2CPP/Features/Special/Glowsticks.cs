@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
@@ -123,7 +124,7 @@ namespace TheArchive.Features.Special
                 LoaderWrapper.StartCoroutine(ColorGlowstick(__instance));
             }
 
-            public static IEnumerator ColorGlowstick(GlowstickInstance __instance)
+            public static IEnumerator ColorGlowstick(GlowstickInstance glowstickInstance)
             {
                 // Wait a single frame so we don't have to patch a generic method lol
                 yield return null;
@@ -169,9 +170,9 @@ namespace TheArchive.Features.Special
                 }
 
                 // Colorize the actual light source
-                
+                ChangeLightColor(glowstickInstance, col);
 
-                yield return CreateAndOrAssignEmission(__instance, col);
+                yield return CreateAndOrAssignEmission(glowstickInstance, col);
             }
 
             public static void ChangeLightColor(GlowstickInstance glowstickInstance, Color col)
@@ -182,6 +183,7 @@ namespace TheArchive.Features.Special
                 // Todo: Implement color change for R7 and below ...
             }
 
+            [MethodImpl(MethodImplOptions.NoInlining)]
             public static void ChangeLightColorAltAndLater(GlowstickInstance glowstickInstance, Color col)
             {
 #if IL2CPP
