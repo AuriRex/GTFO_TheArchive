@@ -11,10 +11,10 @@ This project is in a Beta state at the moment, expect some bugs and unfinished f
 
 ### Quick Links
  * [Highlighted Features](#Features)
-   * [Backported Features](#Backported-Features)
    * [Accessibility](#Accessibility)
    * [Quality of Life](#Quality-of-Life)
    * [Misc / Other](#Misc--Other)
+   * [Backported Features](#Backported-Features)
  * [How to Install](#Installation)
  * [Where are my saves?](#Where-are-my-saves)
  * [Building the project](#Technical-stuffs)
@@ -49,47 +49,10 @@ Game settings get saved to a different location for every Rundown so you only ha
 
 Having to redo your settings whenever you switch to another Rundown is now a thing of the past.
 
----
+## Re-Added Old Hammers - `[R6 - RL]`
 
-## Backported Features
-
-### Instant Hack Release - `[R1 - R4]`
-
-Rundown 5 changed hacks a tiny bit by unlocking locked objects sooner than before, this patch backports this into R1 to R4.
-
-### Center Map on Player - `[R1 - R2]`
-
-Center the map on yourself upon opening. (Has been added officially in R3)
-
-### Melee Cancel Backport - `[R1 - R5]`
-
-Rundown 6 replaced the shove on right click with a simple return of the weapon to it's idle position, this patch backports this all versions before R6.
-
-### Mine Fix Backport - `[R1 - R4]`
-
-According to the devs, mines didn't do the intended amount of damage before R5, this fixes the mine damage.
-
-### Terminal Zone Info - `[R1 - R5]`
-
-Rundown 6 added the terminals key and zone info into the terminal.
-
-### Throwables Run Fix - `[R1 - R5]`
-
-Before R6, trying to throw throwables and then sprinting caused you to instantly throw your item.  
-This patch allows you to sprint without this happening.
-
-### Alarm Class On Doors - `[R1 - R3]`
-
-Always shows the alarm class on security doors, this was not the case in R1 to R3 and doors did not show this information.
-
-### R1 Ladder Fix - `[R1]`
-
-`W` is up and `S` is down, no more weird looking up/down changes the way those buttons work on ladders.
-
-### R1 Visual Pings - `[R1]`
-
-On Rundown 1 builds there is no visual ping indicator that shows up after using the `PING` command inside of a terminal, there's only the sound that plays.  
-This feature allows the lobby host to display a visual indicator by abusing their middle mouse ping.
+All 4 of the old, pre rundown 6 melee weapons, are back:  
+Maul, Gavel, Mallet and Sledge can be enabled in the mod settings menu and will be added to the melee weapons menu on the loadout screen.
 
 ---
 
@@ -114,7 +77,8 @@ Also allows you to adjust what happens with audio whenever you tab outside of th
 
 ### Glass Liquid System Override
 
-Change the resolution of the system that renders the blood splatters and other liquids on your visor or disable it entirely.
+Change the resolution of the system that renders the blood splatters and other liquids on your visor or disable it entirely.  
+Disabling the system entirely prevents/"fixes" the so called "Void Bug" from happening, where sometimes a blob of darkness, the big black blob consumes your entire screen, making you unable to see anything for a few seconds up to minutes at a time.
 
 <details>
 <summary>📷 Glass Liquid Override Quality Settings Overview:</summary>
@@ -267,6 +231,15 @@ Displays a little indicator that shows if other players have finished loading ye
 Displayes the weapons stats on the weapon select screen.  
 Damage, clip size, max ammo and more
 
+### Glowsticks! - `[A1 - RL]`
+
+Change the base color to any of the available ones (Green, Yellow, Orange or Red) which syncs to other players!  
+And/Or override the color locally (for yourself only) based on one fixed color or based on who threw the glowstick.
+
+### Bot Customization - `[R6 - RL]`
+
+Customize your Bots appearance as host and change their names. (Syncs to other players!)
+
 ### Hud Toggle
 
 Toggle your Hud via a key press. `(F1)`
@@ -291,7 +264,49 @@ Build `19087` is/was a commonly redistributed version of Rundown 1
 
 ### Other things not mentioned
 
-Yes, there's more! (smaller things)
+Yes, there's (probably) more! (I usually forget to update this readme)
+
+---
+
+## Backported Features
+
+### Instant Hack Release - `[R1 - R4]`
+
+Rundown 5 changed hacks a tiny bit by unlocking locked objects sooner than before, this patch backports this into R1 to R4.
+
+### Center Map on Player - `[R1 - R2]`
+
+Center the map on yourself upon opening. (Has been added officially in R3)
+
+### Melee Cancel Backport - `[R1 - R5]`
+
+Rundown 6 replaced the shove on right click with a simple return of the weapon to it's idle position, this patch backports this all versions before R6.
+
+### Mine Fix Backport - `[R1 - R4]`
+
+According to the devs, mines didn't do the intended amount of damage before R5, this fixes the mine damage.
+
+### Terminal Zone Info - `[R1 - R5]`
+
+Rundown 6 added the terminals key and zone info into the terminal.
+
+### Throwables Run Fix - `[R1 - R5]`
+
+Before R6, trying to throw throwables and then sprinting caused you to instantly throw your item.  
+This patch allows you to sprint without this happening.
+
+### Alarm Class On Doors - `[R1 - R3]`
+
+Always shows the alarm class on security doors, this was not the case in R1 to R3 and doors did not show this information.
+
+### R1 Ladder Fix - `[R1]`
+
+`W` is up and `S` is down, no more weird looking up/down changes the way those buttons work on ladders.
+
+### R1 Visual Pings - `[R1]`
+
+On Rundown 1 builds there is no visual ping indicator that shows up after using the `PING` command inside of a terminal, there's only the sound that plays.  
+This feature allows the lobby host to display a visual indicator by abusing their middle mouse ping.
 
 ---
 

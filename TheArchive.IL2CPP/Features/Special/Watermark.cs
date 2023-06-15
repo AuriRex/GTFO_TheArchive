@@ -5,7 +5,7 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Features.Special
 {
-    [EnableFeatureByDefault]
+    //[EnableFeatureByDefault]
     public class Watermark : Feature
     {
         public override string Name => "Mod Watermark";
@@ -75,7 +75,7 @@ namespace TheArchive.Features.Special
 				try
                 {
 					string secondLine;
-					if (BuildInfo.Rundown.IsIncludedIn(Utils.RundownFlags.RundownSix.ToLatest()))
+					if (Is.R6OrLater)
 						secondLine = ogText;
 					else
 						secondLine = ogText.Split(new string[] { "\n" }, 2, StringSplitOptions.None)[1];
