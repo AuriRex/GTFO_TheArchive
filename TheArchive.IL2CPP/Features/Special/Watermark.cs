@@ -1,27 +1,68 @@
-﻿using System;
+﻿using Player;
+using System;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace TheArchive.Features.Special
 {
-    //[EnableFeatureByDefault]
-    public class Watermark : Feature
+	public class Watermark : Feature
     {
-        public override string Name => "Mod Watermark";
+        public override string Name => "Watermark";
 
 		public override string Group => FeatureGroups.Special;
 
-		public override string Description => $"Shows the mod version in the bottom right.\n(<#{ColorHex}>{ArchiveMod.MOD_NAME} v{ArchiveMod.VERSION_STRING}</color>)";
+		public override string Description => $"Configurable to either show your current position or the mod version in the bottom right:\n - <color=red>X:24</color> <color=green>Y:2</color> <color=blue>Z:-46</color>\n - <#{ColorHex}>{ArchiveMod.MOD_NAME} v{ArchiveMod.VERSION_STRING}</color>";
 
         public override bool SkipInitialOnEnable => true;
 
+        public override bool PlaceSettingsInSubMenu => true;
+
         public const string ColorHex = "FBF3FF";
+
+		public new static IArchiveLogger FeatureLogger { get; set; }
 
 		public override bool ShouldInit()
 		{
 			return !IsPlayingModded;
 		}
+
+		[FeatureConfig]
+		public static WatermarkSettings Settings { get; set; }
+
+        public class WatermarkSettings
+		{
+			[FSDisplayName("Watermark Mode")]
+			[FSDescription($"{nameof(WatermarkMode.Mod)}: Shows currently installed mod version\n{nameof(WatermarkMode.Positional)}: Shows your current position / XYZ coordinates")]
+			public WatermarkMode Mode { get; set; } = WatermarkMode.Positional;
+
+			[FSSlider(0f, 1f)]
+			[FSDisplayName("XYZ Saturation")]
+			[FSDescription("How much color to apply to the XYZ coords.")]
+			public float XYZSaturation { get; set; } = 0.5f;
+
+			[FSDisplayName("XYZ Decimals")]
+			[FSDescription("Decimal precision to show on the XYZ coords.")]
+			public DecimalPrecision Precision { get; set; } = DecimalPrecision.One;
+
+            public enum DecimalPrecision
+			{
+				None,
+				One,
+				Two,
+			}
+
+			public enum WatermarkMode
+			{
+				Mod,
+				Positional,
+			}
+        }
 
 #if MONO
 		private static MethodAccessor<PUI_Watermark> A_PUI_Watermark_UpdateWatermark;
@@ -29,21 +70,24 @@ namespace TheArchive.Features.Special
 
 		public override void Init()
         {
+            Setup();
 #if MONO
 			A_PUI_Watermark_UpdateWatermark = MethodAccessor<PUI_Watermark>.GetAccessor("UpdateWatermark");
 #endif
-		}
+        }
 
 
         public override void OnEnable()
         {
-			CallUpdateWatermark();
-		}
+            CallUpdateWatermark();
+            WatermarkTopLine?.gameObject?.SetActive(true);
+        }
 
 		public override void OnDisable()
 		{
 			CallUpdateWatermark();
-		}
+            WatermarkTopLine?.gameObject?.SetActive(false);
+        }
 
 		private static void CallUpdateWatermark()
         {
@@ -55,6 +99,84 @@ namespace TheArchive.Features.Special
 				A_PUI_Watermark_UpdateWatermark.Invoke(watermark);
 #endif
 		}
+
+        public override void OnFeatureSettingChanged(FeatureSetting setting)
+        {
+			Setup();
+            CallUpdateWatermark();
+        }
+
+        public static TMPro.TextMeshPro WatermarkTopLine { get; private set; }
+
+		private static string _format = "0.00"; 
+
+		private Color _cRed = Color.red;
+		private Color _cGreen = Color.green;
+		private Color _cBlue = Color.blue;
+
+		private string _cRedString;
+		private string _cGreenString;
+		private string _cBlueString;
+
+		public void Setup()
+		{
+            SetupColors(Settings.XYZSaturation);
+
+            switch (Settings.Precision)
+            {
+                case WatermarkSettings.DecimalPrecision.None:
+                    _format = "0";
+                    break;
+                case WatermarkSettings.DecimalPrecision.One:
+                    _format = "0.0";
+                    break;
+                case WatermarkSettings.DecimalPrecision.Two:
+                    _format = "0.00";
+                    break;
+            }
+        }
+
+		public Color SaturateColor(Color color, float saturation)
+		{
+			Color.RGBToHSV(color, out var H, out _, out var V);
+			return Color.HSVToRGB(H, saturation, V);
+        }
+
+		public void SetupColors(float saturation)
+		{
+            _cRedString = SaturateColor(_cRed, saturation).ToHexString();
+			_cGreenString = SaturateColor(_cGreen, saturation).ToHexString();
+			_cBlueString = SaturateColor(_cBlue, saturation).ToHexString();
+        }
+
+        public override void Update()
+        {
+			if (WatermarkTopLine == null)
+				return;
+
+			switch(Settings.Mode)
+			{
+				case WatermarkSettings.WatermarkMode.Positional:
+					break;
+				default:
+					return;
+			}
+
+			if(PlayerManager.TryGetLocalPlayerAgent(out var localPlayer))
+			{
+				Vector3 pos = localPlayer.transform.position;
+
+                WatermarkTopLine.text = $"<{_cRedString}>X:{pos.x.ToString(_format)}</color> <{_cGreenString}>Y:{pos.y.ToString(_format)}</color> <{_cBlueString}>Z:{pos.z.ToString(_format)}</color>";
+				WatermarkTopLine.Rebuild(CanvasUpdate.PreRender);
+            }
+			else if (WatermarkTopLine.text != string.Empty)
+            {
+                WatermarkTopLine.text = string.Empty;
+                WatermarkTopLine.Rebuild(CanvasUpdate.PreRender);
+            }
+        }
+
+        public const string TOPLINE_GO_NAME = $"{ArchiveMod.MOD_NAME}_WatermarkTopLine";
 
 		[ArchivePatch(typeof(PUI_Watermark), "UpdateWatermark")]
 		internal static class PUI_Watermark_UpdateWatermarkPatch
@@ -74,26 +196,42 @@ namespace TheArchive.Features.Special
 #endif
 				try
                 {
-					string secondLine;
-					if (Is.R6OrLater)
-						secondLine = ogText;
-					else
-						secondLine = ogText.Split(new string[] { "\n" }, 2, StringSplitOptions.None)[1];
+					var go = __instance.transform.GetChildWithExactName(TOPLINE_GO_NAME)?.gameObject;
 
-					var text = $"<#{ColorHex}>{ArchiveMod.MOD_NAME} v{ArchiveMod.VERSION_STRING}</color>\n{secondLine}";
+                    if (go == null)
+					{
+						go = GameObject.Instantiate(__instance.m_watermarkText.gameObject);
+						go.name = TOPLINE_GO_NAME;
+						go.transform.parent = __instance.transform;
+						go.transform.position = __instance.m_watermarkText.transform.position + new Vector3(0, 18, 0);
+
+                        WatermarkTopLine = go.GetComponent<TMPro.TextMeshPro>();
+                        WatermarkTopLine.text = string.Empty;
+
+						var rectTrans = go.GetComponent<RectTransform>();
+						rectTrans.sizeDelta = Vector2.zero;
+                    }
+
+                    WatermarkTopLine.text = $"<#{ColorHex}>{ArchiveMod.MOD_NAME} v{ArchiveMod.VERSION_STRING}</color>";
+					WatermarkTopLine.Rebuild(CanvasUpdate.PreRender);
+
+                    if (Is.R6OrLater)
+                        return;
+
+                    string secondLine = ogText.Split(new string[] { "\n" }, 2, StringSplitOptions.None)[1];
 
 #if IL2CPP
-					__instance.m_watermark = text;
-					__instance.m_watermarkText.text = text;
+                    __instance.m_watermark = secondLine;
+					__instance.m_watermarkText.text = secondLine;
 #else
-					___m_watermark = text;
-					___m_watermarkText.text = text;
+					___m_watermark = secondLine;
+					___m_watermarkText.text = secondLine;
 #endif
-				}
-				catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
-					ArchiveLogger.Error($"Watermark broke! Please fix~ {ex}: {ex.Message}");
-					ArchiveLogger.Exception(ex);
+                    FeatureLogger.Error($"Watermark broke! Please fix~ {ex}: {ex.Message}");
+                    FeatureLogger.Exception(ex);
                 }
 			}
 		}
