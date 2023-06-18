@@ -15,6 +15,8 @@ namespace TheArchive.Utilities
 
         private static readonly HashSet<string> _ignoreListStartsWith = new HashSet<string>() {
             "Wielding new item in slot",
+            "Backend.", // Just constant console spam in Alt://R4
+            "BE.OnGameEvent", // Same but Alt://R5
         };
 
         public static void Ignore(string str) => _ignoreListExact.Add(str);
