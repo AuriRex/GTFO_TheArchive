@@ -18,8 +18,6 @@ namespace TheArchive.Features.Accessibility
 
         public override string Description => "Adjust the games \"Glass Liquid System\"\nThe thing that renders the blood splatters etc on your visor.";
 
-        public override bool PlaceSettingsInSubMenu => true;
-
         [FeatureConfig]
         public static GlassLiquidOverrideSettings Settings { get; set; }
 

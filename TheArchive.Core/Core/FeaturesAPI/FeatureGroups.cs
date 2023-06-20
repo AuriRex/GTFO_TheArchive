@@ -51,12 +51,15 @@ namespace TheArchive.Core.FeaturesAPI
         }
 
         public static Group Accessibility { get; private set; } = Group.GetOrCreate("Accessibility");
+        public static Group Backport { get; private set; } = Group.GetOrCreate("Backport");
+        public static Group Cosmetic { get; private set; } = Group.GetOrCreate("Cosmetic");
+        public static Group Dev { get; private set; } = Group.GetOrCreate("Developer");
         public static Group Fixes { get; private set; } = Group.GetOrCreate("Fixes");
         public static Group Hud { get; private set; } = Group.GetOrCreate("HUD / UI");
-        public static Group Special { get; private set; } = Group.GetOrCreate("Misc");
-        public static Group Dev { get; private set; } = Group.GetOrCreate("Developer");
-        public static Group Backport { get; private set; } = Group.GetOrCreate("Backport");
-        public static Group QualityOfLife { get; private set; } = Group.GetOrCreate("Quality of Life");
         public static Group LocalProgression { get; private set; } = Group.GetOrCreate("Local Progression"); // , group => group.InlineSettings = true
+        public static Group Special { get; private set; } = Group.GetOrCreate("Misc");
+        public static Group Presence { get; private set; } = Group.GetOrCreate("Discord / Steam Presence");
+        public static Group Security { get; private set; } = Group.GetOrCreate("Security / Anti Cheat");
+        public static Group QualityOfLife { get; private set; } = Group.GetOrCreate("Quality of Life");
     }
 }

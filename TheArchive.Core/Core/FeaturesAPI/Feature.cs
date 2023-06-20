@@ -19,6 +19,7 @@ namespace TheArchive.Core.FeaturesAPI
         public bool IsHidden => FeatureInternal.HideInModSettings;
         public bool BelongsToGroup => Group != null;
         public bool HasAdditionalSettings => FeatureInternal.HasAdditionalSettings;
+        public bool AllAdditionalSettingsAreHidden => FeatureInternal.AllAdditionalSettingsAreHidden;
         public IEnumerable<FeatureSettingsHelper> SettingsHelpers => FeatureInternal.Settings;
         public void RequestRestart() => FeatureManager.RequestRestart(this);
         public void RevokeRestartRequest() => FeatureManager.RevokeRestartRequest(this);
@@ -89,10 +90,13 @@ namespace TheArchive.Core.FeaturesAPI
         /// </summary>
         public virtual bool RequiresUnityAudioListener => false;
 
-        /// <summary>
-        /// If this <see cref="Feature"/>s settings should be put into a sub menu inside of the Mod Settings menu
-        /// </summary>
+        [Obsolete($"Remove or use {nameof(InlineSettingsIntoParentMenu)} instead if inlining is intended")]
         public virtual bool PlaceSettingsInSubMenu => false;
+
+        /// <summary>
+        /// If this <see cref="Feature"/>s settings should be put inside of íts parent menu in the Mod Settings menu
+        /// </summary>
+        public virtual bool InlineSettingsIntoParentMenu => false;
 
         /// <summary>
         /// Called once upon application start before <see cref="Init"/> and before any patches have been loaded
@@ -217,24 +221,6 @@ namespace TheArchive.Core.FeaturesAPI
 
         }
 
-        /// <summary>
-        /// Store a value
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="obj"></param>
-        /// <returns>true if the value has been stored successfully</returns>
-        public bool TryStore<T>(string key, T obj) => FeatureInternal.Store(key, obj);
-
-        /// <summary>
-        /// Retrieve a stored value via a key
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <returns>true if a value has been returned</returns>
-        public bool TryRetrieve<T>(string key, out T value) => FeatureInternal.Retrieve(key, out value);
-
         internal FeatureInternal FeatureInternal { get; set; }
         public static bool IsPlayingModded => ArchiveMod.IsPlayingModded;
         public static bool DevMode => ArchiveMod.Settings.FeatureDevMode;
@@ -271,6 +257,8 @@ namespace TheArchive.Core.FeaturesAPI
             Is.A3OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltThree.ToLatest());
             Is.A4 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltFour);
             Is.A4OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltFour.ToLatest());
+            Is.A5 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltFive);
+            Is.A5OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltFive.ToLatest());
         }
 
         /// <summary>
@@ -300,8 +288,8 @@ namespace TheArchive.Core.FeaturesAPI
             public static bool A3OrLater { get; internal set; }
             public static bool A4 { get; internal set; }
             public static bool A4OrLater { get; internal set; }
+            public static bool A5 { get; internal set; }
+            public static bool A5OrLater { get; internal set; }
         }
-
-        
     }
 }

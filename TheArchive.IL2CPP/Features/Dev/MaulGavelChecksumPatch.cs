@@ -12,6 +12,8 @@ namespace TheArchive.Features.Dev
 
         public override string Group => FeatureGroups.Dev;
 
+        public override string Description => "Fixes the Maul and Gavel hammers having the same icon.";
+
         // Fix for Maul and Gavel having the same Checksum for SOME reason ...
 #if IL2CPP
         [ArchivePatch(typeof(GearIDRange), "GetChecksum")]

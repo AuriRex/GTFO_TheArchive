@@ -15,6 +15,8 @@ namespace TheArchive.Features.LocalProgression
     {
         public override string Name => nameof(ExpeditionUnlockSkip);
 
+        public override string Group => FeatureGroups.LocalProgression;
+
         public static new IArchiveLogger FeatureLogger { get; set; }
 
         public override void OnEnable()

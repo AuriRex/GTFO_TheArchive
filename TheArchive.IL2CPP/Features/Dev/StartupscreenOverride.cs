@@ -10,6 +10,8 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => nameof(StartupscreenOverride);
 
+        public override string Group => FeatureGroups.Dev;
+
         [ArchivePatch(typeof(PlayFabManager), "TryGetStartupScreenData")]
         internal class PlayFabManager_TryGetStartupScreenData_Patch
         {

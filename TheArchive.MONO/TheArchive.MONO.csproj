@@ -152,9 +152,6 @@
 		<Compile Include="..\TheArchive.IL2CPP\Features\Backport\ThrowablesRunFix.cs">
 			<Link>Features\Backport\ThrowablesRunFix.cs</Link>
 		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\CustomLobbyCodeString.cs">
-			<Link>Features\CustomLobbyCodeString.cs</Link>
-		</Compile>
 		<Compile Include="..\TheArchive.IL2CPP\Features\Dev\AnalyticsBlocker.cs">
 			<Link>Features\Dev\AnalyticsBlocker.cs</Link>
 		</Compile>
@@ -173,12 +170,6 @@
 		<Compile Include="..\TheArchive.IL2CPP\Features\Dev\RedirectSettings.cs">
 			<Link>Features\Dev\RedirectSettings.cs</Link>
 		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\DiscordRichPresence.cs">
-			<Link>Features\DiscordRichPresence.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\HudToggle.cs">
-			<Link>Features\HudToggle.cs</Link>
-		</Compile>
 		<Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\ExpeditionUnlockSkip.cs">
 			<Link>Features\LocalProgression\ExpeditionUnlockSkip.cs</Link>
 		</Compile>
@@ -196,54 +187,6 @@
 		</Compile>
 		<Compile Include="..\TheArchive.IL2CPP\Features\LocalProgression\PlayFabManagerPatches.cs">
 			<Link>Features\LocalProgression\PlayFabManagerPatches.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\QoL\LoadoutRandomizer.cs">
-			<Link>Features\QoL\LoadoutRandomizer.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\QoL\MapToObjectivesSwitchFix.cs">
-			<Link>Features\QoL\MapToObjectivesSwitchFix.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\QoL\ResourcePrioritizationPings.cs">
-			<Link>Features\QoL\ResourcePrioritizationPings.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\QoL\UnreadyButtonPatches.cs">
-			<Link>Features\QoL\UnreadyButtonPatches.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\RichPresenceCore.cs">
-			<Link>Features\RichPresenceCore.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\Special\CustomWeaponFOV.cs">
-			<Link>Features\Special\CustomWeaponFOV.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\Special\HideFirstPersonItem.cs">
-			<Link>Features\Special\HideFirstPersonItem.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\Special\IntroSkip.cs">
-			<Link>Features\Special\IntroSkip.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\Special\MuteSpeak.cs">
-			<Link>Features\Special\MuteSpeak.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\Special\ProcessPriority.cs">
-			<Link>Features\Special\ProcessPriority.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveChatRestrictions.cs">
-			<Link>Features\Special\RemoveChatRestrictions.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveDownedMessage.cs">
-			<Link>Features\Special\RemoveDownedMessage.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\Special\UnityRandomOverrider.cs">
-			<Link>Features\Special\UnityRandomOverrider.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\Special\Watermark.cs">
-			<Link>Features\Special\Watermark.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\Special\WeaponShootForward.cs">
-			<Link>Features\Special\WeaponShootForward.cs</Link>
-		</Compile>
-		<Compile Include="..\TheArchive.IL2CPP\Features\SteamRichPresenceTweaks.cs">
-			<Link>Features\SteamRichPresenceTweaks.cs</Link>
 		</Compile>
 		<Compile Include="..\TheArchive.IL2CPP\Utilities\SColorExtensions.cs">
 			<Link>Utilities\SColorExtensions.cs</Link>
@@ -266,34 +209,57 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DynamicVolumeOverride.cs" Link="Features\Accessibility\DynamicVolumeOverride.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\GlassLiquidOverride.cs" Link="Features\Accessibility\GlassLiquidOverride.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\SentryMarkerTweaks.cs" Link="Features\Accessibility\SentryMarkerTweaks.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Backport\UnreadyButtonPatches.cs" Link="Features\Backport\UnreadyButtonPatches.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Cosmetic\BotCustomization.cs" Link="Features\Cosmetic\BotCustomization.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Cosmetic\CustomWeaponFOV.cs" Link="Features\Cosmetic\CustomWeaponFOV.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Cosmetic\EnableLegacyHammers.cs" Link="Features\Cosmetic\EnableLegacyHammers.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Cosmetic\Glowsticks.cs" Link="Features\Cosmetic\Glowsticks.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Cosmetic\VanityDirtControl.cs" Link="Features\Cosmetic\VanityDirtControl.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\CullingHook.cs" Link="Features\Dev\CullingHook.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\DamageLog.cs" Link="Features\Dev\DamageLog.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ForcedSeed.cs" Link="Features\Dev\ForcedSeed.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\IconRenderSettings.cs" Link="Features\Dev\IconRenderSettings.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\PlayerDialogFilter.cs" Link="Features\Dev\PlayerDialogFilter.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\StartupscreenOverride.cs" Link="Features\Dev\StartupscreenOverride.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\PlayerLobbyManagement.cs" Link="Features\PlayerLobbyManagement.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\CarryItemMarker.cs" Link="Features\QoL\CarryItemMarker.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\CombatIndicator.cs" Link="Features\QoL\CombatIndicator.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\FlashlightIconColors.cs" Link="Features\QoL\FlashlightIconColors.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\InteractionFix.cs" Link="Features\QoL\InteractionFix.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\UnityRandomOverrider.cs" Link="Features\Dev\UnityRandomOverrider.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\BioTrackerStuckSoundFix.cs" Link="Features\Fixes\BioTrackerStuckSoundFix.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\InteractionFix.cs" Link="Features\Fixes\InteractionFix.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\MapToObjectivesSwitchFix.cs" Link="Features\Fixes\MapToObjectivesSwitchFix.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\NoDeadPings.cs" Link="Features\Fixes\NoDeadPings.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\ReloadMinusOneBugFix.cs" Link="Features\Fixes\ReloadMinusOneBugFix.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\WeaponShootForward.cs" Link="Features\Fixes\WeaponShootForward.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\CarryItemMarker.cs" Link="Features\Hud\CarryItemMarker.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\CombatIndicator.cs" Link="Features\Hud\CombatIndicator.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\DetailedExpeditionDisplay.cs" Link="Features\Hud\DetailedExpeditionDisplay.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\DontHideLoadoutUI.cs" Link="Features\Hud\DontHideLoadoutUI.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\ExpeditionResultsScreenTweaks.cs" Link="Features\Hud\ExpeditionResultsScreenTweaks.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\FlashlightIconColors.cs" Link="Features\Hud\FlashlightIconColors.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\HudToggle.cs" Link="Features\Hud\HudToggle.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\LoadingIndicator.cs" Link="Features\Hud\LoadingIndicator.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\PuzzleHUDTweaks.cs" Link="Features\Hud\PuzzleHUDTweaks.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\RemoveDownedMessage.cs" Link="Features\Hud\RemoveDownedMessage.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\Watermark.cs" Link="Features\Hud\Watermark.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\WeaponStats.cs" Link="Features\Hud\WeaponStats.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Presence\DiscordRichPresence.cs" Link="Features\Presence\DiscordRichPresence.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Presence\ReactorDiscordRPC.cs" Link="Features\Presence\ReactorDiscordRPC.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Presence\RichPresenceCore.cs" Link="Features\Presence\RichPresenceCore.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Presence\SteamRichPresenceTweaks.cs" Link="Features\Presence\SteamRichPresenceTweaks.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\IntroSkip.cs" Link="Features\QoL\IntroSkip.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\L4DStylePacks.cs" Link="Features\QoL\L4DStylePacks.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoDeadPings.cs" Link="Features\QoL\NoDeadPings.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\LoadoutRandomizer.cs" Link="Features\QoL\LoadoutRandomizer.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoDroppedMagazineSounds.cs" Link="Features\QoL\NoDroppedMagazineSounds.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoNavMarkerHideInChat.cs" Link="Features\QoL\NoNavMarkerHideInChat.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoStoryDialog.cs" Link="Features\QoL\NoStoryDialog.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\ReloadMinusOneBugFix.cs" Link="Features\QoL\ReloadMinusOneBugFix.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\ReloadSoundCue.cs" Link="Features\QoL\ReloadSoundCue.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\ResourcePrioritizationPings.cs" Link="Features\QoL\ResourcePrioritizationPings.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\SituationalAwareWeaponSwitch.cs" Link="Features\QoL\SituationalAwareWeaponSwitch.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\SkipElevatorAnimation.cs" Link="Features\QoL\SkipElevatorAnimation.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\ReactorDiscordRPC.cs" Link="Features\ReactorDiscordRPC.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\BotCustomization.cs" Link="Features\Special\BotCustomization.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\DetailedExpeditionDisplay.cs" Link="Features\Special\DetailedExpeditionDisplay.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\DontHideLoadoutUI.cs" Link="Features\Special\DontHideLoadoutUI.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\EnableLegacyHammers.cs" Link="Features\Special\EnableLegacyHammers.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\ExpeditionResultsScreenTweaks.cs" Link="Features\Special\ExpeditionResultsScreenTweaks.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\Glowsticks.cs" Link="Features\Special\Glowsticks.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\LoadingIndicator.cs" Link="Features\Special\LoadingIndicator.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\PlayerDialogFilter.cs" Link="Features\Special\PlayerDialogFilter.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\VanityDirtControl.cs" Link="Features\Special\VanityDirtControl.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\WeaponStats.cs" Link="Features\Special\WeaponStats.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Security\PlayerLobbyManagement.cs" Link="Features\Security\PlayerLobbyManagement.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\CustomLobbyCodeString.cs" Link="Features\Special\CustomLobbyCodeString.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\HideFirstPersonItem.cs" Link="Features\Special\HideFirstPersonItem.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\MuteSpeak.cs" Link="Features\Special\MuteSpeak.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\ProcessPriority.cs" Link="Features\Special\ProcessPriority.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\RemoveChatRestrictions.cs" Link="Features\Special\RemoveChatRestrictions.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
@@ -303,6 +269,11 @@
 		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
+		<Folder Include="Features\Fixes\" />
+		<Folder Include="Features\Cosmetic\" />
+		<Folder Include="Features\QoL\" />
+		<Folder Include="Features\Presence\" />
+		<Folder Include="Features\Security\" />
 		<Folder Include="Managers\" />
 		<Folder Include="Properties\" />
 	</ItemGroup>

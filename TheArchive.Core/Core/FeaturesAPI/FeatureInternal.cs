@@ -28,6 +28,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal bool AutomatedFeature { get; private set; }
         internal bool DisableModSettingsButton { get; private set; }
         internal bool HasAdditionalSettings => _settingsHelpers.Count > 0;
+        internal bool AllAdditionalSettingsAreHidden { get; private set; } = true;
         internal bool InitialEnabledState { get; private set; } = false;
         internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
@@ -499,6 +500,9 @@ namespace TheArchive.Core.FeaturesAPI
                 var configInstance = LocalFiles.LoadFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
 
                 settingsHelper.SetupViaFeatureInstance(configInstance);
+
+                if (settingsHelper.Settings.Any(fs => !fs.HideInModSettings))
+                    AllAdditionalSettingsAreHidden = false;
             }
         }
 

@@ -12,9 +12,12 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Redirect Settings";
 
+        public override string Group => FeatureGroups.Dev;
+
+        public override string Description => "Redirect settings load/save location";
+
         public override bool RequiresRestart => true;
 
-        public override string Group => FeatureGroups.Dev;
 
         [ArchivePatch(typeof(UnityEngine.Application), nameof(UnityEngine.Application.persistentDataPath), patchMethodType: ArchivePatch.PatchMethodType.Getter)]
         public static class Application_persistentDataPath_Patch

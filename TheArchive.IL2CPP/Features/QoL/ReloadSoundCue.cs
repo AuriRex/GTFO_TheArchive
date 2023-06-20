@@ -16,8 +16,6 @@ namespace TheArchive.Features.QoL
 
         public override string Description => "Play a sound cue on reload the moment the bullets have entered your gun.";
 
-        public override bool PlaceSettingsInSubMenu => true;
-
         public new static IArchiveLogger FeatureLogger { get; set; }
 
         [FeatureConfig]

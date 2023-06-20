@@ -15,8 +15,6 @@ namespace TheArchive.Features.Dev
 
         public override string Description => $"Force Seeds used to randomize objectives, boxes and enemies spawns.\n\n<#F00>(Master only!)</color>\n(Probably doesn't work in multiplayer, idk ... haven't tested it :p)";
 
-        public override bool PlaceSettingsInSubMenu => true;
-
         public static new IArchiveLogger FeatureLogger { get; set; }
 
         [FeatureConfig]

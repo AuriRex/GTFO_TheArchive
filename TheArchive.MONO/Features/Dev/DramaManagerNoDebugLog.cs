@@ -9,7 +9,10 @@ namespace TheArchive.Features.Dev
     public class DramaManagerNoDebugLog : Feature
     {
         public override string Name => nameof(DramaManagerNoDebugLog);
+
         public override string Group => FeatureGroups.Dev;
+
+        public override string Description => "Prevent DramaManager debug log spam on R1 to R3.";
 
 #if MONO
         [ArchivePatch(typeof(DramaManager), nameof(DramaManager.FullDebugLog))]

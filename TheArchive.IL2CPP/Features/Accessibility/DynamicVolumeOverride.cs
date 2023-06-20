@@ -21,8 +21,6 @@ namespace TheArchive.Features.Accessibility
 
         public override string Description => "Lower the game volume during loud sections:\n- game intro\n- elevator drop";
 
-        public override bool PlaceSettingsInSubMenu => true;
-
         public static bool IsOverrideActive { get; private set; } = false;
         public static bool IsLerpActive { get; private set; } = false;
 

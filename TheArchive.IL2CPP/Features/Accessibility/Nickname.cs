@@ -22,8 +22,6 @@ namespace TheArchive.Features.Accessibility
 
         public override string Description => "Nickname related settings.";
 
-        public override bool PlaceSettingsInSubMenu => true;
-
         public class NicknameSettings
         {
             [FSDescription($"Modes explained using <#C21F4E>this</color> as the character color and <#404>this</color> as the custom color:\n\n<#E4A818>{nameof(NicknameMode.Normal)}</color>:\n <#C21F4E>> > Nickname</color>: Some chat message here.\n<#E4A818>{nameof(NicknameMode.Color)}</color>:\n <#C21F4E>> > <#404>Nickname</color>: Some chat message here.\n</color><#E4A818>{nameof(NicknameMode.TerminatedColor)}</color>:\n <#C21F4E>> > <#404>Nickname</color></color>: Some chat message here.")]

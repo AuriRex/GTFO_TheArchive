@@ -143,7 +143,6 @@
 		</Compile>
 		<Compile Include="..\TheArchive.MONO\Features\Backport\CenterMapOnPlayer.cs" Link="Features\Backport\CenterMapOnPlayer.cs" />
 		<Compile Include="..\TheArchive.MONO\Features\Backport\DontPauseAudio.cs" Link="Features\Backport\DontPauseAudio.cs" />
-		<Compile Include="..\TheArchive.MONO\Features\Backport\EnhancedExpeditionTimer.cs" Link="Features\Backport\EnhancedExpeditionTimer.cs" />
 		<Compile Include="..\TheArchive.MONO\Features\Backport\R1LadderFix.cs">
 			<Link>Features\Backport\R1LadderFix.cs</Link>
 		</Compile>
@@ -153,6 +152,7 @@
 		<Compile Include="..\TheArchive.MONO\Features\Dev\DramaManagerNoDebugLog.cs">
 			<Link>Features\Dev\DramaManagerNoDebugLog.cs</Link>
 		</Compile>
+		<Compile Include="..\TheArchive.MONO\Features\Hud\EnhancedExpeditionTimer.cs" Link="Features\Hud\EnhancedExpeditionTimer.cs" />
 		<Compile Include="..\TheArchive.MONO\Features\Special\R1SNetRevisionOverridePatch.cs">
 			<Link>Features\Special\R1SNetRevisionOverridePatch.cs</Link>
 		</Compile>

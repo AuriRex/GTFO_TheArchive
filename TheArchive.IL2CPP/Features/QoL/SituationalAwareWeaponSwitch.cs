@@ -19,8 +19,6 @@ namespace TheArchive.Features.QoL
 
         public override string Description => "Switch to either your Melee weapon or Primary depending on if you're sneaking around or in combat after depleting all of your throwables / exit a ladder.";
 
-        public override bool PlaceSettingsInSubMenu => true;
-
         public new static IArchiveLogger FeatureLogger { get; set; }
 
         [FeatureConfig]

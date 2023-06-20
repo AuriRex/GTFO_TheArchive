@@ -1,6 +1,6 @@
 ﻿using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Features.Special;
+using TheArchive.Features.Dev;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Accessibility

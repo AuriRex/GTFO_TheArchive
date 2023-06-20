@@ -17,6 +17,8 @@ namespace TheArchive.Features.LocalProgression
 
         public override string Group => FeatureGroups.LocalProgression;
 
+        public override bool InlineSettingsIntoParentMenu => true;
+
         public override bool RequiresRestart => true;
 
         public new static IArchiveLogger FeatureLogger { get; set; }
@@ -83,9 +85,11 @@ namespace TheArchive.Features.LocalProgression
             [FSHeader("Progression :// Misc")]
             [FSRundownHint(RundownFlags.Latest)]
             [FSDisplayName("Use Servers on Latest")]
+            [FSDescription($"Disables the options above automatically on the latest game version")]
             public bool DisableLocalProgressionOnLatest { get; set; } = true;
 
             [FSDisplayName("All Expeditions Unlocked")]
+            [FSDescription("Only works with LocalProgression enabled!")]
             public bool SkipExpeditionUnlockRequirements { get; set; } = false;
         }
     }

@@ -17,8 +17,6 @@ namespace TheArchive.Features.Accessibility
 
         public override string Description => "Add hud markers onto placed down sentry guns and tweak how those are shown.";
 
-        public override bool PlaceSettingsInSubMenu => true;
-
         public override bool SkipInitialOnEnable => true;
 
         [FeatureConfig]

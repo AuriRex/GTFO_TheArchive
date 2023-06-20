@@ -16,6 +16,8 @@ namespace TheArchive.Features.Dev
 
         public override string Group => FeatureGroups.Dev;
 
+        public override string Description => "Prints Unity debug logs into the <i>MelonLoader</i> console.";
+
         //Log
 #if IL2CPP
         [ArchivePatch(typeof(Debug), nameof(Debug.Log), new Type[] { typeof(Il2CppSystem.Object) })]

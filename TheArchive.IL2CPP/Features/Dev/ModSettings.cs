@@ -29,10 +29,12 @@ namespace TheArchive.Features.Dev
     public class ModSettings : Feature
     {
         public override string Name => "Mod Settings (this)";
+        
+        public override string Group => FeatureGroups.Dev;
+
+        public override string Description => "<color=red>WARNING!</color> Disabling this makes you unable to change settings in game via this very menu after a restart!";
 
         public override bool RequiresRestart => true;
-
-        public override string Group => FeatureGroups.Dev;
 
         public new static IArchiveLogger FeatureLogger { get; set; }
 
@@ -634,7 +636,7 @@ namespace TheArchive.Features.Dev
                     {
                         groupSubMenu = new SubMenu(groupName);
 
-                        var featuresCount = featureSet.Where(f => !f.IsHidden).Count();
+                        var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
                         CreateSubMenuControls(groupSubMenu, menuEntryLabelText: $"{featuresCount} Feature{(featuresCount == 1 ? string.Empty : "s")} >>");
 
                         CreateHeader(groupName, subMenu: groupSubMenu);
@@ -683,7 +685,7 @@ namespace TheArchive.Features.Dev
                     if (!inlineSettings)
                     {
                         otherModSubMenu = new SubMenu(headerTitle);
-                        var featuresCount = featuresFromMod.Where(f => !f.IsHidden).Count();
+                        var featuresCount = featuresFromMod.Where(f => !f.IsHidden || DevMode).Count();
                         CreateSubMenuControls(otherModSubMenu, menuEntryLabelText: $"{featuresCount} Feature{(featuresCount == 1 ? string.Empty : "s")} >>");
 
                         CreateHeader(headerTitle, subMenu: otherModSubMenu);
@@ -802,10 +804,9 @@ namespace TheArchive.Features.Dev
                     }
 
                     SubMenu subMenu = null;
-                    if(feature.PlaceSettingsInSubMenu)
+                    if(!feature.InlineSettingsIntoParentMenu && feature.HasAdditionalSettings && !feature.AllAdditionalSettingsAreHidden)
                     {
                         subMenu = new SubMenu(featureName);
-                        feature.TryStore("SubMenu", subMenu);
                         featureName = $"<u>{featureName}</u>";
                     }
 
