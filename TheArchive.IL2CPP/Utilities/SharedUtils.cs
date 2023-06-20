@@ -181,14 +181,16 @@ namespace TheArchive.Utilities
                 item.m_onBtnPress = new UnityEngine.Events.UnityEvent();
 
 #if IL2CPP
-            item.OnBtnPressCallback = onButtonPress;
+            if(onButtonPress != null)
+                item.OnBtnPressCallback = onButtonPress;
             if(onButtonHover != null)
                 item.OnBtnHoverChanged = onButtonHover;
 #else
             MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnHoverChanged), item);
             MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnPressCallback), item);
 
-            item.OnBtnPressCallback += onButtonPress;
+            if(onButtonPress!= null)
+                item.OnBtnPressCallback += onButtonPress;
             if(onButtonHover != null)
                 item.OnBtnHoverChanged += onButtonHover;
 #endif
@@ -268,6 +270,24 @@ namespace TheArchive.Utilities
                 if (child.name == name) return child;
             }
             return null;
+        }
+
+        public static void SafeDestroyGO(this GameObject go) => go.SafeDestroy();
+
+        public static void SafeDestroyGO(this Component comp) => comp?.gameObject.SafeDestroy();
+
+        public static void SafeDestroy(this GameObject go)
+        {
+            if (go == null)
+                return;
+            UnityEngine.Object.Destroy(go);
+        }
+
+        public static void SafeDestroy(this Component comp)
+        {
+            if (comp == null)
+                return;
+            UnityEngine.Object.Destroy(comp);
         }
 
         public static T GetComponentOnSelfOrParents<T>(this Transform trans) where T : Component

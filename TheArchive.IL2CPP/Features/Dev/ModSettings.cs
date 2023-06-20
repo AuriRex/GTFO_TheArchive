@@ -317,7 +317,7 @@ namespace TheArchive.Features.Dev
             }
         }
 
-        public class DescriptionPanel
+        public class DescriptionPanel : IDisposable
         {
             private CM_ScrollWindow _backgroundPanel;
             private TMPro.TextMeshPro _headerText;
@@ -362,6 +362,12 @@ namespace TheArchive.Features.Dev
                 AddToAllSettingsWindows(_backgroundPanel);
             }
 
+            public void Dispose()
+            {
+                RemoveFromAllSettingsWindows(_backgroundPanel);
+                _backgroundPanel.SafeDestroyGO();
+            }
+
             public void Show(string title, string content)
             {
                 _backgroundPanel.gameObject.SetActive(true);
@@ -377,17 +383,22 @@ namespace TheArchive.Features.Dev
             {
                 _backgroundPanel.gameObject.SetActive(false);
             }
+
         }
 
         public static class PageSettingsData
         {
             internal static GameObject SettingsItemPrefab { get; set; }
             internal static CM_ScrollWindow MainModSettingsScrollWindow { get; set; }
-            internal static List<iScrollWindowContent> ScrollWindowContentElements { get; set; }
+            internal static List<iScrollWindowContent> ScrollWindowContentElements { get; set; } = new List<iScrollWindowContent>();
+            internal static List<CM_ScrollWindow> AllSubmenuScrollWindows { get; set; } = new List<CM_ScrollWindow>();
             internal static Transform MainScrollWindowTransform { get; set; }
             internal static CM_ScrollWindow PopupWindow { get; set; }
             internal static CM_PageSettings SettingsPageInstance { get; set; }
             internal static DescriptionPanel TheDescriptionPanel { get; set; }
+
+            internal static CM_Item MainModSettingsButton { get; set; }
+            internal static GameObject SubMenuButtonPrefab { get; set; }
 
             public static MainMenuGuiLayer MMGuiLayer { get; internal set; }
             public static GameObject ScrollWindowPrefab { get; internal set; }
@@ -422,10 +433,20 @@ namespace TheArchive.Features.Dev
 
         public static void AddToAllSettingsWindows(CM_ScrollWindow scrollWindow)
         {
+            AllSubmenuScrollWindows.Add(scrollWindow);
 #if IL2CPP
             SettingsPageInstance.m_allSettingsWindows.Add(scrollWindow);
 #else
             A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Add(scrollWindow);
+#endif
+        }
+
+        public static void RemoveFromAllSettingsWindows(CM_ScrollWindow scrollWindow)
+        {
+#if IL2CPP
+            SettingsPageInstance.m_allSettingsWindows.Remove(scrollWindow);
+#else
+            A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Remove(scrollWindow);
 #endif
         }
 
@@ -453,7 +474,7 @@ namespace TheArchive.Features.Dev
         [ArchivePatch(typeof(CM_PageSettings), "Setup")]
         public class CM_PageSettings_SetupPatch
         {
-            private static Stopwatch _setupStopwatch;
+            private static Stopwatch _setupStopwatch = new Stopwatch();
 
             private static TMPro.TextMeshPro _restartInfoText;
 
@@ -476,179 +497,38 @@ namespace TheArchive.Features.Dev
                 JankTextMeshProUpdaterOnce.UpdateMesh(_restartInfoText);
             }
 
+            public static IValueAccessor<CM_PageSettings, float> A_CM_PageSettings_m_subMenuItemOffset;
+
+            public static void Init()
+            {
+                A_CM_PageSettings_m_subMenuItemOffset = AccessorBase.GetValueAccessor<CM_PageSettings, float>("m_subMenuItemOffset");
+            }
+
 #if IL2CPP
             public static void Postfix(CM_PageSettings __instance, MainMenuGuiLayer guiLayer)
             {
-                try
-                {
-                    var m_subMenuButtonPrefab = __instance.m_subMenuButtonPrefab;
-                    var m_subMenuItemOffset = __instance.m_subMenuItemOffset;
-                    var m_movingContentHolder = __instance.m_movingContentHolder;
-                    var m_scrollwindowPrefab = __instance.m_scrollwindowPrefab;
-#else
-            public static void Postfix(CM_PageSettings __instance, MainMenuGuiLayer guiLayer, GameObject ___m_subMenuButtonPrefab, ref float ___m_subMenuItemOffset, List<CM_ScrollWindow> ___m_allSettingsWindows)
-            {
-                var m_subMenuButtonPrefab = ___m_subMenuButtonPrefab;
-                var m_subMenuItemOffset = ___m_subMenuItemOffset;
+                SubMenuButtonPrefab = __instance.m_subMenuButtonPrefab;
                 var m_movingContentHolder = __instance.m_movingContentHolder;
                 var m_scrollwindowPrefab = __instance.m_scrollwindowPrefab;
+#else
+            public static void Postfix(CM_PageSettings __instance, MainMenuGuiLayer guiLayer, GameObject ___m_subMenuButtonPrefab)
+            {
+                SubMenuButtonPrefab = ___m_subMenuButtonPrefab;
+                var m_movingContentHolder = __instance.m_movingContentHolder;
+                var m_scrollwindowPrefab = __instance.m_scrollwindowPrefab;
+                
+#endif
                 try
                 {
-#endif
-                    FeatureLogger.Debug("Starting Setup Stopwatch.");
-                    _setupStopwatch = new Stopwatch();
-                    _setupStopwatch.Start();
-
                     SettingsPageInstance = __instance;
                     PopupWindow = __instance.m_popupWindow;
                     SettingsItemPrefab = __instance.m_settingsItemPrefab;
                     ScrollWindowPrefab = m_scrollwindowPrefab;
                     MMGuiLayer = guiLayer;
                     MovingContentHolder = m_movingContentHolder;
-                    if (ScrollWindowContentElements == null)
-                    {
-                        ScrollWindowContentElements = new List<iScrollWindowContent>();
-                    }
-                    ScrollWindowContentElements.Clear();
-
-                    var title = "Mod Settings";
-
-                    CM_Item mainModSettingsButton = guiLayer.AddRectComp(m_subMenuButtonPrefab, GuiAnchor.TopLeft, new Vector2(70f, m_subMenuItemOffset), m_movingContentHolder).TryCastTo<CM_Item>();
-
-                    mainModSettingsButton.SetScaleFactor(0.85f);
-                    mainModSettingsButton.UpdateColliderOffset();
-#if IL2CPP
-                    __instance.m_subMenuItemOffset -= 80f;
-#else
-                    ___m_subMenuItemOffset -= 80f;
-#endif
-                    mainModSettingsButton.SetText(title);
-
-                    
-
-                    SharedUtils.ChangeColorCMItem(mainModSettingsButton, Color.magenta);
-
-                    MainModSettingsScrollWindow = SettingsCreationHelper.CreateScrollWindow(title);
-
-                    MainScrollWindowTransform = MainModSettingsScrollWindow.transform;
 
 
-                    TMPro.TextMeshPro scrollWindowHeaderTextTMP = MainModSettingsScrollWindow.GetComponentInChildren<TMPro.TextMeshPro>();
-
-                    _restartInfoText = GameObject.Instantiate(scrollWindowHeaderTextTMP, scrollWindowHeaderTextTMP.transform.parent);
-
-                    _restartInfoText.name = "ModSettings_RestartInfoText";
-                    _restartInfoText.transform.localPosition += new Vector3(300, 0, 0);
-                    _restartInfoText.SetText("");
-                    _restartInfoText.text = "";
-                    _restartInfoText.enableWordWrapping = false;
-                    _restartInfoText.fontSize = 16;
-                    _restartInfoText.fontSizeMin = 16;
-
-                    JankTextMeshProUpdaterOnce.UpdateMesh(_restartInfoText);
-
-                    TheDescriptionPanel = new DescriptionPanel();
-
-                    var odereredGroups = FeatureManager.Instance.GroupedFeatures.OrderBy(kvp => kvp.Key);
-
-                    foreach(var kvp in odereredGroups)
-                    {
-                        var groupName = kvp.Key;
-                        var featureSet = kvp.Value.OrderBy(fs => fs.Name);
-
-                        if (groupName == FeatureGroups.Dev && !Feature.DevMode)
-                            continue;
-
-                        if(!Feature.DevMode && featureSet.All(f => f.IsHidden))
-                            continue;
-
-                        // Title
-                        CreateHeader(groupName);
-
-                        foreach(var feature in featureSet)
-                        {
-                            SetupEntriesForFeature(feature);
-                        }
-
-                        // Spacer
-                        CreateSpacer();
-                    }
-
-                    IEnumerable<Feature> features;
-                    if(Feature.DevMode)
-                    {
-                        features = FeatureManager.Instance.RegisteredFeatures;
-                    }
-                    else
-                    {
-                        features = FeatureManager.Instance.RegisteredFeatures.Where(f => !f.IsHidden);
-                    }
-
-                    features = features.Where(f => !f.BelongsToGroup);
-
-                    features = features.OrderBy(f => f.GetType().Assembly.GetName().Name + f.Name);
-
-                    CreateHeader("Uncategorized", DISABLED);
-
-                    Assembly currentAsm = null;
-                    bool createSpacer = false;
-                    foreach (var feature in features)
-                    {
-                        var featureAsm = feature.GetType().Assembly;
-                        if (featureAsm != currentAsm)
-                        {
-                            if(createSpacer)
-                            {
-                                CreateSpacer();
-                            }
-                            createSpacer = true;
-                            var headerTitle = featureAsm.GetCustomAttribute<ModDefaultFeatureGroupName>()?.DefaultGroupName ?? featureAsm.GetName().Name;
-                            CreateHeader(headerTitle);
-                            currentAsm = featureAsm;
-                        }
-                        SetupEntriesForFeature(feature);
-                    }
-
-                    CreateSpacer();
-                    CreateHeader("Info");
-
-                    CreateSimpleButton("Open saves folder", "Open", () => {
-                        System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
-                        {
-                            Arguments = System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath),
-                            UseShellExecute = true,
-                            FileName = "explorer.exe"
-                        };
-
-                        System.Diagnostics.Process.Start(startInfo);
-                    });
-                    
-                    CreateHeader($"> {System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath)}", WHITE_GRAY, false);
-
-                    CreateSimpleButton("Open mod github", "Open in Browser", () => {
-                        Application.OpenURL(ArchiveMod.GITHUB_LINK);
-                    });
-
-                    CreateHeader($"{ArchiveMod.MOD_NAME} <color=orange>v{ArchiveMod.VERSION_STRING}", WHITE_GRAY, false);
-
-                    if (ArchiveMod.GIT_IS_DIRTY)
-                    {
-                        CreateHeader($"Built with uncommitted changes | <color=red>Git is dirty</color>", ORANGE, false);
-                    }
-
-                    if (Feature.DevMode)
-                    {
-                        CreateHeader($"Last Commit Hash: {ArchiveMod.GIT_COMMIT_SHORT_HASH}", WHITE_GRAY, false);
-                        CreateHeader($"Last Commit Date: {ArchiveMod.GIT_COMMIT_DATE}", WHITE_GRAY, false);
-                    }
-
-                    CreateHeader($"Currently running GTFO <color=orange>{BuildInfo.Rundown}</color>, build <color=orange>{BuildInfo.BuildNumber}</color>", WHITE_GRAY, false);
-
-                    AddToAllSettingsWindows(MainModSettingsScrollWindow);
-
-                    mainModSettingsButton.SetCMItemEvents(ShowMainModSettingsWindow);
-
-                    MainModSettingsScrollWindow.SetContentItems(PageSettingsData.ScrollWindowContentElements.ToIL2CPPListIfNecessary(), 5);
+                    SetupMainModSettingsPage();
                 }
                 catch (Exception ex)
                 {
@@ -663,12 +543,242 @@ namespace TheArchive.Features.Dev
                 {
                     FeatureLogger.Exception(ex);
                 }
-
-                _setupStopwatch.Stop();
-                FeatureLogger.Debug($"It took {_setupStopwatch.Elapsed:ss\\.fff} seconds to run {nameof(ModSettings)} setup!");
             }
 
-            private static void SetupEntriesForFeature(Feature feature)
+            public static void DestroyModSettingsPage()
+            {
+                MainModSettingsButton.SafeDestroyGO();
+                MainModSettingsScrollWindow.SafeDestroyGO();
+
+                TheDescriptionPanel.Dispose();
+                TheDescriptionPanel = null;
+
+                foreach (var scrollWindow in AllSubmenuScrollWindows)
+                {
+                    RemoveFromAllSettingsWindows(scrollWindow);
+                    scrollWindow.SafeDestroyGO();
+                }
+
+                AllSubmenuScrollWindows.Clear();
+
+                var subMenuItemOffset = A_CM_PageSettings_m_subMenuItemOffset.Get(SettingsPageInstance);
+                A_CM_PageSettings_m_subMenuItemOffset.Set(SettingsPageInstance, subMenuItemOffset + 80);
+            }
+
+            public static void SetupMainModSettingsPage()
+            {
+                FeatureLogger.Debug($"{nameof(SetupMainModSettingsPage)}: Starting Setup Stopwatch.");
+                _setupStopwatch.Reset();
+                _setupStopwatch.Start();
+
+                ScrollWindowContentElements.Clear();
+
+                var title = "Mod Settings";
+
+                var subMenuItemOffset = A_CM_PageSettings_m_subMenuItemOffset.Get(SettingsPageInstance);
+
+                MainModSettingsButton = MMGuiLayer.AddRectComp(SubMenuButtonPrefab, GuiAnchor.TopLeft, new Vector2(70f, subMenuItemOffset), MovingContentHolder).TryCastTo<CM_Item>();
+
+                MainModSettingsButton.SetScaleFactor(0.85f);
+                MainModSettingsButton.UpdateColliderOffset();
+
+                A_CM_PageSettings_m_subMenuItemOffset.Set(SettingsPageInstance, subMenuItemOffset - 80);
+
+                MainModSettingsButton.SetText(title);
+
+
+                SharedUtils.ChangeColorCMItem(MainModSettingsButton, Color.magenta);
+
+                MainModSettingsScrollWindow = SettingsCreationHelper.CreateScrollWindow(title);
+
+                MainScrollWindowTransform = MainModSettingsScrollWindow.transform;
+
+
+                TMPro.TextMeshPro scrollWindowHeaderTextTMP = MainModSettingsScrollWindow.GetComponentInChildren<TMPro.TextMeshPro>();
+
+                _restartInfoText = GameObject.Instantiate(scrollWindowHeaderTextTMP, scrollWindowHeaderTextTMP.transform.parent);
+
+                _restartInfoText.name = "ModSettings_RestartInfoText";
+                _restartInfoText.transform.localPosition += new Vector3(300, 0, 0);
+                _restartInfoText.SetText("");
+                _restartInfoText.text = "";
+                _restartInfoText.enableWordWrapping = false;
+                _restartInfoText.fontSize = 16;
+                _restartInfoText.fontSizeMin = 16;
+
+                JankTextMeshProUpdaterOnce.UpdateMesh(_restartInfoText);
+
+                TheDescriptionPanel = new DescriptionPanel();
+
+                var odereredGroups = FeatureManager.Instance.GroupedFeatures.OrderBy(kvp => kvp.Key);
+
+                foreach (var kvp in odereredGroups)
+                {
+                    var groupName = kvp.Key;
+                    var featureSet = kvp.Value.OrderBy(fs => fs.Name);
+
+                    if (groupName == FeatureGroups.Dev && !Feature.DevMode)
+                        continue;
+
+                    if (!Feature.DevMode && featureSet.All(f => f.IsHidden))
+                        continue;
+
+                    var group = FeatureGroups.Get(groupName);
+
+                    var inlineSettings = group?.InlineSettings ?? false;
+
+                    CreateHeader(groupName);
+
+                    SubMenu groupSubMenu = null;
+                    if (!inlineSettings)
+                    {
+                        groupSubMenu = new SubMenu(groupName);
+
+                        var featuresCount = featureSet.Where(f => !f.IsHidden).Count();
+                        CreateSubMenuControls(groupSubMenu, menuEntryLabelText: $"{featuresCount} Feature{(featuresCount == 1 ? string.Empty : "s")} >>");
+
+                        CreateHeader(groupName, subMenu: groupSubMenu);
+                    }
+
+                    foreach (var feature in featureSet)
+                    {
+                        SetupEntriesForFeature(feature, groupSubMenu);
+                    }
+
+                    groupSubMenu?.Build();
+
+                    CreateSpacer();
+                }
+
+                IEnumerable<Feature> features;
+                if (Feature.DevMode)
+                {
+                    features = FeatureManager.Instance.RegisteredFeatures;
+                }
+                else
+                {
+                    features = FeatureManager.Instance.RegisteredFeatures.Where(f => !f.IsHidden);
+                }
+
+                features = features.Where(f => !f.BelongsToGroup);
+
+                features = features.OrderBy(f => f.GetType().Assembly.GetName().Name + f.Name);
+
+                var featureAssembliesSet = features.Select(f => f.GetType().Assembly).ToHashSet();
+                var featureAssemblies = featureAssembliesSet.OrderBy(asm => asm.GetName().Name);
+
+                CreateHeader("Uncategorized", DISABLED);
+
+                foreach (var featureAsm in featureAssemblies)
+                {
+                    var featuresFromMod = features.Where(f => f.GetType().Assembly == featureAsm);
+                    featuresFromMod = featuresFromMod.OrderBy(f => f.Name);
+
+                    var headerTitle = featureAsm.GetCustomAttribute<ModDefaultFeatureGroupName>()?.DefaultGroupName ?? featureAsm.GetName().Name;
+                    bool inlineSettings = featureAsm.GetCustomAttribute<ModInlineUncategorizedSettingsIntoMainMenu>() != null;
+
+                    CreateHeader(headerTitle);
+
+                    SubMenu otherModSubMenu = null;
+                    if (!inlineSettings)
+                    {
+                        otherModSubMenu = new SubMenu(headerTitle);
+                        var featuresCount = featuresFromMod.Where(f => !f.IsHidden).Count();
+                        CreateSubMenuControls(otherModSubMenu, menuEntryLabelText: $"{featuresCount} Feature{(featuresCount == 1 ? string.Empty : "s")} >>");
+
+                        CreateHeader(headerTitle, subMenu: otherModSubMenu);
+                    }
+
+                    foreach (var feature in featuresFromMod)
+                    {
+                        SetupEntriesForFeature(feature, otherModSubMenu);
+                    }
+
+                    CreateSpacer();
+
+                    otherModSubMenu?.Build();
+                }
+
+                CreateHeader("Info");
+
+                CreateSimpleButton("Open saves folder", "Open", () => {
+                    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
+                    {
+                        Arguments = System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath),
+                        UseShellExecute = true,
+                        FileName = "explorer.exe"
+                    };
+
+                    System.Diagnostics.Process.Start(startInfo);
+                });
+
+                CreateHeader($"> {System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath)}", WHITE_GRAY, false);
+
+                CreateSimpleButton("Open mod github", "Open in Browser", () => {
+                    Application.OpenURL(ArchiveMod.GITHUB_LINK);
+                });
+
+                CreateHeader($"{ArchiveMod.MOD_NAME} <color=orange>v{ArchiveMod.VERSION_STRING}", WHITE_GRAY, false, clickAction: VersionClicked);
+
+                if (ArchiveMod.GIT_IS_DIRTY)
+                {
+                    CreateHeader($"Built with uncommitted changes | <color=red>Git is dirty</color>", ORANGE, false);
+                }
+
+                if (Feature.DevMode)
+                {
+                    CreateHeader($"Last Commit Hash: {ArchiveMod.GIT_COMMIT_SHORT_HASH}", WHITE_GRAY, false);
+                    CreateHeader($"Last Commit Date: {ArchiveMod.GIT_COMMIT_DATE}", WHITE_GRAY, false);
+                }
+
+                CreateHeader($"Currently running GTFO <color=orange>{BuildInfo.Rundown}</color>, build <color=orange>{BuildInfo.BuildNumber}</color>", WHITE_GRAY, false);
+
+                AddToAllSettingsWindows(MainModSettingsScrollWindow);
+
+                MainModSettingsButton.SetCMItemEvents(ShowMainModSettingsWindow);
+
+                MainModSettingsScrollWindow.SetContentItems(PageSettingsData.ScrollWindowContentElements.ToIL2CPPListIfNecessary(), 5);
+
+                _setupStopwatch.Stop();
+                FeatureLogger.Debug($"It took {_setupStopwatch.Elapsed:ss\\.fff} seconds to run {nameof(SetupMainModSettingsPage)}!");
+            }
+
+            private static int _versionClickedCounter = 0;
+            private static float _lastVersionClickedTime = 0;
+            private const int VERSION_CLICK_MIN = 3; // = 5 times because janky code lmao
+            private const float VERSION_CLICK_TIME = 1.5f;
+            private static void VersionClicked(int _)
+            {
+                if(_versionClickedCounter >= VERSION_CLICK_MIN)
+                {
+                    ArchiveMod.Settings.FeatureDevMode = !ArchiveMod.Settings.FeatureDevMode;
+
+                    FeatureLogger.Notice($"{ArchiveMod.MOD_NAME} Developer mode has been {(DevMode ? "enabled" : "disabled")} temporarily!");
+
+                    _versionClickedCounter = 0;
+
+                    DestroyModSettingsPage();
+                    SetupMainModSettingsPage();
+
+                    ShowMainModSettingsWindow(0);
+
+                    return;
+                }
+
+                var currentTime = Time.time;
+
+                if(currentTime - _lastVersionClickedTime >= VERSION_CLICK_TIME)
+                {
+                    _lastVersionClickedTime = currentTime;
+                    _versionClickedCounter = 0;
+                    return;
+                }
+
+                _versionClickedCounter++;
+                _lastVersionClickedTime = currentTime;
+            }
+
+            private static void SetupEntriesForFeature(Feature feature, SubMenu groupSubMenu)
             {
                 if (!Feature.DevMode && feature.IsHidden) return;
 
@@ -699,7 +809,7 @@ namespace TheArchive.Features.Dev
                         featureName = $"<u>{featureName}</u>";
                     }
 
-                    CreateSettingsItem(featureName, out var cm_settingsItem, col);
+                    CreateSettingsItem(featureName, out var cm_settingsItem, col, groupSubMenu);
                     
                     SetupToggleButton(cm_settingsItem, out CM_Item toggleButton_cm_item, out var toggleButtonText);
 
@@ -707,7 +817,7 @@ namespace TheArchive.Features.Dev
                     CM_SettingsItem sub_cm_settingsItem = null;
                     if (subMenu != null)
                     {
-                        CreateSubMenuControls(subMenu, col);
+                        CreateSubMenuControls(subMenu, col, placeIntoMenu: groupSubMenu);
 
                         CreateSettingsItem(featureName, out sub_cm_settingsItem, ORANGE, subMenu);
                     }
@@ -775,7 +885,7 @@ namespace TheArchive.Features.Dev
                     {
                         foreach (var settingsHelper in feature.SettingsHelpers)
                         {
-                            SetupItemsForSettingsHelper(settingsHelper, subMenu);
+                            SetupItemsForSettingsHelper(settingsHelper, subMenu ?? groupSubMenu);
                         }
                     }
 
@@ -889,7 +999,7 @@ namespace TheArchive.Features.Dev
                 CreateHeader("------------------------------", col, false, subMenu);
             }
 
-            public static void CreateHeader(string title, Color? color = null, bool bold = true, SubMenu subMenu = null)
+            public static void CreateHeader(string title, Color? color = null, bool bold = true, SubMenu subMenu = null, Action<int> clickAction = null, Action<int, bool> hoverAction = null)
             {
                 if (!color.HasValue)
                     color = ORANGE;
@@ -913,6 +1023,11 @@ namespace TheArchive.Features.Dev
                 if (!string.IsNullOrWhiteSpace(title))
                 {
                     cm_settingsItem.ForcePopupLayer(true);
+                }
+
+                if(clickAction != null || hoverAction != null)
+                {
+                    cm_settingsItem.SetCMItemEvents(clickAction, hoverAction);
                 }
             }
 

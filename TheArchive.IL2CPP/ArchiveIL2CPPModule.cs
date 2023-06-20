@@ -7,6 +7,7 @@ using TheArchive.Utilities;
 using UnityEngine.CrashReportHandler;
 
 [assembly: ModDefaultFeatureGroupName("TheArchive")]
+[assembly: ModInlineUncategorizedSettingsIntoMainMenu]
 namespace TheArchive
 {
     public class ArchiveIL2CPPModule : IArchiveModule
