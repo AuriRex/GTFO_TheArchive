@@ -87,6 +87,8 @@ namespace TheArchive.Features.Hud
         public static string Short_ShotgunSpread { get; } = "Sh.Sprd";
         public static string Short_BurstShotCount { get; } = "Brst.Sht";
         public static string Short_BurstDelay { get; } = "Brst.Dly";
+        public static string Short_FalloffDistanceClose { get; } = "Dst.C";
+        public static string Short_FalloffDistanceFar { get; } = "Dst.F";
 
         //public void LoadData(GearIDRange idRange, bool clickable, bool detailedInfo)
 #if IL2CPP
@@ -142,17 +144,6 @@ namespace TheArchive.Features.Hud
 
                 StringBuilder builder = new StringBuilder();
 
-                void Divider(ref int count, StringBuilder builder)
-                {
-                    if (count >= 3)
-                    {
-                        builder.Append("\n");
-                        count = 0;
-                    }
-                    else if (count > 0)
-                        builder.Append(DIVIDER);
-                }
-
                 builder.Append("<#9D2929>");
                 builder.Append($"{Short_Damage}{Short_MeleeLight} ");
                 builder.Append(archeTypeDataBlock.LightAttackDamage);
@@ -186,7 +177,6 @@ namespace TheArchive.Features.Hud
                     builder.Append($"{Short_Stagger}{Short_MeleeLight} ");
                     builder.Append(archeTypeDataBlock.LightStaggerMulti);
                     builder.Append(CLOSE_COLOR_TAG);
-                    count++;
                 }
 
                 if (archeTypeDataBlock.ChargedStaggerMulti != 1f)
@@ -197,7 +187,6 @@ namespace TheArchive.Features.Hud
                     builder.Append($"{Short_Stagger}{Short_MeleeCharged} ");
                     builder.Append(archeTypeDataBlock.ChargedStaggerMulti);
                     builder.Append(CLOSE_COLOR_TAG);
-                    count++;
                 }
 
                 if (archeTypeDataBlock.LightPrecisionMulti != 1f)
@@ -208,7 +197,6 @@ namespace TheArchive.Features.Hud
                     builder.Append($"{Short_Precision}{Short_MeleeLight} ");
                     builder.Append(archeTypeDataBlock.LightPrecisionMulti);
                     builder.Append(CLOSE_COLOR_TAG);
-                    count++;
                 }
 
                 if (archeTypeDataBlock.ChargedPrecisionMulti != 1f)
@@ -219,7 +207,6 @@ namespace TheArchive.Features.Hud
                     builder.Append($"{Short_Precision}{Short_MeleeCharged} ");
                     builder.Append(archeTypeDataBlock.ChargedPrecisionMulti);
                     builder.Append(CLOSE_COLOR_TAG);
-                    count++;
                 }
 
                 if (archeTypeDataBlock.LightSleeperMulti != 1f)
@@ -230,7 +217,6 @@ namespace TheArchive.Features.Hud
                     builder.Append($"{Short_MeleeSleepingEnemiesMultiplier}{Short_MeleeLight} ");
                     builder.Append(archeTypeDataBlock.LightSleeperMulti);
                     builder.Append(CLOSE_COLOR_TAG);
-                    count++;
                 }
 
                 if (archeTypeDataBlock.ChargedSleeperMulti != 1f)
@@ -241,7 +227,6 @@ namespace TheArchive.Features.Hud
                     builder.Append($"{Short_MeleeSleepingEnemiesMultiplier}{Short_MeleeCharged} ");
                     builder.Append(archeTypeDataBlock.ChargedSleeperMulti);
                     builder.Append(CLOSE_COLOR_TAG);
-                    count++;
                 }
 
                 if (archeTypeDataBlock.LightEnvironmentMulti != 1f)
@@ -252,7 +237,6 @@ namespace TheArchive.Features.Hud
                     builder.Append($"{Short_EnvironmentMultiplier}{Short_MeleeLight} ");
                     builder.Append(archeTypeDataBlock.LightEnvironmentMulti);
                     builder.Append(CLOSE_COLOR_TAG);
-                    count++;
                 }
 
                 if (archeTypeDataBlock.ChargedEnvironmentMulti != 1f)
@@ -263,12 +247,24 @@ namespace TheArchive.Features.Hud
                     builder.Append($"{Short_EnvironmentMultiplier}{Short_MeleeCharged} ");
                     builder.Append(archeTypeDataBlock.ChargedEnvironmentMulti);
                     builder.Append(CLOSE_COLOR_TAG);
-                    count++;
                 }
 
                 return builder.ToString();
             }
 #endif
+        }
+
+        private static void Divider(ref int count, StringBuilder builder, int maxPerLine = 3)
+        {
+            if (count >= maxPerLine)
+            {
+                builder.Append("\n");
+                count = 0;
+            }
+            else if (count > 0)
+                builder.Append(DIVIDER);
+
+            count++;
         }
 
         public static string GetFormatedWeaponStats(ArchetypeDataBlock archeTypeDataBlock, ItemDataBlock itemDataBlock, bool isSentryGun = false)
@@ -277,6 +273,8 @@ namespace TheArchive.Features.Hud
 
             StringBuilder builder = new StringBuilder();
 
+            var count = 1;
+
             builder.Append("<#9D2929>");
             builder.Append($"{Short_Damage} ");
             builder.Append(archeTypeDataBlock.Damage);
@@ -284,7 +282,7 @@ namespace TheArchive.Features.Hud
 
             if (!isSentryGun)
             {
-                builder.Append(DIVIDER);
+                Divider(ref count, builder, 4);
 
                 builder.Append("<color=orange>");
                 builder.Append($"{Short_Clip} ");
@@ -292,7 +290,7 @@ namespace TheArchive.Features.Hud
                 builder.Append(CLOSE_COLOR_TAG);
             }
 
-            builder.Append(DIVIDER);
+            Divider(ref count, builder, 4);
 
             builder.Append("<#FFD306>");
             builder.Append($"{Short_MaxAmmo} ");
@@ -301,7 +299,7 @@ namespace TheArchive.Features.Hud
 
             if (!isSentryGun)
             {
-                builder.Append(DIVIDER);
+                Divider(ref count, builder, 4);
 
                 builder.Append("<#C0FF00>");
                 builder.Append($"{Short_Reload} ");
@@ -309,78 +307,81 @@ namespace TheArchive.Features.Hud
                 builder.Append(CLOSE_COLOR_TAG);
             }
 
-            builder.Append("\n");
-
-
 #if IL2CPP
-            bool nonStandardStagger = archeTypeDataBlock.StaggerDamageMulti != 1f;
-
-            if (nonStandardStagger)
+            if (archeTypeDataBlock.StaggerDamageMulti != 1f)
             {
+                Divider(ref count, builder, 3);
+
                 builder.Append("<color=green>");
                 builder.Append($"{Short_Stagger} ");
                 builder.Append(archeTypeDataBlock.StaggerDamageMulti);
                 builder.Append(CLOSE_COLOR_TAG);
             }
-#else
-            bool nonStandardStagger = false;
 #endif
 
-            bool pierce = archeTypeDataBlock.PiercingBullets;
-
-            if (pierce)
+            if (archeTypeDataBlock.PiercingBullets)
             {
-                if (nonStandardStagger)
-                    builder.Append(DIVIDER);
+                Divider(ref count, builder, 4);
 
                 builder.Append("<#004E2C>");
                 builder.Append($"{Short_PierceCount} ");
                 builder.Append(archeTypeDataBlock.PiercingDamageCountLimit);
                 builder.Append(CLOSE_COLOR_TAG);
-
-                if (nonStandardStagger)
-                    builder.Append("\n");
             }
 
             bool isShotgun = archeTypeDataBlock.ShotgunBulletCount > 0;
 
             if (isShotgun)
             {
-                if (!pierce && nonStandardStagger)
-                    builder.Append(DIVIDER);
+                Divider(ref count, builder, 4);
 
                 builder.Append("<#55022B>");
                 builder.Append($"{Short_ShotgunPelletCount} ");
                 builder.Append(archeTypeDataBlock.ShotgunBulletCount);
                 builder.Append(CLOSE_COLOR_TAG);
 
-                builder.Append(DIVIDER);
+                Divider(ref count, builder, 4);
 
                 builder.Append("<#A918A7>");
                 builder.Append($"{Short_ShotgunSpread} ");
                 builder.Append(archeTypeDataBlock.ShotgunBulletSpread);
                 builder.Append(CLOSE_COLOR_TAG);
-
-                builder.Append("\n");
             }
 
             if (archeTypeDataBlock.BurstShotCount > 1 && archeTypeDataBlock.FireMode == eWeaponFireMode.Burst)
             {
-                if (!isShotgun && nonStandardStagger)
-                    builder.Append(DIVIDER);
+                Divider(ref count, builder, 3);
 
                 builder.Append("<#025531>");
                 builder.Append($"{Short_BurstShotCount} ");
                 builder.Append(archeTypeDataBlock.BurstShotCount);
                 builder.Append(CLOSE_COLOR_TAG);
 
-                builder.Append(DIVIDER);
+                Divider(ref count, builder, 4);
 
                 builder.Append("<#18A4A9>");
                 builder.Append($"{Short_BurstDelay} ");
                 builder.Append(archeTypeDataBlock.BurstDelay);
                 builder.Append(CLOSE_COLOR_TAG);
+
+                count++; // yes
             }
+
+            Divider(ref count, builder, 3);
+
+            builder.Append("<#00FFA2>");
+            builder.Append($"{Short_FalloffDistanceClose} ");
+            builder.Append(archeTypeDataBlock.DamageFalloff.x);
+            builder.Append(" m");
+            builder.Append(CLOSE_COLOR_TAG);
+
+            Divider(ref count, builder, 3);
+
+            builder.Append("<#1D82FF>");
+            builder.Append($"{Short_FalloffDistanceFar} ");
+            builder.Append(archeTypeDataBlock.DamageFalloff.y);
+            builder.Append(" m");
+            builder.Append(CLOSE_COLOR_TAG);
 
             return builder.ToString();
         }
