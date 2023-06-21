@@ -531,6 +531,12 @@ namespace TheArchive.Utilities
         {
             return value.TryCast<T>();
         }
+
+        public static bool TryCastTo<T>(this Il2CppObjectBase value, out T castedValue) where T : Il2CppObjectBase
+        {
+            castedValue = value.TryCastTo<T>();
+            return castedValue != null;
+        }
 #else
         public static T CastTo<T>(this object value)
         {
@@ -540,6 +546,12 @@ namespace TheArchive.Utilities
         public static T TryCastTo<T>(this object value) where T : class
         {
             return value as T;
+        }
+
+        public static bool TryCastTo<T>(this object value, out T castedValue) where T : class
+        {
+            castedValue = value.TryCastTo<T>();
+            return castedValue != null;
         }
 #endif
     }

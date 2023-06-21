@@ -1,4 +1,5 @@
 ﻿using ChainedPuzzles;
+using System.Linq;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
@@ -37,7 +38,7 @@ namespace TheArchive.Features.Hud
             private static string _ogAtText;
             private static string _ogEnterScanText;
 
-            public static void Postfix(CP_Bioscan_Hud __instance, int puzzleIndex)
+            public static void Postfix(CP_Bioscan_Hud __instance, int puzzleIndex, bool visible)
             {
                 if (!__instance.m_atText.Contains("("))
                 {
@@ -45,9 +46,28 @@ namespace TheArchive.Features.Hud
                     _ogEnterScanText = __instance.m_enterSecurityScanText;
                 }
 
+                if (!visible)
+                    return;
+
                 // " AT " <- original ("AT" is localized)
                 // " (I/IV) AT " <- modified
-                var puzzleInstance = __instance?.transform?.parent?.GetComponentInChildren<ChainedPuzzleInstance>();
+                var allPuzzleInstances = __instance?.transform?.parent?.GetComponentsInChildren<ChainedPuzzleInstance>();
+                
+                ChainedPuzzleInstance puzzleInstance;
+                if(allPuzzleInstances.Count > 1)
+                {
+                    // Get the correct ChainedPuzzleInstance if there are multiple; ex: on Reactor Shutdown gameobjects
+                    puzzleInstance = allPuzzleInstances
+                        .Where(cpi =>
+                            cpi.m_chainedPuzzleCores.FirstOrDefault(core =>
+                                GetHudFromCore(core)?.Pointer == __instance.Pointer
+                            ) != null
+                        ).FirstOrDefault();
+                }
+                else
+                {
+                    puzzleInstance = allPuzzleInstances.FirstOrDefault();
+                }
 
                 if (puzzleInstance == null)
                     return;
@@ -71,6 +91,22 @@ namespace TheArchive.Features.Hud
 
                 __instance.m_atText = $"{scanPuzzleProgress}{_ogAtText}";
                 __instance.m_enterSecurityScanText = $"{_ogEnterScanText}{scanPuzzleProgress}";
+            }
+
+            public static iChainedPuzzleHUD GetHudFromCore(iChainedPuzzleCore core)
+            {
+                if(core.TryCastTo<CP_Bioscan_Core>(out var bioScan))
+                {
+                    return bioScan.m_hud;
+                }
+
+                if (core.TryCastTo<CP_Cluster_Core>(out var clusterScan))
+                {
+                    // Cluster Hud is a middle man between core and normal hud
+                    return clusterScan.m_hud?.TryCastTo<CP_Cluster_Hud>()?.m_hud;
+                }
+
+                return null;
             }
         }
 #endif
