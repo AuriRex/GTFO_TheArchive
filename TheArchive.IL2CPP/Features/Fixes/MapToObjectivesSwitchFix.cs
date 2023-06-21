@@ -1,5 +1,8 @@
-﻿using TheArchive.Core.Attributes;
+﻿using Player;
+using System.Collections;
+using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Loader;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Fixes
@@ -28,10 +31,21 @@ namespace TheArchive.Features.Fixes
             {
                 if (pageEnum == eCM_MenuPage_CMP_OBJECTIVES && PlayerChatManager.InChatMode)
                 {
+                    LoaderWrapper.StartCoroutine(CancelSoundButJank());
                     return ArchivePatch.SKIP_OG;
                 }
 
                 return ArchivePatch.RUN_OG;
+            }
+
+            // Doesn't work perfectly on 60 FPS but whatever
+            private static IEnumerator CancelSoundButJank()
+            {
+                yield return null;
+                if (PlayerManager.TryGetLocalPlayerAgent(out var localPlayer))
+                {
+                    localPlayer.Sound?.Stop();
+                }
             }
         }
     }
