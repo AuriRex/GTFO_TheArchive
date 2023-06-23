@@ -136,9 +136,16 @@ namespace TheArchive.Features.Accessibility
         /// <param name="volume"></param>
         public static void SetAllVolume(float volume)
         {
-            CellSound.SetGlobalRTPCValue(AK.GAME_PARAMETERS.VOLUME_SETTING_SFX, volume);
-            CellSound.SetGlobalRTPCValue(AK.GAME_PARAMETERS.VOLUME_SETTING_MUSIC, volume);
-            CellSound.SetGlobalRTPCValue(AK.GAME_PARAMETERS.VOLUME_SETTING_DIALOG, volume);
+            float newVolume;
+
+            newVolume = Math.Min(CellSettingsManager.SettingsData.Audio.SFXVolume.Value * 100f, volume);
+            CellSound.SetGlobalRTPCValue(AK.GAME_PARAMETERS.VOLUME_SETTING_SFX, newVolume);
+
+            newVolume = Math.Min(CellSettingsManager.SettingsData.Audio.MusicVolume.Value * 100f, volume);
+            CellSound.SetGlobalRTPCValue(AK.GAME_PARAMETERS.VOLUME_SETTING_MUSIC, newVolume);
+
+            newVolume = Math.Min(CellSettingsManager.SettingsData.Audio.DialogVolume.Value * 100f, volume);
+            CellSound.SetGlobalRTPCValue(AK.GAME_PARAMETERS.VOLUME_SETTING_DIALOG, newVolume);
         }
 
         public static void ResetAllVolume()
