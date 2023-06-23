@@ -25,11 +25,6 @@ namespace TheArchive.Features.Hud
 
         public new static IArchiveLogger FeatureLogger { get; set; }
 
-        public override bool ShouldInit()
-        {
-            return !IsPlayingModded;
-        }
-
         [FeatureConfig]
         public static WatermarkSettings Settings { get; set; }
 
