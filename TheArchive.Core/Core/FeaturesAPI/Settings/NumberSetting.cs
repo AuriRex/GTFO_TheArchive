@@ -7,11 +7,15 @@ namespace TheArchive.Core.FeaturesAPI.Settings
 {
     public class NumberSetting : FeatureSetting
     {
+        public bool HasSlider => Slider != null;
+        public FSSlider Slider { get; private set; } = null;
         public FSTimestamp Timestamp { get; private set; } = null;
         public NumberFormat Format { get; private set; }
+
         public NumberSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
         {
             Timestamp = prop.GetCustomAttribute<FSTimestamp>();
+            Slider = prop.GetCustomAttribute<FSSlider>();
 
             switch (Type.Name)
             {

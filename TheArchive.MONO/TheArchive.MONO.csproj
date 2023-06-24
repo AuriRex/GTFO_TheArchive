@@ -219,6 +219,9 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\DamageLog.cs" Link="Features\Dev\DamageLog.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ForcedSeed.cs" Link="Features\Dev\ForcedSeed.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\IconRenderSettings.cs" Link="Features\Dev\IconRenderSettings.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModSettings.Receivers.cs" Link="Features\Dev\ModSettings.Receivers.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModSettings.SettingsCreationHelper.cs" Link="Features\Dev\ModSettings.SettingsCreationHelper.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModSettings.SubMenu.cs" Link="Features\Dev\ModSettings.SubMenu.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\PlayerDialogFilter.cs" Link="Features\Dev\PlayerDialogFilter.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\StartupscreenOverride.cs" Link="Features\Dev\StartupscreenOverride.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\UnityRandomOverrider.cs" Link="Features\Dev\UnityRandomOverrider.cs" />
