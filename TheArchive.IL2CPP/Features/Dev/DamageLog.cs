@@ -93,9 +93,11 @@ namespace TheArchive.Features.Dev
             public static bool HasHitAnyAgent => hitAgent != null;
             public static bool HasHitEnemy => hitEnemyAgent != null;
 
+            [IsPrefix]
             [RundownConstraint(Utils.RundownFlags.RundownOne, Utils.RundownFlags.RundownTwo)]
             public static void PrefixPreR3(Weapon.WeaponHitData weaponRayData) => PrefixR3(weaponRayData, 0);
 
+            [IsPrefix]
             [RundownConstraint(Utils.RundownFlags.RundownThree, Utils.RundownFlags.Latest)]
             public static void PrefixR3(Weapon.WeaponHitData weaponRayData, float additionalDis)
             {
