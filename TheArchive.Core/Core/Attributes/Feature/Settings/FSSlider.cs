@@ -8,10 +8,35 @@ namespace TheArchive.Core.Attributes.Feature.Settings
         public float Min { get; set; }
         public float Max { get; set; }
 
-        public FSSlider(float min, float max)
+        public SliderStyle Style { get; set; }
+        public RoundTo Rounding { get; set; }
+
+        public FSSlider(float min, float max, SliderStyle style = SliderStyle.FloatPercent, RoundTo rounding = RoundTo.TwoDecimal)
         {
             Min = min;
             Max = max;
+
+            Style = style;
+            Rounding = rounding;
+        }
+
+        public enum SliderStyle
+        {
+            FloatPercent,
+            FloatNoDecimal,
+            FloatOneDecimal,
+            FloatTwoDecimal,
+            [Obsolete("Not yet implemented properly! Use a float value instead!")]
+            IntMinMax
+        }
+
+        public enum RoundTo
+        {
+            NoRounding = -1,
+            NoDecimal = 0,
+            OneDecimal,
+            TwoDecimal,
+            ThreeDecimal,
         }
     }
 }

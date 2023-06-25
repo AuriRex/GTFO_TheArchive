@@ -2,11 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
 using UnityEngine;
+using UnityEngine.UI;
+using static TheArchive.Core.Attributes.Feature.Settings.FSSlider;
 using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Utilities.Utils;
 
@@ -616,6 +619,58 @@ namespace TheArchive.Features.Dev
                 CreateSubMenuControls(dynamicSubMenu, menuEntryLabelText: setting.DisplayName, headerText: setting.DisplayName, placeIntoMenu: subMenu);
             }
 
+            #region NumberSetting_FloatValueDisplay
+            private static class OnlyTouchOnR5AndLater
+            {
+#if IL2CPP
+                internal static Dictionary<SliderStyle, eDisplayFloatValueAs> _styleDisplayMap = new Dictionary<SliderStyle, eDisplayFloatValueAs>()
+                {
+                    { SliderStyle.IntMinMax, GetEnumFromName<eDisplayFloatValueAs>(nameof(eDisplayFloatValueAs.Percent)) },
+                    { SliderStyle.FloatPercent, GetEnumFromName<eDisplayFloatValueAs>(nameof(eDisplayFloatValueAs.Percent)) },
+                    { SliderStyle.FloatNoDecimal, GetEnumFromName<eDisplayFloatValueAs>(nameof(eDisplayFloatValueAs.Decimal0)) },
+                    { SliderStyle.FloatOneDecimal, GetEnumFromName<eDisplayFloatValueAs>(nameof(eDisplayFloatValueAs.Decimal1)) },
+                    { SliderStyle.FloatTwoDecimal, GetEnumFromName<eDisplayFloatValueAs>(nameof(eDisplayFloatValueAs.Decimal2)) },
+                };
+#endif
+            }
+
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            /// <summary>
+            /// Only touch on R5 and later!!
+            /// </summary>
+            private static bool GetSliderFloatDisplayValue(SliderStyle style, out int val)
+            {
+#if IL2CPP
+                var ret = OnlyTouchOnR5AndLater._styleDisplayMap.TryGetValue(style, out var value);
+                val = (int)value;
+                return ret;
+#else
+                val = 0;
+                return false;
+#endif
+            }
+
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            /// <summary>
+            /// Only touch on R5 and later!!
+            /// </summary>
+            private static void SetSliderFloatDisplayStyle(CM_SettingScrollReceiver cm_settingScrollReceiver, SliderStyle style)
+            {
+#if IL2CPP
+                if(GetSliderFloatDisplayValue(style, out var value))
+                {
+                    cm_settingScrollReceiver.m_displayAs = (eDisplayFloatValueAs)value;
+                }
+#endif
+            }
+            #endregion NumberSetting_FloatValueDisplay
+
+            private static IValueAccessor<CM_SettingScrollReceiver, iFloatInputReceiver> _A_m_floatReceiver = AccessorBase.GetValueAccessor<CM_SettingScrollReceiver, iFloatInputReceiver>("m_floatReceiver");
+            private static IValueAccessor<CM_SettingScrollReceiver, iIntInputReceiver> _A_m_intReceiver = AccessorBase.GetValueAccessor<CM_SettingScrollReceiver, iIntInputReceiver>("m_intReceiver");
+            private static IValueAccessor<CM_SettingScrollReceiver, eSettingInputType> _A_m_inputType = AccessorBase.GetValueAccessor<CM_SettingScrollReceiver, eSettingInputType>("m_inputType");
+            private static IValueAccessor<CM_SettingScrollReceiver, float> _A_m_scrollRange = AccessorBase.GetValueAccessor<CM_SettingScrollReceiver, float>("m_scrollRange");
+
+            //m_handleLocalXPosMinMax // m_scrollRange
             public static void CreateNumberSetting(NumberSetting setting, SubMenu subMenu)
             {
                 CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
@@ -640,8 +695,78 @@ namespace TheArchive.Features.Dev
                 }
                 else if (setting.HasSlider)
                 {
-                    //cm_settingScrollReceiver = GOUtil.SpawnChildAndGetComp<CM_SettingScrollReceiver>(cm_settingsItem.m_sliderInputPrefab, cm_settingsItem.m_inputAlign);
-                    // TODO!!
+                    var slider = setting.Slider;
+
+                    cm_settingScrollReceiver = GOUtil.SpawnChildAndGetComp<CM_SettingScrollReceiver>(cm_settingsItem.m_sliderInputPrefab, cm_settingsItem.m_inputAlign);
+
+                    var inputType = slider.Style == SliderStyle.IntMinMax ? eSettingInputType.IntMinMaxSlider : eSettingInputType.FloatSlider;
+
+                    _A_m_inputType.Set(cm_settingScrollReceiver, inputType);
+#if IL2CPP
+                    if(Is.R5OrLater)
+                    {
+                        // Proper value display on sliders is R5 and up only for now!
+                        SetSliderFloatDisplayStyle(cm_settingScrollReceiver, slider.Style);
+                    }   
+#endif
+
+                    // TODO: Properly implement int sliders!
+                    var intReceiver = new CustomIntReceiver(new Func<int>(() =>
+                    {
+                        return (int)setting.GetValue();
+                    }),
+                    (val) => {
+                        if(((int)setting.GetValue()) != val)
+                        {
+                            setting.SetValue(val);
+                        }
+                    });
+
+                    var floatReceiver = new CustomFloatReceiver(new Func<float>(() =>
+                    {
+                        var val = (float)setting.GetValue();
+                        var delta = (val - slider.Min) / (slider.Max - slider.Min);
+                        return delta;
+                    }),
+                    (delta) => {
+                        var val = (slider.Max - slider.Min) * delta + slider.Min;
+                        switch (slider.Rounding)
+                        {
+                            case RoundTo.NoRounding:
+                                break;
+                            default:
+                                val = (float) Math.Round(val, (int)slider.Rounding);
+                                break;
+                        }
+                        val = Math.Min(slider.Max, Math.Max(val, slider.Min));
+                        if(((float)setting.GetValue()) != val)
+                        {
+                            FeatureLogger.Debug($"{setting.DEBUG_Path}: setting to {val} (delta={delta})");
+                            setting.SetValue(val);
+                        }
+
+                        CM_SettingScrollReceiver_GetFloatDisplayText_Patch.OverrideDisplayValue = true;
+                        CM_SettingScrollReceiver_GetFloatDisplayText_Patch.Value = val;
+                    });
+
+#if IL2CPP
+                    cm_settingScrollReceiver.m_intReceiver = new iIntInputReceiver(intReceiver.Pointer);
+                    cm_settingScrollReceiver.m_floatReceiver = new iFloatInputReceiver(floatReceiver.Pointer);
+#else
+                    _A_m_intReceiver.Set(cm_settingScrollReceiver, intReceiver);
+                    _A_m_floatReceiver.Set(cm_settingScrollReceiver, floatReceiver);
+#endif
+
+                    _A_m_scrollRange.Set(cm_settingScrollReceiver, cm_settingScrollReceiver.m_handleLocalXPosMinMax.y - cm_settingScrollReceiver.m_handleLocalXPosMinMax.x);
+
+                    CM_SettingScrollReceiver_GetFloatDisplayText_Patch.OverrideDisplayValue = true;
+
+                    if(float.TryParse(setting.GetValue().ToString(), out var fValue))
+                        CM_SettingScrollReceiver_GetFloatDisplayText_Patch.Value = fValue;
+
+                    cm_settingScrollReceiver.ResetValue();
+
+                    cm_settingsInputField.gameObject.SetActive(false);
                 }
 
                 JankTextMeshProUpdaterOnce.Apply(cm_settingsInputField.m_text);

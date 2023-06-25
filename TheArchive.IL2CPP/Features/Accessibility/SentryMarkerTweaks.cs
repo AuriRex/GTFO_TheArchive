@@ -30,7 +30,7 @@ namespace TheArchive.Features.Accessibility
 
             [FSDisplayName("Name text size")]
             [FSDescription("Adjust the size of the nametag where 1 is 100% (normal) size.")]
-            [FSSlider(0.05f, 5f)]
+            [FSSlider(0.1f, 3f)]
             public float PlayerNameSize { get; set; } = 0.75f;
 
             [FSDisplayName("Use player color for markers")]

@@ -291,6 +291,25 @@ namespace TheArchive.Features.Dev
 #endif
         }
 
+#if IL2CPP
+        [RundownConstraint(RundownFlags.RundownFive, RundownFlags.Latest)]
+        [ArchivePatch(typeof(CM_SettingScrollReceiver), nameof(CM_SettingScrollReceiver.GetFloatDisplayText))]
+#endif
+        public static class CM_SettingScrollReceiver_GetFloatDisplayText_Patch
+        {
+            public static bool OverrideDisplayValue { get; set; } = false;
+            public static float Value { get; set; } = 0f;
+            public static void Prefix(CM_SettingScrollReceiver __instance, ref float val)
+            {
+                if(OverrideDisplayValue)
+                {
+                    val = Value;
+                    OverrideDisplayValue = false;
+                }
+            }
+        }
+
+
         //Setup(MainMenuGuiLayer guiLayer)
         [ArchivePatch(typeof(CM_PageSettings), "Setup")]
         public static class CM_PageSettings_Setup_Patch

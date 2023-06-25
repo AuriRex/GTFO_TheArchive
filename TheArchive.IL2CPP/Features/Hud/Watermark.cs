@@ -205,8 +205,11 @@ namespace TheArchive.Features.Hud
                         rectTrans.sizeDelta = Vector2.zero;
                     }
 
-                    WatermarkTopLine.text = $"<#{ColorHex}>{ArchiveMod.MOD_NAME} v{ArchiveMod.VERSION_STRING}</color>";
-                    WatermarkTopLine.Rebuild(CanvasUpdate.PreRender);
+                    if(Settings.Mode == WatermarkSettings.WatermarkMode.Mod)
+                    {
+                        WatermarkTopLine.text = $"<#{ColorHex}>{ArchiveMod.MOD_NAME} v{ArchiveMod.VERSION_STRING}</color>";
+                        WatermarkTopLine.Rebuild(CanvasUpdate.PreRender);
+                    }
 
                     if (Is.R6OrLater)
                         return;
