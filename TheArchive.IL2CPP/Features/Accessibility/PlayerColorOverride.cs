@@ -133,6 +133,31 @@ namespace TheArchive.Features.Accessibility
         }
 #endif
 
+        [ArchivePatch(typeof(PlayerAgent), nameof(PlayerAgent.PlayerName), patchMethodType: ArchivePatch.PatchMethodType.Getter)]
+        public static class PlayerAgent_PlayerName_Patch
+        {
+            public static bool Prefix(PlayerAgent __instance, ref string __result)
+            {
+                __result = $"<{__instance.Owner.PlayerColor.ToHexString()}>{__instance.Owner.GetName()}</color>";
+
+                if (Is.R6OrLater)
+                    SetInteractionNameBackingFieldR6OrLater(__instance, __result);
+
+                return ArchivePatch.SKIP_OG;
+            }
+
+            private static void SetInteractionNameBackingFieldR6OrLater(PlayerAgent player, string interactionName)
+            {
+#if IL2CPP
+                // assigned by Black Magic ???????? (laughs in early R6 mono code 😂)
+                // this is just to fix janky interaction text not updating at all for some reason
+                // also fixes white names on drop / before looking at them for the first time
+                // also strips the [Bot] tag in the interactions text but I don't care :)
+                player._InteractionName_k__BackingField = interactionName;
+#endif
+            }
+        }
+
         [ArchivePatch(typeof(PlayerAgent), nameof(PlayerAgent.Setup))]
         public static class PlayerAgent_Setup_Patch
         {
