@@ -228,6 +228,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\UnityRandomOverrider.cs" Link="Features\Dev\UnityRandomOverrider.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\BioTrackerStuckSoundFix.cs" Link="Features\Fixes\BioTrackerStuckSoundFix.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\InteractionFix.cs" Link="Features\Fixes\InteractionFix.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\MapPanFix.cs" Link="Features\Fixes\MapPanFix.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\MapToObjectivesSwitchFix.cs" Link="Features\Fixes\MapToObjectivesSwitchFix.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\NoDeadPings.cs" Link="Features\Fixes\NoDeadPings.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\ReloadMinusOneBugFix.cs" Link="Features\Fixes\ReloadMinusOneBugFix.cs" />
