@@ -54,6 +54,7 @@ namespace TheArchive.Features.Hud
             {
                 Mod,
                 Positional,
+                Timer,
             }
         }
 
@@ -142,27 +143,43 @@ namespace TheArchive.Features.Hud
             _cBlueString = SaturateColor(_cBlue, saturation).ToHexString();
         }
 
+        private static readonly eGameStateName _eGameStateName_InLevel = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.InLevel));
+
+        private bool _hideElement = true;
+
         public override void Update()
         {
             if (WatermarkTopLine == null)
                 return;
 
+            _hideElement = true;
             switch (Settings.Mode)
             {
-                case WatermarkSettings.WatermarkMode.Positional:
-                    break;
                 default:
                     return;
+                case WatermarkSettings.WatermarkMode.Positional:
+                    if (PlayerManager.TryGetLocalPlayerAgent(out var localPlayer))
+                    {
+                        Vector3 pos = localPlayer.transform.position;
+
+                        WatermarkTopLine.text = $"<{_cRedString}>X:{pos.x.ToString(_format)}</color> <{_cGreenString}>Y:{pos.y.ToString(_format)}</color> <{_cBlueString}>Z:{pos.z.ToString(_format)}</color>";
+                        WatermarkTopLine.Rebuild(CanvasUpdate.PreRender);
+
+                        _hideElement = false;
+                    }
+                    break;
+                case WatermarkSettings.WatermarkMode.Timer:
+                    if (((eGameStateName)CurrentGameState) != _eGameStateName_InLevel)
+                        break;
+
+                    WatermarkTopLine.text = EnhancedExpeditionTimer.TotalElapsedMissionTimeFormatted;
+                    WatermarkTopLine.Rebuild(CanvasUpdate.PreRender);
+
+                    _hideElement = false;
+                    break;
             }
 
-            if (PlayerManager.TryGetLocalPlayerAgent(out var localPlayer))
-            {
-                Vector3 pos = localPlayer.transform.position;
-
-                WatermarkTopLine.text = $"<{_cRedString}>X:{pos.x.ToString(_format)}</color> <{_cGreenString}>Y:{pos.y.ToString(_format)}</color> <{_cBlueString}>Z:{pos.z.ToString(_format)}</color>";
-                WatermarkTopLine.Rebuild(CanvasUpdate.PreRender);
-            }
-            else if (WatermarkTopLine.text != string.Empty)
+            if (_hideElement && WatermarkTopLine.text != string.Empty)
             {
                 WatermarkTopLine.text = string.Empty;
                 WatermarkTopLine.Rebuild(CanvasUpdate.PreRender);
