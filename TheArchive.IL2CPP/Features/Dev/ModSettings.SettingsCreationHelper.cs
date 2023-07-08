@@ -66,7 +66,11 @@ namespace TheArchive.Features.Dev
                             break;
                         case SubmenuSetting ss:
                             var subMenu = new SubMenu(ss.DisplayName);
-                            CreateSubMenuControls(subMenu, menuEntryLabelText: ss.DisplayName, placeIntoMenu: placeIntoMenu);
+                            var data = new DescriptionPanel.DescriptionPanelData() {
+                                Title = ss.DisplayName,
+                                Description = ss.Description,
+                            };
+                            CreateSubMenuControls(subMenu, menuEntryLabelText: ss.DisplayName, placeIntoMenu: placeIntoMenu, descriptionPanelData: data);
                             SetupItemsForSettingsHelper(ss.SettingsHelper, subMenu);
                             subMenu.Build();
                             break;
@@ -195,7 +199,7 @@ namespace TheArchive.Features.Dev
                 collider.offset = new Vector2(250, -25);
             }
 
-            public static void CreateSubMenuControls(SubMenu subMenu, Color? entryItemColor = null, string menuEntryLabelText = "> Settings", SubMenu placeIntoMenu = null, string headerText = null)
+            public static void CreateSubMenuControls(SubMenu subMenu, Color? entryItemColor = null, string menuEntryLabelText = "> Settings", SubMenu placeIntoMenu = null, string headerText = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null)
             {
                 if (subMenu == null) return;
 
@@ -209,6 +213,8 @@ namespace TheArchive.Features.Dev
                 }
 
                 CreateSettingsItem(menuEntryLabelText, out var into_sub_cm_settingsItem, entryItemColor, placeIntoMenu);
+
+                CreateFSHoverAndSetButtonAction(descriptionPanelData, into_sub_cm_settingsItem, null);
 
                 #region back-button
                 outof_sub_cm_settingsItem.ForcePopupLayer(true);
@@ -857,12 +863,22 @@ namespace TheArchive.Features.Dev
 
             public static void CreateFSHoverAndSetButtonAction(FeatureSetting setting, CM_SettingsItem cm_settingsItem, CM_Item toggleButton_cm_item, Action<int> buttonAction = null)
             {
+                var data = new DescriptionPanel.DescriptionPanelData() {
+                    Title = setting.DisplayName,
+                    Description = setting.Description,
+                };
+
+                CreateFSHoverAndSetButtonAction(data, cm_settingsItem, toggleButton_cm_item, buttonAction);
+            }
+
+            public static void CreateFSHoverAndSetButtonAction(DescriptionPanel.DescriptionPanelData data, CM_SettingsItem cm_settingsItem, CM_Item toggleButton_cm_item, Action<int> buttonAction = null)
+            {
                 var delHover = delegate (int id, bool hovering)
                 {
                     if (hovering)
                     {
-                        if (!string.IsNullOrWhiteSpace(setting.Description))
-                            TheDescriptionPanel.Show(setting.DisplayName, setting.Description);
+                        if (data.HasDescription)
+                            TheDescriptionPanel.Show(data.Title, data.Description);
                     }
                     else
                     {

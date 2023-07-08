@@ -140,6 +140,14 @@ namespace TheArchive.Features.Dev
 
         public class DescriptionPanel : IDisposable
         {
+            public class DescriptionPanelData
+            {
+                public string Title;
+                public string Description;
+
+                public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
+            }
+
             private CM_ScrollWindow _backgroundPanel;
             private TMPro.TextMeshPro _headerText;
             private TMPro.TextMeshPro _contentText;
