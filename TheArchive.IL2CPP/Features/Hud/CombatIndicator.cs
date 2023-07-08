@@ -1,4 +1,6 @@
-﻿using TheArchive.Core.Attributes;
+﻿using System.Linq;
+using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Features.Dev;
 using TheArchive.Interfaces;
@@ -26,10 +28,25 @@ namespace TheArchive.Features.Hud
         {
             public CombatIndicatorStyle Style { get; set; } = CombatIndicatorStyle.Simple;
 
+            [FSDisplayName("Special Screen Settings")]
+            [FSDescription("<#F00>Don't touch unless the combat indicator looks wrong!</color>\n\nMain purpouse is for weird screen resolution combinations that mess up the indicators scale.")]
+            public SpecialSettings Special { get; set; } = new SpecialSettings();
+
             public enum CombatIndicatorStyle
             {
                 Simple,
                 Detailed
+            }
+
+            public class SpecialSettings
+            {
+                [FSDisplayName("Override CI Scale")]
+                [FSDescription("Enable this if the combat indicator is missing entirely or scaled incorrectly.")]
+                public bool HelpIHaveAWeirdScreenSetupAndItsScaledInproperly { get; set; } = false;
+
+                [FSDisplayName("Size Multiplier")]
+                [FSDescription("Scales the Combat Indicators text element")]
+                public float SizeMultiplierFrom1080pBase { get; set; } = 1f;
             }
         }
 
@@ -92,7 +109,22 @@ namespace TheArchive.Features.Hud
             combatIndicatorTMP.name = nameof(CombatIndicator);
 
             combatIndicatorTMP.transform.SetParent(localPlayerStatus.transform);
+
             combatIndicatorTMP.transform.localPosition = new Vector3(263.5f, 30, 0); // 263.5 = 301 (edge position) - 37.5 (half of it's OG size 75)
+
+            float scale;
+
+            if(Settings.Special.HelpIHaveAWeirdScreenSetupAndItsScaledInproperly)
+            {
+                scale = 0.5f * Settings.Special.SizeMultiplierFrom1080pBase;
+            }
+            else
+            {
+                var bigRes = Screen.resolutions.ToArray().OrderByDescending(res => res.height).First();
+                scale = bigRes.height / 1080 * 0.5f;
+            }
+            
+            combatIndicatorTMP.transform.localScale = new Vector3(scale, scale, scale);
 
             combatIndicatorTMP.GetComponent<RectTransform>().sizeDelta = new Vector2(150, 25); // double it's size
 
