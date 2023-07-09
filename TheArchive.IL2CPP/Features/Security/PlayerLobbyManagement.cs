@@ -1,6 +1,7 @@
 ﻿using CellMenu;
 using Player;
 using SNetwork;
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,10 @@ namespace TheArchive.Features.Security
             [FSDisplayName("Names on Map open Steam Profile")]
             [FSDescription("If clicking a players name on the map screen should open their Steam Profile in your default browser.")]
             public bool NamesOnMapOpenSteamProfile { get; set; } = false;
+
+            [FSDisplayName("Open Profiles in Steam Overlay")]
+            [FSDescription("Wheter to open profile links in the overlay or in the default OS browser.")]
+            public bool PreferOpeningProfileLinksInSteamOverlay { get; set; } = true;
 
             [FSHeader("Lobby Color Settings")]
             public LobbyColorSettings LobbyColors { get; set; } = new LobbyColorSettings();
@@ -289,7 +294,16 @@ namespace TheArchive.Features.Security
             }
 
             FeatureLogger.Info($"Opening Steam profile for player \"{player.NickName}\" ({player.Lookup})");
-            Application.OpenURL($"https://steamcommunity.com/profiles/{player.Lookup}");
+            var profileUrl = $"https://steamcommunity.com/profiles/{player.Lookup}";
+
+            if (Settings.PreferOpeningProfileLinksInSteamOverlay && SteamUtils.IsOverlayEnabled())
+            {
+                SteamFriends.ActivateGameOverlayToWebPage(profileUrl);
+            }
+            else
+            {
+                Application.OpenURL(profileUrl);
+            }
         }
 
         internal static void KickPlayerButtonPressed(int playerID)
