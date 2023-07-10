@@ -8,7 +8,6 @@ using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
 using UnityEngine;
-using UnityEngine.UI;
 using static TheArchive.Core.Attributes.Feature.Settings.FSSlider;
 using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Utilities.Utils;
@@ -91,6 +90,60 @@ namespace TheArchive.Features.Dev
                 scrollWindow.SetHeader(title);
 
                 return scrollWindow;
+            }
+
+            public static void CreateSimpleTextField(string labelText, string initialValue, Action<string> onValueUpdated, Func<string, string> getValue = null, int maxLength = 32, SubMenu placeIntoMenu = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null)
+            {
+                CreateSettingsItem(labelText, out var cm_settingsItem, subMenu: placeIntoMenu);
+
+                CM_SettingsInputField cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
+
+                StringInputSetMaxLength(cm_settingsInputField, maxLength);
+
+                CreateFSHoverAndSetButtonAction(descriptionPanelData, cm_settingsItem, null);
+
+                cm_settingsInputField.m_text.SetText(initialValue ?? string.Empty);
+
+                JankTextMeshProUpdaterOnce.Apply(cm_settingsInputField.m_text);
+
+                var receiver = new CustomStringReceiver(new Func<string>(
+                    () => {
+                        var currentText = cm_settingsInputField.m_text.text;
+                        var val = getValue?.Invoke(currentText);
+                        return val ?? currentText;
+                    }),
+                    (val) => {
+                        onValueUpdated?.Invoke(val);
+                    });
+
+#if IL2CPP
+                cm_settingsInputField.m_stringReceiver = new iStringInputReceiver(receiver.Pointer);
+#else
+                A_CM_SettingsInputField_m_stringReceiver.Set(cm_settingsInputField, receiver);
+#endif
+
+                cm_settingsItem.ForcePopupLayer(true);
+            }
+
+            public static void CreateSimpleToggle(string labelText, bool initialState, Action<bool> onPress, SubMenu placeIntoMenu = null, string stateTrue = "<#0F0>[ On ]</color>", string stateFalse = "<#F00>[ Off ]</color>")
+            {
+                CreateSettingsItem(labelText, out var cmItem, subMenu: placeIntoMenu);
+                cmItem.ForcePopupLayer(true);
+                SetupToggleButton(cmItem, out var buttonCMItem, out var buttonTmp);
+                buttonTmp.SetText(initialState ? stateTrue : stateFalse);
+                JankTextMeshProUpdaterOnce.Apply(buttonTmp);
+                buttonCMItem.SetCMItemEvents((_) => {
+                    var stateString = buttonTmp.text;
+
+                    var state = stateString == stateTrue;
+
+                    state = !state;
+
+                    buttonTmp.SetText(state ? stateTrue : stateFalse);
+                    JankTextMeshProUpdaterOnce.Apply(buttonTmp);
+
+                    onPress?.Invoke(state);
+                });
             }
 
             public static void CreateSimpleButton(string labelText, string buttonText, Action onPress, out CM_SettingsItem cmItem, SubMenu placeIntoMenu = null)
@@ -199,12 +252,13 @@ namespace TheArchive.Features.Dev
                 collider.offset = new Vector2(250, -25);
             }
 
-            public static void CreateSubMenuControls(SubMenu subMenu, Color? entryItemColor = null, string menuEntryLabelText = "> Settings", SubMenu placeIntoMenu = null, string headerText = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null)
+            public static void CreateSubMenuControls(SubMenu subMenu, Color? entryItemColor = null, string menuEntryLabelText = "> Settings", SubMenu placeIntoMenu = null, string headerText = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null, string backButtonText = "<<< Back <<<", string enterButtonText = "> ENTER <")
             {
                 if (subMenu == null) return;
 
-                subMenu.AddContentAsPersistent = true;
-                CreateSettingsItem("<<< Back <<<", out var outof_sub_cm_settingsItem, RED, subMenu);
+                using var _ = subMenu.GetPersistentContenAdditionToken();
+
+                CreateSettingsItem(backButtonText, out var outof_sub_cm_settingsItem, RED, subMenu);
                 CreateSpacer(subMenu);
 
                 if (!string.IsNullOrWhiteSpace(headerText))
@@ -232,10 +286,8 @@ namespace TheArchive.Features.Dev
 
                 into_sub_cm_settingsItem.ForcePopupLayer(true);
 
-                into_sub_toggleButtonText.SetText("> ENTER <");
+                into_sub_toggleButtonText.SetText(enterButtonText);
                 JankTextMeshProUpdaterOnce.Apply(into_sub_toggleButtonText);
-
-                subMenu.AddContentAsPersistent = false;
             }
 
             public static void CreateColorSetting(ColorSetting setting, SubMenu subMenu = null)
@@ -877,7 +929,7 @@ namespace TheArchive.Features.Dev
                 {
                     if (hovering)
                     {
-                        if (data.HasDescription)
+                        if (data != null && data.HasDescription)
                             TheDescriptionPanel.Show(data.Title, data.Description);
                     }
                     else

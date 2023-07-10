@@ -50,7 +50,7 @@ namespace TheArchive.Features.Dev
             }
         }
 
-        public class SubMenu
+        public class SubMenu : IDisposable
         {
             internal static Stack<SubMenu> openMenus = new Stack<SubMenu>();
 
@@ -62,15 +62,33 @@ namespace TheArchive.Features.Dev
                 AddToAllSettingsWindows(ScrollWindow);
             }
 
+            public void Dispose()
+            {
+                if (ScrollWindow == null)
+                    return;
+
+                RemoveFromAllSettingsWindows(ScrollWindow);
+                ScrollWindow.SafeDestroyGO();
+            }
+
             public string Title { get; private set; }
             public bool HasBeenBuilt { get; protected set; }
             public float Padding { get; set; } = 5;
-            public bool AddContentAsPersistent { get; set; } = false;
-            public Transform WindowTransform => ScrollWindow.transform;
+            public Transform WindowTransform => ScrollWindow?.transform;
             public CM_ScrollWindow ScrollWindow { get; private set; }
 
             protected readonly List<SubMenuEntry> persistentContent = new List<SubMenuEntry>();
             protected readonly List<SubMenuEntry> content = new List<SubMenuEntry>();
+            protected bool addContentAsPersistent = false;
+
+            /// <summary>
+            /// Use a using block or dispose after you're done adding persistent content!
+            /// </summary>
+            /// <returns></returns>
+            public PersistentContentAdditionToken GetPersistentContenAdditionToken()
+            {
+                return new PersistentContentAdditionToken(this);
+            }
 
             public bool AppendContent(GameObject go)
             {
@@ -82,7 +100,7 @@ namespace TheArchive.Features.Dev
                 if (HasBeenBuilt)
                     return false;
 
-                if (AddContentAsPersistent)
+                if (addContentAsPersistent)
                     persistentContent.Add(item);
                 else
                     content.Add(item);
@@ -143,6 +161,24 @@ namespace TheArchive.Features.Dev
                     IScrollWindowContent = go.GetComponentInChildren<iScrollWindowContent>();
 
                     if (IScrollWindowContent == null) throw new ArgumentException($"Passed GameObject does not contain a Component inherriting from {nameof(iScrollWindowContent)} in its children!", nameof(go));
+                }
+            }
+
+            public class PersistentContentAdditionToken : IDisposable
+            {
+                private readonly SubMenu _subMenu;
+                private readonly bool _previousAddAsPersistent = false;
+
+                internal PersistentContentAdditionToken(SubMenu menu)
+                {
+                    _subMenu = menu;
+                    _previousAddAsPersistent = menu.addContentAsPersistent;
+                    menu.addContentAsPersistent = true;
+                }
+
+                public void Dispose()
+                {
+                    _subMenu.addContentAsPersistent = _previousAddAsPersistent;
                 }
             }
         }

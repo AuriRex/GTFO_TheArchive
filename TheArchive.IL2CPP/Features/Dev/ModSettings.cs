@@ -38,6 +38,22 @@ namespace TheArchive.Features.Dev
 
         public new static IArchiveLogger FeatureLogger { get; set; }
 
+        [FeatureConfig]
+        public static ModSettingsSettings Settings { get; set; }
+
+        public class ModSettingsSettings
+        {
+            public SearchOptions Search { get; set; } = new SearchOptions();
+
+            public class SearchOptions
+            {
+                public bool SearchTitles { get; set; } = true;
+                public bool SearchDescriptions { get; set; } = false;
+                public bool SearchSubSettingsTitles { get; set; } = true;
+                public bool SearchSubSettingsDescription { get; set; } = false;
+            }
+        }
+
 #if MONO
         private static readonly FieldAccessor<CM_PageSettings, eSettingsSubMenuId> A_CM_PageSettings_m_currentSubMenuId = FieldAccessor<CM_PageSettings, eSettingsSubMenuId>.GetAccessor("m_currentSubMenuId");
         private static readonly MethodAccessor<CM_PageSettings> A_CM_PageSettings_ResetAllValueHolders = MethodAccessor<CM_PageSettings>.GetAccessor("ResetAllValueHolders");
@@ -154,7 +170,7 @@ namespace TheArchive.Features.Dev
             public DescriptionPanel()
             {
                 _backgroundPanel = CreateScrollWindow("Description");
-                _backgroundPanel.transform.position = _backgroundPanel.transform.position + new Vector3(1050, 0, 0);
+                _backgroundPanel.transform.localPosition = _backgroundPanel.transform.localPosition + new Vector3(1050, 0, 0);
 
 
                 var headerItemGO = GameObject.Instantiate(SettingsItemPrefab, _backgroundPanel.transform);
@@ -197,6 +213,20 @@ namespace TheArchive.Features.Dev
                 _backgroundPanel.SafeDestroyGO();
             }
 
+            public void Show(DescriptionPanelData data)
+            {
+                _backgroundPanel.gameObject.SetActive(true);
+
+                _headerText.SetText(data.Title);
+                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_headerText);
+
+                _contentText.SetText(data.Description);
+                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_contentText);
+
+                // TODO: Include Module/Mod name of feature
+                // TODO: Include Rundown Constraints
+            }
+
             public void Show(string title, string content)
             {
                 _backgroundPanel.gameObject.SetActive(true);
@@ -225,6 +255,7 @@ namespace TheArchive.Features.Dev
             internal static CM_ScrollWindow PopupWindow { get; set; }
             internal static CM_PageSettings SettingsPageInstance { get; set; }
             internal static DescriptionPanel TheDescriptionPanel { get; set; }
+            internal static SearchMainPage TheSearchMenu { get; set; }
 
             internal static CM_Item MainModSettingsButton { get; set; }
             internal static GameObject SubMenuButtonPrefab { get; set; }
@@ -401,6 +432,9 @@ namespace TheArchive.Features.Dev
                 TheDescriptionPanel.Dispose();
                 TheDescriptionPanel = null;
 
+                TheSearchMenu.Dispose();
+                TheSearchMenu = null;
+
                 foreach (var scrollWindow in AllSubmenuScrollWindows)
                 {
                     RemoveFromAllSettingsWindows(scrollWindow);
@@ -457,6 +491,13 @@ namespace TheArchive.Features.Dev
                 JankTextMeshProUpdaterOnce.UpdateMesh(_restartInfoText);
 
                 TheDescriptionPanel = new DescriptionPanel();
+
+                if (DevMode)
+                {
+                    CreateHeader("Dev Mode enabled - Hidden Features shown!", DISABLED);
+                }
+
+                TheSearchMenu = new SearchMainPage();
 
                 var odereredGroups = FeatureManager.Instance.GroupedFeatures.OrderBy(kvp => kvp.Key);
 
@@ -626,7 +667,7 @@ namespace TheArchive.Features.Dev
                 _lastVersionClickedTime = currentTime;
             }
 
-            private static void SetupEntriesForFeature(Feature feature, SubMenu groupSubMenu)
+            internal static void SetupEntriesForFeature(Feature feature, SubMenu groupSubMenu)
             {
                 if (!Feature.DevMode && feature.IsHidden) return;
 
