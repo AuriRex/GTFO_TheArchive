@@ -31,9 +31,12 @@ namespace TheArchive.Features.Accessibility
 
         public class DynamicVolumeSettings
         {
-            [FSSlider(0f, 100f)]
+            [FSSlider(0f, 1f, FSSlider.SliderStyle.FloatPercent, FSSlider.RoundTo.TwoDecimal)]
             [FSDisplayName("Volume Override")]
             [FSDescription("Volume percent to use during the games' intro and elevator ride sequences.")]
+            public float VolumeOverrideValue { get; set; } = 0.1f;
+
+            [FSHide, Obsolete]
             public float VolumeOverride { get; set; } = 10f;
 
             [FSDisplayName("Volume Interpolation (Seconds)")]
@@ -56,6 +59,18 @@ namespace TheArchive.Features.Accessibility
                 DoNothingInBackground,
                 OverrideInBackground
             }
+        }
+
+        public override void Init()
+        {
+            // Move from legacy settings value to new one
+#pragma warning disable CS0612 // Type or member is obsolete
+            if (Settings.VolumeOverride >= 0)
+            {
+                Settings.VolumeOverrideValue = Settings.VolumeOverride / 100f;
+                Settings.VolumeOverride = -1;
+            }
+#pragma warning restore CS0612 // Type or member is obsolete
         }
 
         public override void OnButtonPressed(ButtonSetting setting)
@@ -89,7 +104,7 @@ namespace TheArchive.Features.Accessibility
             {
                 if (IsOverrideActive)
                 {
-                    SetSFXVolume(Settings.VolumeOverride);
+                    SetSFXVolume(Settings.VolumeOverrideValue * 100f);
                     return;
                 }
                 ResetAllVolume();
@@ -107,7 +122,7 @@ namespace TheArchive.Features.Accessibility
                         ResetAllVolume();
                         break;
                     case DynamicVolumeSettings.FocusChangeMode.OverrideInBackground:
-                        SetAllVolume(Settings.VolumeOverride);
+                        SetAllVolume(Settings.VolumeOverrideValue * 100f);
                         break;
                 }
                 return;
@@ -158,6 +173,7 @@ namespace TheArchive.Features.Accessibility
         private static readonly eGameStateName _eGameStateName_Offline = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.Offline));
         private static readonly eGameStateName _eGameStateName_StopElevatorRide = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.StopElevatorRide));
         private static readonly eGameStateName _eGameStateName_InLevel = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.InLevel));
+        private static readonly eGameStateName _eGameStateName_Lobby = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.Lobby));
 
         public void OnGameStateChanged(eGameStateName state)
         {
@@ -165,18 +181,25 @@ namespace TheArchive.Features.Accessibility
             {
                 IsOverrideActive = true;
                 // Change volume for intro seq.
-                SetSFXVolume(Settings.VolumeOverride, "OnGameStateChanged, Offline");
+                SetSFXVolume(Settings.VolumeOverrideValue * 100f, "OnGameStateChanged, Offline");
             }
 
             if(state == _eGameStateName_StopElevatorRide || (state == _eGameStateName_InLevel && !IsLerpActive && IsOverrideActive))
             {
                 // Lerp to game settings on elevator ride stop
-                LerpVolume(Settings.VolumeOverride, GetPlayerSFXSettings(), Settings.LerpTime, onDone: () =>
+                LerpVolume(Settings.VolumeOverrideValue * 100f, GetPlayerSFXSettings(), Settings.LerpTime, onDone: () =>
                 {
                     IsOverrideActive = false;
                     if (IsApplicationFocused)
                         ResetAllVolume();
                 });
+            }
+
+            if (state == _eGameStateName_Lobby)
+            {
+                IsOverrideActive = false;
+                if (IsApplicationFocused)
+                    ResetAllVolume();
             }
         }
 
@@ -233,7 +256,7 @@ namespace TheArchive.Features.Accessibility
                     // And a second time later once enabled for real (also everytime you switch in the menu)
                     if (_state == 1)
                     {
-                        LerpVolume(Settings.VolumeOverride, GetPlayerSFXSettings(), Settings.LerpTime, onDone: () =>
+                        LerpVolume(Settings.VolumeOverrideValue * 100f, GetPlayerSFXSettings(), Settings.LerpTime, onDone: () =>
                         {
                             IsOverrideActive = false;
                             if (IsApplicationFocused)
@@ -252,7 +275,7 @@ namespace TheArchive.Features.Accessibility
             public static void Prefix()
             {
                 IsOverrideActive = true;
-                SetSFXVolume(Settings.VolumeOverride, "ElevatorRide.StartPreReleaseSequence");
+                SetSFXVolume(Settings.VolumeOverrideValue * 100f, "ElevatorRide.StartPreReleaseSequence");
             }
         }
 
