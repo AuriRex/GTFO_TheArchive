@@ -330,15 +330,16 @@ namespace TheArchive.Features.Dev
 #endif
         }
 
-#if IL2CPP
+#if IL2CPP && !BepInEx // TODO: Remove this BepInEx check later
         [RundownConstraint(RundownFlags.RundownFive, RundownFlags.Latest)]
         [ArchivePatch(typeof(CM_SettingScrollReceiver), nameof(CM_SettingScrollReceiver.GetFloatDisplayText))]
 #endif
+#warning TODO: Reintroduce patch later - If patched, this crashes on latest GTFO thunderstore BepInEx release; works on newest Bleeding Edge builds.
         public static class CM_SettingScrollReceiver_GetFloatDisplayText_Patch
         {
             public static bool OverrideDisplayValue { get; set; } = false;
             public static float Value { get; set; } = 0f;
-            public static void Prefix(CM_SettingScrollReceiver __instance, ref float val)
+            public static void Prefix(ref float val)
             {
                 if(OverrideDisplayValue)
                 {
