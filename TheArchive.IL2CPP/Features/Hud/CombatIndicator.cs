@@ -93,12 +93,12 @@ namespace TheArchive.Features.Hud
 
             combatIndicatorTMP.transform.SetParent(localPlayerStatus.transform);
 
-            combatIndicatorTMP.transform.localPosition = new Vector3(292f, 27.5f, 0);
+            combatIndicatorTMP.transform.localPosition = new Vector3(245f, 27.5f, 0);
 
             float scale = .625f;
             combatIndicatorTMP.transform.localScale = new Vector3(scale, scale, scale);
 
-            combatIndicatorTMP.GetComponent<RectTransform>().sizeDelta = new Vector2(150, 25); // double it's size
+            combatIndicatorTMP.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 25);
 
             combatIndicatorTMP.alignment = TMPro.TextAlignmentOptions.Right;
             //combatIndicatorTMP.fontSize = 15;
