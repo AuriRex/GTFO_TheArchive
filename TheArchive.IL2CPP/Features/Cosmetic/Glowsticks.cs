@@ -59,6 +59,10 @@ namespace TheArchive.Features.Cosmetic
             [FSDescription("Turns dark colors bright to actually make them glow")]
             public bool ScaleUpColors { get; set; } = true;
 
+            [FSDisplayName("Blue is Blue")]
+            [FSDescription("Adds a third of the blue component as green to the current color if the green component is below that amount.\n\nBasically makes blue look blue instead of purple.")]
+            public bool BlueIsBlue { get; set; } = true;
+
             public enum LocalOverrideMode
             {
                 Default,
@@ -165,6 +169,11 @@ namespace TheArchive.Features.Cosmetic
                         // All 0es - make glowstick white instead of black :p
                         col = Color.white;
                     }
+                }
+
+                if (Settings.BlueIsBlue)
+                {
+                    col = new Color(col.r, Math.Max(col.g, 0.333f * col.b), col.b);
                 }
 
                 // Colorize the actual light source
