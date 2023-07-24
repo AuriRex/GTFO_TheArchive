@@ -187,7 +187,7 @@ namespace TheArchive.Core.Managers
 
                 _activityManager = _discordClient.GetActivityManager();
 #warning todo: replace with command that runs steam:// maybe?
-                _activityManager.RegisterSteam(493520); // GTFO App ID
+                _activityManager.RegisterSteam(ArchiveMod.GTFO_STEAM_APPID); // GTFO App ID
 
                 _activityManager.OnActivityJoin += _activityManager_OnActivityJoin;
             }

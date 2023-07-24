@@ -683,7 +683,9 @@ namespace TheArchive.Features.Dev
 #if IL2CPP
                 internal static Dictionary<SliderStyle, eDisplayFloatValueAs> _styleDisplayMap = new Dictionary<SliderStyle, eDisplayFloatValueAs>()
                 {
+#pragma warning disable CS0618 // Type or member is obsolete
                     { SliderStyle.IntMinMax, GetEnumFromName<eDisplayFloatValueAs>(nameof(eDisplayFloatValueAs.Percent)) },
+#pragma warning restore CS0618 // Type or member is obsolete
                     { SliderStyle.FloatPercent, GetEnumFromName<eDisplayFloatValueAs>(nameof(eDisplayFloatValueAs.Percent)) },
                     { SliderStyle.FloatNoDecimal, GetEnumFromName<eDisplayFloatValueAs>(nameof(eDisplayFloatValueAs.Decimal0)) },
                     { SliderStyle.FloatOneDecimal, GetEnumFromName<eDisplayFloatValueAs>(nameof(eDisplayFloatValueAs.Decimal1)) },
@@ -757,7 +759,9 @@ namespace TheArchive.Features.Dev
 
                     cm_settingScrollReceiver = GOUtil.SpawnChildAndGetComp<CM_SettingScrollReceiver>(cm_settingsItem.m_sliderInputPrefab, cm_settingsItem.m_inputAlign);
 
+#pragma warning disable CS0618 // Type or member is obsolete
                     var inputType = slider.Style == SliderStyle.IntMinMax ? eSettingInputType.IntMinMaxSlider : eSettingInputType.FloatSlider;
+#pragma warning restore CS0618 // Type or member is obsolete
 
                     _A_m_inputType.Set(cm_settingScrollReceiver, inputType);
 #if IL2CPP

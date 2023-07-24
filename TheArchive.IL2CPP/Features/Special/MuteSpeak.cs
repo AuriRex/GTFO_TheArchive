@@ -21,7 +21,7 @@ namespace TheArchive.Features.Special
 
         public static bool EnableOtherVoiceBinds { get; set; } = false;
 
-        private static PlayerAgent _localPlayerAgent;
+        private static PlayerAgent _localPlayerAgent = null!;
 
         public static void IfKeySay(KeyCode key, uint soundId)
         {

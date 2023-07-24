@@ -12,6 +12,7 @@ namespace TheArchive
     {
         public override string Name => nameof(ArchiveMONOBootstrap);
         public override string Group => FeatureGroups.Dev;
+        public override string Description => "Hooks into a bunch of important game code in order for this mod to work.";
         public override bool RequiresRestart => true;
 
         [ArchivePatch(typeof(StartMainGame), "Awake")]
@@ -20,9 +21,7 @@ namespace TheArchive
             public static void Postfix()
             {
                 ArchiveMod.CurrentlySelectedRundownKey = $"Local_{Global.RundownIdToLoad}";
-#pragma warning disable CS0618 // Type or member is obsolete
                 ArchiveMod.InvokeGameDataInitialized();
-#pragma warning restore CS0618 // Type or member is obsolete
             }
         }
 
@@ -31,9 +30,7 @@ namespace TheArchive
         {
             public static void Postfix()
             {
-#pragma warning disable CS0618 // Type or member is obsolete
                 ArchiveMod.InvokeDataBlocksReady();
-#pragma warning restore CS0618 // Type or member is obsolete
             }
         }
 
@@ -42,9 +39,7 @@ namespace TheArchive
         {
             public static void Postfix(eGameStateName nextState)
             {
-#pragma warning disable CS0618 // Type or member is obsolete
-                ArchiveMod.InvokeGameStateChanged((int) nextState);
-#pragma warning restore CS0618 // Type or member is obsolete
+                ArchiveMod.InvokeGameStateChanged((int)nextState);
             }
         }
         
@@ -53,9 +48,7 @@ namespace TheArchive
         {
             public static void Postfix(bool focusState)
             {
-#pragma warning disable CS0618 // Type or member is obsolete
                 ArchiveMod.InvokeApplicationFocusChanged(focusState);
-#pragma warning restore CS0618 // Type or member is obsolete
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,8 +18,8 @@ namespace TheArchive.Core.Managers
         private static IArchiveLogger _logger;
         private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateArSubLoggerInstance(nameof(DataBlockManager), ConsoleColor.Green);
 
-        private static List<Type> _dataBlockTypes;
-        public static List<Type> DataBlockTypes
+        private static HashSet<Type> _dataBlockTypes;
+        public static HashSet<Type> DataBlockTypes
         {
             get
             {
@@ -48,7 +49,7 @@ namespace TheArchive.Core.Managers
                 && x.BaseType.IsGenericType
                 && x.BaseType.GetGenericTypeDefinition() == ImplementationManager.GameTypeByIdentifier("GameDataBlockBase<>"));
 
-            _dataBlockTypes = AllTypesOfGameDataBlockBase.ToList();
+            _dataBlockTypes = AllTypesOfGameDataBlockBase.ToHashSet();
         }
 
 
@@ -119,36 +120,35 @@ namespace TheArchive.Core.Managers
             return wrapperType.GetProperty("Blocks").GetValue(wrapper);
         }
 
-        public static void Setup()
+        public static List<T> GetAllBlocks<T>()
+        {
+            return (List<T>) GetAllBlocks(typeof(T));
+        }
+
+        public static IList GetAllBlocks(Type dataBlockType)
+        {
+            if (!IsDataBlockType(dataBlockType))
+                throw new InvalidOperationException($"The Type \"{dataBlockType?.FullName}\" is not a valid DataBlock Type!");
+
+            var wrapper = GetWrapper(dataBlockType, out var wrapperType);
+            var allBlocks = GetAllBlocksFromWrapper(wrapperType, wrapper);
+
+            return Utils.ToSystemListSlow(allBlocks, dataBlockType);
+        }
+
+        public static bool IsDataBlockType(Type type)
+        {
+            return DataBlockTypes.Contains(type);
+        }
+
+        internal static void Setup()
         {
             Logger.Msg(ConsoleColor.Green, $"Setting up ...");
             try
             {
-                if (!ArchiveMod.IsPlayingModded)
+                if (ArchiveMod.Settings.DumpDataBlocks && !ArchiveMod.IsPlayingModded)
                 {
-                    Logger.Msg(ConsoleColor.Green, $"Dumping built in DataBlocks ...");
-                    foreach (var type in DataBlockTypes)
-                    {
-                        Logger.Msg(ConsoleColor.DarkGreen, $"> {type.FullName}");
-
-                        var path = Path.Combine(LocalFiles.DataBlockDumpPath, type.Name + ".json");
-
-                        var genericType = ImplementationManager.GameTypeByIdentifier("GameDataBlockBase<>").MakeGenericType(type);
-
-                        string fileContents = (string)genericType.GetMethod("GetFileContents").Invoke(null, new object[0]);
-
-                        if (string.IsNullOrWhiteSpace(fileContents))
-                        {
-                            Logger.Warning($"  X returned string is empty!!");
-                        }
-
-                        if (ArchiveMod.Settings.DumpDataBlocks && (ArchiveMod.Settings.AlwaysOverrideDataBlocks || !File.Exists(path)))
-                        {
-                            Logger.Msg(ConsoleColor.DarkYellow, $"  > Writing to file: {path}");
-
-                            File.WriteAllText(path, fileContents);
-                        }
-                    }
+                    DumpOriginalDataBlocks(LocalFiles.DataBlockDumpPath, ArchiveMod.Settings.AlwaysOverrideDataBlocks);
                 }
 
                 if(_transformationDataToApply.Count > 0)
@@ -162,10 +162,8 @@ namespace TheArchive.Core.Managers
                         try
                         {
                             Logger.Notice($"> Applying transform for {trans.DBType.Name} from '{trans.DeclaringType?.FullName ?? "Null"}', Method: '{trans.OriginMethod?.Name ?? "Null"}' (Asm:{trans.DeclaringAssembly?.GetName()?.Name ?? "Null"}) [Priority:{trans.Priority}]");
-                            var wrapper = GetWrapper(trans.DBType, out var wrapperType);
-                            var allBlocks = GetAllBlocksFromWrapper(wrapperType, wrapper);
 
-                            trans.Invoke(Utils.ToSystemListSlow(allBlocks, trans.DBType));
+                            trans.Invoke(GetAllBlocks(trans.DBType));
                         }
                         catch (Exception ex)
                         {
@@ -182,5 +180,35 @@ namespace TheArchive.Core.Managers
             HasBeenSetup = true;
         }
 
+        public static void DumpOriginalDataBlocks(string pathToDumpTo, bool overrideExistingFiles)
+        {
+            if (string.IsNullOrWhiteSpace(pathToDumpTo) || !Directory.Exists(pathToDumpTo))
+                throw new ArgumentException($"Parameter \"{nameof(pathToDumpTo)}\" may not be null or whitespace and has to be a valid directory path!");
+
+            Logger.Msg(ConsoleColor.Green, $"Dumping original DataBlocks into \"{pathToDumpTo}\"");
+
+            foreach (var type in DataBlockTypes)
+            {
+                Logger.Msg(ConsoleColor.DarkGreen, $"> {type.FullName}");
+
+                var path = Path.Combine(pathToDumpTo, type.Name + ".json");
+
+                var genericType = ImplementationManager.GameTypeByIdentifier("GameDataBlockBase<>").MakeGenericType(type);
+
+                string fileContents = (string)genericType.GetMethod("GetFileContents").Invoke(null, Array.Empty<object>());
+
+                if (string.IsNullOrWhiteSpace(fileContents))
+                {
+                    Logger.Warning($"  X This DataBlock does not have any content!");
+                }
+
+                if (overrideExistingFiles || !File.Exists(path))
+                {
+                    Logger.Msg(ConsoleColor.DarkYellow, $"  > Writing to file: {path}");
+
+                    File.WriteAllText(path, fileContents);
+                }
+            }
+        }
     }
 }

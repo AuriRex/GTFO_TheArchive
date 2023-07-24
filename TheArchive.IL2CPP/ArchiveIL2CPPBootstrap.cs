@@ -15,15 +15,14 @@ namespace TheArchive
     {
         public override string Name => nameof(ArchiveIL2CPPBootstrap);
         public override string Group => FeatureGroups.Dev;
+        public override string Description => "Hooks into a bunch of important game code in order for this mod to work.";
         public override bool RequiresRestart => true;
 
         private static void InvokeGameDataInitialized()
         {
-#pragma warning disable CS0618 // Type or member is obsolete
             ArchiveMod.InvokeGameDataInitialized();
-#pragma warning restore CS0618 // Type or member is obsolete
 
-            if(ArchiveMod.CurrentRundown.IsIncludedIn(RundownFlags.RundownFour | RundownFlags.RundownFive))
+            if (ArchiveMod.CurrentRundown.IsIncludedIn(RundownFlags.RundownFour | RundownFlags.RundownFive))
             {
                 // Invoke DataBlocksReady on R4 & R5 instantly
                 InvokeDataBlocksReady();
@@ -36,9 +35,8 @@ namespace TheArchive
             {
                 ArchiveMod.CurrentlySelectedRundownKey = $"Local_{block.persistentID}";
             }
-#pragma warning disable CS0618 // Type or member is obsolete
+
             ArchiveMod.InvokeDataBlocksReady();
-#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         [ArchivePatch(typeof(GameDataInit), nameof(GameDataInit.Initialize))]
@@ -86,9 +84,7 @@ namespace TheArchive
         {
             public static void Postfix(eGameStateName nextState)
             {
-#pragma warning disable CS0618 // Type or member is obsolete
-                ArchiveMod.InvokeGameStateChanged((int) nextState);
-#pragma warning restore CS0618 // Type or member is obsolete
+                ArchiveMod.InvokeGameStateChanged((int)nextState);
             }
         }
 
@@ -120,9 +116,7 @@ namespace TheArchive
         {
             public static void Postfix(bool focusState)
             {
-#pragma warning disable CS0618 // Type or member is obsolete
                 ArchiveMod.InvokeApplicationFocusChanged(focusState);
-#pragma warning restore CS0618 // Type or member is obsolete
             }
         }
     }

@@ -32,7 +32,9 @@ namespace TheArchive.Features.Dev
                 [FSSlider(0f, 100f, FSSlider.SliderStyle.FloatNoDecimal, FSSlider.RoundTo.NoDecimal)]
                 public float SliderFloat0_100_NoDec { get; set; } = 50;
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 [FSSlider(0f, 100f, FSSlider.SliderStyle.IntMinMax)]
+#pragma warning restore CS0618 // Type or member is obsolete
                 public int SliderInt0_100_NoDec { get; set; } = 50;
 
                 [FSSlider(0, 3, FSSlider.SliderStyle.FloatPercent)]

@@ -29,6 +29,7 @@ namespace TheArchive
         public static readonly bool GIT_IS_DIRTY = ThisAssembly.Git.IsDirty;
         public const string GIT_COMMIT_SHORT_HASH = ThisAssembly.Git.Commit;
         public const string GIT_COMMIT_DATE = ThisAssembly.Git.CommitDate;
+        public const uint GTFO_STEAM_APPID = 493520;
 
         public const string MTFO_GUID = "com.dak.MTFO";
 
@@ -64,7 +65,7 @@ namespace TheArchive
         public static string CurrentlySelectedRundownKey
         {
             get => _currentlySelectedRundownKey;
-            set
+            internal set
             {
                 _currentlySelectedRundownKey = value;
 
@@ -118,7 +119,7 @@ namespace TheArchive
 
         private static HarmonyLib.Harmony _harmonyInstance;
 
-        public static void OnApplicationStart(IArchiveLogger logger, HarmonyLib.Harmony harmonyInstance)
+        internal static void OnApplicationStart(IArchiveLogger logger, HarmonyLib.Harmony harmonyInstance)
         {
             ArchiveLogger.logger = logger;
             _harmonyInstance = harmonyInstance;
@@ -181,7 +182,7 @@ namespace TheArchive
             if(!File.Exists(steam_appidtxt))
             {
                 ArchiveLogger.Notice("Creating \"steam_appid.txt\" in GTFO folder ...");
-                File.WriteAllText(steam_appidtxt, "493520");
+                File.WriteAllText(steam_appidtxt, $"{GTFO_STEAM_APPID}");
             }
 
             FeatureManager.Internal_Init();
@@ -202,7 +203,7 @@ namespace TheArchive
             }
         }
 
-        public static void OnApplicationQuit()
+        internal static void OnApplicationQuit()
         {
             FeatureManager.Instance.OnApplicationQuit();
         }
@@ -270,11 +271,9 @@ namespace TheArchive
             return false;
         }
 
-        [Obsolete("Do not call!")]
-        public static void InvokeGameDataInitialized()
+        internal static void InvokeGameDataInitialized()
         {
             ArchiveLogger.Info($"GameData has been initialized, invoking event.");
-            //CurrentRundownInt = rundownId;
 
             try
             {
@@ -326,8 +325,7 @@ namespace TheArchive
             GameDataInitialized?.Invoke(CurrentRundown);
         }
 
-        [Obsolete("Do not call!")]
-        public static void InvokeDataBlocksReady()
+        internal static void InvokeDataBlocksReady()
         {
             try
             {
@@ -368,15 +366,13 @@ namespace TheArchive
             DataBlocksReady?.Invoke();
         }
 
-        [Obsolete("Do not call!")]
-        public static void InvokeGameStateChanged(int eGameState_state)
+        internal static void InvokeGameStateChanged(int eGameState_state)
         {
             CurrentGameState = eGameState_state;
             GameStateChanged?.Invoke(eGameState_state);
         }
 
-        [Obsolete("Do not call!")]
-        public static void InvokeApplicationFocusChanged(bool focus)
+        internal static void InvokeApplicationFocusChanged(bool focus)
         {
             ApplicationFocusStateChanged?.Invoke(focus);
         }
