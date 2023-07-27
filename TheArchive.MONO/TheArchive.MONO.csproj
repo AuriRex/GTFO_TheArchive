@@ -242,6 +242,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\ExpeditionResultsScreenTweaks.cs" Link="Features\Hud\ExpeditionResultsScreenTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\FlashlightIconColors.cs" Link="Features\Hud\FlashlightIconColors.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\HudToggle.cs" Link="Features\Hud\HudToggle.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\InteractReviveFix.cs" Link="Features\Hud\InteractReviveFix.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\LoadingIndicator.cs" Link="Features\Hud\LoadingIndicator.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\PuzzleHUDTweaks.cs" Link="Features\Hud\PuzzleHUDTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\RemoveDownedMessage.cs" Link="Features\Hud\RemoveDownedMessage.cs" />
