@@ -85,7 +85,7 @@ namespace TheArchive.Features.QoL
         // prioritize resources in ping raycasts
         [RundownConstraint(RundownFlags.RundownFour, RundownFlags.RundownFive)]
         [ArchivePatch(typeof(PlayerAgent), "TriggerMarkerPing")]
-        internal static class PlayerAgent_TriggerMarkerPingPatch
+        internal static class PlayerAgent_TriggerMarkerPing_R4_R5_Patch
         {
             private static PropertyAccessor<PlayerAgent, Vector3> A_PlayerAgent_CamPos;
             private static PropertyAccessor<PlayerAgent, iPlayerPingTarget> A_PlayerAgent_m_pingTargets;
@@ -160,25 +160,21 @@ namespace TheArchive.Features.QoL
 
 #if IL2CPP
         [RundownConstraint(RundownFlags.RundownSix, RundownFlags.Latest)]
-        [ArchivePatch(null, nameof(PlayerAgent.TriggerMarkerPing))]
-        internal static class LocalPlayerAgent_TriggerMarkerPingPatch
+        [ArchivePatch(typeof(PlayerAgent), nameof(PlayerAgent.TriggerMarkerPing))]
+        internal static class PlayerAgent_TriggerMarkerPing_Patch
         {
-            public static Type Type()
-            {
-                return typeof(LocalPlayerAgent);
-            }
-
-            public static bool Prefix(LocalPlayerAgent __instance, ref iPlayerPingTarget target, ref Vector3 worldPos)
+            public static bool Prefix(PlayerAgent __instance, ref iPlayerPingTarget target, ref Vector3 worldPos)
             {
                 try
                 {
-
                     if (__instance == null || !__instance.IsLocallyOwned || target == null)
                     {
                         return ArchivePatch.RUN_OG;
                     }
 
-                    var rayCastHits = Physics.RaycastAll(__instance.CamPos, __instance.FPSCamera.Forward, 40f, LayerManager.MASK_PING_TARGET, QueryTriggerInteraction.Ignore);
+                    var localPlayerAgent = __instance.TryCastTo<LocalPlayerAgent>();
+
+                    var rayCastHits = Physics.RaycastAll(localPlayerAgent.CamPos, __instance.FPSCamera.Forward, 40f, LayerManager.MASK_PING_TARGET, QueryTriggerInteraction.Ignore);
 
                     if (rayCastHits == null || rayCastHits.Length == 0)
                     {
@@ -216,8 +212,8 @@ namespace TheArchive.Features.QoL
                         {
                             target = hitTarget;
                             worldPos = hit.point;
-                            __instance.m_pingTarget = hitTarget;
-                            __instance.m_pingPos = hit.point;
+                            localPlayerAgent.m_pingTarget = hitTarget;
+                            localPlayerAgent.m_pingPos = hit.point;
                             if (OverrideSoundsAndPings(worldPos, hit.collider.gameObject))
                                 return ArchivePatch.SKIP_OG;
                             break;
