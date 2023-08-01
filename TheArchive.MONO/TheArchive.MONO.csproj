@@ -244,6 +244,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\HudToggle.cs" Link="Features\Hud\HudToggle.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\InteractReviveFix.cs" Link="Features\Hud\InteractReviveFix.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\LoadingIndicator.cs" Link="Features\Hud\LoadingIndicator.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\ProMode.cs" Link="Features\Hud\ProMode.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\PuzzleHUDTweaks.cs" Link="Features\Hud\PuzzleHUDTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\RemoveDownedMessage.cs" Link="Features\Hud\RemoveDownedMessage.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\Watermark.cs" Link="Features\Hud\Watermark.cs" />
