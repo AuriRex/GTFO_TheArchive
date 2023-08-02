@@ -15,7 +15,7 @@ namespace TheArchive.Features.QoL
 
         public override string Group => FeatureGroups.QualityOfLife;
 
-        public override string Description => "Use left and right mouse buttons to apply resource packs instead of E.\n\nLeft mouse = yourself\nRight mouse = other players\n\n<color=orange>[R4+]</color> You're able to hold down M2 and it will start applying to a receiver under your croshair if in range automatically";
+        public override string Description => "Use left and right mouse buttons to apply resource packs instead of E.\n\nLeft mouse = yourself\nRight mouse = other players\n\n<color=orange>[R4+]</color> You're able to hold down M2 and it will start applying to a receiver under your croshair if in range automatically\n\n<#f00><u>/!\\</u> Make sure to <color=orange><u>disable</u></color> the vanilla game setting <color=orange>Gameplay > Separate Use Keybinds</color> for this Feature to work!</color>";
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 
