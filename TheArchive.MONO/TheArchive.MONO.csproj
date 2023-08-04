@@ -235,6 +235,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\NoDeadPings.cs" Link="Features\Fixes\NoDeadPings.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\ReloadMinusOneBugFix.cs" Link="Features\Fixes\ReloadMinusOneBugFix.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Fixes\WeaponShootForward.cs" Link="Features\Fixes\WeaponShootForward.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\BioPingColor.cs" Link="Features\Hud\BioPingColor.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\CarryItemMarker.cs" Link="Features\Hud\CarryItemMarker.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\CombatIndicator.cs" Link="Features\Hud\CombatIndicator.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\DetailedExpeditionDisplay.cs" Link="Features\Hud\DetailedExpeditionDisplay.cs" />
