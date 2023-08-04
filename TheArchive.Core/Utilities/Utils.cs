@@ -199,6 +199,24 @@ namespace TheArchive.Utilities
             }
         }
 
+        /// <summary>
+        /// Replaces format string literals ({0}, {1}, ...) in <paramref name="format"/> with the respective index in the params <paramref name="replacementData"/>
+        /// </summary>
+        /// <param name="format">String to format</param>
+        /// <param name="replacementData">Data to be inserted</param>
+        /// <returns>The formatted string with every {i} replaced with <paramref name="replacementData"/>[i]</returns>
+        public static string UsersafeFormat(string format, params string[] replacementData)
+        {
+            for(int i = 0; i < replacementData.Length; i++)
+            {
+                var thisSequenceOfCharacters = $"{{{i}}}"; // {0}, {1}
+                if (format.Contains(thisSequenceOfCharacters))
+                    format = format.ReplaceCaseInsensitive(thisSequenceOfCharacters, replacementData[i]);
+            }
+
+            return format;
+        }
+
         public static IList ToSystemListSlow(object allBlocks, Type type)
         {
             if(LoaderWrapper.IsGameIL2CPP())

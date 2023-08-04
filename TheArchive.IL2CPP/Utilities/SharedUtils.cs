@@ -521,6 +521,54 @@ namespace TheArchive.Utilities
 #endif
         }
 
+        /// <summary>
+        /// Use the games localization system (if available) to localize the text with ID <paramref name="localizedTextID"/>, or use an <paramref name="overrideText"/> replacement instead.
+        /// </summary>
+        /// <param name="localizedTextID">The ID to localize from inside the TextDatablock</param>
+        /// <param name="forceOverrideText">If the ID lookup should be skipped and the <paramref name="overrideText"/> be used instead.</param>
+        /// <param name="overrideText">Fallback text used if localization isn't available (R5 and below) or if it has been forced using <paramref name="forceOverrideText"/></param>
+        /// <returns>Localized string</returns>
+        public static string GetLocalizedTextSafe(uint localizedTextID, bool forceOverrideText = false, string overrideText = null)
+        {
+            var text = overrideText;
+
+            if(Feature.Is.R6OrLater && !forceOverrideText)
+            {
+                text = Localization_Text_Get_R6Plus(localizedTextID);
+            }
+
+            return text;
+        }
+
+        /// <summary>
+        /// Use the games localization system (if available) to localize the text with ID <paramref name="localizedTextID"/>, or use an <paramref name="overrideText"/> replacement instead.
+        /// <br/>Additionally formats the text using <see cref="Utils.UsersafeFormat(string, string[])"/>
+        /// </summary>
+        /// <param name="localizedTextID">The ID to localize from inside the TextDatablock</param>
+        /// <param name="forceOverrideText">If the ID lookup should be skipped and the <paramref name="overrideText"/> be used instead.</param>
+        /// <param name="overrideText">Fallback text used if localization isn't available (R5 and below) or if it has been forced using <paramref name="forceOverrideText"/></param>
+        /// <param name="formatArgs">Parameters to replace format literals with</param>
+        /// <returns>Localized and formatted string</returns>
+        public static string GetLocalizedTextSafeAndFormat(uint localizedTextID, bool forceOverrideText = false, string overrideText = null, params string[] formatArgs)
+        {
+            var text = GetLocalizedTextSafe(localizedTextID, forceOverrideText, overrideText);
+
+            if (formatArgs == null || formatArgs == Array.Empty<string>())
+                return text;
+
+            return Utils.UsersafeFormat(text, formatArgs);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static string Localization_Text_Get_R6Plus(uint id)
+        {
+#if IL2CPP
+            return Localization.Text.Get(id);
+#else
+            return string.Empty;
+#endif
+        }
+
 #if IL2CPP
         public static T CastTo<T>(this Il2CppObjectBase value) where T : Il2CppObjectBase
         {
