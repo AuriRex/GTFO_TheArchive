@@ -19,7 +19,7 @@ namespace TheArchive.Features.QoL
 
         public override string Group => FeatureGroups.QualityOfLife;
 
-        public override string Description => "Removes all level-based voice events that come with subtitles.\naka Schaefer-be-gone";
+        public override string Description => "Removes all level-based voice events that come with subtitles.\naka Schaeffer-be-gone";
 
 #if IL2CPP
         public static new IArchiveLogger FeatureLogger { get; set; }

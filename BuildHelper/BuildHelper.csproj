@@ -90,8 +90,8 @@
 			  dotnet build -f $(TargetFramework) -c $(Configuration)
 			  
 			  ECHO [#4] Copying $(Configuration) TheArchive.Core.dll to out directory.
-			  if exist $(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.dll copy /y $(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.dll $(MSBuildProjectDirectory)\..\out\TheArchive.Core.dll
-			  if exist $(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb copy /y $(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb $(MSBuildProjectDirectory)\..\out\TheArchive.Core.pdb" />
+			  if exist &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.dll&quot; copy /y &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.dll&quot; &quot;$(SolutionDir)out\&quot;
+			  if exist &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb&quot; copy /y &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb&quot; &quot;$(SolutionDir)out\&quot;" />
 		
 	</Target>
 	
