@@ -119,13 +119,13 @@ namespace TheArchive.Core.FeaturesAPI
                     SaveFeatureConfig(feature);
                 }
 
-                _logger.Info($"Unpatching ... ");
+                //_logger.Info($"Unpatching ... ");
 
                 foreach (var feature in RegisteredFeatures)
                 {
                     feature.FeatureInternal.Quit();
                     
-                    DisableFeature(feature);
+                    //DisableFeature(feature);
                 }
             }
             catch(Exception ex)
