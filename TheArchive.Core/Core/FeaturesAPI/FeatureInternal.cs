@@ -512,11 +512,19 @@ namespace TheArchive.Core.FeaturesAPI
 
             foreach (var settingsHelper in _settingsHelpers)
             {
-                _FILogger.Info($"Saving config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
+                if(!settingsHelper.IsDirty)
+                {
+                    _FILogger.Info($"Config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) does not need saving!");
+                    continue;
+                }
+
+                _FILogger.Success($"Saving config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
 
                 var configInstance = settingsHelper.GetFeatureInstance();
 
                 LocalFiles.SaveFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType, configInstance);
+
+                settingsHelper.IsDirty = false;
             }
         }
 

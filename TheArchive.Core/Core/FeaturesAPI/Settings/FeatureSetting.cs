@@ -50,6 +50,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public virtual object SetValue(object value)
         {
             Prop.SetValue(WrappedInstance, value);
+            Helper.IsDirty = true;
             FeatureManager.Instance.OnFeatureSettingChanged(this);
             return value;
         }
