@@ -1,4 +1,5 @@
-﻿using SNetwork;
+﻿using System;
+using SNetwork;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
@@ -27,9 +28,9 @@ namespace TheArchive.Features.Hud
             [FSDescription("If Player Names, Bio Pings and Player Pings should be shown.")]
             public bool EnableNavmarkers { get; set; } = false;
 
-            /*[FSDisplayName("Show Warden Intel")]
-            [FSDescription("If Objective Reminders should be shown.")]
-            public bool EnableWardenIntel { get; set; } = false;*/
+            [FSDisplayName("Show Warden Intel")]
+            [FSDescription("If Objective Info / Reminders should be shown.")]
+            public bool EnableWardenIntel { get; set; } = false;
 
             [FSDisplayName("Show Coms-Menu")]
             [FSDescription("Enable the Communication Menu in order to communicate / command bots.")]
@@ -220,8 +221,7 @@ namespace TheArchive.Features.Hud
         }
 
         // Hide WardenIntel completely
-        // Doesn't quite work ...
-        /*[ArchivePatch(typeof(PUI_WardenIntel), nameof(PUI_WardenIntel.SetVisible))]
+        [ArchivePatch(typeof(PUI_WardenIntel), nameof(PUI_WardenIntel.SetVisible), new Type[] { typeof(bool), typeof(float) })]
         internal static class PUI_WardenIntel_SetVisible_Patch
         {
             public static bool Prefix(PUI_WardenIntel __instance)
@@ -233,7 +233,7 @@ namespace TheArchive.Features.Hud
 
                 return ArchivePatch.SKIP_OG;
             }
-        }*/
+        }
 
         // Disable the helper text below the chat
 #if IL2CPP
