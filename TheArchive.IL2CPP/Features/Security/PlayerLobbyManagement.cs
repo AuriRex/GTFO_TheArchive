@@ -396,6 +396,7 @@ namespace TheArchive.Features.Security
                     Timestamp = DateTime.UtcNow.Ticks
                 });
                 FeatureLogger.Fail($"Player has been added to list of banned players: Name:\"{player.GetName()}\" SteamID:\"{player.Lookup}\"");
+                MarkSettingsAsDirty(Settings);
 
                 if (kickPlayer)
                     KickPlayer(player);
@@ -417,6 +418,7 @@ namespace TheArchive.Features.Security
             {
                 Settings.BanList.Remove(playerToUnban);
                 FeatureLogger.Success($"Player has been removed from the list of banned players: Name:\"{playerToUnban.Name}\" SteamID:\"{playerToUnban.SteamID}\"");
+                MarkSettingsAsDirty(Settings);
                 return true;
             }
 
@@ -559,13 +561,21 @@ namespace TheArchive.Features.Security
             PopupWindow.SetVisible(true);
         }
 
-        private static void AddRecentlyPlayedWith(SNet_Player player)
+        private static void AddRecentlyPlayedWith(SNet_Player player, bool joined)
         {
             var entry = Settings.RecentlyPlayedWith.FirstOrDefault(entry => entry.SteamID == player.Lookup);
             if (entry != null)
             {
-                FeatureLogger.Notice($"{player.NickName} joined Session, last time played with them {DateTime.UtcNow - new DateTime(entry.TimestampLast):d' day(s) and 'hh':'mm':'ss} ago.");
+                if(joined)
+                {
+                    FeatureLogger.Notice($"{player.NickName} joined Session, last time played with them {DateTime.UtcNow - new DateTime(entry.TimestampLast):d' day(s) and 'hh':'mm':'ss} ago.");
+                }
+                else
+                {
+                    FeatureLogger.Debug($"{player.NickName} left Session, saving Timestamp.");
+                }
                 entry.TimestampLast = DateTime.UtcNow.Ticks;
+                MarkSettingsAsDirty(Settings);
                 return;
             }
 
@@ -577,6 +587,8 @@ namespace TheArchive.Features.Security
                 TimestampFirst = ticks,
                 TimestampLast = ticks,
             });
+
+            MarkSettingsAsDirty(Settings);
         }
 
         [ArchivePatch(typeof(SNet_SessionHub), "SlaveWantsToJoin")]
@@ -603,7 +615,16 @@ namespace TheArchive.Features.Security
         {
             public static void Postfix(SNet_Player player)
             {
-                AddRecentlyPlayedWith(player);
+                AddRecentlyPlayedWith(player, true);
+            }
+        }
+
+        [ArchivePatch(typeof(SNet_SyncManager), nameof(SNet_SyncManager.OnPlayerLeftSessionHub))]
+        internal static class SNet_OnPlayerLeftSessionHub_Patch
+        {
+            public static void Prefix(SNet_Player player)
+            {
+                AddRecentlyPlayedWith(player, false);
             }
         }
 
