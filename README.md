@@ -1,24 +1,33 @@
 # TheArchive
 
-A [MelonLoader](https://github.com/LavaGang/MelonLoader) based [GTFO](https://gtfothegame.com/) mod that's aiming to preserve older versions by keeping them playable even once the servers are gone forever **by handling all playfab requests locally** and saving things like **progression/level completions**, **boosters** and **vanity items** onto your storage device of choice.
+A massive mod for the game [GTFO](https://gtfothegame.com/), that adds a ton of Quality of Life and cosmetic features to the game without overstepping the games original design.
 
-Compatible with many different GTFO builds, tested on all of the latest patches for each rundown.
+Not only compatible with the **latest release** on steam but also with many of the **older GTFO builds**, tested on all of the latest patches for each (old) rundown.  
+Additionally this mod is trying to preserve older versions by keeping them playable even once the servers are gone forever **by handling all playfab requests locally** and saving things like **progression/level completions**, **boosters** and **vanity items** onto your storage device of choice for old versions.
 
-*Also adds a bunch of neat Quality of Life features I guess ...*
+## What this does
+Improve the game via Quality of Life and cosmetic additions without disrupting the experience of other players.  
+All mechanics are still kept vanilla and in spirit of the games original design.
+
+## What this **doesn't** do
+This ***does not*** give you access to the game or any of the old versions, you have to have bought the game on steam!  
+This ***does not*** give any player an unfair advantage or trivialize the game, you have to bring your own skill.
 
 ## Status
-This project is in a Beta state at the moment, expect some bugs and unfinished features.
+This project is in a Beta state at the moment, overall it's pretty stable but expect some bugs and unfinished features.  
+
+If you encounter any bugs while playing with mods installed make sure to remove your mods first and reproduce the issue without any installed before asking the games devs for support.
 
 ### Quick Links
- * [Highlighted Features](#Features)
-   * [Accessibility](#Accessibility)
-   * [Quality of Life](#Quality-of-Life)
-   * [Misc / Other](#Misc--Other)
-   * [Backported Features](#Backported-Features)
- * [How to Install](#Installation)
- * [Where are my saves?](#Where-are-my-saves)
- * [Building the project](#Technical-stuffs)
- * [Contributing & License](#Contributing)
+ * [Highlighted Features](#features)
+   * [Accessibility](#accessibility)
+   * [Quality of Life](#quality-of-life)
+   * [Misc / Other](#misc--other)
+   * [Backported Features](#backported-features)
+ * [How to Install](#installation)
+ * [Where are my saves?](#where-are-my-saves)
+ * [Building the project](#technical-stuffs)
+ * [Contributing & License](#contributing)
 
 # Features
 
