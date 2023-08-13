@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TheArchive.Core.FeaturesAPI.Settings
 {
@@ -64,7 +61,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
                 Key = key;
                 Value = instance;
 
-                Helper = new DynamicFeatureSettingsHelper(Parent.Helper.Feature).Initialize(entryType, instance);
+                Helper = new DynamicFeatureSettingsHelper(Parent.Helper.Feature, Parent.Helper).Initialize(entryType, instance);
             }
 
             public void RemoveFromList()

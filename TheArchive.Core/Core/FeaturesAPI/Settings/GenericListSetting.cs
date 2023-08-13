@@ -43,8 +43,6 @@ namespace TheArchive.Core.FeaturesAPI.Settings
 
         public class ListEntry
         {
-            //private static readonly Dictionary<Type, FeaturelessFeatureSettingsHelper> _helperForType = new Dictionary<Type, FeaturelessFeatureSettingsHelper>();
-
             public GenericListSetting Parent { get; private set; }
             public Type EntryType { get; private set; }
             public object Instance { get; private set; }
@@ -56,14 +54,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
                 EntryType = entryType;
                 Instance = instance;
 
-                /*if(!_helperForType.TryGetValue(entryType, out var helper))
-                {
-                    helper = new FeaturelessFeatureSettingsHelper().Initialize(entryType, instance);
-
-                    _helperForType.Add(entryType, helper);
-                }*/
-
-                Helper = new DynamicFeatureSettingsHelper(Parent.Helper.Feature).Initialize(entryType, instance);
+                Helper = new DynamicFeatureSettingsHelper(Parent.Helper.Feature, Parent.Helper).Initialize(entryType, instance);
             }
 
             public void RemoveFromList()

@@ -648,6 +648,19 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
+        internal bool MarkSettingsDirty(object settings)
+        {
+            foreach(var helper in Settings)
+            {
+                if (helper.Instance == settings)
+                {
+                    helper.IsDirty = true;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         internal void GameStateChanged(int state)
         {
             if (InternalDisabled) return;

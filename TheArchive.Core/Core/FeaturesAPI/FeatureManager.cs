@@ -348,7 +348,12 @@ namespace TheArchive.Core.FeaturesAPI
 
         internal static Feature GetByType<T>() where T : Feature
         {
-            return Instance.RegisteredFeatures.FirstOrDefault(f => f.GetType() == typeof(T));
+            return GetByType(typeof(T));
+        }
+
+        internal static Feature GetByType(Type type)
+        {
+            return Instance.RegisteredFeatures.FirstOrDefault(f => f.GetType() == type);
         }
 
         public static bool IsFeatureEnabled<T>() where T : Feature

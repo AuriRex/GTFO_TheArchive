@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using TheArchive.Core.FeaturesAPI.Settings;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using TheArchive.Core.FeaturesAPI.Components;
+using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
-using static TheArchive.Utilities.Utils;
 using TheArchive.Utilities;
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core.FeaturesAPI
 {
@@ -219,6 +221,70 @@ namespace TheArchive.Core.FeaturesAPI
         public virtual void OnQuit()
         {
 
+        }
+
+        /// <summary>
+        /// Call this to mark settings as dirty,<br/>
+        /// Use for dictionary or other list type settings whenever changed through code!
+        /// </summary>
+        /// <param name="settings">The instance of the settings to mark dirty</param>
+        public bool MarkSettingsDirty(object settings) => FeatureInternal.MarkSettingsDirty(settings);
+
+        /// <summary>
+        /// Call this to mark settings as dirty,<br/>
+        /// Use for dictionary or other list type settings whenever changed through code!<br/>
+        /// Not specifying <paramref name="featureType"/> will try to resolve it via a <seealso cref="StackTrace"/>!
+        /// </summary>
+        /// <param name="settings">The instance of the settings object</param>
+        /// <param name="featureType">The Feature type the setting is implemented on</param>
+        /// <returns>Whether the setting was able to be set as dirty</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static bool MarkSettingsAsDirty(object settings, Type featureType = null)
+        {
+            if (featureType == null)
+            {
+                featureType = new StackTrace().GetFrame(1).GetMethod().DeclaringType;
+                ArchiveLogger.Debug(featureType.FullName);
+                int c = 0;
+                while (!typeof(Feature).IsAssignableFrom(featureType) && c <= 5)
+                {
+                    if (featureType.IsNested)
+                    {
+                        featureType = featureType.DeclaringType;
+                    }
+                    c++;
+                }
+            }
+
+            if (!typeof(Feature).IsAssignableFrom(featureType))
+            {
+                throw new InvalidOperationException("Only call from within a Feature class or provide the correct type!");
+            }
+
+            var feature = FeatureManager.GetByType(featureType) ?? throw new InvalidOperationException("Feature Type could not be found!");
+
+            return feature.MarkSettingsDirty(settings);
+        }
+
+        /// <summary>
+        /// Call this to mark settings as dirty,<br/>
+        /// Use for dictionary or other list type settings whenever changed through code!<br/>
+        /// <paramref name="settings"/> must be a <b>nested class</b> inside of your <seealso cref="Feature"/> implementation!<br/>
+        /// Use <see cref="MarkSettingsAsDirty(object, Type)"/> instead if the above is not the case.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="settings">The instance of the settings object</param>
+        /// <returns>Whether the setting was able to be set as dirty</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static bool MarkSettingsAsDirty<T>(T settings)
+        {
+            if (!typeof(T).IsNested)
+                throw new InvalidOperationException("Type must be a nested class of your Feature implementation to use this method!");
+
+            var featureType = typeof(T).DeclaringType;
+
+            return MarkSettingsAsDirty(settings, featureType);
         }
 
         internal FeatureInternal FeatureInternal { get; set; }

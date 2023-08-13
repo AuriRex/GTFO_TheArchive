@@ -4,9 +4,10 @@ namespace TheArchive.Core.FeaturesAPI
 {
     public class DynamicFeatureSettingsHelper : FeatureSettingsHelper
     {
-        public DynamicFeatureSettingsHelper(Feature feature)
+        public DynamicFeatureSettingsHelper(Feature feature, FeatureSettingsHelper parentHelper = null)
         {
             Feature = feature;
+            ParentHelper = parentHelper;
         }
 
         /// <summary>
