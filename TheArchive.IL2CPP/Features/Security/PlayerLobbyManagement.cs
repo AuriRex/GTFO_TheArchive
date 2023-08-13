@@ -280,16 +280,39 @@ namespace TheArchive.Features.Security
             if (!Settings.NamesOnMapOpenSteamProfile)
                 return;
 
-            OnNameButtonPressed(id);
+            if(!SharedUtils.TryGetPlayerByCharacterIndex(id, out var player))
+            {
+                FeatureLogger.Debug($"No player found for character index {id - 1}.");
+                return;
+            }
+
+            OpenSteamProfileFor(player);
         }
 
         internal static void OnNameButtonPressed(int id)
         {
             PopupWindow.SetVisible(false);
 
-            if (!SharedUtils.TryGetPlayerByCharacterIndex(id - 1, out var player))
+            if (!SharedUtils.TryGetPlayerByPlayerLobbyBarIndex(id - 1, out var player))
             {
                 FeatureLogger.Debug($"No player found for index {id - 1}.");
+                return;
+            }
+            
+            OpenSteamProfileFor(player);
+        }
+
+        public static void OpenSteamProfileFor(SNet_Player player)
+        {
+            if (player == null)
+            {
+                FeatureLogger.Debug($"Player was null!");
+                return;
+            }
+
+            if (player.SafeIsBot())
+            {
+                FeatureLogger.Notice("The Bot has no steam profile!");
                 return;
             }
 
@@ -312,8 +335,14 @@ namespace TheArchive.Features.Security
 
             if (!SNet.IsMaster) return;
 
-            if (!SharedUtils.TryGetPlayerByCharacterIndex(playerID - 1, out var player))
+            if (!SharedUtils.TryGetPlayerByPlayerLobbyBarIndex(playerID - 1, out var player))
             {
+                return;
+            }
+
+            if (player.SafeIsBot())
+            {
+                FeatureLogger.Notice("Use the built in button below to remove bots!");
                 return;
             }
 
@@ -324,7 +353,7 @@ namespace TheArchive.Features.Security
 
         internal static void BanPlayerButtonPressed(int playerID)
         {
-            if (!SharedUtils.TryGetPlayerByCharacterIndex(playerID - 1, out var player))
+            if (!SharedUtils.TryGetPlayerByPlayerLobbyBarIndex(playerID - 1, out var player))
             {
                 return;
             }
@@ -336,6 +365,12 @@ namespace TheArchive.Features.Security
             }
 
             PopupWindow.SetVisible(false);
+
+            if (player.SafeIsBot())
+            {
+                FeatureLogger.Notice("You can't ban a bot!");
+                return;
+            }
 
             if (!IsPlayerBanned(player.Lookup))
             {
@@ -424,12 +459,29 @@ namespace TheArchive.Features.Security
 
         public static void SetupAndPlaceWindow(int playerID, Transform pos)
         {
-            if (!SharedUtils.TryGetPlayerByCharacterIndex(playerID - 1, out var player))
+            if (!SharedUtils.TryGetPlayerByPlayerLobbyBarIndex(playerID - 1, out var player))
             {
                 return;
             }
 
             var name = player.GetName();
+
+
+            var isBot = player.SafeIsBot();
+
+            KickPlayerItem.gameObject.SetActive(!isBot);
+            BanPlayerItem.gameObject.SetActive(!isBot);
+            OpenSteamItem.gameObject.SetActive(!isBot);
+
+            if (isBot)
+            {
+                IsFriendItem.gameObject.SetActive(true);
+                IsFriendItem.SetText(" I am a robot, beep boop!");
+                SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Bot));
+
+                ShowWindow(name, pos, playerID);
+                return;
+            }
 
 #if IL2CPP
             PopupWindow.SetupFromButton(new iCellMenuPopupController(CM_PageLoadout.Current.Pointer), CM_PageLoadout.Current);
@@ -490,7 +542,12 @@ namespace TheArchive.Features.Security
                 }
             }
 
-            PopupWindow.SetHeader(name);
+            ShowWindow(name, pos, playerID);
+        }
+
+        private static void ShowWindow(string header, Transform pos, int playerID)
+        {
+            PopupWindow.SetHeader(header);
 
             PopupWindow.ID = playerID;
             PopupWindow.transform.position = pos.position + new Vector3(200, 0, 0);
@@ -625,24 +682,24 @@ namespace TheArchive.Features.Security
             {
                 if (player?.CharacterSlot?.index == null) return;
 
-                var charIndex = player.CharacterSlot.index;
+                var slotIndex = SharedUtils.GetPlayerLobbyBarIndex(__instance);
 
                 var nameGO = __instance.m_nickText.gameObject;
 
                 var CM_Item = nameGO.GetComponent<CM_Item>();
                 if (CM_Item == null)
                 {
-                    FeatureLogger.Debug($"Setting up player name button for index {player.CharacterSlot.index}");
+                    FeatureLogger.Debug($"Setting up player name button for slot index {slotIndex}");
                     var collider = nameGO.AddComponent<BoxCollider2D>();
                     collider.size = new Vector2(447.2f, 52.8f);
                     collider.offset = new Vector2(160f, 1.6f);
 
-                    if (colliderMap.ContainsKey(charIndex))
-                        colliderMap.Remove(charIndex);
-                    colliderMap.Add(charIndex, collider);
+                    if (colliderMap.ContainsKey(slotIndex))
+                        colliderMap.Remove(slotIndex);
+                    colliderMap.Add(slotIndex, collider);
 
                     CM_Item = nameGO.AddComponent<CM_Item>();
-                    CM_Item.ID = charIndex + 1; // +1
+                    CM_Item.ID = slotIndex + 1; // +1
 
                     CM_Item.SetCMItemEvents((id) =>
                     {

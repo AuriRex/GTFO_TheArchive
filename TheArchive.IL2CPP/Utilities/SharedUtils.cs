@@ -8,6 +8,7 @@ using GameData;
 using TheArchive.Core.FeaturesAPI;
 using System.Runtime.CompilerServices;
 using TheArchive.Loader;
+using SNetwork;
 #if Unhollower
 using UnhollowerBaseLib;
 #endif
@@ -325,6 +326,42 @@ namespace TheArchive.Utilities
             Match,
             StartsWith,
             EndsWith
+        }
+
+        private static readonly IValueAccessor<CM_PageLoadout, CM_PlayerLobbyBar[]> _A_CM_PageLoadout_m_playerLobbyBars = AccessorBase.GetValueAccessor<CM_PageLoadout, CM_PlayerLobbyBar[]>("m_playerLobbyBars");
+        private static readonly IValueAccessor<CM_PlayerLobbyBar, int> _A_CM_PlayerLobbyBar_m_playerSlotIndex = AccessorBase.GetValueAccessor<CM_PlayerLobbyBar, int>("m_playerSlotIndex");
+        private static readonly IValueAccessor<CM_PlayerLobbyBar, int> _A_CM_PlayerLobbyBar_m_playerIndex = AccessorBase.GetValueAccessor<CM_PlayerLobbyBar, int>("m_playerIndex"); // Used in older versions
+        private static readonly IValueAccessor<CM_PlayerLobbyBar, SNet_Player> _A_CM_PlayerLobbyBar_m_player = AccessorBase.GetValueAccessor<CM_PlayerLobbyBar, SNet_Player>("m_player");
+
+        public static bool TryGetPlayerLobbyBarIndex(CM_PlayerLobbyBar plb, out int index)
+        {
+            index = GetPlayerLobbyBarIndex(plb);
+            return index >= 0;
+        }
+
+        public static int GetPlayerLobbyBarIndex(CM_PlayerLobbyBar plb)
+        {
+            return _A_CM_PlayerLobbyBar_m_playerSlotIndex?.Get(plb) ?? _A_CM_PlayerLobbyBar_m_playerIndex?.Get(plb) ?? -1;
+        }
+
+        public static bool TryGetPlayerByPlayerLobbyBarIndex(int index, out SNet_Player player)
+        {
+#if IL2CPP
+            var lobbyBars = CM_PageLoadout.Current.m_playerLobbyBars.ToArray();
+#else
+            var lobbyBars = _A_CM_PageLoadout_m_playerLobbyBars.Get(CM_PageLoadout.Current);
+#endif
+
+            var resultPlayerLobbyBar = lobbyBars.FirstOrDefault(plb => GetPlayerLobbyBarIndex(plb) == index);
+
+            if (resultPlayerLobbyBar == null)
+            {
+                player = null;
+                return false;
+            }
+
+            player = _A_CM_PlayerLobbyBar_m_player.Get(resultPlayerLobbyBar);
+            return player != null;
         }
 
         public static bool TryGetPlayerByCharacterIndex(int id, out SNetwork.SNet_Player player)
