@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
@@ -92,11 +93,127 @@ namespace TheArchive.Features.Dev
                 return scrollWindow;
             }
 
+            public static void CreateSimpleNumberField(string labelText, float initialValue, Action<float> onValueUpdated, Func<float, float> getValue = null, FSSlider slider = null, SubMenu placeIntoMenu = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null, bool placeInNoMenu = false)
+            {
+                CreateSimpleNumberField(labelText, initialValue, onValueUpdated, out _, out _, out _, getValue, slider, placeIntoMenu, descriptionPanelData, placeInNoMenu);
+            }
+            
+            public static void CreateSimpleNumberField(string labelText, float initialValue, Action<float> onValueUpdated, out CM_SettingsItem cm_settingsItem, out CM_SettingsInputField cm_settingsInputField, out CM_SettingScrollReceiver cm_settingScrollReceiver, Func<float, float> getValue = null, FSSlider slider = null, SubMenu placeIntoMenu = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null, bool placeInNoMenu = false)
+            {
+                // I do not like this method lol
+#warning TODO
+                var onValueUpdateStringField = new Action<string>((val) =>
+                {
+                    if(float.TryParse(val, out var result))
+                    {
+                        onValueUpdated?.Invoke(result);
+                    }
+                });
+
+                var getValueStringField = new Func<string, string>((val) =>
+                {
+                    if (float.TryParse(val, out var result))
+                    {
+                        return getValue?.Invoke(result).ToString() ?? result.ToString();
+                    }
+                    return val;
+                });
+
+                CreateSimpleTextField(labelText, initialValue.ToString(), onValueUpdateStringField, out cm_settingsItem, out cm_settingsInputField, getValueStringField, 32, placeIntoMenu, descriptionPanelData, placeInNoMenu);
+
+                cm_settingScrollReceiver = null;
+
+                if (slider != null)
+                {
+                    cm_settingScrollReceiver = GOUtil.SpawnChildAndGetComp<CM_SettingScrollReceiver>(cm_settingsItem.m_sliderInputPrefab, cm_settingsItem.m_inputAlign);
+
+#pragma warning disable CS0618 // Type or member is obsolete
+                    var inputType = slider.Style == SliderStyle.IntMinMax ? eSettingInputType.IntMinMaxSlider : eSettingInputType.FloatSlider;
+#pragma warning restore CS0618 // Type or member is obsolete
+
+                    _A_m_inputType.Set(cm_settingScrollReceiver, inputType);
+#if IL2CPP
+                    if (Is.R5OrLater)
+                    {
+                        // Proper value display on sliders is R5 and up only for now!
+                        SetSliderFloatDisplayStyle(cm_settingScrollReceiver, slider.Style);
+                    }
+#endif
+
+                    var floatReceiver = new CustomFloatReceiver(new Func<float>(() =>
+                    {
+                        var val = (float)getValue?.Invoke(0);
+                        var delta = (val - slider.Min) / (slider.Max - slider.Min);
+                        return delta;
+                    }),
+                    (delta) => {
+                        var val = (slider.Max - slider.Min) * delta + slider.Min;
+                        switch (slider.Rounding)
+                        {
+                            case RoundTo.NoRounding:
+                                break;
+                            default:
+                                val = (float)Math.Round(val, (int)slider.Rounding);
+                                break;
+                        }
+                        val = Math.Min(slider.Max, Math.Max(val, slider.Min));
+                        if (((float)getValue?.Invoke(0)) != val)
+                        {
+                            //FeatureLogger.Debug($"{nameof(CreateSimpleNumberField)}: setting to {val} (delta={delta})");
+                            onValueUpdated?.Invoke(val);
+                        }
+
+                        CM_SettingScrollReceiver_GetFloatDisplayText_Patch.OverrideDisplayValue = true;
+                        CM_SettingScrollReceiver_GetFloatDisplayText_Patch.Value = val;
+                    });
+
+#if IL2CPP
+                    cm_settingScrollReceiver.m_floatReceiver = new iFloatInputReceiver(floatReceiver.Pointer);
+#else
+                    _A_m_floatReceiver.Set(cm_settingScrollReceiver, floatReceiver);
+#endif
+
+                    _A_m_scrollRange.Set(cm_settingScrollReceiver, cm_settingScrollReceiver.m_handleLocalXPosMinMax.y - cm_settingScrollReceiver.m_handleLocalXPosMinMax.x);
+
+                    CM_SettingScrollReceiver_GetFloatDisplayText_Patch.OverrideDisplayValue = true;
+
+                    if (float.TryParse(getValue?.Invoke(0).ToString(), out var fValue))
+                        CM_SettingScrollReceiver_GetFloatDisplayText_Patch.Value = fValue;
+
+                    cm_settingScrollReceiver.ResetValue();
+
+                    cm_settingsInputField.gameObject.SetActive(false);
+                }
+
+
+                cm_settingsItem.ForcePopupLayer(true);
+            }
+
             public static void CreateSimpleTextField(string labelText, string initialValue, Action<string> onValueUpdated, Func<string, string> getValue = null, int maxLength = 32, SubMenu placeIntoMenu = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null)
             {
-                CreateSettingsItem(labelText, out var cm_settingsItem, subMenu: placeIntoMenu);
+                CreateSimpleTextField(labelText, initialValue, onValueUpdated, out _, out _, getValue, maxLength, placeIntoMenu, descriptionPanelData);
+            }
 
-                CM_SettingsInputField cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
+            public static void CreateSimpleTextField(string labelText, string initialValue, Action<string> onValueUpdated, out CM_SettingsItem cm_settingsItem, out CM_SettingsInputField cm_settingsInputField, Func<string, string> getValue = null, int maxLength = 32, SubMenu placeIntoMenu = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null, bool placeInNoMenu = false)
+            {
+                CreateSettingsItem(labelText, out cm_settingsItem, subMenu: placeIntoMenu, placeInNoMenu: placeInNoMenu);
+
+                cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
+
+                var cm_settingsInputField_bruh = cm_settingsInputField;
+
+                var disabledListener = cm_settingsInputField.gameObject.AddComponent<OnDisabledListener>();
+
+                TheStaticSettingsInputFieldJankRemoverHashSet2000.Add(cm_settingsInputField);
+
+                disabledListener.OnDisabledSelf = (go) =>
+                {
+                    if (_A_CM_SettingsInputField_m_readingActive.Get(cm_settingsInputField_bruh))
+                    {
+                        _A_CM_SettingsInputField_SetReadingActive.Invoke(cm_settingsInputField_bruh, false);
+                        cm_settingsInputField_bruh.ResetValue();
+                    }  
+                };
 
                 StringInputSetMaxLength(cm_settingsInputField, maxLength);
 
@@ -106,9 +223,10 @@ namespace TheArchive.Features.Dev
 
                 JankTextMeshProUpdaterOnce.Apply(cm_settingsInputField.m_text);
 
+
                 var receiver = new CustomStringReceiver(new Func<string>(
                     () => {
-                        var currentText = cm_settingsInputField.m_text.text;
+                        var currentText = cm_settingsInputField_bruh.m_text.text;
                         var val = getValue?.Invoke(currentText);
                         return val ?? currentText;
                     }),
@@ -146,9 +264,9 @@ namespace TheArchive.Features.Dev
                 });
             }
 
-            public static void CreateSimpleButton(string labelText, string buttonText, Action onPress, out CM_SettingsItem cmItem, SubMenu placeIntoMenu = null)
+            public static void CreateSimpleButton(string labelText, string buttonText, Action onPress, out CM_SettingsItem cmItem, SubMenu placeIntoMenu = null, bool placeInNoMenu = false)
             {
-                CreateSettingsItem(labelText, out cmItem, subMenu: placeIntoMenu);
+                CreateSettingsItem(labelText, out cmItem, subMenu: placeIntoMenu, placeInNoMenu: placeInNoMenu);
                 cmItem.ForcePopupLayer(true);
                 SetupToggleButton(cmItem, out var buttonCMItem, out var buttonTmp);
                 buttonTmp.SetText($"[ {buttonText} ]");
@@ -158,9 +276,14 @@ namespace TheArchive.Features.Dev
                 });
             }
 
-            public static void CreateSimpleButton(string labelText, string buttonText, Action onPress, SubMenu placeIntoMenu = null)
+            public static void CreateSimpleButton(string labelText, string buttonText, Action onPress, SubMenu placeIntoMenu = null, bool placeInNoMenu = false)
             {
-                CreateSimpleButton(labelText, buttonText, onPress, out _, placeIntoMenu);
+                CreateSimpleButton(labelText, buttonText, onPress, out _, placeIntoMenu, placeInNoMenu);
+            }
+
+            public static void CreateSpacer(out CM_SettingsItem cm_settingsItem, SubMenu subMenu = null, bool placeInNoMenu = false)
+            {
+                CreateHeader(string.Empty, out cm_settingsItem, subMenu: subMenu, placeInNoMenu: placeInNoMenu);
             }
 
             public static void CreateSpacer(SubMenu subMenu = null)
@@ -170,12 +293,22 @@ namespace TheArchive.Features.Dev
 
             public static void CreateSeparator(Color? col = null, SubMenu subMenu = null)
             {
+                CreateSeparator(out _, col, subMenu);
+            }
+
+            public static void CreateSeparator(out CM_SettingsItem cm_settingsItem, Color? col = null, SubMenu subMenu = null, bool placeInNoMenu = false)
+            {
                 if (!col.HasValue)
                     col = DISABLED;
-                CreateHeader("------------------------------", col, false, subMenu);
+                CreateHeader("------------------------------", out cm_settingsItem, col, false, subMenu, placeInNoMenu: placeInNoMenu);
             }
 
             public static void CreateHeader(string title, Color? color = null, bool bold = true, SubMenu subMenu = null, Action<int> clickAction = null, Action<int, bool> hoverAction = null)
+            {
+                CreateHeader(title, out _, color, bold, subMenu, clickAction, hoverAction);
+            }
+
+            public static void CreateHeader(string title, out CM_SettingsItem cm_settingsItem, Color? color = null, bool bold = true, SubMenu subMenu = null, Action<int> clickAction = null, Action<int, bool> hoverAction = null, bool placeInNoMenu = false)
             {
                 if (!color.HasValue)
                     color = ORANGE;
@@ -190,7 +323,7 @@ namespace TheArchive.Features.Dev
                         title = $"<b>{title}</b>";
                 }
 
-                CreateSettingsItem(title, out var cm_settingsItem, color.Value, subMenu);
+                CreateSettingsItem(title, out cm_settingsItem, color.Value, subMenu, placeInNoMenu: placeInNoMenu);
 
                 var rectTrans = cm_settingsItem.transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<RectTransform>();
 
@@ -207,7 +340,7 @@ namespace TheArchive.Features.Dev
                 }
             }
 
-            public static void CreateSettingsItem(string titleText, out CM_SettingsItem cm_settingsItem, Color? titleColor = null, SubMenu subMenu = null)
+            public static void CreateSettingsItem(string titleText, out CM_SettingsItem cm_settingsItem, Color? titleColor = null, SubMenu subMenu = null, bool placeInNoMenu = false)
             {
                 var settingsItemGameObject = GameObject.Instantiate(SettingsItemPrefab, subMenu?.WindowTransform ?? MainScrollWindowTransform);
 
@@ -215,7 +348,7 @@ namespace TheArchive.Features.Dev
                 {
                     subMenu.AppendContent(settingsItemGameObject);
                 }
-                else
+                else if(!placeInNoMenu)
                 {
                     ScrollWindowContentElements.Add(settingsItemGameObject.GetComponentInChildren<iScrollWindowContent>());
                 }
@@ -290,62 +423,94 @@ namespace TheArchive.Features.Dev
                 JankTextMeshProUpdaterOnce.Apply(into_sub_toggleButtonText);
             }
 
-            public static void CreateColorSetting(ColorSetting setting, SubMenu subMenu = null)
-            {
-                //setting.Helper.Feature.TryRetrieve<SubMenu>("SubMenu", out var subMenu);
+            public const string COLOR_PREVIEW_NAME = "ColorPreview";
 
-                CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
+            public static void CreateColorSetting(ColorSetting setting, SubMenu subMenu = null, bool useLegacyColorInputField = false)
+            {
+                CM_SettingsItem cm_settingsItem;
+
+                if(useLegacyColorInputField)
+                {
+                    CreateSettingsItem(GetNameForSetting(setting), out cm_settingsItem, subMenu: subMenu);
+                }
+                else
+                {
+                    var onPress = () =>
+                    {
+                        if (setting.Readonly)
+                            return;
+
+                        TheColorPicker.Show(setting);
+                    };
+
+                    CreateSimpleButton(GetNameForSetting(setting), "Pick Color", onPress, out cm_settingsItem, placeIntoMenu: subMenu);
+                }
+
+                setting.CM_SettingsItem = cm_settingsItem;
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
                 CM_SettingsInputField cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
 
-                StringInputSetMaxLength(cm_settingsInputField, 7);
+                if (useLegacyColorInputField)
+                    StringInputSetMaxLength(cm_settingsInputField, 7);
 
                 CreateFSHoverAndSetButtonAction(setting, cm_settingsItem, null);
 
-                var bg_rt = cm_settingsInputField.m_background.GetComponent<RectTransform>();
-                bg_rt.anchoredPosition = new Vector2(-175, 0);
-                bg_rt.localScale = new Vector3(0.19f, 1, 1);
-
-                if (setting.Readonly)
+                if (useLegacyColorInputField)
                 {
-                    cm_settingsInputField.GetComponent<BoxCollider2D>().enabled = false;
+                    var bg_rt = cm_settingsInputField.m_background.GetComponent<RectTransform>();
+                    bg_rt.anchoredPosition = new Vector2(-175, 0);
+                    bg_rt.localScale = new Vector3(0.19f, 1, 1);
+
+                    if (setting.Readonly)
+                    {
+                        cm_settingsInputField.GetComponent<BoxCollider2D>().enabled = false;
+                    }
                 }
 
-                var colorPreviewGO = GameObject.Instantiate(cm_settingsInputField.m_background.gameObject, cm_settingsInputField.transform, true);
+
+                var colorPreviewGO = GameObject.Instantiate(cm_settingsInputField.m_background.gameObject, cm_settingsItem.m_inputAlign, true);
+
+                if (!useLegacyColorInputField)
+                    cm_settingsInputField.SafeDestroyGO();
+
                 colorPreviewGO.transform.SetParent(cm_settingsItem.m_inputAlign);
                 colorPreviewGO.transform.localScale = new Vector3(0.07f, 1, 1);
-                colorPreviewGO.GetComponent<RectTransform>().anchoredPosition = new Vector2(-225, -25);
+                var xPos = useLegacyColorInputField ? -225 : -100;
+                colorPreviewGO.GetComponent<RectTransform>().anchoredPosition = new Vector2(xPos, -25);
+                colorPreviewGO.name = COLOR_PREVIEW_NAME;
                 var renderer = colorPreviewGO.GetComponent<SpriteRenderer>();
 
                 var scol = (SColor)setting.GetValue();
 
                 renderer.color = scol.ToUnityColor();
 
-                cm_settingsInputField.m_text.SetText(scol.ToHexString());
+                if(useLegacyColorInputField)
+                {
+                    cm_settingsInputField.m_text.SetText(scol.ToHexString());
 
-                JankTextMeshProUpdaterOnce.Apply(cm_settingsInputField.m_text);
+                    JankTextMeshProUpdaterOnce.Apply(cm_settingsInputField.m_text);
 
-                var receiver = new CustomStringReceiver(new Func<string>(
-                    () => {
-                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}({nameof(ColorSetting)})] Gotten value of \"{setting.DEBUG_Path}\"!");
-                        SColor color = (SColor)setting.GetValue();
-                        renderer.color = color.ToUnityColor();
-                        return color.ToHexString();
-                    }),
-                    (val) => {
-                        FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}({nameof(ColorSetting)})] Set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
-                        SColor color = SColorExtensions.FromHexString(val);
-                        setting.SetValue(color);
-                    });
+                    var receiver = new CustomStringReceiver(new Func<string>(
+                        () => {
+                            FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}({nameof(ColorSetting)})] Gotten value of \"{setting.DEBUG_Path}\"!");
+                            SColor color = (SColor)setting.GetValue();
+                            renderer.color = color.ToUnityColor();
+                            return color.ToHexString();
+                        }),
+                        (val) => {
+                            FeatureLogger.Debug($"[{nameof(CustomStringReceiver)}({nameof(ColorSetting)})] Set value of \"{setting.DEBUG_Path}\" to \"{val}\"");
+                            SColor color = SColorExtensions.FromHexString(val);
+                            setting.SetValue(color);
+                        });
 
-#if IL2CPP
-                cm_settingsInputField.m_stringReceiver = new iStringInputReceiver(receiver.Pointer);
-#else
-                A_CM_SettingsInputField_m_stringReceiver.Set(cm_settingsInputField, receiver);
-#endif
-
+    #if IL2CPP
+                    cm_settingsInputField.m_stringReceiver = new iStringInputReceiver(receiver.Pointer);
+    #else
+                    A_CM_SettingsInputField_m_stringReceiver.Set(cm_settingsInputField, receiver);
+    #endif
+                }
 
                 cm_settingsItem.ForcePopupLayer(true);
             }
@@ -354,9 +519,24 @@ namespace TheArchive.Features.Dev
             {
                 CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
+                setting.CM_SettingsItem = cm_settingsItem;
+
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
                 CM_SettingsInputField cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
+
+                TheStaticSettingsInputFieldJankRemoverHashSet2000.Add(cm_settingsInputField);
+
+                var disabledListener = cm_settingsInputField.gameObject.AddComponent<OnDisabledListener>();
+
+                disabledListener.OnDisabledSelf = (go) =>
+                {
+                    if (_A_CM_SettingsInputField_m_readingActive.Get(cm_settingsInputField))
+                    {
+                        _A_CM_SettingsInputField_SetReadingActive.Invoke(cm_settingsInputField, false);
+                        cm_settingsInputField.ResetValue();
+                    }
+                };
 
                 StringInputSetMaxLength(cm_settingsInputField, setting.MaxInputLength);
 
@@ -404,6 +584,8 @@ namespace TheArchive.Features.Dev
             {
                 CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
+                setting.CM_SettingsItem = cm_settingsItem;
+
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
                 CM_SettingsToggleButton cm_SettingsToggleButton = GOUtil.SpawnChildAndGetComp<CM_SettingsToggleButton>(cm_settingsItem.m_toggleInputPrefab, cm_settingsItem.m_inputAlign);
@@ -439,6 +621,8 @@ namespace TheArchive.Features.Dev
             public static void CreateEnumListSetting(EnumListSetting setting, SubMenu subMenu = null)
             {
                 CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
+
+                setting.CM_SettingsItem = cm_settingsItem;
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -557,6 +741,8 @@ namespace TheArchive.Features.Dev
             public static void CreateEnumSetting(EnumSetting setting, SubMenu subMenu = null)
             {
                 CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
+
+                setting.CM_SettingsItem = cm_settingsItem;
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
@@ -735,6 +921,8 @@ namespace TheArchive.Features.Dev
             {
                 CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
 
+                setting.CM_SettingsItem = cm_settingsItem;
+
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 
                 CM_SettingsInputField cm_settingsInputField = GOUtil.SpawnChildAndGetComp<CM_SettingsInputField>(cm_settingsItem.m_textInputPrefab, cm_settingsItem.m_inputAlign);
@@ -859,6 +1047,8 @@ namespace TheArchive.Features.Dev
                 CreateSimpleButton(GetNameForSetting(setting), setting.ButtonText, () => {
                     FeatureManager.InvokeButtonPressed(setting.Helper.Feature, setting);
                 }, out var cm_settingsItem, subMenu);
+
+                setting.CM_SettingsItem = cm_settingsItem;
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 

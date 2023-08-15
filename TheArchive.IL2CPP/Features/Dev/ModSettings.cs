@@ -1,27 +1,18 @@
 ﻿using CellMenu;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using TheArchive.Core.Attributes;
-using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Utilities;
-using UnityEngine;
-using TheArchive.Core.Models;
-using static TheArchive.Utilities.Utils;
-using static TheArchive.Utilities.SColorExtensions;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
+using TheArchive.Utilities;
+using UnityEngine;
 using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
-using System.Diagnostics;
-#if Unhollower
-using UnhollowerBaseLib.Attributes;
-#endif
-#if Il2CppInterop
-using Il2CppInterop.Runtime.Attributes;
-#endif
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Dev
 {
@@ -67,6 +58,9 @@ namespace TheArchive.Features.Dev
 #endif
         private static MethodAccessor<TMPro.TextMeshPro> A_TextMeshPro_ForceMeshUpdate;
 
+        private static readonly MethodAccessor<CM_SettingsInputField> _A_CM_SettingsInputField_SetReadingActive = MethodAccessor<CM_SettingsInputField>.GetAccessor("SetReadingActive", new Type[] { typeof(bool) });
+        private static readonly IValueAccessor<CM_SettingsInputField, bool> _A_CM_SettingsInputField_m_readingActive = AccessorBase.GetValueAccessor<CM_SettingsInputField, bool>("m_readingActive");
+
         public static Color ORANGE_WHITE = new Color(1f, 0.85f, 0.75f, 0.8f);
         public static Color ORANGE = new Color(1f, 0.5f, 0.05f, 0.8f);
         public static Color WHITE_GRAY = new Color(0.7358f, 0.7358f, 0.7358f, 0.7686f);
@@ -78,6 +72,7 @@ namespace TheArchive.Features.Dev
         {
 #if IL2CPP
             LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<JankTextMeshProUpdaterOnce>();
+            LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<OnDisabledListener>();
 
             RegisterReceiverTypesInIL2CPP();
 #endif
@@ -105,185 +100,6 @@ namespace TheArchive.Features.Dev
         private void OnFeatureRestartRequestChanged(Feature feature, bool restartRequested)
         {
             CM_PageSettings_Setup_Patch.SetRestartInfoText(FeatureManager.Instance.AnyFeatureRequestingRestart);
-        }
-
-        public class JankTextMeshProUpdaterOnce : MonoBehaviour
-        {
-#if IL2CPP
-            public JankTextMeshProUpdaterOnce(IntPtr ptr) : base(ptr) { }
-#endif
-            public void Awake()
-            {
-                UpdateMesh(this.GetComponent<TMPro.TextMeshPro>());
-                Destroy(this);
-            }
-
-            public static void UpdateMesh(TMPro.TextMeshPro textMesh)
-            {
-                if (Is.R4 || Is.R5)
-                {
-                    ForceUpdateMesh(textMesh);
-                }
-            }
-
-            public static void ForceUpdateMesh(TMPro.TextMeshPro textMesh)
-            {
-                if (textMesh == null)
-                    return;
-
-                if (Is.R6OrLater)
-                {
-                    A_TextMeshPro_ForceMeshUpdate.Invoke(textMesh, true, false);
-                }
-                else
-                {
-                    A_TextMeshPro_ForceMeshUpdate.Invoke(textMesh);
-                }
-            }
-
-#if IL2CPP
-            [HideFromIl2Cpp]
-#endif
-            public static JankTextMeshProUpdaterOnce Apply(TMPro.TextMeshPro tmp)
-            {
-                if (Is.R4 || Is.R5)
-                {
-                    return tmp.gameObject.AddComponent<JankTextMeshProUpdaterOnce>();
-                }
-                return null;
-            }
-        }
-
-        public class DescriptionPanel : IDisposable
-        {
-            public class DescriptionPanelData
-            {
-                public string Title;
-                public string Description;
-
-                public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
-            }
-
-            private CM_ScrollWindow _backgroundPanel;
-            private TMPro.TextMeshPro _headerText;
-            private TMPro.TextMeshPro _contentText;
-            public DescriptionPanel()
-            {
-                _backgroundPanel = CreateScrollWindow("Description");
-                _backgroundPanel.transform.localPosition = _backgroundPanel.transform.localPosition + new Vector3(1050, 0, 0);
-
-
-                var headerItemGO = GameObject.Instantiate(SettingsItemPrefab, _backgroundPanel.transform);
-
-                _headerText = headerItemGO.GetComponentInChildren<CM_SettingsItem>().transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
-
-                _headerText.color = ORANGE;
-
-                _headerText.SetText("Header Text");
-
-                var rectTrans = _headerText.gameObject.GetComponent<RectTransform>();
-
-                rectTrans.sizeDelta = new Vector2(rectTrans.sizeDelta.x * 2, rectTrans.sizeDelta.y);
-
-
-                var contentItemGO = GameObject.Instantiate(SettingsItemPrefab, _backgroundPanel.transform);
-
-                _contentText = contentItemGO.GetComponentInChildren<CM_SettingsItem>().transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
-
-                _contentText.color = WHITE_GRAY;
-
-                _contentText.SetText("Content Text");
-
-                var rectTransContent = _contentText.gameObject.GetComponent<RectTransform>();
-
-                rectTransContent.sizeDelta = new Vector2(rectTransContent.sizeDelta.x * 2, rectTransContent.sizeDelta.y * 10);
-
-                _backgroundPanel.SetContentItems(new List<iScrollWindowContent>()
-                    { 
-                        headerItemGO.GetComponentInChildren<iScrollWindowContent>(),
-                        contentItemGO.GetComponentInChildren<iScrollWindowContent>()
-                    }.ToIL2CPPListIfNecessary(), 5);
-
-                AddToAllSettingsWindows(_backgroundPanel);
-            }
-
-            public void Dispose()
-            {
-                RemoveFromAllSettingsWindows(_backgroundPanel);
-                _backgroundPanel.SafeDestroyGO();
-            }
-
-            public void Show(DescriptionPanelData data)
-            {
-                _backgroundPanel.gameObject.SetActive(true);
-
-                _headerText.SetText(data.Title);
-                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_headerText);
-
-                _contentText.SetText(data.Description);
-                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_contentText);
-
-                // TODO: Include Module/Mod name of feature
-                // TODO: Include Rundown Constraints
-            }
-
-            public void Show(string title, string content)
-            {
-                _backgroundPanel.gameObject.SetActive(true);
-
-                _headerText.SetText(title);
-                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_headerText);
-
-                _contentText.SetText(content);
-                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_contentText);
-            }
-
-            public void Hide()
-            {
-                _backgroundPanel.gameObject.SetActive(false);
-            }
-
-        }
-
-        public static class PageSettingsData
-        {
-            internal static GameObject SettingsItemPrefab { get; set; }
-            internal static CM_ScrollWindow MainModSettingsScrollWindow { get; set; }
-            internal static List<iScrollWindowContent> ScrollWindowContentElements { get; set; } = new List<iScrollWindowContent>();
-            internal static List<CM_ScrollWindow> AllSubmenuScrollWindows { get; set; } = new List<CM_ScrollWindow>();
-            internal static Transform MainScrollWindowTransform { get; set; }
-            internal static CM_ScrollWindow PopupWindow { get; set; }
-            internal static CM_PageSettings SettingsPageInstance { get; set; }
-            internal static DescriptionPanel TheDescriptionPanel { get; set; }
-            internal static SearchMainPage TheSearchMenu { get; set; }
-
-            internal static CM_Item MainModSettingsButton { get; set; }
-            internal static GameObject SubMenuButtonPrefab { get; set; }
-
-            public static MainMenuGuiLayer MMGuiLayer { get; internal set; }
-            public static GameObject ScrollWindowPrefab { get; internal set; }
-            public static RectTransform MovingContentHolder { get; internal set; }
-        }
-
-        public static class UIHelper
-        {
-            internal static void Setup()
-            {
-                var settingsItemGameObject = GameObject.Instantiate(ModSettings.PageSettingsData.SettingsItemPrefab);
-
-                var settingsItem = settingsItemGameObject.GetComponentInChildren<CM_SettingsItem>();
-
-                var enumDropdown = GOUtil.SpawnChildAndGetComp<CM_SettingsEnumDropdownButton>(settingsItem.m_enumDropdownInputPrefab, settingsItemGameObject.transform);
-
-                PopupItemPrefab = GameObject.Instantiate(enumDropdown.m_popupItemPrefab);
-                GameObject.DontDestroyOnLoad(PopupItemPrefab);
-                PopupItemPrefab.hideFlags = HideFlags.HideAndDontSave;
-                PopupItemPrefab.transform.position = new Vector3(-3000, -3000, 0);
-
-                GameObject.Destroy(settingsItemGameObject);
-            }
-
-            public static GameObject PopupItemPrefab { get; private set; } //iScrollWindowContent
         }
 
         public static void ShowMainModSettingsWindow(int _)
@@ -349,6 +165,37 @@ namespace TheArchive.Features.Dev
             }
         }
 
+        // Disable all other active TextFields
+        [ArchivePatch(typeof(CM_SettingsInputField), "OnBtnPress")]
+        internal static class CM_SettingsInputField_OnBtnPress_Patch
+        {
+            private static bool _alreadyInMethod = false;
+
+            public static void Postfix(CM_SettingsInputField __instance)
+            {
+                if (_alreadyInMethod)
+                    return;
+
+                _alreadyInMethod = true;
+
+                foreach (var other in TheStaticSettingsInputFieldJankRemoverHashSet2000)
+                {
+                    if (other == null)
+                        continue;
+
+                    if (other.ID == __instance.ID)
+                        continue;
+
+                    if (_A_CM_SettingsInputField_m_readingActive.Get(other))
+                    {
+                        _A_CM_SettingsInputField_SetReadingActive.Invoke(other, false);
+                        other.ResetValue();
+                    }
+                }
+
+                _alreadyInMethod = false;
+            }
+        }
 
         //Setup(MainMenuGuiLayer guiLayer)
         [ArchivePatch(typeof(CM_PageSettings), "Setup")]
@@ -433,6 +280,9 @@ namespace TheArchive.Features.Dev
                 TheDescriptionPanel.Dispose();
                 TheDescriptionPanel = null;
 
+                TheColorPicker.Dispose();
+                TheColorPicker = null;
+
                 TheSearchMenu.Dispose();
                 TheSearchMenu = null;
 
@@ -492,6 +342,8 @@ namespace TheArchive.Features.Dev
                 JankTextMeshProUpdaterOnce.UpdateMesh(_restartInfoText);
 
                 TheDescriptionPanel = new DescriptionPanel();
+
+                TheColorPicker = new ColorPicker();
 
                 if (DevMode)
                 {

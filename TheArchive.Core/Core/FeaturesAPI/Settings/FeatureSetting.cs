@@ -18,6 +18,8 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public Type Type { get; }
         public string DEBUG_Path { get; }
 
+        public object CM_SettingsItem { get; internal set; }
+
         public bool SeparatorAbove { get; private set; }
         public bool SpacerAbove { get; private set; }
         public FSHeader HeaderAbove { get; private set; }
