@@ -240,6 +240,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\CarryItemMarker.cs" Link="Features\Hud\CarryItemMarker.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\CombatIndicator.cs" Link="Features\Hud\CombatIndicator.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\DetailedExpeditionDisplay.cs" Link="Features\Hud\DetailedExpeditionDisplay.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\DisplaySentryArchetypeName.cs" Link="Features\Hud\DisplaySentryArchetypeName.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\DontHideLoadoutUI.cs" Link="Features\Hud\DontHideLoadoutUI.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\ExpeditionResultsScreenTweaks.cs" Link="Features\Hud\ExpeditionResultsScreenTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\FlashlightIconColors.cs" Link="Features\Hud\FlashlightIconColors.cs" />
