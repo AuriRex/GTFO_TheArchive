@@ -1,6 +1,7 @@
 ﻿using CellMenu;
 using System;
 using System.Collections;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
@@ -242,6 +243,8 @@ namespace TheArchive.Features.Hud
 
                     var parts = text.Split('-');
 
+                    var expeditionTitle = parts.Length > 1 ? string.Join("-", parts.Take(parts.Length - 1)) : parts[0];
+
                     string time;
 
                     if (FeatureManager.IsFeatureEnabled(nameof(EnhancedExpeditionTimer)))
@@ -265,7 +268,7 @@ namespace TheArchive.Features.Hud
                         extraForOldBuilds = "<color=#ccc><size=50%> ";
                     }
 
-                    var newText = $"{parts[0]}{extraForOldBuilds}- {time}</size></color>";
+                    var newText = $"{expeditionTitle}{extraForOldBuilds}- {time}</size></color>";
                     __instance.m_expeditionName.text = newText;
                 }
                 catch (Exception ex)
