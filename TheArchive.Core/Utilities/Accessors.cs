@@ -5,6 +5,20 @@ using System.Reflection;
 
 namespace TheArchive.Utilities
 {
+    public static class AccessorExtensions
+    {
+        public static IValueAccessor<T, MT> OrAlternative<T, MT>(this IValueAccessor<T, MT> self, Func<IValueAccessor<T, MT>> func)
+        {
+            if (self != null && self.HasMember)
+                return self;
+
+            if (func == null)
+                throw new NullReferenceException($"Parameter {nameof(func)} may not be null!");
+
+            return func.Invoke();
+        }
+    }
+
     /// <summary>
     /// Globally cached reflection wrapper for fields or properties.
     /// </summary>
@@ -21,6 +35,11 @@ namespace TheArchive.Utilities
         /// If getting a value is possible
         /// </summary>
         public bool CanSet { get; }
+
+        /// <summary>
+        /// If the member has been found
+        /// </summary>
+        public bool HasMember { get; }
 
         /// <summary>
         /// Get the value of the reflected member from an <paramref name="instance"/>.
@@ -77,11 +96,14 @@ namespace TheArchive.Utilities
         /// </summary>
         public string Identifier { get; private set; } = null;
 
+        public bool IgnoreErrors { get; private set; } = false;
+
         public abstract bool HasMemberBeenFound { get; }
 
-        protected AccessorBase(string identifier)
+        protected AccessorBase(string identifier, bool ignoreErrors)
         {
             Identifier = identifier;
+            IgnoreErrors = ignoreErrors;
         }
 
         /// <summary>
@@ -100,7 +122,7 @@ namespace TheArchive.Utilities
             if(Loader.LoaderWrapper.IsGameIL2CPP() && Loader.LoaderWrapper.IsIL2CPPType(typeof(T)))
             {
                 // All fields are turned into properties by unhollower/interop!
-                return PropertyAccessor<T, MT>.GetAccessor(memberName);
+                return PropertyAccessor<T, MT>.GetAccessor(memberName, !throwOnError);
             }
 
             var member = typeof(T).GetMember(memberName, Utils.AnyBindingFlagss).FirstOrDefault();
@@ -108,9 +130,9 @@ namespace TheArchive.Utilities
             switch(member)
             {
                 case PropertyInfo:
-                    return PropertyAccessor<T, MT>.GetAccessor(memberName);
+                    return PropertyAccessor<T, MT>.GetAccessor(memberName, !throwOnError);
                 case FieldInfo:
-                    return FieldAccessor<T, MT>.GetAccessor(memberName);
+                    return FieldAccessor<T, MT>.GetAccessor(memberName, !throwOnError);
             }
 
             if (throwOnError)
@@ -160,14 +182,14 @@ namespace TheArchive.Utilities
         /// </summary>
         /// <param name="fieldName">The name of the field</param>
         /// <returns><see cref="FieldAccessor{T, FT}"/></returns>
-        public static FieldAccessor<T, FT> GetAccessor(string fieldName)
+        public static FieldAccessor<T, FT> GetAccessor(string fieldName, bool ignoreErrors = false)
         {
             var identifier = $"Field_{typeof(T).FullName}_{fieldName}";
 
             if (Accessors.TryGetValue(identifier, out var val))
                 return (FieldAccessor<T, FT>) val;
 
-            val = new FieldAccessor<T, FT>(identifier, fieldName);
+            val = new FieldAccessor<T, FT>(identifier, fieldName, ignoreErrors);
 
             Accessors.Add(identifier, val);
 
@@ -182,9 +204,11 @@ namespace TheArchive.Utilities
 
         public bool CanSet => true;
 
+        public bool HasMember => HasMemberBeenFound;
+
         public bool IsStatic => _field?.IsStatic ?? false;
 
-        private FieldAccessor(string identifier, string fieldName) : base(identifier)
+        private FieldAccessor(string identifier, string fieldName, bool ignoreErrors = false) : base(identifier, ignoreErrors)
         {
             _field = typeof(T).GetField(fieldName, AnyBindingFlags);
         }
@@ -200,7 +224,21 @@ namespace TheArchive.Utilities
             {
                 return (FT)_field.GetValue(instance);
             }
-            catch(Exception ex)
+            catch (NullReferenceException nre)
+            {
+                if (!IgnoreErrors)
+                {
+                    if (!HasMemberBeenFound)
+                    {
+                        ArchiveLogger.Warning($"NullReferenceException while getting {nameof(FieldAccessor<T, FT>)} field \"{Identifier}\"! If this is intentional consider setting {nameof(IgnoreErrors)} to true.");
+                        return default;
+                    }
+
+                    ArchiveLogger.Error($"NullReferenceException while getting {nameof(FieldAccessor<T, FT>)} field \"{Identifier}\"!");
+                    throw nre;
+                }
+            }
+            catch (Exception ex)
             {
                 ArchiveLogger.Error($"Exception while getting {nameof(FieldAccessor<T, FT>)} field \"{Identifier}\"!");
                 ArchiveLogger.Exception(ex);
@@ -218,6 +256,20 @@ namespace TheArchive.Utilities
             try
             {
                 _field.SetValue(instance, value);
+            }
+            catch (NullReferenceException nre)
+            {
+                if (!IgnoreErrors)
+                {
+                    if (!HasMemberBeenFound)
+                    {
+                        ArchiveLogger.Warning($"NullReferenceException while setting {nameof(FieldAccessor<T, FT>)} field \"{Identifier}\"! If this is intentional consider setting {nameof(IgnoreErrors)} to true.");
+                        return;
+                    }
+
+                    ArchiveLogger.Error($"NullReferenceException while setting {nameof(FieldAccessor<T, FT>)} field \"{Identifier}\"!");
+                    throw nre;
+                }
             }
             catch (Exception ex)
             {
@@ -249,14 +301,14 @@ namespace TheArchive.Utilities
         /// </summary>
         /// <param name="propertyName">The name of the property</param>
         /// <returns><see cref="PropertyAccessor{T, FT}"/></returns>
-        public static PropertyAccessor<T, PT> GetAccessor(string propertyName)
+        public static PropertyAccessor<T, PT> GetAccessor(string propertyName, bool ignoreErrors = false)
         {
             var identifier = $"Property_{typeof(T).FullName}_{propertyName}";
 
             if (Accessors.TryGetValue(identifier, out var val))
                 return (PropertyAccessor<T, PT>)val;
 
-            val = new PropertyAccessor<T, PT>(identifier, propertyName);
+            val = new PropertyAccessor<T, PT>(identifier, propertyName, ignoreErrors);
 
             Accessors.Add(identifier, val);
 
@@ -271,9 +323,11 @@ namespace TheArchive.Utilities
 
         public bool CanSet => _property?.GetSetMethod(true) != null;
 
+        public bool HasMember => HasMemberBeenFound;
+
         public bool IsStatic => (_property?.GetGetMethod(true) ?? _property?.GetSetMethod(true))?.IsStatic ?? false;
 
-        private PropertyAccessor(string identifier, string propertyName) : base(identifier)
+        private PropertyAccessor(string identifier, string propertyName, bool ignoreErrors = false) : base(identifier, ignoreErrors)
         {
             _property = typeof(T).GetProperty(propertyName, AnyBindingFlags);
         }
@@ -289,9 +343,23 @@ namespace TheArchive.Utilities
             {
                 return (PT)_property.GetValue(instance);
             }
+            catch (NullReferenceException nre)
+            {
+                if (!IgnoreErrors)
+                {
+                    if (!HasMemberBeenFound)
+                    {
+                        ArchiveLogger.Warning($"NullReferenceException while getting {nameof(PropertyAccessor<T, PT>)} property \"{Identifier}\"! If this is intentional consider setting {nameof(IgnoreErrors)} to true.");
+                        return default;
+                    }
+
+                    ArchiveLogger.Error($"NullReferenceException while getting {nameof(PropertyAccessor<T, PT>)} property \"{Identifier}\"!");
+                    throw nre;
+                }
+            }
             catch (Exception ex)
             {
-                ArchiveLogger.Error($"Exception while getting {nameof(FieldAccessor<T, PT>)} property \"{Identifier}\"!");
+                ArchiveLogger.Error($"Exception while getting {nameof(PropertyAccessor<T, PT>)} property \"{Identifier}\"!");
                 ArchiveLogger.Exception(ex);
             }
             return default;
@@ -308,9 +376,23 @@ namespace TheArchive.Utilities
             {
                 _property.SetValue(instance, value);
             }
+            catch (NullReferenceException nre)
+            {
+                if (!IgnoreErrors)
+                {
+                    if (!HasMemberBeenFound)
+                    {
+                        ArchiveLogger.Warning($"NullReferenceException while setting {nameof(PropertyAccessor<T, PT>)} property \"{Identifier}\"! If this is intentional consider setting {nameof(IgnoreErrors)} to true.");
+                        return;
+                    }
+
+                    ArchiveLogger.Error($"NullReferenceException while setting {nameof(PropertyAccessor<T, PT>)} property \"{Identifier}\"!");
+                    throw nre;
+                }
+            }
             catch (Exception ex)
             {
-                ArchiveLogger.Error($"Exception while setting {nameof(FieldAccessor<T, PT>)} property \"{Identifier}\"!");
+                ArchiveLogger.Error($"Exception while setting {nameof(PropertyAccessor<T, PT>)} property \"{Identifier}\"!");
                 ArchiveLogger.Exception(ex);
             }
         }
@@ -339,7 +421,7 @@ namespace TheArchive.Utilities
         /// <param name="methodName">The name of the method</param>
         /// <param name="parameterTypes">Parameter Types of the method (leave null if there are none)</param>
         /// <returns><see cref="MethodAccessor{T, RT}"/></returns>
-        public static MethodAccessor<T, RT> GetAccessor(string methodName, Type[] parameterTypes = null)
+        public static MethodAccessor<T, RT> GetAccessor(string methodName, Type[] parameterTypes = null, bool ignoreErrors = false)
         {
             var identifier = $"Method_{typeof(T).FullName}_{typeof(RT)}_{methodName}";
             if(parameterTypes != null)
@@ -350,7 +432,7 @@ namespace TheArchive.Utilities
             if (Accessors.TryGetValue(identifier, out var val))
                 return (MethodAccessor<T, RT>) val;
 
-            val = new MethodAccessor<T, RT>(identifier, methodName, parameterTypes);
+            val = new MethodAccessor<T, RT>(identifier, methodName, parameterTypes, ignoreErrors);
 
             Accessors.Add(identifier, val);
 
@@ -361,7 +443,7 @@ namespace TheArchive.Utilities
         public bool IsMethodStatic => _method.IsStatic;
         public override bool HasMemberBeenFound => _method != null;
 
-        private MethodAccessor(string identifier, string methodName, Type[] parameterTypes) : base(identifier)
+        private MethodAccessor(string identifier, string methodName, Type[] parameterTypes, bool ignoreErrors = false) : base(identifier, ignoreErrors)
         {
             try
             {
@@ -397,6 +479,20 @@ namespace TheArchive.Utilities
                     return default;
 
                 return (RT)value;
+            }
+            catch (NullReferenceException nre)
+            {
+                if (!IgnoreErrors)
+                {
+                    if (!HasMemberBeenFound)
+                    {
+                        ArchiveLogger.Warning($"NullReferenceException while calling {nameof(MethodAccessor<T, RT>)} method \"{Identifier}\"! If this is intentional consider setting {nameof(IgnoreErrors)} to true.");
+                        return default;
+                    }
+
+                    ArchiveLogger.Error($"NullReferenceException while calling {nameof(MethodAccessor<T, RT>)} method \"{Identifier}\"!");
+                    throw nre;
+                }
             }
             catch (Exception ex)
             {
@@ -449,7 +545,7 @@ namespace TheArchive.Utilities
         public override bool HasMemberBeenFound => _method != null;
         public int ParameterCount { get; private set; }
 
-        private MethodAccessor(string identifier, string methodName, Type[] parameterTypes, bool ignoreErrors = false) : base(identifier)
+        private MethodAccessor(string identifier, string methodName, Type[] parameterTypes, bool ignoreErrors = false) : base(identifier, ignoreErrors)
         {
             try
             {
@@ -499,6 +595,20 @@ namespace TheArchive.Utilities
                     parameters = parameters.Take(ParameterCount).ToArray();
                 }
                 _method.Invoke(instance, parameters ?? NoParams);
+            }
+            catch(NullReferenceException nre)
+            {
+                if(!IgnoreErrors)
+                {
+                    if(!HasMemberBeenFound)
+                    {
+                        ArchiveLogger.Warning($"NullReferenceException while calling {nameof(MethodAccessor<T>)} method \"{Identifier}\"! If this is intentional consider setting {nameof(IgnoreErrors)} to true.");
+                        return;
+                    }
+
+                    ArchiveLogger.Error($"NullReferenceException while calling {nameof(MethodAccessor<T>)} method \"{Identifier}\"!");
+                    throw nre;
+                }
             }
             catch(Exception ex)
             {
