@@ -1,18 +1,17 @@
-﻿using GameData;
-using Player;
+﻿using Player;
 using System;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
-using static TheArchive.Utilities.Utils;
 using static TheArchive.Utilities.SharedUtils;
-using System.Linq;
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.QoL
 {
     [EnableFeatureByDefault]
+    [RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownAltFive)]
     public class ResourcePrioritizationPings : Feature
     {
         public override string Name => "Prioritize Resource Pings";
