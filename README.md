@@ -20,20 +20,12 @@ If you encounter any bugs while playing with mods installed make sure to remove 
 
 ### Quick Links
  * [Highlighted Features](#features)
-   * [Accessibility](#accessibility)
-   * [Quality of Life](#quality-of-life)
-   * [Misc / Other](#misc--other)
-   * [Backported Features](#backported-features)
  * [How to Install](#installation)
  * [Where are my saves?](#where-are-my-saves)
  * [Building the project](#technical-stuffs)
  * [Contributing & License](#contributing)
 
 # Features
-
-## Local Rundown Progression
-This allows you to save your progress (including boosters and vanity items) onto your computers hard drive instead of depending on the developers servers.  
-The implementation should be as close to the original game whenever a specific (rundown) version was live, to keep the experience genuine even after servers are down forever.
 
 ## In Game Mod Settings
 
@@ -63,18 +55,11 @@ Having to redo your settings whenever you switch to another Rundown is now a thi
 All 4 of the old, pre rundown 6 melee weapons, are back:  
 Maul, Gavel, Mallet and Sledge can be enabled in the mod settings menu and will be added to the melee weapons menu on the loadout screen.
 
+## Local Rundown Progression
+This allows you to save your progress (including boosters and vanity items) onto your computers hard drive instead of depending on the developers servers.  
+The implementation should be as close to the original game whenever a specific (rundown) version was live, to keep the experience genuine even after servers are down forever.
+
 ---
-
-## Accessibility
-
-### Nickname
-
-Change your name in game, includes a color option.
-
-### Player Color Override
-
-Allows you to change the colors of you and your teammates.  
-Additionally allows you to colorize other players based on their nickname color.
 
 ### Loud Volume Override
 
@@ -83,6 +68,27 @@ Also allows you to adjust what happens with audio whenever you tab outside of th
 * Continue playing
 * Lower Volume
 * Mute
+
+### Player Lobby Management
+
+Open up players Steam profile or, if you're the host, kick them out of your lobby.
+
+![PlayerLobbyManagement](https://user-images.githubusercontent.com/37329066/227807583-03305c00-323c-446c-94df-43f9aa7595cd.png)
+
+### Carry Item Marker
+
+Big pickups (like `CELL`s or `FOG_TURBINE`s) get their own color as well as the item name above it.  
+Also shows a marker on whoever is carrying a big pickup.
+
+![CarryMarker](https://user-images.githubusercontent.com/37329066/227804434-22e8de81-6884-4830-9ff6-a5a8c4616cc2.png)
+
+<details>
+<summary>📷 All the different color variations: (Big Pickup spoilers!!)</summary>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/37329066/227804227-207d47a7-54cb-49f7-936f-76e4d0c5068d.png" alt="CarryItemMarker"/>
+</p>
+</details>
 
 ### Glass Liquid System Override
 
@@ -118,17 +124,38 @@ Adds a player colored marker on placed down sentry guns, with who placed it and 
 ![SentryMarkers](https://user-images.githubusercontent.com/37329066/227806849-933e2a23-7bb3-4352-b028-8c35974b4e26.png)
 </details>
 
-### Disable Breathing (Infection) - `[R2 - RL]`
+### Show Weapon Stats
 
-Removes the sound effect than can only be described as "sucking up liquid through a straw" that playes while having high infection.
+Displayes the weapons stats on the weapon select screen.  
+Damage, clip size, max ammo and more
 
-### Disable Breathing (Stamina)
+### Glowsticks! - `[A1 - RL]`
 
-Removes the players breathing and panting sounds while running around.
+Change the base color to any of the available ones (Green, Yellow, Orange or Red) which syncs to other players!  
+And/Or override the color locally (for yourself only) based on one fixed color or based on who threw the glowstick.
 
-### Disable Coughing (Infection) - `[R2 - RL]`
+### Loading Indicator
 
-Removes the coughing sound effect whenever someone looses HP due to infection.
+Displays a little indicator that shows if other players have finished loading yet.
+
+### Nickname
+
+Change your name in game, includes a color option.
+
+### Player Color Override
+
+Allows you to change the colors of you and your teammates.  
+Additionally allows you to colorize other players based on their nickname color.
+
+### 99% Reload Fix
+
+Fixes the bug that leaves you with one bullet short in the mag even though enough ammo is available.
+
+### L4D Style Resource Packs
+
+Use left and right mouse buttons to apply resource packs instead of `E`  
+Left mouse = yourself  
+Right mouse = other players (can be held down + hovered over a player to start the interaction)
 
 ### Disable Hud Sway
 
@@ -143,69 +170,9 @@ Removes the mirroring effect on UI elements.
 Stops the movement of UI elements in menu screens (Loadout, Rundown, ...) whenever you move your cursor around.  
 (Some elements might get partially or fully cut off-screen!)
 
----
-
-## Quality of Life
-
-### Carry Item Marker
-
-Big pickups (like `CELL`s or `FOG_TURBINE`s) get their own color as well as the item name above it.  
-Also shows a marker on whoever is carrying a big pickup.
-
-<details>
-<summary>📷 All the different color variations: (Big Pickup spoilers!!)</summary>
-
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/37329066/227804227-207d47a7-54cb-49f7-936f-76e4d0c5068d.png" alt="CarryItemMarker"/>
-</p>
-</details>
-
-<details>
-<summary>📷 Example of someone carrying a CELL:</summary>
-
-![CarryMarker](https://user-images.githubusercontent.com/37329066/227804434-22e8de81-6884-4830-9ff6-a5a8c4616cc2.png)
-</details>
-
-### 99% Reload Fix
-
-Fixes the bug that leaves you with one bullet short in the mag even though enough ammo is available.
-
-### L4D Style Resource Packs
-
-Use left and right mouse buttons to apply resource packs instead of `E`  
-Left mouse = yourself  
-Right mouse = other players (can be held down + hovered over a player to start the interaction)
-
-### Situation Aware Weapon Switch
-
-Switch to either your Melee weapon or Primary depending on if you're sneaking around or in combat after depleting all of your throwables / exit a ladder.
-
-### Prioritize Resource Pings
-
-Instead of pinging the lockers/boxes with your middle mouse pings it pings the resource packs instead.  
-This changes the ping icon as well as the voice line your character says.
-
-### Loadout Randomizer
-
-Adds a button onto the loadout screen that allows you to randomize your current loadout.  
-(Configurable in mod settings)
-
-### Map Abduction Fix - `[R4 - RL]`
-
-Ever tried typing on the map screen only to be taken to the objectives screen after hitting the `o` key on your keyboard?  
-This has been fixed.
-
 ### No Dead Pings
 
 Fixes pings (red triangles, doritos) staying on dead enemies as a result of high ping.
-
-### No Magazine Drop Sound
-
-Removes the *globally audible* sound that playes whenever a magazine drops on the floor after a reload.
-
-### Reload Sound Cue
-
-Play a sound the moment your gun has reloaded. (= bullets have entered the gun)
 
 ### Remove Story Dialog
 
@@ -217,105 +184,17 @@ Prevents all level-based voice events that have subtitles assigned from playing.
 Automatically skips the cutscene after initiating a cage drop.  
 This leads to faster load times as the game only starts building the level once the cutscene is over.  
 
-### Unready Button - `[R1 - R5]`
-
-Adds an unready button into the older game versions.
-
----
-
-## Misc / Other
-
-### Player Lobby Management
-
-Open up players Steam profile or, if you're the host, kick them out of your lobby.
-
-![PlayerLobbyManagement](https://user-images.githubusercontent.com/37329066/227807583-03305c00-323c-446c-94df-43f9aa7595cd.png)
-
-### Loading Indicator
-
-Displays a little indicator that shows if other players have finished loading yet.
-
-### Show Weapon Stats
-
-Displayes the weapons stats on the weapon select screen.  
-Damage, clip size, max ammo and more
-
-### Glowsticks! - `[A1 - RL]`
-
-Change the base color to any of the available ones (Green, Yellow, Orange or Red) which syncs to other players!  
-And/Or override the color locally (for yourself only) based on one fixed color or based on who threw the glowstick.
-
 ### Bot Customization - `[R6 - RL]`
 
 Customize your Bots appearance as host and change their names. (Syncs to other players!)
-
-### Hud Toggle
-
-Toggle your Hud via a key press. `(F1)`
 
 ### Process Priority
 
 Automatically change the games process priority, potentially increasing performance by a tiny bit.
 
-### Remove Downed Message
-
-Remove the "You have died, check map with TAB" text at the top of your screen whenever you die.  
-Allows you to see reactor progress text when dead.
-
-### Weapon Shoot Forwards
-
-Tries to always aim your shots into the center of your crosshair, therefore not allowing your guns to shoot the floor upon drawing and immediately firing.
-
-### R1 SNet Revision Override
-
-Allows you to connect to R1 build `19087` games even though you're playing on R1 build `19715`.  
-Build `19087` is/was a commonly redistributed version of Rundown 1
-
 ### Other things not mentioned
 
 Yes, there's (probably) more! (I usually forget to update this readme)
-
----
-
-## Backported Features
-
-### Instant Hack Release - `[R1 - R4]`
-
-Rundown 5 changed hacks a tiny bit by unlocking locked objects sooner than before, this patch backports this into R1 to R4.
-
-### Center Map on Player - `[R1 - R2]`
-
-Center the map on yourself upon opening. (Has been added officially in R3)
-
-### Melee Cancel Backport - `[R1 - R5]`
-
-Rundown 6 replaced the shove on right click with a simple return of the weapon to it's idle position, this patch backports this all versions before R6.
-
-### Mine Fix Backport - `[R1 - R4]`
-
-According to the devs, mines didn't do the intended amount of damage before R5, this fixes the mine damage.
-
-### Terminal Zone Info - `[R1 - R5]`
-
-Rundown 6 added the terminals key and zone info into the terminal.
-
-### Throwables Run Fix - `[R1 - R5]`
-
-Before R6, trying to throw throwables and then sprinting caused you to instantly throw your item.  
-This patch allows you to sprint without this happening.
-
-### Alarm Class On Doors - `[R1 - R3]`
-
-Always shows the alarm class on security doors, this was not the case in R1 to R3 and doors did not show this information.
-
-### R1 Ladder Fix - `[R1]`
-
-`W` is up and `S` is down, no more weird looking up/down changes the way those buttons work on ladders.
-
-### R1 Visual Pings - `[R1]`
-
-On Rundown 1 builds there is no visual ping indicator that shows up after using the `PING` command inside of a terminal, there's only the sound that plays.  
-This feature allows the lobby host to display a visual indicator by abusing their middle mouse ping.
 
 ---
 

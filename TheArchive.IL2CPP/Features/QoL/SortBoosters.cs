@@ -15,6 +15,8 @@ namespace TheArchive.Features.QoL
 
         public override string Group => FeatureGroups.QualityOfLife;
 
+        public override string Description => "Sorts your booster inventory by type and alphabetically";
+
         public static new IArchiveLogger FeatureLogger { get; set; }
 
         public override bool SkipInitialOnEnable => true;

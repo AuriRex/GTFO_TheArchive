@@ -23,6 +23,8 @@ namespace TheArchive.Features.Presence
 
         public override string Group => FeatureGroups.Presence;
 
+        public override string Description => "Set a custom text for Steams' presence system.";
+
         [FeatureConfig]
         public static SteamRPCSettings Config { get; set; }
 

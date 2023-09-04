@@ -19,7 +19,7 @@ namespace TheArchive.Features.Special
 
         public override string Group => FeatureGroups.Special;
 
-        public override string Description => "Allows the usage of '<' and '>' characters in chat.\n\n(Also enables TextMeshPro RichText tags to be used in chat, don't do stupid things!)";
+        public override string Description => "Allows the usage of '>' and '<' characters in chat.\n\n(Also enables TextMeshPro RichText tags to be used in chat, don't do stupid things!)";
 
 #if IL2CPP
         private static PropertyAccessor<PlayerChatManager, Il2CppStructArray<int>> A_PlayerChatManager_m_forbiddenChars;

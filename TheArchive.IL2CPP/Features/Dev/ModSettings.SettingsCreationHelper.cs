@@ -1072,36 +1072,9 @@ namespace TheArchive.Features.Dev
                 }
                 else
                 {
-                    Enum.TryParse<RundownID>(rundowns.LowestRundownFlag().ToString(), out var lowestId);
-                    Enum.TryParse<RundownID>(rundowns.HighestRundownFlag().ToString(), out var highestId);
+                    var tag = Utils.GetRundownTag(rundowns);
 
-
-                    if (lowestId == highestId)
-                    {
-                        var R = "R";
-                        if (lowestId >= RundownID.RundownAltOne)
-                        {
-                            R = "A";
-                            lowestId = lowestId - (int)RundownID.RundownAltOne + 1;
-                        }
-                        rundownInfoTMP.SetText($"<align=right>{R}{(int)lowestId}</align>");
-                    }
-                    else
-                    {
-                        var RL = "R";
-                        if (lowestId >= RundownID.RundownAltOne)
-                        {
-                            RL = "A";
-                            lowestId = lowestId - (int)RundownID.RundownAltOne + 1;
-                        }
-                        var RH = "R";
-                        if (highestId >= RundownID.RundownAltOne)
-                        {
-                            RH = "A";
-                            highestId = highestId - (int)RundownID.RundownAltOne + 1;
-                        }
-                        rundownInfoTMP.SetText($"<align=right>{RL}{(int)lowestId}-{RH}{(int)highestId}</align>");
-                    }
+                    rundownInfoTMP.SetText($"<align=right>{tag}</align>");
                 }
 
                 rundownInfoTMP.color = ORANGE;

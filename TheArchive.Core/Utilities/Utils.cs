@@ -161,6 +161,44 @@ namespace TheArchive.Utilities
 
         public static void StopCoroutine(object coroutineToken) => LoaderWrapper.StopCoroutine(coroutineToken);
 
+        public static string GetRundownTag(RundownFlags rundowns, bool generalizeLatest = false)
+        {
+            Enum.TryParse<RundownID>(rundowns.LowestRundownFlag().ToString(), out var lowestId);
+            Enum.TryParse<RundownID>(rundowns.HighestRundownFlag().ToString(), out var highestId);
+
+            if (highestId == 0)
+                highestId = GetEnumFromName<RundownID>(nameof(RundownID.Latest));
+
+            var isLatest = (int)highestId == (int)RundownID.Latest;
+
+            if (lowestId == highestId)
+            {
+                var R = "R";
+                if (lowestId >= RundownID.RundownAltOne)
+                {
+                    R = "A";
+                    lowestId = lowestId - (int)RundownID.RundownAltOne + 1;
+                }
+                return $"{R}{(int)lowestId}";
+            }
+            else
+            {
+                var RL = "R";
+                if (lowestId >= RundownID.RundownAltOne)
+                {
+                    RL = "A";
+                    lowestId = lowestId - (int)RundownID.RundownAltOne + 1;
+                }
+                var RH = "R";
+                if (highestId >= RundownID.RundownAltOne)
+                {
+                    RH = "A";
+                    highestId = highestId - (int)RundownID.RundownAltOne + 1;
+                }
+                return $"{RL}{(int)lowestId}-{(isLatest && generalizeLatest ? "RL" : RH+(int)highestId)}";
+            }
+        }
+
         public static string GetRundownTitle() => GetRundownTitle(ArchiveMod.CurrentRundown);
         public static string GetRundownTitle(RundownID rundown)
         {

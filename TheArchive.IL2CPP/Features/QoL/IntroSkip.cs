@@ -13,6 +13,8 @@ namespace TheArchive.Features.QoL
 
         public override string Group => FeatureGroups.QualityOfLife;
 
+        public override string Description => "Automatically presses inject at the start of the game";
+
         public new static IArchiveLogger FeatureLogger { get; set; }
 
         [ArchivePatch(typeof(CM_PageIntro), "Update")]
