@@ -20,6 +20,7 @@ If you encounter any bugs while playing with mods installed make sure to remove 
 
 ### Quick Links
  * [Highlighted Features](#features)
+ * [List of all Features](Features.md)
  * [How to Install](#installation)
  * [Where are my saves?](#where-are-my-saves)
  * [Building the project](#technical-stuffs)
@@ -59,6 +60,8 @@ Maul, Gavel, Mallet and Sledge can be enabled in the mod settings menu and will 
 This allows you to save your progress (including boosters and vanity items) onto your computers hard drive instead of depending on the developers servers.  
 The implementation should be as close to the original game whenever a specific (rundown) version was live, to keep the experience genuine even after servers are down forever.
 
+## [List of all Features](Features.md)
+
 ---
 
 ### Loud Volume Override
@@ -80,7 +83,11 @@ Open up players Steam profile or, if you're the host, kick them out of your lobb
 Big pickups (like `CELL`s or `FOG_TURBINE`s) get their own color as well as the item name above it.  
 Also shows a marker on whoever is carrying a big pickup.
 
+<details>
+<summary>📷 Example of someone carrying a CELL:</summary>
+
 ![CarryMarker](https://user-images.githubusercontent.com/37329066/227804434-22e8de81-6884-4830-9ff6-a5a8c4616cc2.png)
+</details>
 
 <details>
 <summary>📷 All the different color variations: (Big Pickup spoilers!!)</summary>
@@ -128,6 +135,8 @@ Adds a player colored marker on placed down sentry guns, with who placed it and 
 
 Displayes the weapons stats on the weapon select screen.  
 Damage, clip size, max ammo and more
+
+![GTFO_ShowWeaponStats](https://github.com/AuriRex/GTFO_TheArchive/assets/37329066/d771eaf2-0d57-4978-ac32-8f44e34e5800)
 
 ### Glowsticks! - `[A1 - RL]`
 
@@ -192,13 +201,18 @@ Customize your Bots appearance as host and change their names. (Syncs to other p
 
 Automatically change the games process priority, potentially increasing performance by a tiny bit.
 
-### Other things not mentioned
+### Other things not mentioned here
 
-Yes, there's (probably) more! (I usually forget to update this readme)
+Check the [List of all Features](Features.md), that one should (hopefully) be somewhat up to date.
 
 ---
 
 # Installation
+
+The mod is available for both MelonLoader and BepInEx (R2ModMan).  
+The BepInEx version is a little behind currently but will be updated in the future - not every feature is currently available on this version!
+
+## Using MelonLoader
 
 1. Install [MelonLoader](https://github.com/LavaGang/MelonLoader#how-to-use-the-installer) into your game folder.  
    Make sure to install **MelonLoader version `0.5.7`**, not anything older or newer (for now!)
@@ -209,6 +223,16 @@ Yes, there's (probably) more! (I usually forget to update this readme)
    (In Steam: `[Right Click on GTFO]` > `[Manage >]` > `[Browse local files]`)
 5. Launch the game again, you're done!  
    (Check if the mod is installed by navigating to the games `Settings` menu, there should be a button labeled `Mod Settings` in the bottom left.)
+
+## Using BepInEx / R2MM
+
+1. Create a Profile in R2MM and install the `GTFO BepInEx Pack`
+2. Go to the profiles settings tab
+3. Click the `Browse Profile Folder` button  
+   You'll see a folder called `BepInEx` in there
+4. Download the `EXPERIMENTAL_BepInEx_Ar_v?.?.??.zip` from the bottom of the [releases page](https://github.com/AuriRex/GTFO_TheArchive/releases/latest).
+5. Open the downloaded zip file and copy the `plugins` folder from within the zip file into the `BepInEx` folder mentioned in step 3.  
+   The result should be this: `<PathToProfile>/BepInEx/plugins/TheArchive.Core.dll` (+ `Clonesoft.dll`)
 
 ---
 
