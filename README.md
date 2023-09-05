@@ -227,12 +227,11 @@ The BepInEx version is a little behind currently but will be updated in the futu
 ## Using BepInEx / R2MM
 
 1. Create a Profile in R2MM and install the `GTFO BepInEx Pack`
-2. Go to the profiles settings tab
-3. Click the `Browse Profile Folder` button  
-   You'll see a folder called `BepInEx` in there
-4. Download the `EXPERIMENTAL_BepInEx_Ar_v?.?.??.zip` from the bottom of the [releases page](https://github.com/AuriRex/GTFO_TheArchive/releases/latest).
-5. Open the downloaded zip file and copy the `plugins` folder from within the zip file into the `BepInEx` folder mentioned in step 3.  
-   The result should be this: `<PathToProfile>/BepInEx/plugins/TheArchive.Core.dll` (+ `Clonesoft.dll`)
+2. Download the `EXPERIMENTAL_BepInEx_Ar_v?.?.??.zip` from the bottom of the [releases page here](https://github.com/AuriRex/GTFO_TheArchive/releases/latest).
+3. In R2ModMan, go to the `Settings > Profile` tab
+4. Click the `Import local mod` button  
+5. Open the downloaded zip file via the `Select file` button and following file picker.
+6. You're done, it should now appear in the `Installed` tab.
 
 ---
 
