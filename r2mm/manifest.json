@@ -1,0 +1,10 @@
+{
+    "name": "TheArchive",
+    "author": "AuriRex",
+    "version_number": "0.5.52",
+    "website_url": "https://github.com/AuriRex/GTFO_TheArchive",
+    "description": "That one massive GTFO Quality of Life mod.",
+    "dependencies": [
+        "BepInEx-BepInExPack_GTFO-1.5.0"
+    ]
+}
