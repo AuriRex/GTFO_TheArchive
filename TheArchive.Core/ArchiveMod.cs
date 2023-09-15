@@ -58,6 +58,7 @@ namespace TheArchive
         public static GameBuildInfo CurrentBuildInfo { get; private set; }
         public static int CurrentGameState { get; private set; }
         public static bool IsOnALTBuild { get; private set; }
+        public static bool IsInitialized { get; private set; } = false;
         /// <summary>
         /// The currently selected rundown on the rundown screen.<br/>
         /// Is equal to <seealso cref="string.Empty"/> on the "Select Rundown" screen.<br/>
@@ -273,6 +274,15 @@ namespace TheArchive
 
         internal static void InvokeGameDataInitialized()
         {
+            if (IsInitialized)
+            {
+                // Most likely a reload has been triggered via the MTFO `Reload Game Data` button
+                ArchiveLogger.Info($"Reload triggered, skipping init.");
+                return;
+            }
+
+            IsInitialized = true;
+
             ArchiveLogger.Info($"GameData has been initialized, invoking event.");
 
             try
@@ -405,7 +415,8 @@ namespace TheArchive
             bool init = true;
 
             var initSingletonbase_Type = typeof(InitSingletonBase<>).MakeGenericType(type);
-            if (initSingletonbase_Type.IsAssignableFrom(type))
+            var isInitSingleton = initSingletonbase_Type.IsAssignableFrom(type);
+            if (isInitSingleton)
             {
                 initSingletonbase_Type.GetProperty(nameof(InitSingletonBase<String>.Instance), AnyBindingFlagss).SetValue(null, instance);
             }
@@ -421,7 +432,17 @@ namespace TheArchive
             {
                 var conditional = (IInitCondition)instance;
 
-                init = conditional.InitCondition();
+                try
+                {
+                    init = conditional.InitCondition();
+                }
+                catch(Exception ex)
+                {
+                    ArchiveLogger.Error($"{nameof(IInitCondition.InitCondition)} method on Type \"{type.FullName}\" failed!");
+                    ArchiveLogger.Warning($"This {nameof(IInitializable)} won't be initialized.");
+                    ArchiveLogger.Exception(ex);
+                    init = false;
+                }
             }
 
             if (init)
@@ -429,7 +450,10 @@ namespace TheArchive
                 try
                 {
                     instance.Init();
-                    initSingletonbase_Type.GetProperty(nameof(InitSingletonBase<String>.HasBeenInitialized), AnyBindingFlagss).SetValue(null, true);
+                    if(isInitSingleton)
+                    {
+                        initSingletonbase_Type.GetProperty(nameof(InitSingletonBase<String>.HasBeenInitialized), AnyBindingFlagss).SetValue(null, true);
+                    }
                 }
                 catch(Exception ex)
                 {
