@@ -2,6 +2,7 @@
 using SNetwork;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
@@ -209,7 +210,49 @@ namespace TheArchive.Features.Presence
         }
 
         [PresenceFormatProvider(nameof(PresenceManager.ExpeditionTierIsSpecial))]
-        public static bool ExpeditionTierIsSpecial => (RundownManager.ActiveExpedition?.Descriptive?.Prefix ?? "?").EndsWith("X");
+        public static bool ExpeditionTierIsSpecial
+        {
+            get
+            {
+#if IL2CPP
+                if (Is.R6OrLater)
+                    return IsActiveExpeditionSpecial();
+#endif
+                return false;
+            }
+        }
+
+        [PresenceFormatProvider(nameof(PresenceManager.ExpeditionSkipExpNumberInName))]
+        public static bool ExpeditionSkipExpNumberInName
+        {
+            get
+            {
+#if IL2CPP
+                try
+                {
+                    if (Is.R6OrLater)
+                        return ShouldSkipExpNumberInName();
+                }
+                catch { }
+#endif
+                return false;
+            }
+        }
+
+#if IL2CPP
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static bool IsActiveExpeditionSpecial()
+        {
+            return RundownManager.ActiveExpedition?.Descriptive?.IsExtraExpedition ?? false;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static bool ShouldSkipExpNumberInName()
+        {
+            return RundownManager.ActiveExpedition?.Descriptive?.SkipExpNumberInName ?? false;
+        }
+#endif
+
 
         [PresenceFormatProvider(nameof(PresenceManager.ExpeditionNumber))]
         public static int ExpeditionNumber { get; set; } = 0;

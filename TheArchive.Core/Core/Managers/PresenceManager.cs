@@ -264,6 +264,9 @@ namespace TheArchive.Core.Managers
         [FallbackPresenceFormatProvider(nameof(ExpeditionTierIsSpecial), true)]
         public static bool ExpeditionTierIsSpecial { get; set; } = false; // True on R6 Extended Levels
 
+        [FallbackPresenceFormatProvider(nameof(ExpeditionSkipExpNumberInName), true)]
+        public static bool ExpeditionSkipExpNumberInName { get; set; } = false;
+
         [FallbackPresenceFormatProvider(nameof(ExpeditionNumber))]
         public static string ExpeditionNumber { get; set; } = string.Empty; // 1, 2, 3, 4
 
@@ -327,7 +330,7 @@ namespace TheArchive.Core.Managers
         {
             get
             {
-                if(Get<bool>(nameof(ExpeditionTierIsSpecial)))
+                if(Get<bool>(nameof(ExpeditionSkipExpNumberInName)))
                     return $"{Get(nameof(ExpeditionTier))}";
                 return $"{ExpeditionWithNumber}";
             }
