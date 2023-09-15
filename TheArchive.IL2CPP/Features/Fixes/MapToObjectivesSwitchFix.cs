@@ -8,14 +8,14 @@ using TheArchive.Utilities;
 namespace TheArchive.Features.Fixes
 {
     [EnableFeatureByDefault]
-    [RundownConstraint(Utils.RundownFlags.RundownFour, Utils.RundownFlags.Latest)]
+    [RundownConstraint(Utils.RundownFlags.RundownFour, Utils.RundownFlags.RundownAltFive)]
     public class MapToObjectivesSwitchFix : Feature
     {
         public override string Name => "Map Chat Abduction Fix";
 
         public override string Group => FeatureGroups.Fixes;
 
-        public override string Description => "Prevent a switch to the Objectives Screen whenever the chat is open and the 'o' key is pressed.";
+        public override string Description => "Prevent a switch to the Objectives Screen whenever the chat is open and the 'o' key is pressed.\n\n(Thanks for fixing this in A6 Alex! <3)";
 
         // Prevent a switch to the Objectives Screen whenever the chat is open
         [ArchivePatch(typeof(MainMenuGuiLayer), nameof(MainMenuGuiLayer.ChangePage))]

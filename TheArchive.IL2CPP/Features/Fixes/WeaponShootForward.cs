@@ -10,6 +10,7 @@ using static TheArchive.Utilities.Utils;
 namespace TheArchive.Features.Fixes
 {
     [EnableFeatureByDefault]
+    [RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownAltFive)]
     public class WeaponShootForward : Feature
     {
         public override string Name => "Weapons shoot forward";
