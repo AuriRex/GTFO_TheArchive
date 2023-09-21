@@ -22,12 +22,14 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public void RemoveEntry(object entry)
         {
             GetList().Remove(entry);
+            Helper.IsDirty = true;
         }
 
         public void AddEntry(object entry)
         {
             if (!ListType.IsAssignableFrom(entry.GetType())) return;
             GetList().Add(entry);
+            Helper.IsDirty = true;
         }
 
         public IEnumerable<ListEntry> GetEntries()

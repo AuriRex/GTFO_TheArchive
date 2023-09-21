@@ -24,12 +24,14 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public void RemoveEntry(object key)
         {
             GetDict().Remove(key);
+            Helper.IsDirty = true;
         }
 
         public void AddEntry(object key, object entry)
         {
             if (!DictKeyType.IsAssignableFrom(key.GetType())) return;
             GetDict().Add(key, entry);
+            Helper.IsDirty = true;
         }
 
         public IEnumerable<DictEntry> GetEntries()
