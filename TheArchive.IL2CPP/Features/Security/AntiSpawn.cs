@@ -156,7 +156,7 @@ namespace TheArchive.Features.Security
         public delegate void Original_InternalSpawnCallback(IntPtr type, IntPtr self, IntPtr spawnData);
         public static void InternalSpawnCallback_Replacement(IntPtr type, IntPtr self, IntPtr spawnData)
         {
-            if (IsEnabled && SNet.IsMaster && !isLocallySpawned)
+            if (IsEnabled && SNet.IsMaster && !isLocallySpawned && !SNet.Capture.IsCheckpointRecall)
             {
                 bool cancelSpawn = true;
 
