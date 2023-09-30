@@ -19,14 +19,20 @@ namespace TheArchive.Core.FeaturesAPI
 
         public Dictionary<string, HashSet<Feature>> GroupedFeatures { get; private set; } = new Dictionary<string, HashSet<Feature>>();
 
-        private EnabledFeatures _enabledFeatures { get; set; }
+        public bool InUpdateCycle { get; private set; } = false;
+        public bool InLateUpdateCycle { get; private set; } = false;
+
+        private readonly EnabledFeatures _enabledFeatures;
+
+        private readonly HashSet<FeatureInternal.Update> _activeUpdateMethods = new HashSet<FeatureInternal.Update>();
+        private readonly HashSet<FeatureInternal.LateUpdate> _activeLateUpdateMethods = new HashSet<FeatureInternal.LateUpdate>();
+
+        private readonly Stack<UpdateModification<FeatureInternal.Update>> _updateModification = new Stack<UpdateModification<FeatureInternal.Update>>();
+        private readonly Stack<UpdateModification<FeatureInternal.LateUpdate>> _lateUpdateModification = new Stack<UpdateModification<FeatureInternal.LateUpdate>>();
 
 
-        private HashSet<FeatureInternal.Update> _updateMethods = new HashSet<FeatureInternal.Update>();
-        private HashSet<FeatureInternal.LateUpdate> _lateUpdateMethods = new HashSet<FeatureInternal.LateUpdate>();
-
-        private Stack<FeatureInternal.Update> _updateToRemove = new Stack<FeatureInternal.Update>();
-        private Stack<FeatureInternal.LateUpdate> _lateUpdateToRemove = new Stack<FeatureInternal.LateUpdate>();
+        private record struct UpdateModification<T>(bool SetEnabled, T Value);
+ 
 
         private Feature _unityAudioListenerHelper;
         private Feature UnityAudioListenerHelper
@@ -41,7 +47,7 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        private IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureManager), ConsoleColor.DarkYellow);
+        private readonly IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureManager), ConsoleColor.DarkYellow);
 
         public event Action<Feature> OnFeatureEnabled;
         public event Action<Feature> OnFeatureDisabled;
@@ -137,7 +143,21 @@ namespace TheArchive.Core.FeaturesAPI
 
         internal void OnUpdate()
         {
-            foreach(var update in _updateMethods)
+            while (_updateModification.Count > 0)
+            {
+                var mod = _updateModification.Pop();
+                if (mod.SetEnabled)
+                {
+                    _activeUpdateMethods.Add(mod.Value);
+                }
+                else
+                {
+                    _activeUpdateMethods.Remove(mod.Value);
+                }
+            }
+
+            InUpdateCycle = true;
+            foreach(var update in _activeUpdateMethods)
             {
                 try
                 {
@@ -147,20 +167,30 @@ namespace TheArchive.Core.FeaturesAPI
                 {
                     _logger.Error($"Update method on {update.Target.GetType().FullName} threw an exception! {ex}: {ex.Message}");
                     _logger.Exception(ex);
-                    _logger.Warning($"Removing Update method on {update.Target.GetType().FullName}! (Update won't be called anymore!!)");
-                    _updateToRemove.Push(update);
+                    _logger.Warning($"Removing Update method on {update.Target.GetType().FullName}! (Update won't be called anymore!! Toggle the Feature to re-enable)");
+                    _updateModification.Push(new UpdateModification<FeatureInternal.Update>(false, update));
                 }
             }
-
-            while (_updateToRemove.Count > 0)
-            {
-                _updateMethods.Remove(_updateToRemove.Pop());
-            }
+            InUpdateCycle = false;
         }
 
         internal void OnLateUpdate()
         {
-            foreach (var lateUpdate in _lateUpdateMethods)
+            while (_lateUpdateModification.Count > 0)
+            {
+                var mod = _lateUpdateModification.Pop();
+                if (mod.SetEnabled)
+                {
+                    _activeLateUpdateMethods.Add(mod.Value);
+                }
+                else
+                {
+                    _activeLateUpdateMethods.Remove(mod.Value);
+                }
+            }
+
+            InLateUpdateCycle = true;
+            foreach (var lateUpdate in _activeLateUpdateMethods)
             {
                 try
                 {
@@ -170,15 +200,11 @@ namespace TheArchive.Core.FeaturesAPI
                 {
                     _logger.Error($"LateUpdate method on {lateUpdate.Target.GetType().FullName} threw an exception! {ex}: {ex.Message}");
                     _logger.Exception(ex);
-                    _logger.Warning($"Removing LateUpdate method on {lateUpdate.Target.GetType().FullName}! (LateUpdate won't be called anymore!!)");
-                    _lateUpdateToRemove.Push(lateUpdate);
+                    _logger.Warning($"Removing LateUpdate method on {lateUpdate.Target.GetType().FullName}! (LateUpdate won't be called anymore!! Toggle the Feature to re-enable)");
+                    _lateUpdateModification.Push(new UpdateModification<FeatureInternal.LateUpdate>(false, lateUpdate));
                 }
             }
-
-            while (_lateUpdateToRemove.Count > 0)
-            {
-                _lateUpdateMethods.Remove(_lateUpdateToRemove.Pop());
-            }
+            InLateUpdateCycle = false;
         }
 
         internal void OnFeatureSettingChanged(FeatureSetting setting)
@@ -233,9 +259,9 @@ namespace TheArchive.Core.FeaturesAPI
             if (feature.Enabled)
             {
                 if (feature.FeatureInternal.HasUpdateMethod)
-                    _updateMethods.Add(feature.FeatureInternal.UpdateDelegate);
+                    _activeUpdateMethods.Add(feature.FeatureInternal.UpdateDelegate);
                 if (feature.FeatureInternal.HasLateUpdateMethod)
-                    _lateUpdateMethods.Add(feature.FeatureInternal.LateUpdateDelegate);
+                    _activeLateUpdateMethods.Add(feature.FeatureInternal.LateUpdateDelegate);
             }
             RegisteredFeatures.Add(feature);
         }
@@ -258,10 +284,9 @@ namespace TheArchive.Core.FeaturesAPI
             _logger.Msg(ConsoleColor.Green, $"Enabling {(feature.IsAutomated ? "automated " : String.Empty)}{nameof(Feature)} {feature.Identifier} ...");
 
             feature.FeatureInternal.Enable();
-            if (feature.FeatureInternal.HasUpdateMethod)
-                _updateMethods.Add(feature.FeatureInternal.UpdateDelegate);
-            if (feature.FeatureInternal.HasLateUpdateMethod)
-                _lateUpdateMethods.Add(feature.FeatureInternal.LateUpdateDelegate);
+
+            SetAllUpdateMethodsEnabled(feature, true);
+
             OnFeatureEnabled?.Invoke(feature);
         }
 
@@ -282,11 +307,72 @@ namespace TheArchive.Core.FeaturesAPI
                 _logger.Msg(ConsoleColor.Red, $"Disabling {nameof(Feature)} {feature.Identifier} ...");
 
             feature.FeatureInternal.Disable();
-            if (feature.FeatureInternal.HasUpdateMethod)
-                _updateMethods.Remove(feature.FeatureInternal.UpdateDelegate);
-            if (feature.FeatureInternal.HasLateUpdateMethod)
-                _lateUpdateMethods.Remove(feature.FeatureInternal.LateUpdateDelegate);
+
+            SetAllUpdateMethodsEnabled(feature, false);
+
             OnFeatureDisabled?.Invoke(feature);
+        }
+
+        public void SetAllUpdateMethodsEnabled(Feature feature, bool enable)
+        {
+            SetUpdateMethodEnabled(feature, enable);
+            SetLateUpdateMethodEnabled(feature, enable);
+        }
+
+        private void SetUpdateMethodEnabled(Feature feature, bool enable)
+        {
+            if (!feature.FeatureInternal.HasUpdateMethod)
+                return;
+
+            SetUpdateMethodEnabled(feature.FeatureInternal.UpdateDelegate, enable);
+        }
+
+        private void SetUpdateMethodEnabled(FeatureInternal.Update update, bool enable)
+        {
+            if (update == null)
+                return;
+
+            if (InUpdateCycle)
+            {
+                _updateModification.Push(new UpdateModification<FeatureInternal.Update>(enable, update));
+                return;
+            }
+
+            if (enable)
+            {
+                _activeUpdateMethods.Add(update);
+                return;
+            }
+
+            _activeUpdateMethods.Remove(update);
+        }
+
+        private void SetLateUpdateMethodEnabled(Feature feature, bool enable)
+        {
+            if (!feature.FeatureInternal.HasLateUpdateMethod)
+                return;
+
+            SetLateUpdateMethodEnabled(feature.FeatureInternal.LateUpdateDelegate, enable);
+        }
+
+        private void SetLateUpdateMethodEnabled(FeatureInternal.LateUpdate update, bool enable)
+        {
+            if (update == null)
+                return;
+
+            if (InLateUpdateCycle)
+            {
+                _lateUpdateModification.Push(new UpdateModification<FeatureInternal.LateUpdate>(enable, update));
+                return;
+            }
+
+            if (enable)
+            {
+                _activeLateUpdateMethods.Add(update);
+                return;
+            }
+
+            _activeLateUpdateMethods.Remove(update);
         }
 
         public void CheckSpecialFeatures()
