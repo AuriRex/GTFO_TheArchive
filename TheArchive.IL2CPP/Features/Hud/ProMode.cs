@@ -56,6 +56,8 @@ namespace TheArchive.Features.Hud
 
         private static eFocusState _eFocusState_MainMenu;
         private static eFocusState _eFocusState_Map;
+        private static eFocusState _eFocusState_InActive;
+        private static eFocusState _eFocusState_GlobalPopupMessage;
         private static eFocusState _eFocusState_InElevator;
         private static eFocusState _eFocusState_FPS;
         private static eFocusState _eFocusState_FPS_TypingInChat;
@@ -67,6 +69,9 @@ namespace TheArchive.Features.Hud
         {
             _eFocusState_MainMenu = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.MainMenu));
             _eFocusState_Map = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.Map));
+            _eFocusState_InActive = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.InActive));
+            if (!Utils.TryGetEnumFromName(nameof(eFocusState.GlobalPopupMessage), out _eFocusState_GlobalPopupMessage))
+                _eFocusState_GlobalPopupMessage = (eFocusState) (-1);
             _eFocusState_InElevator = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.InElevator));
             _eFocusState_FPS = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.FPS));
             _eFocusState_FPS_TypingInChat = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.FPS_TypingInChat));
@@ -149,6 +154,8 @@ namespace TheArchive.Features.Hud
             {
                 if(state == _eFocusState_MainMenu
                     || state == _eFocusState_Map
+                    || state == _eFocusState_InActive
+                    || state == _eFocusState_GlobalPopupMessage
                     || (Is.R6OrLater && Settings.EnableComsMenu && state == _eFocusState_FPS_CommunicationsMenu))
                     return ArchivePatch.RUN_OG;
 
