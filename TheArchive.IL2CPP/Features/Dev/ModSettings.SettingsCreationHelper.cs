@@ -65,14 +65,31 @@ namespace TheArchive.Features.Dev
                             CreateButton(bs, placeIntoMenu);
                             break;
                         case SubmenuSetting ss:
-                            var subMenu = new SubMenu(ss.DisplayName);
+                            SubMenu subMenu;
+                            if(ss.UseDynamicMenu)
+                            {
+                                subMenu = new DynamicSubMenu(ss.DisplayName, (dsm) =>
+                                {
+                                    SetupItemsForSettingsHelper(ss.SettingsHelper, dsm);
+                                });
+                            }
+                            else
+                            {
+                                subMenu = new SubMenu(ss.DisplayName);
+                            }
+
                             var data = new DescriptionPanel.DescriptionPanelData() {
                                 Title = ss.DisplayName,
                                 Description = ss.Description,
                             };
                             CreateSubMenuControls(subMenu, menuEntryLabelText: ss.DisplayName, placeIntoMenu: placeIntoMenu, descriptionPanelData: data);
-                            SetupItemsForSettingsHelper(ss.SettingsHelper, subMenu);
-                            subMenu.Build();
+
+                            if (!ss.UseDynamicMenu)
+                            {
+                                SetupItemsForSettingsHelper(ss.SettingsHelper, subMenu);
+                                subMenu.Build();
+                            }
+                            
                             break;
                         default:
                             CreateHeader(setting.DEBUG_Path, subMenu: placeIntoMenu);
