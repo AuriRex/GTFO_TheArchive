@@ -7,6 +7,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Models;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
 
@@ -22,6 +23,8 @@ namespace TheArchive.Features.Accessibility
         public override string Description => "Override the built in player colors.";
 
         public override bool SkipInitialOnEnable => true;
+
+        public new static IArchiveLogger FeatureLogger { get; set; }
 
         [FeatureConfig]
         public static PlayerColorOverrideSettings Settings { get; set; }
@@ -101,9 +104,22 @@ namespace TheArchive.Features.Accessibility
             {
                 if (player == null) continue;
                 if (player?.Owner == null) continue;
-                var color = PlayerManager.GetStaticPlayerColor(player.Owner.CharacterIndex);
-                player.Owner.PlayerColor = color;
+                ResetColor(player);
             }
+        }
+
+        public static void ResetColor(PlayerAgent player) => ResetColor(player.Owner);
+
+        public static void ResetColor(SNet_Player player)
+        {
+            if (player == null)
+                return;
+
+            if (!player.IsInSlot || !player.HasPlayerAgent)
+                return;
+
+            var color = PlayerManager.GetStaticPlayerColor(player.CharacterIndex);
+            player.PlayerColor = color;
         }
 
         private IEnumerable<PlayerAgent> GetAllPlayers()
@@ -307,19 +323,45 @@ namespace TheArchive.Features.Accessibility
             return true;
         }
 
+#if MONO
         [ArchivePatch(typeof(SNet_Player), nameof(SNet_Player.UpdateVisibleName))]
+#endif
         internal static class SNet_Player_UpdateVisibleName_Patch
         {
             public static void Prefix(SNet_Player __instance)
             {
-                if (!Settings.RemoteUseNicknameColorAsPlayerColor)
+                FeatureLogger.Debug($"SNet_Player.UpdateVisibleName() called for player {__instance.NickName}");
+
+                if (!__instance.IsLocal && !Settings.RemoteUseNicknameColorAsPlayerColor)
+                {
+                    ResetColor(__instance);
                     return;
+                }
 
                 if (!ShouldApplyNickNameColor(__instance.Profile.nick.data, out var color))
+                {
+                    ResetColor(__instance);
                     return;
+                }
+
+                FeatureLogger.Debug($"Applying color: {ColorUtility.ToHtmlStringRGB(color)}");
 
                 __instance.PlayerColor = color;
             }
         }
+
+#if IL2CPP
+        [ArchivePatch(typeof(SNet_GlobalManager), nameof(SNet_GlobalManager.OnPlayerEvent))]
+        internal static class SNet_GlobalManager_OnPlayerEvent_Patch
+        {
+            public static void Postfix(SNet_Player player, SNet_PlayerEvent playerEvent, SNet_PlayerEventReason reason)
+            {
+                if (playerEvent != SNet_PlayerEvent.PlayerChangedNickName)
+                    return;
+
+                SNet_Player_UpdateVisibleName_Patch.Prefix(player);
+            }
+        }
+#endif
     }
 }
