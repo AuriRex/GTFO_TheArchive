@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Utilities;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
 
 namespace TheArchive.Features.Dev
@@ -149,9 +150,15 @@ namespace TheArchive.Features.Dev
                 return !fs.HideInModSettings;
             }
 
-            private bool ContainsIgnoreCase(string text, string value)
+            private bool ContainsIgnoreCase(string text, string value, bool stripTMPTags = true)
             {
-                return text?.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
+                if (string.IsNullOrWhiteSpace(text))
+                    return false;
+
+                if(stripTMPTags)
+                    text = Utils.StripTMPTagsRegex(text);
+
+                return text.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
             }
 
             private IEnumerable<Feature> SearchForFeatures(SearchQuery query)
