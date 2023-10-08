@@ -296,6 +296,8 @@
 	  <Reference Include="0Harmony">
 	    <HintPath>..\_R_LATEST\MelonLoader\0Harmony.dll</HintPath>
 	  </Reference>
+	  <Reference Include="Microsoft.CSharp" />
+	  <Reference Include="System.Net.Http" />
 	</ItemGroup>
 	
 	<PropertyGroup>

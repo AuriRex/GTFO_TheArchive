@@ -66,6 +66,7 @@
 			<HintPath>$(LatestGeneratedGameAssembliesPath)Il2CppSystem.Core.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="Microsoft.CSharp" />
 		<Reference Include="Modules-ASM">
 			<HintPath>$(LatestGeneratedGameAssembliesPath)Modules-ASM.dll</HintPath>
 			<Private>False</Private>
@@ -90,6 +91,7 @@
 			<HintPath>$(LatestGeneratedGameAssembliesPath)SteamWorks_ASM.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="System.Net.Http" />
 		<Reference Include="Unity.TextMeshPro">
 			<HintPath>$(LatestGeneratedGameAssembliesPath)Unity.TextMeshPro.dll</HintPath>
 			<Private>False</Private>

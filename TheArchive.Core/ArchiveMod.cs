@@ -25,10 +25,13 @@ namespace TheArchive
         public const string ABBREVIATION = "Ar";
         public const string AUTHOR = "AuriRex";
         public const string VERSION_STRING = ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch;
-        public const string GITHUB_LINK = "https://github.com/AuriRex/GTFO_TheArchive";
+        public const string GITHUB_REPOSITORY_NAME = "GTFO_TheArchive";
+        public const string GITHUB_OWNER_NAME = "AuriRex";
+        public const string GITHUB_LINK = $"https://github.com/{GITHUB_OWNER_NAME}/{GITHUB_REPOSITORY_NAME}";
         public static readonly bool GIT_IS_DIRTY = ThisAssembly.Git.IsDirty;
         public const string GIT_COMMIT_SHORT_HASH = ThisAssembly.Git.Commit;
         public const string GIT_COMMIT_DATE = ThisAssembly.Git.CommitDate;
+        public const string GIT_BASE_TAG = ThisAssembly.Git.BaseTag;
         public const uint GTFO_STEAM_APPID = 493520;
 
         public const string MTFO_GUID = "com.dak.MTFO";
