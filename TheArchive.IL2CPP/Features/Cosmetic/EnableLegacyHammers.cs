@@ -41,10 +41,15 @@ namespace TheArchive.Features.Cosmetic
             if (Is.A2OrLater)
             {
                 // The OG hammers have been removed from the DataBlocks.
-
+                var allBlocksPre = PlayerOfflineGearDataBlock.GetAllBlocks().AsEnumerable();
                 foreach (var kvp in _oldHammers)
                 {
-                    FeatureLogger.Debug($"Adding old hammer '{kvp.Key}' as new block ...");
+                    if(allBlocksPre.Any(block => block.name == kvp.Key))
+                    {
+                        FeatureLogger.Debug($"> Skipping block '{kvp.Key}' because one with the same name already exists!");
+                        continue;
+                    }
+                    FeatureLogger.Info($"> Adding old hammer '{kvp.Key}' as new block ...");
                     PlayerOfflineGearDataBlock.AddBlock(new PlayerOfflineGearDataBlock
                     {
                         Type = eOfflineGearType.StandardInventory,
@@ -63,7 +68,7 @@ namespace TheArchive.Features.Cosmetic
             {
                 if (blocksToEnable.Contains(block.name))
                 {
-                    FeatureLogger.Success($" > Enabling block: ID: {block.persistentID}, Name: '{block.name}'");
+                    FeatureLogger.Success($"> Enabling block: ID: {block.persistentID}, Name: '{block.name}'");
                     block.internalEnabled = true;
                 }
             }
