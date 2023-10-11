@@ -54,6 +54,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         {
             GetList().Add(value);
             FeatureManager.Instance.OnFeatureSettingChanged(this);
+            Helper.IsDirty = true;
         }
 
         public bool RemoveFromList(object value)
@@ -63,6 +64,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             {
                 list.Remove(value);
                 FeatureManager.Instance.OnFeatureSettingChanged(this);
+                Helper.IsDirty = true;
                 return true;
             }
             return false;
