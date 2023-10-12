@@ -77,8 +77,7 @@ namespace TheArchive.Core.FeaturesAPI
 
                 if (prop.SetMethod == null)
                 {
-                    if (type != typeof(FButton))
-                        continue;
+                    continue;
                 }
 
                 bool shouldInline = prop.GetCustomAttribute<FSInline>() != null;
@@ -88,7 +87,6 @@ namespace TheArchive.Core.FeaturesAPI
                     && !typeof(IDictionary).IsAssignableFrom(type)
                     && type != typeof(string)
                     && type.GenericTypeArguments.Length <= 1
-                    && type != typeof(FButton)
                     && shouldInline)
                 {
                     PopulateSettings(type, prop.GetValue(instance), propPath);
@@ -100,6 +98,9 @@ namespace TheArchive.Core.FeaturesAPI
                 {
                     case nameof(FButton):
                         setting = new ButtonSetting(this, prop, instance, propPath);
+                        break;
+                    case nameof(FLabel):
+                        setting = new LabelSetting(this, prop, instance, propPath);
                         break;
                     case nameof(SColor):
                         setting = new ColorSetting(this, prop, instance, propPath);

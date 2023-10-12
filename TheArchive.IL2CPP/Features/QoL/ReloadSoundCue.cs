@@ -25,14 +25,14 @@ namespace TheArchive.Features.QoL
         {
             [FSDisplayName("Test Sound Event")]
             [FSDescription("Plays the sound event below,\nit's a little janky and might not work depending on the sound, sorry!")]
-            public FButton TestSoundButton => new FButton("Play Sound");
+            public FButton TestSoundButton { get; set; } = new FButton("Play Sound");
 
             [FSDescription("The sound event to play whenever the reaload has happend.")]
             public string SoundEvent { get; set; } = nameof(AK.EVENTS.HACKING_PUZZLE_CORRECT);
             
             [FSDisplayName("Print Sound Events To Console")]
             [FSDescription("Prints all available sound events to the <b><#F00>console</color></b>.\n<color=orange>Warning! This might freeze your game for a few seconds!</color>\n\nSome events might not work because their playback conditions are not met!")]
-            public FButton PrintSoundEventsButton => new FButton("Print To Console");
+            public FButton PrintSoundEventsButton { get; set; } = new FButton("Print To Console");
         }
 
         private static bool _hasPrintedEvents = false;

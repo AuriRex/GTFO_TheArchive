@@ -31,7 +31,7 @@ namespace TheArchive.Features.Dev
 
         public class ReadmeCreatorSettings
         {
-            public FButton CreateMarkdownButton => new FButton("Create Markdown (Clipboard)", "create_markdown");
+            public FButton CreateMarkdownButton { get; set; } = new FButton("Create Markdown (Clipboard)", "create_markdown");
         }
 
         public const string NEWLINE = "\n";

@@ -32,7 +32,7 @@ namespace TheArchive.Features.Accessibility
 
             [FSDisplayName("Clean Screen")]
             [FSDescription("Applies the Disinfect Station visuals to clear any other liquids.\n\n(Might fix \"Void Bug\" once pressed)")]
-            public FButton ApplyDisinfectButton => new FButton("Clean");
+            public FButton ApplyDisinfectButton { get; set; } = new FButton("Clean");
 
             [FSHeader("Warning")]
             [FSDisplayName("Completely Disable System")]

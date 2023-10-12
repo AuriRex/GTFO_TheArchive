@@ -8,6 +8,7 @@ using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
+using TMPro;
 using UnityEngine;
 using static TheArchive.Core.Attributes.Feature.Settings.FSSlider;
 using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
@@ -64,6 +65,9 @@ namespace TheArchive.Features.Dev
                         case ButtonSetting bs:
                             CreateButton(bs, placeIntoMenu);
                             break;
+                        case LabelSetting ls:
+                            CreateLabel(ls, placeIntoMenu);
+                            break;
                         case SubmenuSetting ss:
                             SubMenu subMenu;
                             if(ss.UseDynamicMenu)
@@ -96,6 +100,13 @@ namespace TheArchive.Features.Dev
                             break;
                     }
                 }
+            }
+
+            private static void CreateLabel(LabelSetting ls, SubMenu placeIntoMenu)
+            {
+                CreateHeader(ls.LabelText, out var cm_settingsItem, color: WHITE_GRAY, bold: false, subMenu: placeIntoMenu);
+
+                ls.FComponent.PrimaryText = cm_settingsItem.transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").GetComponent<TextMeshPro>();
             }
 
             public static CM_ScrollWindow CreateScrollWindow(string title)
@@ -283,9 +294,14 @@ namespace TheArchive.Features.Dev
 
             public static void CreateSimpleButton(string labelText, string buttonText, Action onPress, out CM_SettingsItem cmItem, SubMenu placeIntoMenu = null, bool placeInNoMenu = false)
             {
+                CreateSimpleButton(labelText, buttonText, onPress, out cmItem, out _, placeIntoMenu, placeInNoMenu);
+            }
+
+            public static void CreateSimpleButton(string labelText, string buttonText, Action onPress, out CM_SettingsItem cmItem, out TextMeshPro buttonTmp, SubMenu placeIntoMenu = null, bool placeInNoMenu = false)
+            {
                 CreateSettingsItem(labelText, out cmItem, subMenu: placeIntoMenu, placeInNoMenu: placeInNoMenu);
                 cmItem.ForcePopupLayer(true);
-                SetupToggleButton(cmItem, out var buttonCMItem, out var buttonTmp);
+                SetupToggleButton(cmItem, out var buttonCMItem, out buttonTmp);
                 buttonTmp.SetText($"[ {buttonText} ]");
                 JankTextMeshProUpdaterOnce.Apply(buttonTmp);
                 buttonCMItem.SetCMItemEvents((_) => {
@@ -1063,9 +1079,12 @@ namespace TheArchive.Features.Dev
             {
                 CreateSimpleButton(GetNameForSetting(setting), setting.ButtonText, () => {
                     FeatureManager.InvokeButtonPressed(setting.Helper.Feature, setting);
-                }, out var cm_settingsItem, subMenu);
+                }, out var cm_settingsItem, out var buttonTmp, subMenu);
 
                 setting.CM_SettingsItem = cm_settingsItem;
+
+                setting.FComponent.PrimaryText = cm_settingsItem.transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TextMeshPro>();
+                setting.FComponent.SecondaryText = buttonTmp;
 
                 CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
 

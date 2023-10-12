@@ -50,7 +50,7 @@ namespace TheArchive.Features.Accessibility
 
             [FSDisplayName("Reset Game Volume")]
             [FSDescription("Press if for some reason the audio volume settings don't seem to be back at their default values even though they should be.")]
-            public FButton OopsMySoundSomehowBrokePleaseReset => new FButton("Reset Volume");
+            public FButton OopsMySoundSomehowBrokePleaseReset { get; set; } = new FButton("Reset Volume");
 
             public enum FocusChangeMode
             {

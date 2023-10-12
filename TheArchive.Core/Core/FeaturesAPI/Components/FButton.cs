@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace TheArchive.Core.FeaturesAPI.Components
 {
@@ -6,10 +7,18 @@ namespace TheArchive.Core.FeaturesAPI.Components
     /// Used to define a Mod Settings Button element.<br/>
     /// Make sure to <b>not</b> implement a setter on your property!
     /// </summary>
-    public class FButton
+    public class FButton : ISettingsComponent
     {
-        internal string ButtonText { get; private set; }
+        public string ButtonText { get; set; }
         internal string ButtonID { get; private set; }
+
+        public bool HasPrimaryText => PrimaryText != null;
+
+        public MonoBehaviour PrimaryText { get; set; }
+
+        public bool HasSecondaryText => SecondaryText != null;
+
+        public MonoBehaviour SecondaryText { get; set; }
 
         public FButton() { }
 
@@ -22,27 +31,6 @@ namespace TheArchive.Core.FeaturesAPI.Components
         {
             ButtonText = buttonText;
             ButtonID = buttonId;
-        }
-
-        internal class FButtonConverter : JsonConverter
-        {
-            public override bool CanConvert(Type objectType)
-            {
-                return objectType == typeof(FButton);
-            }
-
-            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-            {
-                JObject.Load(reader);
-                return new FButton();
-            }
-
-            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-            {
-                throw new NotImplementedException();
-            }
-
-            public override bool CanWrite => false;
         }
     }
 }

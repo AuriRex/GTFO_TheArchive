@@ -50,7 +50,7 @@ namespace TheArchive
                         Formatting = Formatting.Indented,
                     };
                     _jsonSerializerSettings.Converters.Add(new JsonLib.Converters.StringEnumConverter());
-                    _jsonSerializerSettings.Converters.Add(new Core.FeaturesAPI.Components.FButton.FButtonConverter());
+                    _jsonSerializerSettings.ContractResolver = ArchiveContractResolver.Instance;
                 }
                 return _jsonSerializerSettings;
             }
