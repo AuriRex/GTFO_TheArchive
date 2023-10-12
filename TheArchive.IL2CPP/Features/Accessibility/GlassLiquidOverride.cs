@@ -68,6 +68,9 @@ namespace TheArchive.Features.Accessibility
 
         public override void OnButtonPressed(ButtonSetting setting)
         {
+            if (Settings.CompletelyDisable)
+                return;
+
             if (setting.ButtonID.Contains(nameof(GlassLiquidOverrideSettings.ApplyDisinfectButton)))
                 ScreenLiquidManager.DirectApply(ScreenLiquidSettingName.disinfectionStation_Apply, new UnityEngine.Vector2(0.5f, 0.5f), UnityEngine.Vector2.zero);
         }
