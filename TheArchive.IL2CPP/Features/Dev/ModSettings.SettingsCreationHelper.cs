@@ -62,6 +62,9 @@ namespace TheArchive.Features.Dev
                         case NumberSetting ns:
                             CreateNumberSetting(ns, placeIntoMenu);
                             break;
+                        case KeySetting ks:
+                            CreateKeySetting(ks, placeIntoMenu);
+                            break;
                         case ButtonSetting bs:
                             CreateButton(bs, placeIntoMenu);
                             break;
@@ -102,7 +105,28 @@ namespace TheArchive.Features.Dev
                 }
             }
 
-            private static void CreateLabel(LabelSetting ls, SubMenu placeIntoMenu)
+            public static void CreateKeySetting(KeySetting setting, SubMenu subMenu)
+            {
+                CreateSimpleButton(GetNameForSetting(setting), setting.Key, () => {
+                    KeyListener.ActivateKeyListener(setting);
+                }, out var cm_settingsItem, out var buttonTmp, subMenu);
+
+                buttonTmp.color = ORANGE;
+
+                setting.KeyTextUpdated = (key) =>
+                {
+                    buttonTmp.SetText($"[ {key} ]");
+                    JankTextMeshProUpdaterOnce.UpdateMesh(buttonTmp);
+                };
+
+                setting.CM_SettingsItem = cm_settingsItem;
+
+                CreateRundownInfoTextForItem(cm_settingsItem, setting.RundownHint);
+
+                CreateFSHoverAndSetButtonAction(setting, cm_settingsItem, null);
+            }
+
+            public static void CreateLabel(LabelSetting ls, SubMenu placeIntoMenu)
             {
                 CreateHeader(ls.LabelText, out var cm_settingsItem, color: WHITE_GRAY, bold: false, subMenu: placeIntoMenu);
 

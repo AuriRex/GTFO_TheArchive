@@ -8,6 +8,7 @@ using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
+using UnityEngine;
 
 namespace TheArchive.Core.FeaturesAPI
 {
@@ -124,7 +125,12 @@ namespace TheArchive.Core.FeaturesAPI
                         setting = new NumberSetting(this, prop, instance, propPath);
                         break;
                     default:
-                        if(typeof(IList).IsAssignableFrom(type) && type.GenericTypeArguments.Length == 1 && type.GenericTypeArguments[0].IsEnum)
+                        if (type == typeof(KeyCode))
+                        {
+                            setting = new KeySetting(this, prop, instance, propPath);
+                            break;
+                        }
+                        if (typeof(IList).IsAssignableFrom(type) && type.GenericTypeArguments.Length == 1 && type.GenericTypeArguments[0].IsEnum)
                         {
                             setting = new EnumListSetting(this, prop, instance, propPath);
                             break;

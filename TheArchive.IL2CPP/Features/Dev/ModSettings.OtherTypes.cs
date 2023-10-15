@@ -20,6 +20,100 @@ namespace TheArchive.Features.Dev
 {
     public partial class ModSettings
     {
+        public class KeyListener : MonoBehaviour
+        {
+            public static readonly KeyCode[] allKeys = (KeyCode[])Enum.GetValues(typeof(KeyCode));
+
+#if IL2CPP
+            public KeyListener(IntPtr ptr) : base(ptr) { }
+#endif
+
+#if IL2CPP
+            [HideFromIl2Cpp]
+#endif
+            public KeySetting ActiveKeySetting { get; private set; } = null;
+
+            public void StartListening(KeySetting setting)
+            {
+                FeatureLogger.Debug($"[{nameof(KeyListener)}] Starting listener, disabling all input!");
+                setting.UpdateKeyText("<#F00><b>Press any Key!</b></color>");
+                ActiveKeySetting = setting;
+                InputMapper.SetPlayerBotModeEnabled(true);
+                enabled = true;
+            }
+
+            public void StopListening()
+            {
+                KeyCode currentOrNone = KeyCode.None;
+
+                if (ActiveKeySetting != null)
+                {
+                    currentOrNone = ActiveKeySetting.GetCurrent();
+                }
+
+                OnKeyFound(currentOrNone);
+            }
+
+            public void OnKeyFound(KeyCode key)
+            {
+                if (key == KeyCode.Escape)
+                {
+                    key = KeyCode.None;
+                }
+
+                if(ActiveKeySetting != null)
+                {
+                    FeatureLogger.Debug($"[{nameof(KeyListener)}] Key found (\"{key}\"), re-enabling all input!");
+                    ActiveKeySetting.SetValue(key);
+                }
+
+                ActiveKeySetting = null;
+                
+                InputMapper.SetPlayerBotModeEnabled(false);
+                enabled = false;
+            }
+
+            public void Update()
+            {
+                if (ActiveKeySetting == null)
+                {
+                    OnKeyFound(KeyCode.None);
+                    return;
+                }
+
+                foreach (var key in allKeys)
+                {
+                    if (Input.GetKeyDown(key))
+                    {
+                        OnKeyFound(key);
+                        break;
+                    }
+                }
+            }
+
+            public void OnDisable()
+            {
+                StopListening();
+            }
+
+            public void OnDestroy()
+            {
+                if (IsApplicationQuitting)
+                    return;
+
+                StopListening();
+            }
+
+            public static void ActivateKeyListener(KeySetting setting)
+            {
+                var settingsGO = PageSettingsData.SettingsPageInstance.gameObject;
+
+                var listener = settingsGO.GetComponent<KeyListener>() ?? settingsGO.AddComponent<KeyListener>();
+
+                listener.StartListening(setting);
+            }
+        }
+
         public class OnDisabledListener : MonoBehaviour
         {
 #if IL2CPP
