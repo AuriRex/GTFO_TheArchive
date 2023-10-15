@@ -9,6 +9,7 @@ using UnityEngine;
 using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
 using static TheArchive.Utilities.SColorExtensions;
+using TheArchive.Core.FeaturesAPI;
 #if Unhollower
 using UnhollowerBaseLib.Attributes;
 #endif
@@ -33,12 +34,15 @@ namespace TheArchive.Features.Dev
 #endif
             public KeySetting ActiveKeySetting { get; private set; } = null;
 
+#if IL2CPP
+            [HideFromIl2Cpp]
+#endif
             public void StartListening(KeySetting setting)
             {
                 FeatureLogger.Debug($"[{nameof(KeyListener)}] Starting listener, disabling all input!");
                 setting.UpdateKeyText("<#F00><b>Press any Key!</b></color>");
                 ActiveKeySetting = setting;
-                InputMapper.SetPlayerBotModeEnabled(true);
+                FeatureManager.EnableAutomatedFeature(typeof(InputDisabler));
                 enabled = true;
             }
 
@@ -69,7 +73,7 @@ namespace TheArchive.Features.Dev
 
                 ActiveKeySetting = null;
                 
-                InputMapper.SetPlayerBotModeEnabled(false);
+                FeatureManager.DisableAutomatedFeature(typeof(InputDisabler));
                 enabled = false;
             }
 
