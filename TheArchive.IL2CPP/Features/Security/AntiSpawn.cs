@@ -16,6 +16,7 @@ namespace TheArchive.Features.Security
     [ForceDisable] // LoaderWrapper.NativeHookAttach isn't implemented for BIE yet
 #endif
     [EnableFeatureByDefault]
+    [RundownConstraint(Utils.RundownFlags.RundownSix, Utils.RundownFlags.Latest)]
     public class AntiSpawn : Feature
     {
         public override string Name => "Anti Spawn";

@@ -28,7 +28,7 @@ namespace TheArchive.Features.Accessibility
         {
             [FSMaxLength(25), FSDisplayName("Nickname")]
             [FSDescription("A custom Nickname.\nOverrides your steam name in game.\nLimited to 25 characters maximum\n\n<color=green>If 11 or less characters: Full color support</color>\n<color=orange>If 19 or less characters: Partial color support, colors are gonna escape!</color>\n<color=red>If 20 or more characters: No color support</color>")]
-            public string Nickname { get; set; }
+            public string Nickname { get; set; } = string.Empty;
 
             [FSDisplayName("Use Color")]
             [FSDescription("If the color below should be used as nickname color\nUsing a color removes 6 characters from your nickname budget minimum!")]
