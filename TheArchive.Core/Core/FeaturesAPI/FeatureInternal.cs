@@ -141,6 +141,8 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 _FILogger.Error($"{nameof(Feature.ShouldInit)} method on {nameof(Feature)} failed: {ex}: {ex.Message}");
                 _FILogger.Exception(ex);
+                InternalDisabled = true;
+                DisabledReason |= InternalDisabledReason.ShouldInitFailed;
             }
 
             if (InternalDisabled)
@@ -457,6 +459,22 @@ namespace TheArchive.Core.FeaturesAPI
             }
 
             LoadFeatureSettings();
+
+            try
+            {
+                if(!_feature.LateShouldInit())
+                {
+                    InternalyDisableFeature(InternalDisabledReason.DisabledViaLateShouldInit);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                _FILogger.Error($"{nameof(Feature.LateShouldInit)} method on {nameof(Feature)} failed: {ex}: {ex.Message}");
+                _FILogger.Exception(ex);
+                InternalyDisableFeature(InternalDisabledReason.LateShouldInitFailed);
+                return;
+            }
 
             try
             {
@@ -833,7 +851,7 @@ namespace TheArchive.Core.FeaturesAPI
         {
             InternalDisabled = true;
             DisabledReason |= reason;
-            FeatureManager.Instance.DisableFeature(_feature);
+            FeatureManager.Instance.DisableFeature(_feature, setConfig: false);
         }
 
         [Flags]
@@ -850,6 +868,9 @@ namespace TheArchive.Core.FeaturesAPI
             DisabledByRequest,
             TypeLoadException,
             Other,
+            ShouldInitFailed,
+            LateShouldInitFailed,
+            DisabledViaLateShouldInit,
         }
     }
 }

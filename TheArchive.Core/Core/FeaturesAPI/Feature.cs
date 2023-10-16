@@ -68,7 +68,7 @@ namespace TheArchive.Core.FeaturesAPI
         /// A text describing this <see cref="Feature"/><br/>
         /// used in Mod Settings
         /// </summary>
-        public virtual string Description { get; set; } = string.Empty;
+        public virtual string Description => string.Empty;
 
         /// <summary>
         /// Used to group multiple settings together under one header<br/>
@@ -105,6 +105,15 @@ namespace TheArchive.Core.FeaturesAPI
         /// </summary>
         /// <returns>If the <see cref="Feature"/> should be inited</returns>
         public virtual bool ShouldInit()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Called once upon application start before <see cref="Init"/> after all patches and settings have been loaded
+        /// </summary>
+        /// <returns>If the <see cref="Feature"/> should be inited</returns>
+        public virtual bool LateShouldInit()
         {
             return true;
         }
