@@ -6,7 +6,22 @@ namespace TheArchive.Core.FeaturesAPI
 {
     public static class FeatureGroups
     {
+        /// <summary>
+        /// Get a <see cref="Group"/> for the given string <paramref name="name"/>
+        /// </summary>
+        /// <param name="name">The name of the <see cref="Group"/> to get</param>
+        /// <returns>An existing <see cref="Group"/> or <c>null</c> if it doesn't exist</returns>
         public static Group Get(string name) => Group.Get(name);
+
+        /// <summary>
+        /// Get or create a <see cref="Group"/> for the given string <paramref name="name"/>
+        /// </summary>
+        /// <param name="name">The name of the <see cref="Group"/> to get or create</param>
+        /// <param name="groupModification">An <seealso cref="Action{Group}"/> that can be used to modify <seealso cref="Group"/> data.</param>
+        /// <returns>An existing <see cref="Group"/> or a new one if it doesn't exist</returns>
+        public static Group GetOrCreate(string name, Action<Group> groupModification = null) => Group.GetOrCreate(name, groupModification);
+
+        // Group System kinda jank ngl haha
 
         public class Group
         {
@@ -51,6 +66,7 @@ namespace TheArchive.Core.FeaturesAPI
         }
 
         public static Group Accessibility { get; private set; } = Group.GetOrCreate("Accessibility");
+        internal static Group ArchiveCore { get; private set; } = Group.GetOrCreate("Archive Core");
         public static Group Backport { get; private set; } = Group.GetOrCreate("Backport");
         public static Group Cosmetic { get; private set; } = Group.GetOrCreate("Cosmetic");
         public static Group Dev { get; private set; } = Group.GetOrCreate("Developer");
