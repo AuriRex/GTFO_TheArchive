@@ -110,6 +110,8 @@ namespace TheArchive.Features.Hud
             combatIndicatorTMP.gameObject.SetActive(false);
             combatIndicatorTMP.gameObject.SetActive(true);
 
+            ModSettings.JankTextMeshProUpdaterOnce.Apply(combatIndicatorTMP);
+
             return true;
         }
 
