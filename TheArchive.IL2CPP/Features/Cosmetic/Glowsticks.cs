@@ -24,7 +24,7 @@ namespace TheArchive.Features.Cosmetic
 
         public override string Group => FeatureGroups.Cosmetic;
 
-        public override string Description => "Costomize your glow-y little friends!";
+        public override string Description => "Costomize your glow-y little friends!\n\nAllows you to change the built in glowstick type and/or customize the color to your liking, or color it based on the player who threw the glowstick.";
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 

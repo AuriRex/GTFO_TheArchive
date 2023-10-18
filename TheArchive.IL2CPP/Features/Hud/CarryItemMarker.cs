@@ -23,7 +23,7 @@ namespace TheArchive.Features.Hud
 
         public override string Group => FeatureGroups.Hud;
 
-        public override string Description => "Colorize and show additional info on big pickups.";
+        public override string Description => "Adds a marker for whenever someone carries a big pickup like CELLs or FOG_TURBINEs\n\nAdditionally colorizes the marker based on what item it is.";
 
         public static bool IsEnabled { get; set; }
 

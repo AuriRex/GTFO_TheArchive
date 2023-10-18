@@ -13,7 +13,7 @@ namespace TheArchive.Features.Hud
 
         public override string Group => FeatureGroups.Hud;
 
-        public override string Description => "Displays the current drama state of the game.\n(Above the health bar, right side)";
+        public override string Description => "Displays the current drama state of the game.\n(Above the health bar, right side)\n\nBasically a visual representation of what the music is doing.";
 
         public override bool SkipInitialOnEnable => true;
 

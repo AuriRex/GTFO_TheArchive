@@ -27,11 +27,11 @@ namespace TheArchive.Features.Accessibility
             [FSDescription("Turning this off stops the Glass Liquid System from updating.\n\nMake sure that nothing's left on your visor or else it'll be stuck there until you re-enable this setting.")]
             public bool EnableGlassLiquidSystem { get; set; } = true;
 
-            [FSDescription("The Systems resolution")]
+            [FSDescription("The resolution used to render the liquid effects.\n\nIncreasing this settings might decrease performance on weaker hardware!")]
             public GlassLiquidSystemQuality Quality { get; set; } = GlassLiquidSystemQuality.Default;
 
             [FSDisplayName("Clean Screen")]
-            [FSDescription("Applies the Disinfect Station visuals to clear any other liquids.\n\n(Might fix \"Void Bug\" once pressed)")]
+            [FSDescription("Applies the Disinfect Station visuals to clear any other liquids.\n\n(Might fix bad cases of liquid bug if spammed a bunch!)")]
             public FButton ApplyDisinfectButton { get; set; } = new FButton("Clean");
 
             [FSHeader("Warning")]

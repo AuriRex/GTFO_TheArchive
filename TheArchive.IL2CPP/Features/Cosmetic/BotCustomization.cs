@@ -20,7 +20,7 @@ namespace TheArchive.Features.Cosmetic
 
         public override string Group => FeatureGroups.Cosmetic;
 
-        public override string Description => "Customize your bots!";
+        public override string Description => "Customize your bots - Change their name and Vanity\n\nAdds the Apparel button to bots if you're host.\n(Bot clothing only works if dropping from lobby atm!)";
 
         public override bool SkipInitialOnEnable => true;
 

@@ -15,7 +15,7 @@ namespace TheArchive.Features.Hud
 
         public override string Group => FeatureGroups.Hud;
 
-        public override string Description => "Adds an overall alarm class counter to the HUD message";
+        public override string Description => "Adds an overall alarm class counter to the HUD message for door alarms etc";
 
         [FeatureConfig]
         public static PuzzleHUDTweaksSettings Settings { get; set; }
