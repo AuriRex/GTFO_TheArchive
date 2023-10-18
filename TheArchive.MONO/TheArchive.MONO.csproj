@@ -253,6 +253,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\PuzzleHUDTweaks.cs" Link="Features\Hud\PuzzleHUDTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\RemoveDownedMessage.cs" Link="Features\Hud\RemoveDownedMessage.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\Watermark.cs" Link="Features\Hud\Watermark.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\WeaponPickerTweaks.cs" Link="Features\Hud\WeaponPickerTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Hud\WeaponStats.cs" Link="Features\Hud\WeaponStats.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Presence\DiscordRichPresence.cs" Link="Features\Presence\DiscordRichPresence.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Presence\ReactorDiscordRPC.cs" Link="Features\Presence\ReactorDiscordRPC.cs" />
