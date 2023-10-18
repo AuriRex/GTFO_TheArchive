@@ -173,6 +173,11 @@ namespace TheArchive.Features.Hud
                     SetMarkerState(player, LoadMarkerState.Hide);
                 }
             }
+
+            if(state == _eGameStateName_Generating)
+            {
+                GuiManager.NavMarkerLayer.SetVisible(true);
+            }
         }
 
         public static uint BlinkAmount = 3;
