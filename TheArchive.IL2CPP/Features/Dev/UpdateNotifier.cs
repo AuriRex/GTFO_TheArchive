@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Linq;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
@@ -20,6 +22,8 @@ namespace TheArchive.Features.Dev
         public override string Group => FeatureGroups.ArchiveCore;
 
         public override string Description => "Shows a popup whenever a new version is available.";
+
+        public const string CMD_ARG_DISABLE_AUTO_UPDATE_CHECKER = "--ar.noupdater";
 
         public new static IArchiveLogger FeatureLogger { get; set; }
 
@@ -48,6 +52,19 @@ namespace TheArchive.Features.Dev
 
             [FSHide]
             public bool FirstEverPopup { get; set; } = true;
+        }
+
+        public override bool ShouldInit()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+
+            if (args.Any(arg => arg == CMD_ARG_DISABLE_AUTO_UPDATE_CHECKER))
+            {
+                FeatureLogger.Info("Disabling update checker via command line argument.");
+                return false;
+            }
+
+            return true;
         }
 
         public override void OnGameDataInitialized()
