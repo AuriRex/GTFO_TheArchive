@@ -593,12 +593,19 @@ namespace TheArchive.Features.Dev
                                 SetFeatureItemTextAndColor(feature, sub_toggleButton_cm_item, sub_toggleButtonText);
                         };
 
+                        var descriptionData = new DescriptionPanel.DescriptionPanelData
+                        {
+                            Title = feature.Name,
+                            Description = feature.Description,
+                            CriticalInfo = feature.FeatureInternal.CriticalInfo,
+                            FeatureOrigin = feature.FeatureInternal.AsmGroupName,
+                        };
+
                         var delHover = delegate (int id, bool hovering)
                         {
                             if(hovering)
                             {
-                                if(!string.IsNullOrWhiteSpace(feature.Description))
-                                    TheDescriptionPanel.Show(feature.Name, feature.Description);
+                                TheDescriptionPanel.Show(descriptionData);
                             }
                             else
                             {

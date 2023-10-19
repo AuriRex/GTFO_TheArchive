@@ -482,6 +482,8 @@ namespace TheArchive.Features.Dev
             {
                 public string Title;
                 public string Description;
+                public string CriticalInfo;
+                public string FeatureOrigin;
 
                 public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
             }
@@ -489,45 +491,53 @@ namespace TheArchive.Features.Dev
             private CM_ScrollWindow _backgroundPanel;
             private TMPro.TextMeshPro _headerText;
             private TMPro.TextMeshPro _contentText;
+            private TMPro.TextMeshPro _infoL1Text;
+            private TMPro.TextMeshPro _infoL2Text;
+
 
             public DescriptionPanel()
             {
                 _backgroundPanel = CreateScrollWindow("Description");
                 _backgroundPanel.transform.localPosition = _backgroundPanel.transform.localPosition + new Vector3(1050, 0, 0);
 
+                CreateItem("Header Text", ORANGE, _backgroundPanel.transform, out var headerSWC, out var rectTransHeader, out _headerText);
+                rectTransHeader.sizeDelta = new Vector2(rectTransHeader.sizeDelta.x * 2, rectTransHeader.sizeDelta.y);
 
-                var headerItemGO = GameObject.Instantiate(SettingsItemPrefab, _backgroundPanel.transform);
-
-                _headerText = headerItemGO.GetComponentInChildren<CM_SettingsItem>().transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
-
-                _headerText.color = ORANGE;
-
-                _headerText.SetText("Header Text");
-
-                var rectTrans = _headerText.gameObject.GetComponent<RectTransform>();
-
-                rectTrans.sizeDelta = new Vector2(rectTrans.sizeDelta.x * 2, rectTrans.sizeDelta.y);
-
-
-                var contentItemGO = GameObject.Instantiate(SettingsItemPrefab, _backgroundPanel.transform);
-
-                _contentText = contentItemGO.GetComponentInChildren<CM_SettingsItem>().transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
-
-                _contentText.color = WHITE_GRAY;
-
-                _contentText.SetText("Content Text");
-
-                var rectTransContent = _contentText.gameObject.GetComponent<RectTransform>();
-
+                CreateItem("Content Text", WHITE_GRAY, _backgroundPanel.transform, out var contentSWC, out var rectTransContent, out _contentText);
                 rectTransContent.sizeDelta = new Vector2(rectTransContent.sizeDelta.x * 2, rectTransContent.sizeDelta.y * 10);
+
+                CreateItem("Info One", RED, _backgroundPanel.transform, out var infoOneSWC, out var rectTransInfo, out _infoL1Text);
+                rectTransInfo.sizeDelta = new Vector2(rectTransInfo.sizeDelta.x * 2, rectTransInfo.sizeDelta.y);
+                rectTransInfo.localPosition = rectTransInfo.localPosition + new Vector3(0, -660, 0);
+
+                CreateItem("Info Two", ORANGE, _backgroundPanel.transform, out var infoTwoSWC, out var rectTransInfoTwo, out _infoL2Text);
+                rectTransInfoTwo.sizeDelta = new Vector2(rectTransInfoTwo.sizeDelta.x * 2, rectTransInfoTwo.sizeDelta.y);
+                rectTransInfoTwo.localPosition = rectTransInfoTwo.localPosition + new Vector3(0, -640, 0);
 
                 _backgroundPanel.SetContentItems(new List<iScrollWindowContent>()
                     {
-                        headerItemGO.GetComponentInChildren<iScrollWindowContent>(),
-                        contentItemGO.GetComponentInChildren<iScrollWindowContent>()
+                        headerSWC,
+                        contentSWC,
+                        infoOneSWC,
+                        infoTwoSWC,
                     }.ToIL2CPPListIfNecessary(), 5);
 
                 AddToAllSettingsWindows(_backgroundPanel);
+            }
+
+            private static void CreateItem(string text, Color col, Transform parent, out iScrollWindowContent scrollWindowContent, out RectTransform rectTrans, out TMPro.TextMeshPro tmp)
+            {
+                var settingsItemGO = GameObject.Instantiate(SettingsItemPrefab, parent);
+
+                tmp = settingsItemGO.GetComponentInChildren<CM_SettingsItem>().transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
+
+                tmp.color = col;
+
+                tmp.SetText(text);
+
+                rectTrans = tmp.gameObject.GetComponent<RectTransform>();
+
+                scrollWindowContent = settingsItemGO.GetComponentInChildren<iScrollWindowContent>();
             }
 
             public void Dispose()
@@ -549,22 +559,11 @@ namespace TheArchive.Features.Dev
                 _contentText.SetText(data.Description);
                 JankTextMeshProUpdaterOnce.ForceUpdateMesh(_contentText);
 
-                // TODO: Include Module/Mod name of feature
-                // TODO: Include Rundown Constraints
-            }
+                _infoL1Text.SetText(data.CriticalInfo ?? string.Empty);
+                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_infoL1Text);
 
-            public void Show(string title, string content)
-            {
-                if (TheColorPicker.IsActive)
-                    return;
-
-                _backgroundPanel.gameObject.SetActive(true);
-
-                _headerText.SetText(title);
-                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_headerText);
-
-                _contentText.SetText(content);
-                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_contentText);
+                _infoL2Text.SetText(data.FeatureOrigin ?? string.Empty);
+                JankTextMeshProUpdaterOnce.ForceUpdateMesh(_infoL2Text);
             }
 
             public void Hide()

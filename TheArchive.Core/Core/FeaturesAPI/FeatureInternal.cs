@@ -33,6 +33,32 @@ namespace TheArchive.Core.FeaturesAPI
         internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
         internal IArchiveLogger FeatureLoggerInstance { get; private set; }
+        internal Assembly OriginAssembly { get; private set; }
+
+        private string _asmGroupName;
+        internal string AsmGroupName
+        {
+            get
+            {
+                if(string.IsNullOrEmpty(_asmGroupName))
+                {
+                    _asmGroupName = OriginAssembly.GetCustomAttribute<ModDefaultFeatureGroupName>()?.DefaultGroupName ?? OriginAssembly.GetName().Name;
+                }
+                return _asmGroupName;
+            }
+        }
+        internal string CriticalInfo
+        {
+            get
+            {
+                if (InternalDisabled)
+                {
+                    return $"<#F00>DISABLED</color>: {DisabledReason}";
+                }
+
+                return string.Empty;
+            }
+        }
 
         private Feature _feature;
         private HarmonyLib.Harmony _harmonyInstance;
@@ -90,6 +116,7 @@ namespace TheArchive.Core.FeaturesAPI
             _feature = feature;
 
             var featureType = _feature.GetType();
+            OriginAssembly = featureType.Assembly;
 
             _FILogger.Msg(ConsoleColor.Black, "-");
             _FILogger.Msg(ConsoleColor.Green, $"Initializing {_feature.Identifier} ...");

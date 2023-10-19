@@ -88,6 +88,8 @@ namespace TheArchive.Features.Dev
                             var data = new DescriptionPanel.DescriptionPanelData() {
                                 Title = ss.DisplayName,
                                 Description = ss.Description,
+                                CriticalInfo = ss.Helper.Feature.FeatureInternal.CriticalInfo,
+                                FeatureOrigin = ss.Helper.Feature.FeatureInternal.AsmGroupName,
                             };
                             CreateSubMenuControls(subMenu, menuEntryLabelText: ss.DisplayName, placeIntoMenu: placeIntoMenu, descriptionPanelData: data);
 
@@ -1145,6 +1147,8 @@ namespace TheArchive.Features.Dev
                 var data = new DescriptionPanel.DescriptionPanelData() {
                     Title = setting.DisplayName,
                     Description = setting.Description,
+                    CriticalInfo = setting.Helper.Feature.FeatureInternal.CriticalInfo,
+                    FeatureOrigin = setting.Helper.Feature.FeatureInternal.AsmGroupName,
                 };
 
                 CreateFSHoverAndSetButtonAction(data, cm_settingsItem, toggleButton_cm_item, buttonAction);
@@ -1156,8 +1160,8 @@ namespace TheArchive.Features.Dev
                 {
                     if (hovering)
                     {
-                        if (data != null && data.HasDescription)
-                            TheDescriptionPanel.Show(data.Title, data.Description);
+                        if (data != null)
+                            TheDescriptionPanel.Show(data);
                     }
                     else
                     {
