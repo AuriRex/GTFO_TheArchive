@@ -261,6 +261,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Presence\SteamRichPresenceTweaks.cs" Link="Features\Presence\SteamRichPresenceTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\IntroSkip.cs" Link="Features\QoL\IntroSkip.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\L4DStylePacks.cs" Link="Features\QoL\L4DStylePacks.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\LastUsedGearSwitcher.cs" Link="Features\QoL\LastUsedGearSwitcher.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\LoadoutRandomizer.cs" Link="Features\QoL\LoadoutRandomizer.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoDroppedMagazineSounds.cs" Link="Features\QoL\NoDroppedMagazineSounds.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\NoNavMarkerHideInChat.cs" Link="Features\QoL\NoNavMarkerHideInChat.cs" />
