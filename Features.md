@@ -1,6 +1,7 @@
 # Features
 
   * [Accessibility](#accessibility)
+  * [Archive Core](#archive-core)
   * [Backport](#backport)
   * [Cosmetic](#cosmetic)
   * [Discord / Steam Presence](#discord--steam-presence)
@@ -63,12 +64,16 @@ The thing that renders the blood splatters etc on your visor.
 ### Loud Volume Override
 
 Lower the game volume during loud sections:
-- game intro
-- elevator drop
+ - game intro
+ - elevator drop
+
+Adjust alt-tab sound behavior.
 
 ### Nickname
 
 Nickname related settings.
+
+Change your in game nickname, handy color picker included!
 
 ### Player Color Override
 
@@ -77,6 +82,13 @@ Override the built in player colors.
 ### Sentry Markers
 
 Add hud markers onto placed down sentry guns and tweak how those are shown.
+
+
+## Archive Core
+
+### Update Notifier - `[R5-RL]`
+
+Shows a popup whenever a new version is available.
 
 
 ## Backport
@@ -137,7 +149,10 @@ Visualize terminal pings in R1 by abusing the local players Middle-Mouse-Ping.
 
 ### Bot Customization - `[R6-RL]`
 
-Customize your bots!
+Customize your bots - Change their name and Vanity
+
+Adds the Apparel button to bots if you're host.
+(Bot clothing only works if dropping from lobby atm!)
 
 ### Enable old Hammers - `[R6-RL]`
 
@@ -147,6 +162,8 @@ Maul, Gavel, Sledge and Mallet
 ### Glowsticks! - `[A1-RL]`
 
 Costomize your glow-y little friends!
+
+Allows you to change the built in glowstick type and/or customize the color to your liking, or color it based on the player who threw the glowstick.
 
 ### Vanity Dirt Control - `[R6-RL]`
 
@@ -186,9 +203,11 @@ Most notably: running past lockers etc
 
 (Text might sometimes disappear)
 
-### Map Chat Abduction Fix - `[R4-RL]`
+### Map Chat Abduction Fix - `[R4-A5]`
 
 Prevent a switch to the Objectives Screen whenever the chat is open and the 'o' key is pressed.
+
+(Thanks for fixing this in A6 Alex! <3)
 
 ### Map Pan Unclamp
 
@@ -199,7 +218,7 @@ Makes you able to zoom in on far out zones.
 
 Prevents bio pings (/\) on dead enemies.
 
-### Weapons shoot forward
+### Weapons shoot forward - `[R1-A5]`
 
 Patches weapons to always shoot into the center of your crosshair.
 Makes shotgun draw & insta-shoot not shoot the floor
@@ -211,14 +230,20 @@ Makes shotgun draw & insta-shoot not shoot the floor
 
 Customize the color of Bio Tracker Pings as well as the blobs on its display.
 
+Single color, does not differentiate between enemies.
+
 ### Carry Item Marker - `[R2-RL]`
 
-Colorize and show additional info on big pickups.
+Adds a marker for whenever someone carries a big pickup like CELLs or FOG_TURBINEs
+
+Additionally colorizes the marker based on what item it is.
 
 ### Combat Indicator
 
 Displays the current drama state of the game.
 (Above the health bar, right side)
+
+Basically a visual representation of what the music is doing.
 
 ### Detailed Expedition Display
 
@@ -268,7 +293,7 @@ Tweak the Expedition Fail/Success screens!
 
 ### Scan HUD Tweaks - `[R6-RL]`
 
-Adds an overall alarm class counter to the HUD message
+Adds an overall alarm class counter to the HUD message for door alarms etc
 
 ### Show Weapon Stats
 
@@ -276,12 +301,21 @@ Adds weapon statistics such as damage, clip size and reload speed (and more if a
 
 ### Watermark Tweaks
 
-Configurable to either show your current position or the mod version in the bottom right:
+Configurable to either show your current position, a timer or the mod version in the bottom right:
  - X:24 Y:2 Z:-46
- - TheArchive v0.5.50
+ - Timer showing elapsed mission time
+ - TheArchive v0.5.87
+
+### Weapon Picker Tweaks - `[R6-RL]`
+
+Allows you to Favorite and Hide Gear in the weapon picker.
 
 
 ## Misc
+
+### Alt Tab Counter
+
+Counts the ammount of times that the game went out of focus. (ALT + TAB)
 
 ### Copy Lobby ID Format
 
@@ -313,6 +347,10 @@ Allows the usage of '>' and '<' characters in chat.
 
 (Also enables TextMeshPro RichText tags to be used in chat, don't do stupid things!)
 
+### Rundown 8 Reminder - `[A6]`
+
+Reminds you to turn off "Remove Story Dialog" for whenever Rundown 8 drops!
+
 ### Weapon Model Toggle (F2)
 
 Forces the held item to be hidden.
@@ -332,6 +370,10 @@ Right mouse = other players
 
 /!\ Make sure to disable the vanilla game setting Gameplay > Separate Use Keybinds for this Feature to work!
 
+### Last Used Gear Switcher
+
+Allows you to swap between the last two used weapons via a keypress
+
 ### Loadout Randomizer
 
 Adds a Loadout Randomizer button onto the loadout screen.
@@ -341,7 +383,7 @@ Select which gear to randomize via the settings below.
 
 Removes the globalally audible sound whenever a magazine drops on the floor after a reload.
 
-### Prioritize Resource Pings - `[R1-RL]`
+### Prioritize Resource Pings - `[R1-A5]`
 
 Resource Packs will be prioritized and show up with special icons and trigger voice lines when pinged by Middle-Mouse-Pings.
 (Yes, disinfect is ammo apparently)
@@ -361,7 +403,7 @@ Prevent enemy pings from hiding whenever the chat is open.
 
 ### Situation Aware Weapon Switch
 
-Switch to either your Melee weapon or Primary depending on if you're sneaking around or in combat after depleting all of your throwables / exit a ladder.
+Switch to either your Melee weapon or Primary depending on if you're sneaking around or in combat after depleting all of your throwables, exit a ladder or place down a sentry gun etc.
 
 ### Skip Elevator Animation
 
@@ -378,7 +420,7 @@ Sorts your booster inventory by type and alphabetically
 
 ## Security / Anti Cheat
 
-### Anti Spawn
+### Anti Spawn - `[R6-RL]`
 
 Prevents clients from spawning in enemies.
 
