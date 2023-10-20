@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 #endif
 
-namespace Discord
+namespace TheArchive.Core.Discord
 {
 	public partial struct ImageHandle
     {

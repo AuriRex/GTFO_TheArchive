@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Discord
+namespace TheArchive.Core.Discord
 {
     static class Constants
     {

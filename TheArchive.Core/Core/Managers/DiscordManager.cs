@@ -1,8 +1,8 @@
-﻿using Discord;
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using TheArchive.Core.Discord;
 using TheArchive.Core.Models;
 using TheArchive.Core.Settings;
 using TheArchive.Interfaces;

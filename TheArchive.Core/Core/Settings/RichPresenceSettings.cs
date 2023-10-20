@@ -7,6 +7,9 @@ namespace TheArchive.Core.Settings
     public class RichPresenceSettings
     {
         [FSHide]
+        public bool DoRundown8DisableCheck { get; set; } = true;
+
+        [FSHide]
         public bool DEBUG_UseDefaultSettings { get; set; } = false;
 
         [FSIgnore]

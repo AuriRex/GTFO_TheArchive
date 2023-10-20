@@ -1,5 +1,7 @@
 ﻿using CellMenu;
+using GameData;
 using System;
+using TheArchive.Core;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
@@ -34,6 +36,15 @@ namespace TheArchive.Features.Presence
 
         public override void OnEnable()
         {
+            if (DiscordRPCSettings.DoRundown8DisableCheck && Is.R6OrLater && LikelyIsOnR8())
+            {
+                FeatureLogger.Notice("Disabling Rich Presence for Rundown 8 for now!");
+                DiscordRPCSettings.DoRundown8DisableCheck = false;
+                MarkSettingsAsDirty(DiscordRPCSettings);
+                FeatureManager.Instance.DisableFeature(this);
+                return;
+            }
+
             try
             {
                 DiscordManager.OnActivityJoin += DiscordManager_OnActivityJoin;
@@ -43,6 +54,17 @@ namespace TheArchive.Features.Presence
             {
                 ArchiveLogger.Exception(ex);
             }
+        }
+
+        private bool LikelyIsOnR8()
+        {
+#if IL2CPP
+            var setupDB = GameSetupDataBlock.GetBlock(1);
+
+            return BuildDB.BuildNumber > 33871 && setupDB.RundownIdsToLoad.Count > 7;
+#else
+            return false;
+#endif
         }
 
         public override void OnGameDataInitialized()
