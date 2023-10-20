@@ -248,7 +248,8 @@ The location of this `SaveData` folder can be customized by editing `TheArchive_
 
 ## Building the project (On Windows)
 
-### Step 1: Getting the game assemblies for references:
+### Step 1 (using MelonLoader)
+In order to fully build the MelonLoader version of the mod, both latest **AND** Rundown 3 game files are required.
 * Latest Game Version
     * Install [MelonLoader](https://github.com/LavaGang/MelonLoader) and run the game once
     * Copy the `MelonLoader` folder from the game directory into `_R_LATEST/`
@@ -258,7 +259,7 @@ The location of this `SaveData` folder can be customized by editing `TheArchive_
     * Create a folder called `GTFO_Data` inside of `_R_RD003/`
     * Copy the `Managed` folder from the game directory `GTFO/GTFO_Data/Managed/` into the `_R_RD003/GTFO_Data/` folder
 
-#### Folder structure:
+#### Folder structure (MelonLoader)
 ```
 .
 ├── _R_LATEST/                              # Latest Version Assemblies go here
@@ -279,10 +280,33 @@ The location of this `SaveData` folder can be customized by editing `TheArchive_
 └── .../                                    # Other Project Folders / Files
 ```
 
+### Step 1 (using BepInEx)
+The BepInEx release is only supported on the latest game version.
+* Install BepInEx either manually or create a new profile in R2MM and install `GTFO BepInEx Pack`
+* Make sure to launch the game (or profile) once and let IL2CPPInterop generate the proxy assemblies
+* Open the game (or profile) folder and copy the `BepInEx` folder into this projects `_R_LATEST/` folder
+* After opening the solution make sure to switch from `R_ML` to `R_BIE` in the menu bar to target BepInEx
+
+#### Folder structure (BepInEx)
+```
+.
+├── _R_LATEST/                              # Latest Version Assemblies go here
+│   └── BepInEx/
+│       ├── interop/
+│       │   ├── Accessibility.dll
+│       │   ├── Addons-ASM.dll
+│       │   └── ...
+│       └── core/
+│           ├── BepInEx.Core.dll
+│           └── ...
+└── .../                                    # Other Project Folders / Files
+```
+
 ### Step 2: Building
 1. Open the solution `TheArchive.sln` in Visual Studio
 2. Hit `CTRL + Shift + B` on your keyboard or alternatively use the `Build > Build Solution` menubar option
 3. The project is now building and the final dll is going to be placed into the `out/` directory
+
 ## Building the project (On Linux)
 
 Have fun, you'll figure it out.
