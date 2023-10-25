@@ -101,20 +101,21 @@ namespace TheArchive.Features.Cosmetic
                             return;
                         case ClothesType.Helmet:
                             Helmet = id;
-                            return;
+                            break;
                         case ClothesType.Torso:
                             Torso = id;
-                            return;
+                            break;
                         case ClothesType.Legs:
                             Legs = id;
-                            return;
+                            break;
                         case ClothesType.Backpack:
                             Backpack = id;
-                            return;
+                            break;
                         case ClothesType.Palette:
                             Palette = id;
-                            return;
+                            break;
                     }
+                    MarkSettingsAsDirty(Settings);
                 }
 #endif
             }
