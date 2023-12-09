@@ -96,6 +96,7 @@ namespace TheArchive.Features.Special
                 Header = "<#F00>Rundown 8 Reminder</color>",
                 UpperText = updateText,
                 PopupType = PopupType.BoosterImplantMissed,
+                OnCloseCallback = new System.Action(() => { })
             });
         }
     }
