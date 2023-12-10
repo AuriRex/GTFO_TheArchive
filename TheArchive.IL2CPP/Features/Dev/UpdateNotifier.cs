@@ -147,6 +147,7 @@ namespace TheArchive.Features.Dev
                 Header = "<#440144>TheArchive Update Checker</color>",
                 UpperText = updateText,
                 PopupType = PopupType.BoosterImplantMissed,
+                OnCloseCallback = new System.Action(() => { }),
             });
         }
     }

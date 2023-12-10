@@ -157,7 +157,8 @@ namespace TheArchive.Features.Hud
 
                 if (Settings.IncludeALTorOGText)
                 {
-                    if (headerText.StartsWith("R7"))
+                    // LOL
+                    if (headerText.StartsWith("R7") || headerText.StartsWith("R8"))
                     {
                         __instance.m_wardenObjective.m_header.text = $"{OGText}{headerText}";
                     }

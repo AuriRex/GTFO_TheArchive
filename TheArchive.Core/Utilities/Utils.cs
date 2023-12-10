@@ -174,26 +174,39 @@ namespace TheArchive.Utilities
             if (lowestId == highestId)
             {
                 var R = "R";
-                if (lowestId >= RundownID.RundownAltOne)
+                if (lowestId >= RundownID.RundownAltOne && lowestId < RundownID.RundownEight)
                 {
                     R = "A";
                     lowestId = lowestId - (int)RundownID.RundownAltOne + 1;
+                }
+                if (lowestId >= RundownID.RundownEight)
+                {
+                    lowestId = lowestId - 6;
                 }
                 return $"{R}{(int)lowestId}";
             }
             else
             {
                 var RL = "R";
-                if (lowestId >= RundownID.RundownAltOne)
+                if (lowestId >= RundownID.RundownAltOne && lowestId < RundownID.RundownEight)
                 {
                     RL = "A";
                     lowestId = lowestId - (int)RundownID.RundownAltOne + 1;
                 }
+                else if (lowestId >= RundownID.RundownEight)
+                {
+                    lowestId = lowestId - 6;
+                }
+
                 var RH = "R";
-                if (highestId >= RundownID.RundownAltOne)
+                if (highestId >= RundownID.RundownAltOne && highestId < RundownID.RundownEight)
                 {
                     RH = "A";
                     highestId = highestId - (int)RundownID.RundownAltOne + 1;
+                }
+                else if (highestId >= RundownID.RundownEight)
+                {
+                    highestId = highestId - 6;
                 }
                 return $"{RL}{(int)lowestId}-{(isLatest && generalizeLatest ? "RL" : RH+(int)highestId)}";
             }
@@ -406,30 +419,30 @@ namespace TheArchive.Utilities
         /// </summary>
         public enum RundownID : int
         {
-
             RundownUnitialized = -1,
-            RundownUnknown,
-            RundownOne,
-            RundownTwo,
-            RundownThree,
-            RundownFour,
-            RundownFive,
-            RundownSix,
-            RundownSeven,
-            RundownAltOne,
-            RundownAltTwo,
-            RundownAltThree,
-            RundownAltFour,
-            RundownAltFive,
-            RundownAltSix,
-
-            Latest = RundownAltSix,
+            RundownUnknown = 0,
+            RundownOne = 1,
+            RundownTwo = 2,
+            RundownThree = 3,
+            RundownFour = 4,
+            RundownFive = 5,
+            RundownSix = 6,
+            RundownSeven = 7,
+            RundownAltOne = 8,
+            RundownAltTwo = 9,
+            RundownAltThree = 10,
+            RundownAltFour = 11,
+            RundownAltFive = 12,
+            RundownAltSix = 13,
+            Latest = RundownEight,
+            RundownEight = 14,
         }
 
         [Flags]
         public enum RundownFlags : int
         {
             None = 0,
+
             RundownOne = 1 << 0,
             RundownTwo = 1 << 1,
             RundownThree = 1 << 2,
@@ -443,13 +456,16 @@ namespace TheArchive.Utilities
             RundownAltFour = 1 << 10,
             RundownAltFive = 1 << 11,
             RundownAltSix = 1 << 12,
+            Latest = RundownEight,
+            RundownEight = 1 << 13,
 
-            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive | RundownSix | RundownSeven
-                | RundownAltOne | RundownAltTwo | RundownAltThree | RundownAltFour | RundownAltFive | RundownAltSix,
+            All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive
+                | RundownSix | RundownSeven | RundownAltOne | RundownAltTwo | RundownAltThree
+                | RundownAltFour | RundownAltFive | RundownAltSix | RundownEight,
 
-            Latest = RundownAltSix,
 #warning TODO: Latest as external constant because alias behave weird with ToString() depending on the amount of enum entries
         }
+
 
         public static bool FlagsContain(RundownFlags flags, RundownID id)
         {
