@@ -336,6 +336,8 @@ namespace TheArchive.Core.FeaturesAPI
             Is.A5OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltFive.ToLatest());
             Is.A6 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltSix);
             Is.A6OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownAltSix.ToLatest());
+            Is.R8 = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownEight);
+            Is.R8OrLater = BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownEight.ToLatest());
         }
 
         /// <summary>
@@ -369,6 +371,8 @@ namespace TheArchive.Core.FeaturesAPI
             public static bool A5OrLater { get; internal set; }
             public static bool A6 { get; internal set; }
             public static bool A6OrLater { get; internal set; }
+            public static bool R8 { get; internal set; }
+            public static bool R8OrLater { get; internal set; }
         }
     }
 }
