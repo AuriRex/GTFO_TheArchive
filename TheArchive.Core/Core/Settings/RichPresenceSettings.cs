@@ -6,8 +6,10 @@ namespace TheArchive.Core.Settings
 {
     public class RichPresenceSettings
     {
-        [FSHide]
-        public bool DoRundown8DisableCheck { get; set; } = true;
+        [FSDisplayName("Disable on R8")]
+        [FSDescription("Only disables Custom Discord Rich Presence on the Rundown 8 game version.\n\nIt will still be enabled if playing on older game versions.")]
+        [FSRundownHint(Utilities.Utils.RundownFlags.RundownEight, Utilities.Utils.RundownFlags.Latest)]
+        public bool DisableOnRundownEight { get; set; } = true;
 
         [FSHide]
         public bool DEBUG_UseDefaultSettings { get; set; } = false;
@@ -128,7 +130,7 @@ namespace TheArchive.Core.Settings
                         new GSActivityFormat()
                         {
                             Details = "%Rundown% %Expedition% \"%ExpeditionName%\"",
-                            Status = "Engaging breaks ...",
+                            Status = "Engaging brakes ...",
                             Assets = new GSActivityAssets
                             {
                                 LargeImageKey = "icon_dropping",

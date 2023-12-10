@@ -1,7 +1,5 @@
 ﻿using CellMenu;
-using GameData;
 using System;
-using TheArchive.Core;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
@@ -14,7 +12,7 @@ namespace TheArchive.Features.Presence
     [EnableFeatureByDefault]
     public class DiscordRichPresence : Feature
     {
-        public override string Name => "Discord Rich Presence";
+        public override string Name => "Archive Discord Rich Presence";
 
         public override string Group => FeatureGroups.Presence;
 
@@ -34,37 +32,27 @@ namespace TheArchive.Features.Presence
             PresenceManager.UpdateGameState(PresenceGameState.Startup, false);
         }
 
+        private static bool _wasDisabledForR8 = false;
+
         public override void OnEnable()
         {
-            if (DiscordRPCSettings.DoRundown8DisableCheck && Is.R6OrLater && LikelyIsOnR8())
+            if (Is.R8OrLater && !_wasDisabledForR8 && !DataBlocksReady && DiscordRPCSettings.DisableOnRundownEight)
             {
-                FeatureLogger.Notice("Disabling Rich Presence for Rundown 8 for now!");
-                DiscordRPCSettings.DoRundown8DisableCheck = false;
-                MarkSettingsAsDirty(DiscordRPCSettings);
-                FeatureManager.Instance.DisableFeature(this);
+                FeatureLogger.Notice("Disabling Archive Rich Presence for Rundown 8!");
+                FeatureManager.Instance.DisableFeature(this, setConfig: false);
+                _wasDisabledForR8 = true; // Only do it once, user might re-enable it
                 return;
             }
 
             try
             {
-                DiscordManager.OnActivityJoin += DiscordManager_OnActivityJoin;
-                DiscordManager.Enable(DiscordRPCSettings);
+                ArchiveDiscordManager.OnActivityJoin += DiscordManager_OnActivityJoin;
+                ArchiveDiscordManager.Enable(DiscordRPCSettings);
             }
             catch (Exception ex)
             {
                 ArchiveLogger.Exception(ex);
             }
-        }
-
-        private bool LikelyIsOnR8()
-        {
-#if IL2CPP
-            var setupDB = GameSetupDataBlock.GetBlock(1);
-
-            return BuildDB.BuildNumber > 33871 && setupDB.RundownIdsToLoad.Count > 7;
-#else
-            return false;
-#endif
         }
 
         public override void OnGameDataInitialized()
@@ -82,13 +70,13 @@ namespace TheArchive.Features.Presence
 
         public override void OnDisable()
         {
-            DiscordManager.OnActivityJoin -= DiscordManager_OnActivityJoin;
-            DiscordManager.Disable();
+            ArchiveDiscordManager.OnActivityJoin -= DiscordManager_OnActivityJoin;
+            ArchiveDiscordManager.Disable();
         }
 
         public override void Update()
         {
-            DiscordManager.Update();
+            ArchiveDiscordManager.Update();
         }
     }
 }

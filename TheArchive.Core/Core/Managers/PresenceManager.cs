@@ -347,7 +347,8 @@ namespace TheArchive.Core.Managers
                     return "Mod";
                 if (ArchiveMod.IsOnALTBuild)
                 {
-                    if (Get(nameof(ExpeditionTier)).ToString().StartsWith("R7"))
+                    var name = Get(nameof(ExpeditionTier)).ToString();
+                    if (name.StartsWith("R7") || name.StartsWith("R8")) // another LOL
                         return string.Empty;
                     return "Alt";
                 }

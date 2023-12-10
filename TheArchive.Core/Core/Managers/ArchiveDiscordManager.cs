@@ -10,7 +10,7 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Core.Managers
 {
-    public class DiscordManager
+    public class ArchiveDiscordManager
     {
         #region native_methods
         [DllImport("kernel32.dll")]
@@ -44,7 +44,7 @@ namespace TheArchive.Core.Managers
         {
             get
             {
-                return _logger ??= Loader.LoaderWrapper.CreateLoggerInstance(nameof(DiscordManager), ConsoleColor.Magenta);
+                return _logger ??= Loader.LoaderWrapper.CreateLoggerInstance(nameof(ArchiveDiscordManager), ConsoleColor.Magenta);
             }
         }
 
@@ -129,7 +129,7 @@ namespace TheArchive.Core.Managers
             }
             catch(Exception ex)
             {
-                Logger.Error($"Exception has been thrown in {nameof(DiscordManager)}. {ex}: {ex.Message}");
+                Logger.Error($"Exception has been thrown in {nameof(ArchiveDiscordManager)}. {ex}: {ex.Message}");
                 Logger.Exception(ex);
             }
         }
