@@ -122,7 +122,9 @@ namespace TheArchive.Features.LocalProgression
                 return PatchInfo.Type.GetMethods(AnyBindingFlagss).FirstOrDefault(m => m.Name.Contains(nameof(DropServerManager.GetRundownProgressionAsync)))?.Name;
             }
 
-            public static bool Prefix(object __instance, ref IL2Tasks.Task<RundownProgression> __result)
+            [IsPrefix]
+            [RundownConstraint(RundownFlags.RundownFour, RundownFlags.RundownAltSix)]
+            public static bool PrefixAlt(object __instance, ref IL2Tasks.Task<RundownProgression> __result)
             {
                 var rundownName = PatchInfo.Type.GetProperty("rundownName").GetValue(__instance).ToString();
 
@@ -131,6 +133,28 @@ namespace TheArchive.Features.LocalProgression
                 var localProgression = LocalProgressionManager.Instance.LoadOrGetAndSaveCurrentFile(rundownName);
 
                 __result = IL2Tasks.Task.FromResult(localProgression.ToBaseGameProgression());
+
+                return ArchivePatch.SKIP_OG;
+            }
+
+            [IsPrefix]
+            [RundownConstraint(RundownFlags.RundownEight, RundownFlags.Latest)]
+            public static bool PrefixEight(object __instance, ref IL2Tasks.Task<DropServerManager.RundownProgressionResponse> __result)
+            {
+                var rundownName = PatchInfo.Type.GetProperty("rundownName").GetValue(__instance).ToString();
+                var updateCurrentRundown = (bool) PatchInfo.Type.GetProperty("updateCurrentRundown").GetValue(__instance);
+
+                FeatureLogger.Msg(ConsoleColor.Magenta, $"Getting RundownProgression for {rundownName} from local files ...");
+
+                var localProgression = LocalProgressionManager.Instance.LoadOrGetAndSaveCurrentFile(rundownName);
+
+                var response = new DropServerManager.RundownProgressionResponse();
+
+                response.rundownName = rundownName;
+                response.updateCurrentRundown = updateCurrentRundown;
+                response.rundownProgression = localProgression.ToBaseGameProgression();
+
+                __result = IL2Tasks.Task.FromResult(response);
 
                 return ArchivePatch.SKIP_OG;
             }
