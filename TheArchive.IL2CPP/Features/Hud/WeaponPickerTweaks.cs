@@ -60,9 +60,9 @@ namespace TheArchive.Features.Hud
             [FSHeader(":// Other")]
             public ItemColors Colors { get; set; } = new ItemColors();
 
-            [FSDisplayName("Sort by Archetype")]
-            [FSDescription("<#0F0>On</color> => Sort by Archetype Name (the bottom one)\n<#F00>Off</color> => Sort by Gear name")]
-            public bool SortByArchetype { get; set; } = false;
+            [FSDisplayName("Sort Gear by ...")]
+            [FSDescription($"{nameof(SortMode.Default)}: Default Gear order\n{nameof(SortMode.Archetype)}: Sort by Archetype Name (the bottom one)\n{nameof(SortMode.Name)}: Sort by Gear name")]
+            public SortMode Mode { get; set; } = SortMode.Default;
 
             [FSDisplayName("Remove Hidden Completely")]
             [FSDescription($"Gear marked as <color=orange>{nameof(ItemFavState.Hidden)}</color> will be removed from the weapon picker.")]
@@ -116,9 +116,20 @@ namespace TheArchive.Features.Hud
                 return entry;
             }
 
+            public enum SortMode
+            {
+                Default,
+                Archetype,
+                Name,
+            }
+
             public class ItemColors
             {
                 [FSHeader("Colors")]
+                [FSDisplayName("Only color Indicator")]
+                [FSDescription("Only colorizes the indicator bar on the left side")]
+                public bool IndicatorLeftOnly { get; set; } = false;
+
                 [FSDisplayName("Favorites Color")]
                 public SColor ColorFavorite { get; set; } = new SColor(0.92f, 0.76f, 0f);
 
@@ -126,6 +137,13 @@ namespace TheArchive.Features.Hud
 
                 [FSDisplayName("Hidden Color")]
                 public SColor ColorHidden { get; set; } = new SColor(0.2f, 0.2f, 0.2f);
+
+                public enum ColorOptions
+                {
+                    Indicator,
+                    Icon,
+                    Name,
+                }
             }
 
             public class WeaponPickerEntry
@@ -178,20 +196,28 @@ namespace TheArchive.Features.Hud
                         __instance.m_colSeleced = colFavSelected;
                         __instance.m_colPassive = colFavSelected;
                         __instance.m_colHover = colFavSelected;
+                        if (Settings.Colors.IndicatorLeftOnly)
+                            break;
                         __instance.m_textColorOut[1] = colFavSelected;
                         __instance.m_textColorOut[1] = colFavSelected.WithAlpha(0.5f);
                         __instance.m_textColorOver[1] = colFavSelected;
                         __instance.m_nameText.color = __instance.m_textColorOut[1];
+
+                        __instance.m_icon.color = colFavSelected.WithAlpha(0.6176f);// 1 1 1 0.6176
                         break;
                     case ItemFavState.Hidden:
                         var colHiddenSelected = Settings.Colors.ColorHidden.ToUnityColor();
                         __instance.m_colSeleced = colHiddenSelected;
                         __instance.m_colPassive = colHiddenSelected;
                         __instance.m_colHover = colHiddenSelected;
+                        if (Settings.Colors.IndicatorLeftOnly)
+                            break;
                         __instance.m_textColorOut[1] = colHiddenSelected;
                         __instance.m_textColorOut[1] = colHiddenSelected.WithAlpha(0.5f);
                         __instance.m_textColorOver[1] = colHiddenSelected;
                         __instance.m_nameText.color = __instance.m_textColorOut[1];
+
+                        __instance.m_icon.color = colHiddenSelected.WithAlpha(0.6176f);// 1 1 1 0.6176
                         break;
                     default:
                         break;
@@ -307,7 +333,16 @@ namespace TheArchive.Features.Hud
 
                 var allGear = __result.ToArray();
 
-                __result = FilterDisabled(allGear.OrderBy((gid) => GetOrderString(gid))).ToArray();
+                var dict = new Dictionary<int, GearIDRange>();
+
+                for(int i = 0; i < allGear.Length; i++)
+                {
+                    dict.Add(i, allGear[i]);
+                }
+
+                var orderedGear = dict.OrderBy((kvp) => GetOrderString(kvp))
+                                        .Select(kvp => kvp.Value);
+                __result = FilterDisabled(orderedGear).ToArray();
             }
         }
 
@@ -332,8 +367,11 @@ namespace TheArchive.Features.Hud
             }
         }
 
-        public static string GetOrderString(GearIDRange gid)
+        public static string GetOrderString(KeyValuePair<int, GearIDRange> kvp)
         {
+            int id = kvp.Key;
+            GearIDRange gid = kvp.Value;
+
             var builder = new StringBuilder();
 
             // num -> status
@@ -352,10 +390,23 @@ namespace TheArchive.Features.Hud
 
             builder.Append($"_{entry.Index.ToString("D3")}");
 
-            if (Settings.SortByArchetype)
-                builder.Append($"_{GetArchetypeName(gid)}");
+            switch(Settings.Mode)
+            {
+                default:
+                case SortMode.Default:
+                    builder.Append($"_{id}");
+                    break;
+                case SortMode.Archetype:
+                    builder.Append($"_{GetArchetypeName(gid)}");
+                    break;
+                case SortMode.Name:
+                    builder.Append($"_{entry.Name}");
+                    break;
+            }
 
             builder.Append($"_{entry.Name}");
+
+            builder.Append($"_{id}");
 
             return builder.ToString();
         }
