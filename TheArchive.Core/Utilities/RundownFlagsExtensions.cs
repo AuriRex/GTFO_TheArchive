@@ -27,6 +27,8 @@ namespace TheArchive.Utilities
         /// <returns></returns>
         public static RundownFlags To(this RundownFlags flags, RundownFlags to)
         {
+            if (to == RundownFlags.Latest)
+                return flags.ToLatest();
             if (((int) flags) > ((int) to))
                 return FlagsFromTo(to, flags);
             return FlagsFromTo(flags, to);
@@ -53,7 +55,7 @@ namespace TheArchive.Utilities
                     _allFlagsOrdered = Enum.GetValues(typeof(RundownFlags))
                         .Cast<RundownFlags>()
                         .OrderBy(x => x)
-                        .Skip(1);
+                        .Skip(2);
                 }
                 return _allFlagsOrdered;
             }
@@ -85,6 +87,7 @@ namespace TheArchive.Utilities
         /// <typeparam name="T">An <seealso cref="Enum"/></typeparam>
         /// <param name="thisEnum"></param>
         /// <returns>The <seealso cref="int"/> value represented by the <seealso cref="ValueAttribute"/> or -1 if <typeparamref name="T"/> is not of type <seealso cref="Enum"/></returns>
+        [Obsolete]
         public static int GetIntValue<T>(this T thisEnum) where T : IConvertible
         {
             if (thisEnum is Enum)

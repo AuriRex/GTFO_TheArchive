@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -167,9 +168,9 @@ namespace TheArchive.Utilities
             Enum.TryParse<RundownID>(rundowns.HighestRundownFlag().ToString(), out var highestId);
 
             if (highestId == 0)
-                highestId = GetEnumFromName<RundownID>(nameof(RundownID.Latest));
+                highestId = GetLatestRundownID();
 
-            var isLatest = (int)highestId == (int)RundownID.Latest;
+            var isLatest = highestId == GetLatestRundownID();
 
             if (lowestId == highestId)
             {
@@ -392,6 +393,7 @@ namespace TheArchive.Utilities
             return sb.ToString();
         }
 
+        [Obsolete]
         public class ValueAttribute : Attribute
         {
             public object Value { get; private set; }
@@ -414,11 +416,21 @@ namespace TheArchive.Utilities
          * 29 = RD#006
          */
 
+        private static RundownID? _latestRundownID = null;
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static RundownID GetLatestRundownID()
+        {
+            return _latestRundownID ??= GetEnumFromName<RundownID>(GetLatestRundownFlags().ToString());
+        }
+
         /// <summary>
         /// This is used to identify the game build in a more broad way.
         /// </summary>
         public enum RundownID : int
         {
+            Latest = -2,
+
             RundownUnitialized = -1,
             RundownUnknown = 0,
             RundownOne = 1,
@@ -434,13 +446,25 @@ namespace TheArchive.Utilities
             RundownAltFour = 11,
             RundownAltFive = 12,
             RundownAltSix = 13,
-            Latest = RundownEight,
             RundownEight = 14,
         }
 
+        // IMPORTANT VALUE HERE
+        // IMPORTANT VALUE HERE
+        // IMPORTANT VALUE HERE
+        private const RundownFlags LatestRundownFlags = RundownFlags.RundownEight;
+        // IMPORTANT VALUE ABOVE
+        // IMPORTANT VALUE ABOVE
+        // IMPORTANT VALUE ABOVE
+
+        /// <summary>
+        /// <b>Avoid</b> using <seealso cref="RundownFlags.Latest"/> outside of <seealso cref="RundownConstraint"/>, similar Attributes or without using <seealso cref="RundownFlagsExtensions.To(RundownFlags, RundownFlags)"/>
+        /// </summary>
         [Flags]
         public enum RundownFlags : int
         {
+            Latest = -2,
+
             None = 0,
 
             RundownOne = 1 << 0,
@@ -456,19 +480,23 @@ namespace TheArchive.Utilities
             RundownAltFour = 1 << 10,
             RundownAltFive = 1 << 11,
             RundownAltSix = 1 << 12,
-            Latest = RundownEight,
             RundownEight = 1 << 13,
 
             All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive
                 | RundownSix | RundownSeven | RundownAltOne | RundownAltTwo | RundownAltThree
                 | RundownAltFour | RundownAltFive | RundownAltSix | RundownEight,
-
-#warning TODO: Latest as external constant because alias behave weird with ToString() depending on the amount of enum entries
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static RundownFlags GetLatestRundownFlags()
+        {
+            return LatestRundownFlags;
+        }
 
         public static bool FlagsContain(RundownFlags flags, RundownID id)
         {
+            if (id == RundownID.Latest)
+                id = GetLatestRundownID();
             if (id == RundownID.RundownUnknown) return false;
 
             if (!Enum.TryParse(id.ToString(), out RundownFlags currentRundown))
@@ -481,6 +509,11 @@ namespace TheArchive.Utilities
 
         public static RundownFlags FlagsFromTo(RundownFlags from, RundownFlags to)
         {
+            if (from == RundownFlags.Latest)
+                from = GetLatestRundownFlags();
+            if (to == RundownFlags.Latest)
+                to = GetLatestRundownFlags();
+
             if (from == to) return from;
             if ((int) from > (int) to) throw new ArgumentException($"{nameof(from)} ({from}) may not be larger than {nameof(to)} ({to})!");
 

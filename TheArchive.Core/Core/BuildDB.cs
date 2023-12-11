@@ -82,7 +82,7 @@ namespace TheArchive.Core
                 }
             }
 
-            return RundownID.Latest;
+            return GetLatestRundownID();
         }
     }
 }

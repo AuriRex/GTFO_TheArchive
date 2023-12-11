@@ -168,12 +168,6 @@ namespace TheArchive
             CurrentRundown = BuildDB.GetCurrentRundownID(BuildDB.BuildNumber);
             ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"Current game revision determined to be {BuildDB.BuildNumber}! ({CurrentRundown})");
 
-            if (RundownFlags.Latest.ToString() == nameof(RundownFlags.Latest))
-            {
-                for(int i = 0; i < 5; i++)
-                    ArchiveLogger.Warning($"{nameof(RundownFlags)} enum is missaligned again!! >:I");
-            }
-
             CurrentBuildInfo = new GameBuildInfo
             {
                 BuildNumber = BuildDB.BuildNumber,
