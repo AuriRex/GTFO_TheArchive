@@ -273,6 +273,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\SituationalAwareWeaponSwitch.cs" Link="Features\QoL\SituationalAwareWeaponSwitch.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\QoL\SkipElevatorAnimation.cs" Link="Features\QoL\SkipElevatorAnimation.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Security\PlayerLobbyManagement.cs" Link="Features\Security\PlayerLobbyManagement.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\AdBlock.cs" Link="Features\Special\AdBlock.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\CustomLobbyCodeString.cs" Link="Features\Special\CustomLobbyCodeString.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\HideFirstPersonItem.cs" Link="Features\Special\HideFirstPersonItem.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Special\MuteSpeak.cs" Link="Features\Special\MuteSpeak.cs" />
