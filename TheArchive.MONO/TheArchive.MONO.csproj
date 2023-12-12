@@ -213,6 +213,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Backport\UnreadyButtonPatches.cs" Link="Features\Backport\UnreadyButtonPatches.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Cosmetic\BotCustomization.cs" Link="Features\Cosmetic\BotCustomization.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Cosmetic\CustomWeaponFOV.cs" Link="Features\Cosmetic\CustomWeaponFOV.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Cosmetic\DisableTracers.cs" Link="Features\Cosmetic\DisableTracers.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Cosmetic\EnableLegacyHammers.cs" Link="Features\Cosmetic\EnableLegacyHammers.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Cosmetic\Glowsticks.cs" Link="Features\Cosmetic\Glowsticks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Cosmetic\VanityDirtControl.cs" Link="Features\Cosmetic\VanityDirtControl.cs" />
