@@ -132,6 +132,20 @@ namespace TheArchive.Features.Dev
             }
         }
 
+        public class OnEnabledListener : MonoBehaviour
+        {
+#if IL2CPP
+            public OnEnabledListener(IntPtr ptr) : base(ptr) { }
+#endif
+
+            public Action<GameObject> OnEnabledSelf;
+
+            public void OnEnable()
+            {
+                OnEnabledSelf?.Invoke(gameObject);
+            }
+        }
+
         public class JankTextMeshProUpdaterOnce : MonoBehaviour
         {
 #if IL2CPP

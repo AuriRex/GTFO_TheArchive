@@ -73,6 +73,7 @@ namespace TheArchive.Features.Dev
 #if IL2CPP
             LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<JankTextMeshProUpdaterOnce>();
             LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<OnDisabledListener>();
+            LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<OnEnabledListener>();
             LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<KeyListener>();
 
             RegisterReceiverTypesInIL2CPP();
