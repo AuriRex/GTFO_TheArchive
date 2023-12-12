@@ -22,9 +22,14 @@ namespace TheArchive.Features.Presence
             DisableBaseDiscord();
         }
 
-        public override void OnDatablocksReady()
+        private bool _firstTime = true;
+        public void OnGameStateChanged(eGameStateName state)
         {
-            DisableBaseDiscord();
+            if(state == eGameStateName.NoLobby && _firstTime)
+            {
+                DisableBaseDiscord();
+                _firstTime = false;
+            }
         }
 
         public override void OnDisable()
