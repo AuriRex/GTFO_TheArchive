@@ -185,11 +185,28 @@ namespace TheArchive
 
             FeatureManager.Internal_Init();
 
-            var archiveModule = LoadMainArchiveModule(LoaderWrapper.IsGameIL2CPP());
+            try
+            {
+                var archiveModule = LoadMainArchiveModule(LoaderWrapper.IsGameIL2CPP());
 
-            var moduleMainType = archiveModule.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
+                var moduleMainType = archiveModule.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
 
-            _mainModule = CreateAndInitModule(moduleMainType);
+                _mainModule = CreateAndInitModule(moduleMainType);
+            }
+            catch(ReflectionTypeLoadException ex)
+            {
+                ArchiveLogger.Error("Failed loading main module!!");
+                ArchiveLogger.Exception(ex);
+
+                ArchiveLogger.Notice($"Loader Exceptions ({ex.LoaderExceptions.Length}):");
+                foreach(var lex in ex.LoaderExceptions)
+                {
+                    ArchiveLogger.Warning(lex.Message);
+                    ArchiveLogger.Debug(lex.StackTrace);
+                }
+                ArchiveLogger.Info("-------------");
+            }
+            
 
             try
             {
