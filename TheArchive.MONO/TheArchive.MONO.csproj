@@ -204,6 +204,8 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableHudSway.cs" Link="Features\Accessibility\DisableHudSway.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableInfectionBreathing.cs" Link="Features\Audio\DisableInfectionBreathing.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableInfectionCoughing.cs" Link="Features\Audio\DisableInfectionCoughing.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableRespawnSackAudio.cs" Link="Features\Audio\DisableRespawnSackAudio.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableSpitterAudio.cs" Link="Features\Audio\DisableSpitterAudio.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableStaminaBreathing.cs" Link="Features\Audio\DisableStaminaBreathing.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableUIMirroring.cs" Link="Features\Accessibility\DisableUIMirroring.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableUIParalax.cs" Link="Features\Accessibility\DisableUIParalax.cs" />

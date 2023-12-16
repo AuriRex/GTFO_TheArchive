@@ -9,11 +9,16 @@ using TheArchive.Core.FeaturesAPI;
 using System.Runtime.CompilerServices;
 using TheArchive.Loader;
 using SNetwork;
+using LevelGeneration;
+using static TheArchive.Core.FeaturesAPI.Feature;
 #if Unhollower
 using UnhollowerBaseLib;
 #endif
 #if Il2CppInterop
 using Il2CppInterop.Runtime.InteropTypes;
+#endif
+#if IL2CPP
+using IL2ColGen = Il2CppSystem.Collections.Generic;
 #endif
 
 namespace TheArchive.Utilities
@@ -537,6 +542,85 @@ namespace TheArchive.Utilities
         public static bool LocalPlayerIsDead => FocusStateManager.CurrentState == eFocusState_Dead;
         public static bool LocalPlayerIsInElevator => FocusStateManager.CurrentState == eFocusState_InElevator;
         public static bool LocalPlayerIsHacking => FocusStateManager.CurrentState == eFocusState_Hacking;
+
+        public static readonly eGameStateName eGameStateName_InLevel = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.InLevel));
+
+#if IL2CPP
+        private static IValueAccessor<LG_Floor, IL2ColGen.List<LG_Layer>> _A_LG_Floor_m_layers;
+#endif
+#if MONO
+        private static IValueAccessor<LG_Floor, List<LG_Zone>> _A_LG_Floor_m_zones;
+#endif
+
+        /// <summary>
+        /// Returns all zones if in a level (including from every dimension!)
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<LG_Zone> GetAllZones()
+        {
+            if (GetGameState() != eGameStateName_InLevel)
+                yield break;
+
+#if IL2CPP
+            if (Is.R6OrLater)
+            {
+                foreach (var zone_r6 in GetAllZonesR6Plus())
+                    yield return zone_r6;
+                yield break;
+            }
+
+            _A_LG_Floor_m_layers ??= AccessorBase.GetValueAccessor<LG_Floor, IL2ColGen.List<LG_Layer>>("m_layers");
+
+            foreach (var layer in _A_LG_Floor_m_layers.Get(Builder.CurrentFloor))
+            {
+                foreach (var zone in layer.m_zones)
+                    yield return zone;
+            }
+#endif
+#if MONO
+            if(Is.R3OrLater)
+            {
+                foreach (var zone in GetAllZonesR3Plus())
+                    yield return zone;
+                yield break;
+            }
+            else
+            {
+                //R2, R1
+                _A_LG_Floor_m_zones ??= AccessorBase.GetValueAccessor<LG_Floor, List<LG_Zone>>("m_zones");
+
+                foreach(var zone in _A_LG_Floor_m_zones.Get(Builder.CurrentFloor))
+                    yield return zone;
+            }
+#endif
+        }
+
+#if MONO
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static IEnumerable<LG_Zone> GetAllZonesR3Plus()
+        {
+            foreach (var layer in Builder.CurrentFloor.m_layers)
+            {
+                foreach (var zone in layer.m_zones)
+                    yield return zone;
+            }
+        }
+#endif
+
+#if IL2CPP
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static IEnumerable<LG_Zone> GetAllZonesR6Plus()
+        {
+            foreach (var dimension in Builder.CurrentFloor.m_dimensions)
+            {
+                foreach (var layer in dimension.Layers)
+                {
+                    foreach (var zone in layer.m_zones)
+                        yield return zone;
+                }
+            }
+        }
+#endif
 
         public static eGameStateName GetGameState() => (eGameStateName) ArchiveMod.CurrentGameState;
 
