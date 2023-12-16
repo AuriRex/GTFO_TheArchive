@@ -67,6 +67,7 @@ namespace TheArchive.Core.FeaturesAPI
 
         public static Group Accessibility { get; private set; } = Group.GetOrCreate("Accessibility");
         internal static Group ArchiveCore { get; private set; } = Group.GetOrCreate("Archive Core");
+        public static Group Audio { get; private set; } = Group.GetOrCreate("Audio");
         public static Group Backport { get; private set; } = Group.GetOrCreate("Backport");
         public static Group Cosmetic { get; private set; } = Group.GetOrCreate("Cosmetic");
         public static Group Dev { get; private set; } = Group.GetOrCreate("Developer");

@@ -9,7 +9,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Disable Breathing (<#1F835F>Infection</color>)";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override string Group => FeatureGroups.Audio;
 
         public override string Description => "Disables the infection \"drinking-straw-sucking\" sounding sound.";
 

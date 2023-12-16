@@ -202,12 +202,12 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableDeathDrone.cs" Link="Features\Accessibility\DisableDeathDrone.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableAmbientParticles.cs" Link="Features\Accessibility\DisableAmbientParticles.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableHudSway.cs" Link="Features\Accessibility\DisableHudSway.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableInfectionBreathing.cs" Link="Features\Accessibility\DisableInfectionBreathing.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableInfectionCoughing.cs" Link="Features\Accessibility\DisableInfectionCoughing.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableStaminaBreathing.cs" Link="Features\Accessibility\DisableStaminaBreathing.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableInfectionBreathing.cs" Link="Features\Audio\DisableInfectionBreathing.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableInfectionCoughing.cs" Link="Features\Audio\DisableInfectionCoughing.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableStaminaBreathing.cs" Link="Features\Audio\DisableStaminaBreathing.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableUIMirroring.cs" Link="Features\Accessibility\DisableUIMirroring.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableUIParalax.cs" Link="Features\Accessibility\DisableUIParalax.cs" />
-	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DynamicVolumeOverride.cs" Link="Features\Accessibility\DynamicVolumeOverride.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DynamicVolumeOverride.cs" Link="Features\Audio\DynamicVolumeOverride.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\GlassLiquidOverride.cs" Link="Features\Accessibility\GlassLiquidOverride.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\SentryMarkerTweaks.cs" Link="Features\Accessibility\SentryMarkerTweaks.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Backport\UnreadyButtonPatches.cs" Link="Features\Backport\UnreadyButtonPatches.cs" />
@@ -290,6 +290,7 @@
 	<ItemGroup>
 		<Folder Include="Features\Fixes\" />
 		<Folder Include="Features\Cosmetic\" />
+		<Folder Include="Features\Audio\" />
 		<Folder Include="Features\QoL\" />
 		<Folder Include="Features\Presence\" />
 		<Folder Include="Features\Security\" />

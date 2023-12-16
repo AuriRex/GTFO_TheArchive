@@ -10,7 +10,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Disable Coughing (<#1F835F>Infection</color>)";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override string Group => FeatureGroups.Audio;
 
         public override string Description => $"Disables the cough sound effect whenever a player looses HP due to infection.\n\n<size=70%>(SoundEvent=\"{nameof(AK.EVENTS.PLAY_COUGHSOFT01)}\")</size>";
 

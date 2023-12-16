@@ -17,7 +17,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Loud Volume Override";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override string Group => FeatureGroups.Audio;
 
         public override string Description => "Lower the game volume during loud sections:\n - game intro\n - elevator drop\n\nAdjust alt-tab sound behavior.";
 
