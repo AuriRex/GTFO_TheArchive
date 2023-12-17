@@ -202,6 +202,7 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableDeathDrone.cs" Link="Features\Accessibility\DisableDeathDrone.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableAmbientParticles.cs" Link="Features\Accessibility\DisableAmbientParticles.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Accessibility\DisableHudSway.cs" Link="Features\Accessibility\DisableHudSway.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableArtifactSoundLoop.cs" Link="Features\Audio\DisableArtifactSoundLoop.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableInfectionBreathing.cs" Link="Features\Audio\DisableInfectionBreathing.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableInfectionCoughing.cs" Link="Features\Audio\DisableInfectionCoughing.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Audio\DisableRespawnSackAudio.cs" Link="Features\Audio\DisableRespawnSackAudio.cs" />
