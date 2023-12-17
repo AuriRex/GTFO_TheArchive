@@ -83,6 +83,15 @@ namespace TheArchive.Features.Hud
                 return ArchivePatch.SKIP_OG;
             }
         }
+
+        [ArchivePatch(typeof(CM_PageLoadout), nameof(CM_PageLoadout.UpdateReadyState))]
+        internal static class CM_PageLoadout_UpdateReadyState_Patch
+        {
+            public static void Postfix(CM_PageLoadout __instance)
+            {
+                __instance.m_copyLobbyIdRoot.SetActive(!SNet.IsExternalMatchMakingActive);
+            }
+        }
 #endif
     }
 }
