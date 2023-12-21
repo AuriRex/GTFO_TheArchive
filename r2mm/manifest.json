@@ -1,7 +1,7 @@
 {
     "name": "TheArchive",
     "author": "AuriRex",
-    "version_number": "0.6.0",
+    "version_number": "0.7.0",
     "website_url": "https://github.com/AuriRex/GTFO_TheArchive",
     "description": "That one massive GTFO Quality of Life mod.",
     "dependencies": [
