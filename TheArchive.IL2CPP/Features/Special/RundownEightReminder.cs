@@ -3,6 +3,7 @@ using System.Collections;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Features.Dev;
 using TheArchive.Features.QoL;
 using TheArchive.Loader;
 using UnityEngine;
@@ -89,7 +90,7 @@ namespace TheArchive.Features.Special
 
             var updateText = $"Hi, quick reminder that you have <color=orange>{noStoryDialog.Name}</color> <#0f0>enabled</color> and that <color=orange><b>might impact your Rundown 8 experience</b></color>!\n\nConsider turning it <#F00>off</color> in mod settings <color=orange>if you care about the Story</color>!\n\nYou can find it under:\n<color=orange>[Mod Settings] > [{noStoryDialog.Group}] > [{noStoryDialog.Name}]</color>";
 
-            GlobalPopupMessageManager.ShowPopup(new PopupMessage()
+            PageRundownPopupManager.ShowPopup(new PopupMessage()
             {
                 BlinkInContent = true,
                 BlinkTimeInterval = 0.2f,

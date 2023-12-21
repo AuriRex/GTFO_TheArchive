@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
@@ -81,6 +82,7 @@ namespace TheArchive.Features.Dev
             {
                 UpdateChecker.CheckForUpdate((releaseInfo) =>
                 {
+                    MainMenuGuiLayer.Current.ChangePage(eCM_MenuPage.CMP_RUNDOWN_NEW);
                     ShowUpdatesPopup(showUpToDate: true);
                 });
             }
@@ -140,7 +142,7 @@ namespace TheArchive.Features.Dev
                 updateText = $"{updateText}\n\n<size=80%><color=orange>(This can be turned off in mod settings!)</color>\n[Mod Settings] > [{FeatureGroups.ArchiveCore.Name}] > [{nameof(UpdateNotifier)}]</size>";
             }
 
-            GlobalPopupMessageManager.ShowPopup(new PopupMessage()
+            PageRundownPopupManager.ShowPopup(new PopupMessage()
             {
                 BlinkInContent = true,
                 BlinkTimeInterval = 0.2f,
