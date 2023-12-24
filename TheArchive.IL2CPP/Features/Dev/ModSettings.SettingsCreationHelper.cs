@@ -1105,6 +1105,8 @@ namespace TheArchive.Features.Dev
             {
                 CreateSimpleButton(GetNameForSetting(setting), setting.ButtonText, () => {
                     FeatureManager.InvokeButtonPressed(setting.Helper.Feature, setting);
+                    if (setting.RefreshSubMenu)
+                        subMenu.Refresh();
                 }, out var cm_settingsItem, out var buttonTmp, subMenu);
 
                 setting.CM_SettingsItem = cm_settingsItem;

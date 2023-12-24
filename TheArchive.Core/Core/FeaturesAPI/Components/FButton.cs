@@ -20,6 +20,12 @@ namespace TheArchive.Core.FeaturesAPI.Components
 
         public MonoBehaviour SecondaryText { get; set; }
 
+        public bool HasCallback => Callback != null;
+
+        internal Action Callback { get; set; }
+
+        public bool RefreshSubMenu { get; set; } = false;
+
         public FButton() { }
 
         /// <summary>
@@ -27,10 +33,12 @@ namespace TheArchive.Core.FeaturesAPI.Components
         /// </summary>
         /// <param name="buttonText">The button text</param>
         /// <param name="buttonId">The buttons ID, default is the property name</param>
-        public FButton(string buttonText, string buttonId = null)
+        public FButton(string buttonText, string buttonId = null, Action callback = null, bool refreshSubMenu = false)
         {
             ButtonText = buttonText;
             ButtonID = buttonId;
+            Callback = callback;
+            RefreshSubMenu = refreshSubMenu;
         }
     }
 }

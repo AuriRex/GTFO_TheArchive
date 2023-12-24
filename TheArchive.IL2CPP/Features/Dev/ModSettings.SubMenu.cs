@@ -133,6 +133,12 @@ namespace TheArchive.Features.Dev
                 openMenus.Push(this);
             }
 
+            public virtual void Refresh()
+            {
+                Close();
+                Show();
+            }
+
             public void Close()
             {
                 if (openMenus.Count > 0)

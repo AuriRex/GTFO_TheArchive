@@ -7,6 +7,7 @@ using TheArchive.Core.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
+using static TheArchive.Core.FeaturesAPI.FeatureInternal;
 
 namespace TheArchive.Core.FeaturesAPI
 {
@@ -579,7 +580,25 @@ namespace TheArchive.Core.FeaturesAPI
         {
             if (feature == null || setting == null) return;
 
+            if (setting.Callback != null)
+            {
+                try
+                {
+                    setting.Callback.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    feature.FeatureLogger.Error($"Button {setting.ButtonID} callback threw an exception! {ex}: {ex.Message}");
+                    feature.FeatureLogger.Exception(ex);
+                }
+            }
+
             feature.FeatureInternal.OnButtonPressed(setting);
+
+            if (setting.RefreshSubMenu)
+            {
+
+            }
         }
     }
 }
