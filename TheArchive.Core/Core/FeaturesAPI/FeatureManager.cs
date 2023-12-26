@@ -594,11 +594,6 @@ namespace TheArchive.Core.FeaturesAPI
             }
 
             feature.FeatureInternal.OnButtonPressed(setting);
-
-            if (setting.RefreshSubMenu)
-            {
-
-            }
         }
     }
 }

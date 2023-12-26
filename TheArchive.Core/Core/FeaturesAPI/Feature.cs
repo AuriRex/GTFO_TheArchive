@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -17,7 +18,7 @@ namespace TheArchive.Core.FeaturesAPI
     public abstract class Feature
     {
         private string _identifier = null;
-        public string Identifier => _identifier ??= this.GetType().Name;
+        public string Identifier => _identifier ??= GetType().Name;
         public bool IsHidden => FeatureInternal.HideInModSettings;
         public bool BelongsToGroup => Group != null;
         public bool HasAdditionalSettings => FeatureInternal.HasAdditionalSettings;
@@ -27,6 +28,8 @@ namespace TheArchive.Core.FeaturesAPI
         public void RevokeRestartRequest() => FeatureManager.RevokeRestartRequest(this);
 
         protected void RequestDisable(string reason = null) => FeatureInternal.RequestDisable(reason);
+
+        public ILocalizationService Localization => FeatureInternal.Localization;
 
         /// <summary>
         /// True if this <see cref="Feature"/> is controled via code<br/>

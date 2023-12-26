@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
+using TheArchive.Utilities;
 using UnityEngine;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TheArchive.Core.FeaturesAPI
 {
@@ -48,10 +52,21 @@ namespace TheArchive.Core.FeaturesAPI
 
         internal FeatureSettingsHelper(Feature feature, PropertyInfo settingsProperty)
         {
+            SetupLocalization(feature);
             Feature = feature;
             Property = settingsProperty;
             SettingType = settingsProperty?.GetMethod?.ReturnType ?? throw new ArgumentNullException(nameof(settingsProperty), $"Settings Property must implement a get method!");
-            DisplayName = settingsProperty.GetCustomAttribute<FSDisplayName>()?.DisplayName;
+            DisplayName = null;
+            var displayeName = settingsProperty.GetCustomAttributes<FSDisplayName>();
+            if (displayeName.Any())
+            {
+                uint key = LocalizationCoreService.RegisterAttributeLocalized(displayeName.ToList<Localized>());
+                if (LocalizationCoreService.GetForAttribute(key, out var text))
+                {
+                    DisplayName = $"> {text}";
+                }
+                ArchiveLogger.Msg(ConsoleColor.White, $"LocalizationService: {feature.Identifier}-->{settingsProperty.Name}-->{DisplayName}");
+            }
         }
 
         protected FeatureSettingsHelper() { }
@@ -172,6 +187,11 @@ namespace TheArchive.Core.FeaturesAPI
         }
 
         internal virtual void SetupViaFeatureInstance(object configInstance) => SetupViaInstanceOnHost(Feature, configInstance);
+
+        private void SetupLocalization(Feature feature)
+        {
+            feature.FeatureInternal.Localization.Setup(LocalFiles.LoadFeatureLocalizedText(feature));
+        }
 
         internal virtual void SetupViaInstanceOnHost(object host, object configInstance)
         {

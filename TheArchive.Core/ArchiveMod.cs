@@ -274,7 +274,7 @@ namespace TheArchive
             if (!typeof(IArchiveModule).IsAssignableFrom(moduleType)) throw new ArgumentException($"Type \"{moduleType.Name}\" does not implement {nameof(IArchiveModule)}!");
 
             var module = CreateAndInitModule(moduleType);
-
+            
             OnNewModuleRegistered?.Invoke(module);
 
             if (CurrentRundown != RundownID.RundownUnitialized)

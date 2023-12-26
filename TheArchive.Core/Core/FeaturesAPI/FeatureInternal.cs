@@ -5,6 +5,7 @@ using System.Reflection;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Exceptions;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
@@ -16,6 +17,7 @@ namespace TheArchive.Core.FeaturesAPI
 {
     internal class FeatureInternal
     {
+        internal FeatureLocalizationService Localization { get; private set; } = new();
         internal static GameBuildInfo BuildInfo => Feature.BuildInfo;
         internal bool InternalDisabled { get; private set; } = false;
         internal InternalDisabledReason DisabledReason {get; private set;}
