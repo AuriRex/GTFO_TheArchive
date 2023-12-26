@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using TheArchive.Core;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
@@ -461,9 +463,9 @@ namespace TheArchive.Utilities
             return JsonConvert.DeserializeObject(File.ReadAllText(path), configType, ArchiveMod.JsonSerializerSettings);
         }
 
-        internal static List<LocalizationTextData> LoadFeatureLocalizedText(Feature feature)
+        internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature, bool mainModule)
         {
-            string dir = string.Concat(Path.GetDirectoryName(feature.FeatureInternal.OriginAssembly.Location), "\\Localization");
+            string dir = string.Concat(Path.GetDirectoryName(mainModule ? ArchiveMod.CORE_PATH : feature.FeatureInternal.OriginAssembly.Location), "\\Localization");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -471,11 +473,11 @@ namespace TheArchive.Utilities
             var path = Path.Combine(dir, $"{feature.Identifier}_Localization.json");
             if (!File.Exists(path))
             {
-                List<LocalizationTextData> data = new();
+                var data = FeatureInternal.GenerateLocalization(feature);
                 File.WriteAllText(path, JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings));
                 return data;
             }
-            return (List<LocalizationTextData>)JsonConvert.DeserializeObject(File.ReadAllText(path), typeof(List<LocalizationTextData>), ArchiveMod.JsonSerializerSettings);
+            return JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
         }
 
         internal static object LoadFeatureConfig(string featureIdentifier, Type configType, bool saveIfNonExistent = true)

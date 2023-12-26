@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using BepInEx;
+using System;
 using System.Reflection;
 using TheArchive.Core.Attributes.Feature.Settings;
-using TheArchive.Core.Localization;
-using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core.FeaturesAPI.Settings
@@ -36,38 +34,13 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             Prop = prop;
             Type = prop?.GetMethod?.ReturnType;
 
-            DisplayName = $"> {prop.Name}";
-            Description = prop.Name;
-            HeaderAbove = null;
-
-            string text;
-            var displayeName = prop.GetCustomAttributes<FSDisplayName>();
-            if (displayeName.Any())
-            {
-                uint key = LocalizationCoreService.RegisterAttributeLocalized(displayeName.ToList<Localized>());
-                if (LocalizationCoreService.GetForAttribute(key, out text))
-                {
-                    DisplayName = $"> {text}";
-                }
-            }
-            var description = prop?.GetCustomAttributes<FSDescription>();
-            if (description.Any())
-            {
-                uint key = LocalizationCoreService.RegisterAttributeLocalized(description.ToList<Localized>());
-                if (LocalizationCoreService.GetForAttribute(key, out text))
-                {
-                    Description = text;
-                }
-            }
-            var header = prop?.GetCustomAttributes<FSHeader>();
-            if (header != null && header.Any())
-            {
-                uint key = LocalizationCoreService.RegisterAttributeLocalized(header.ToList<Localized>());
-                if (LocalizationCoreService.GetForAttribute(key, out _))
-                {
-                    HeaderAbove = header.First();
-                }
-            }
+            var text = featureSettingsHelper.Feature.FeatureInternal.Localization.GetProperty($"{prop.DeclaringType.FullName}.{prop.Name}");
+            if (!text.IsNullOrWhiteSpace() && !string.IsNullOrEmpty(text))
+                DisplayName = text;
+            else
+                DisplayName = $"> {prop?.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
+            Description = prop?.GetCustomAttribute<FSDescription>()?.Description;
+            HeaderAbove = prop?.GetCustomAttribute<FSHeader>();
 
             Identifier = prop?.GetCustomAttribute<FSIdentifier>()?.Identifier ?? ($"{prop.PropertyType.FullName}_{prop.Name}");
             RundownHint = prop?.GetCustomAttribute<FSRundownHint>()?.Rundowns ?? RundownFlags.None;

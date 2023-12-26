@@ -1,9 +1,7 @@
-﻿#if false
-namespace TheArchive.Core.Localization
+﻿namespace TheArchive.Core.Localization
 {
     public interface ILocalizedTextSetter
     {
         void SetText(string text);
     }
 }
-#endif

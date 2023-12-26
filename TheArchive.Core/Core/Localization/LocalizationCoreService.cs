@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TheArchive.Utilities;
 
 namespace TheArchive.Core.Localization
 {
@@ -10,26 +11,14 @@ namespace TheArchive.Core.Localization
         {
             CurrentLanguage = language;
 
-            // please restart game, I'm too lazy to implement the following steps
-            /*
             foreach (var service in m_localizationServices)
             {
                 service.SetCurrentLanguage(CurrentLanguage);
             }
 
-            UpdateAllTexts();
-            */
+            //UpdateAllTexts();
         }
 
-        public static uint AllocateKeyForAttribute()
-        {
-            if (s_KeyPlusOneForAttribute < uint.MaxValue)
-            {
-                return s_KeyPlusOneForAttribute++;
-            }
-            return 0;
-        }
-        /*
         public static void UpdateAllTexts()
         {
             foreach (KeyValuePair<ILocalizedTextSetter, uint> keyValuePair in m_textSetters)
@@ -71,25 +60,14 @@ namespace TheArchive.Core.Localization
             textUpdater.UpdateText();
             m_textUpdaters.Add(textUpdater);
         }
-        */
 
         public static string Get(uint id)
         {
-            if (!m_languages.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text))
+            if (!m_texts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text))
             {
                 return string.Empty;
             }
             return text;
-        }
-
-        public static bool GetForAttribute(uint id, out string text)
-        {
-            text = null;
-            if (!m_attributeLanguages.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out text))
-            {
-                return false;
-            }
-            return true;
         }
 
         public static string Format(uint id, params object[] args)
@@ -102,50 +80,16 @@ namespace TheArchive.Core.Localization
             m_localizationServices.Add(service);
         }
 
-        internal static uint RegisterAttributeLocalized(List<Localized> languages)
-        {
-            uint key = AllocateKeyForAttribute();
-            Dictionary<Language, string> dic = new();
-            bool hasEnglish = false;
-            foreach (var language in languages)
-            {
-                if (language.Language == Language.English)
-                {
-                    hasEnglish = true;
-                }
-                language.ID = key;
-                if (!dic.TryAdd(language.Language, language.TranslatedText))
-                {
-                    dic[language.Language] = language.TranslatedText;
-                }
-            }
-            foreach (Language language in Enum.GetValues(typeof(Language)))
-            {
-                if (!dic.ContainsKey(language))
-                {
-                    dic.Add(language, hasEnglish ? dic[Language.English] : dic.First().Value);
-                }
-            }
-            m_attributeLanguages.Add(key, dic);
-            return key;
-        }
+        public static Language CurrentLanguage { get; private set; } = Language.English;
 
-        public static Language CurrentLanguage { get; private set; }
-
-        /*
         private static Dictionary<ILocalizedTextSetter, uint> m_textSetters = new();
 
         private static Dictionary<ILocalizedTextSetter, uint> m_textSettersDynamic = new();
 
         private static HashSet<ILocalizedTextUpdater> m_textUpdaters = new();
-        */
 
         private static HashSet<ILocalizationService> m_localizationServices = new();
 
-        private static Dictionary<uint, Dictionary<Language, string>> m_languages = new();
-
-        private static readonly Dictionary<uint, Dictionary<Language, string>> m_attributeLanguages = new();
-
-        private static uint s_KeyPlusOneForAttribute = 1;
+        private static Dictionary<uint, Dictionary<Language, string>> m_texts = new();
     }
 }

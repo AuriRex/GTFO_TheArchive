@@ -7,14 +7,14 @@ namespace TheArchive.Core.FeaturesAPI
     public static class FeatureGroups
     {
         /// <summary>
-        /// GetString a <see cref="Group"/> for the given string <paramref name="name"/>
+        /// Get a <see cref="Group"/> for the given string <paramref name="name"/>
         /// </summary>
         /// <param name="name">The name of the <see cref="Group"/> to get</param>
         /// <returns>An existing <see cref="Group"/> or <c>null</c> if it doesn't exist</returns>
         public static Group Get(string name) => Group.Get(name);
 
         /// <summary>
-        /// GetString or create a <see cref="Group"/> for the given string <paramref name="name"/>
+        /// Get or create a <see cref="Group"/> for the given string <paramref name="name"/>
         /// </summary>
         /// <param name="name">The name of the <see cref="Group"/> to get or create</param>
         /// <param name="groupModification">An <seealso cref="Action{Group}"/> that can be used to modify <seealso cref="Group"/> data.</param>

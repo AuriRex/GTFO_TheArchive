@@ -2,33 +2,15 @@
 
 namespace TheArchive.Core.Localization
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class Localized : Attribute
     {
-        public string TranslatedText { get; }
-        public Language Language { get; }
-        public FSTarget Target { get; }
-        public uint ID { get; internal set; }
+        public string UntranslatedText { get; }
 
-        public Localized(string text, FSTarget target, Language language)
+        public Localized(string text)
         {
-            Language = language;
-            TranslatedText = text;
-            Target = target;
-            ID = 0;
+            UntranslatedText = text;
         }
-
-        public Localized(uint id, FSTarget target)
-        {
-            Target = target;
-            ID = id;
-        }
-    }
-
-    public enum FSTarget
-    {
-        FSDisplayName,
-        FSDescription,
-        FSHeader
+        public Localized() { }
     }
 }

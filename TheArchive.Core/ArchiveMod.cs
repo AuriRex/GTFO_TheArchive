@@ -36,6 +36,8 @@ namespace TheArchive
 
         public const string MTFO_GUID = "com.dak.MTFO";
 
+        public static readonly string CORE_PATH = Assembly.GetAssembly(typeof(ArchiveMod)).Location;
+
         public static ArchiveSettings Settings { get; private set; } = new ArchiveSettings();
 
         private static JsonSerializerSettings _jsonSerializerSettings = null;

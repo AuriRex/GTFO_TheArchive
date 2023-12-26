@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.Exceptions;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
@@ -112,6 +113,66 @@ namespace TheArchive.Core.FeaturesAPI
 
         public delegate void Update();
         public delegate void LateUpdate();
+
+        private static HashSet<Type> GetNestedClasses(Type type)
+        {
+            var types = new List<Type>
+            {
+                type
+            };
+            foreach (var nestedType in type.GetNestedTypes())
+            {
+                if (!nestedType.IsClass)
+                {
+                    continue;
+                }
+                types.AddRange(GetNestedClasses(nestedType));
+            }
+            return types.ToHashSet();
+        }
+
+        internal static FeatureLocalizationData GenerateLocalization(Feature feature)
+        {
+            var parentType = feature.GetType();
+
+            var allproperties = new List<Dictionary<string, string>>();
+
+            foreach (var type in GetNestedClasses(parentType))
+            {
+                var properties = type.GetProperties()
+                    .Where(prop => prop.GetCustomAttributes<Localized>(true).Any())
+                    .ToDictionary(
+                        prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
+                        prop => prop.Name
+                    );
+                allproperties.Add(properties);
+            }
+
+            var dictionary = new Dictionary<string, Dictionary<Language, string>>();
+
+            foreach (var props in allproperties)
+            {
+                foreach (var prop in props)
+                {
+                    var languages = new Dictionary<Language, string>();
+
+                    foreach (Language language in Enum.GetValues(typeof(Language)))
+                    {
+                        languages[language] = null;
+                    }
+
+                    dictionary[prop.Key] = languages;
+                }
+            }
+
+            FeatureLocalizationData data = new()
+            {
+                FeaturePropertyTexts = dictionary,
+                DynamicTexts = new()
+            };
+
+            return data;
+        }
 
         internal void Init(Feature feature)
         {
@@ -263,10 +324,13 @@ namespace TheArchive.Core.FeaturesAPI
                     && (mi.GetParameters()[0].ParameterType == _lgAreaType || mi.GetParameters()[0].ParameterType == typeof(object))
                     && mi.GetParameters()[1].ParameterType == typeof(bool));
 
+
+            feature.FeatureInternal.Localization.Setup(LocalFiles.LoadFeatureLocalizationText(feature, feature.GetType().Namespace.StartsWith("TheArchive")));
+
             foreach (var prop in settingsProps)
             {
-                
-                if((!prop.SetMethod?.IsStatic ?? true) || (!prop.GetMethod?.IsStatic ?? true))
+
+                if ((!prop.SetMethod?.IsStatic ?? true) || (!prop.GetMethod?.IsStatic ?? true))
                 {
                     _FILogger.Warning($"Feature \"{_feature.Identifier}\" has an invalid property \"{prop.Name}\" with a {nameof(FeatureConfig)} attribute! Make sure it's static with both a get and set method!");
                 }

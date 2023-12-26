@@ -8,9 +8,9 @@ namespace TheArchive.Core.Localization
 
         void SetCurrentLanguage(Language language);
 
-        string GetString(uint id);
+        string Get(uint id);
 
-        string FormatString(uint id, params object[] args);
+        string Format(uint id, params object[] args);
 
         /*
         void AddTextSetter(ILocalizedTextSetter textSetter, uint textId);
@@ -23,7 +23,7 @@ namespace TheArchive.Core.Localization
 
     public enum Language
     {
-        English = 1,
+        English,
         French,
         Italian,
         German,

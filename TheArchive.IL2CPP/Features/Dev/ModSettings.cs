@@ -128,6 +128,17 @@ namespace TheArchive.Features.Dev
 #endif
         }
 
+        public static void RegenerateModSettingsPage()
+        {
+            if (MainModSettingsScrollWindow == null)
+            {
+                return;
+            }
+            CM_PageSettings_Setup_Patch.DestroyModSettingsPage();
+            CM_PageSettings_Setup_Patch.SetupMainModSettingsPage();
+            ShowMainModSettingsWindow(0);
+        }
+
         public static void ShowScrollWindow(CM_ScrollWindow window)
         {
             if(window == MainModSettingsScrollWindow)
