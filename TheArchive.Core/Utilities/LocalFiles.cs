@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using TheArchive.Core;
+using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Loader;
 using static TheArchive.Utilities.Utils;
 
@@ -456,6 +459,23 @@ namespace TheArchive.Utilities
 
             fileExists = true;
             return JsonConvert.DeserializeObject(File.ReadAllText(path), configType, ArchiveMod.JsonSerializerSettings);
+        }
+
+        internal static List<LocalizationTextData> LoadFeatureLocalizedText(Feature feature)
+        {
+            string dir = string.Concat(Path.GetDirectoryName(feature.FeatureInternal.OriginAssembly.Location), "Localization");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            var path = Path.Combine(dir, $"{feature.Identifier}_Localization.json");
+            if (!File.Exists(path))
+            {
+                List<LocalizationTextData> data = new();
+                File.WriteAllText(path, JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings));
+                return data;
+            }
+            return (List<LocalizationTextData>)JsonConvert.DeserializeObject(File.ReadAllText(path), typeof(List<LocalizationTextData>), ArchiveMod.JsonSerializerSettings);
         }
 
         internal static object LoadFeatureConfig(string featureIdentifier, Type configType, bool saveIfNonExistent = true)
