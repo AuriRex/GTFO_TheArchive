@@ -1,13 +1,10 @@
-﻿using System;
-using TheArchive.Core.Attributes;
+﻿using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
 using TheArchive.Features.Dev;
-using TheArchive.Utilities;
 
 namespace TheArchive.Features;
 
-// 仍未完全实现
 [HideInModSettings]
 [EnableFeatureByDefault]
 [DisallowInGameToggle]
@@ -18,6 +15,11 @@ public class ModLanguage : Feature
     public override string Description => "Change Language of ModSettings";
 
     public override string Group => FeatureGroups.ArchiveCore;
+
+    public override void Init()
+    {
+        LocalizationCoreService.Init();
+    }
 
     private static Language GameLanguageToModLanguage(Localization.Language gameLanguage)
     {

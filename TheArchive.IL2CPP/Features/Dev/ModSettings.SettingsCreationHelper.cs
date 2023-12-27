@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
 using TMPro;
@@ -299,6 +300,14 @@ namespace TheArchive.Features.Dev
 
             public static void CreateSimpleToggle(string labelText, bool initialState, Action<bool> onPress, SubMenu placeIntoMenu = null, string stateTrue = "<#0F0>[ On ]</color>", string stateFalse = "<#F00>[ Off ]</color>")
             {
+                if (stateTrue == "<#0F0>[ On ]</color>")
+                {
+                    stateTrue = $"<#0F0>[ {LocalizationCoreService.Get(6, "On")} ]</color>";
+                }
+                if (stateFalse == "<#F00>[ Off ]</color>")
+                {
+                    stateFalse = $"<#F00>[ {LocalizationCoreService.Get(7, "Off")} ]</color>";
+                }
                 CreateSettingsItem(labelText, out var cmItem, subMenu: placeIntoMenu);
                 cmItem.ForcePopupLayer(true);
                 SetupToggleButton(cmItem, out var buttonCMItem, out var buttonTmp);
@@ -502,7 +511,7 @@ namespace TheArchive.Features.Dev
                         TheColorPicker.Show(setting);
                     };
 
-                    CreateSimpleButton(GetNameForSetting(setting), "Pick Color", onPress, out cm_settingsItem, placeIntoMenu: subMenu);
+                    CreateSimpleButton(GetNameForSetting(setting), LocalizationCoreService.Get(8, "Pick Color"), onPress, out cm_settingsItem, placeIntoMenu: subMenu);
                 }
 
                 setting.CM_SettingsItem = cm_settingsItem;
@@ -664,13 +673,13 @@ namespace TheArchive.Features.Dev
                     var val = !(bool)setting.GetValue();
                     setting.SetValue(val);
 
-                    toggleButtonText.SetText(val ? "On" : "Off");
+                    toggleButtonText.SetText(val ? LocalizationCoreService.Get(6, "On") : LocalizationCoreService.Get(7, "Off"));
                     var color = val ? GREEN : RED;
                     SharedUtils.ChangeColorCMItem(toggleButton_cm_item, color);
                 });
 
                 var currentValue = (bool)setting.GetValue();
-                toggleButtonText.SetText(currentValue ? "On" : "Off");
+                toggleButtonText.SetText(currentValue ? LocalizationCoreService.Get(6, "On") : LocalizationCoreService.Get(7, "Off"));
                 var col = currentValue ? GREEN : RED;
                 SharedUtils.ChangeColorCMItem(toggleButton_cm_item, col);
 
@@ -786,7 +795,7 @@ namespace TheArchive.Features.Dev
 
                 if (string.IsNullOrWhiteSpace(str))
                 {
-                    return "[None]";
+                    return $"[{LocalizationCoreService.Get(5, "None")}]";
                 }
 
                 if (str.Length > 36)
@@ -1179,12 +1188,12 @@ namespace TheArchive.Features.Dev
             {
                 if (feature.IsAutomated)
                 {
-                    text.SetText("Automated");
+                    text.SetText(LocalizationCoreService.Get(4, "Automated"));
                     SharedUtils.ChangeColorCMItem(buttonItem, DISABLED);
                     return;
                 }
                 bool enabled = (feature.AppliesToThisGameBuild && !feature.RequiresRestart) ? feature.Enabled : FeatureManager.IsEnabledInConfig(feature);
-                text.SetText(enabled ? "Enabled" : "Disabled");
+                text.SetText(enabled ? LocalizationCoreService.Get(1, "Enabled") : LocalizationCoreService.Get(2, "Disabled"));
 
                 SetFeatureItemColor(feature, buttonItem);
 

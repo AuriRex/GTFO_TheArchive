@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using BepInEx;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using TheArchive.Interfaces;
 
 namespace TheArchive.Core.Localization
 {
@@ -58,23 +62,56 @@ namespace TheArchive.Core.Localization
             m_textUpdaters.Add(textUpdater);
         }
 
-        public static string Get(uint id)
+        public static string Get(uint id, string defaultValue = "UNKNOWN ID: {0}")
         {
-            if (!m_texts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text))
+            if (!m_texts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text) || text.IsNullOrWhiteSpace() || string.IsNullOrEmpty(text))
             {
-                return string.Empty;
+                if (defaultValue == "UNKNOWN ID: {0}")
+                {
+                    defaultValue = string.Format(defaultValue, id);
+                }
+                return defaultValue;
             }
             return text;
         }
 
-        public static string Format(uint id, params object[] args)
+        public static string Format(uint id, string defaultValue = "UNKNOWN ID: {0}", params object[] args)
         {
-            return string.Format(Get(id), args);
+            return string.Format(Get(id, defaultValue), args);
         }
 
         internal static void RegisterLocalizationService(ILocalizationService service)
         {
             m_localizationServices.Add(service);
+        }
+
+        public static void Init()
+        {
+            string dir = string.Concat(Path.GetDirectoryName(ArchiveMod.CORE_PATH), "\\Localization");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            var path = Path.Combine(dir, $"{nameof(LocalizationCoreService)}_Localization.json");
+            if (!File.Exists(path))
+            {
+                File.WriteAllText(path, JsonConvert.SerializeObject(new(), ArchiveMod.JsonSerializerSettings));
+                return;
+            }
+            var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+            foreach (var item in data.ExtraTexts)
+            {
+                Dictionary<Language, string> dic = new();
+                foreach (Language lang in Enum.GetValues(typeof(Language)))
+                {
+                    if (!item.Languages.TryGetValue(lang, out var text))
+                    {
+                        text = item.UntranslatedText;
+                    }
+                    dic[lang] = text;
+                }
+                m_texts[item.ID] = dic;
+            }
         }
 
         public static Language CurrentLanguage { get; private set; } = Language.English;

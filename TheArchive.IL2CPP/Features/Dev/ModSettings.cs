@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
@@ -319,7 +320,7 @@ namespace TheArchive.Features.Dev
 
                 ScrollWindowContentElements.Clear();
 
-                var title = "Mod Settings";
+                var title = LocalizationCoreService.Get(3, "Mod Settings");
 
                 var subMenuItemOffset = A_CM_PageSettings_m_subMenuItemOffset.Get(SettingsPageInstance);
 
@@ -390,8 +391,8 @@ namespace TheArchive.Features.Dev
                         groupSubMenu = new SubMenu(groupName);
 
                         var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
-                        CreateSubMenuControls(groupSubMenu, menuEntryLabelText: $"{featuresCount} Feature{(featuresCount == 1 ? string.Empty : "s")} >>");
-
+                        CreateSubMenuControls(groupSubMenu, menuEntryLabelText: LocalizationCoreService.Format(24, "{0} Feature{1} >>", featuresCount, featuresCount == 1 ? string.Empty : "s"));
+                        
                         CreateHeader(groupName, subMenu: groupSubMenu);
                     }
 
@@ -422,7 +423,7 @@ namespace TheArchive.Features.Dev
                 var featureAssembliesSet = features.Select(f => f.GetType().Assembly).ToHashSet();
                 var featureAssemblies = featureAssembliesSet.OrderBy(asm => asm.GetName().Name);
 
-                CreateHeader("Uncategorized", DISABLED);
+                CreateHeader(LocalizationCoreService.Get(25, "Uncategorized"), DISABLED);
 
                 foreach (var featureAsm in featureAssemblies)
                 {
@@ -439,7 +440,7 @@ namespace TheArchive.Features.Dev
                     {
                         otherModSubMenu = new SubMenu(headerTitle);
                         var featuresCount = featuresFromMod.Where(f => !f.IsHidden || DevMode).Count();
-                        CreateSubMenuControls(otherModSubMenu, menuEntryLabelText: $"{featuresCount} Feature{(featuresCount == 1 ? string.Empty : "s")} >>");
+                        CreateSubMenuControls(otherModSubMenu, menuEntryLabelText: LocalizationCoreService.Format(24, "{0} Feature{1} >>", featuresCount, featuresCount == 1 ? string.Empty : "s"));
 
                         CreateHeader(headerTitle, subMenu: otherModSubMenu);
                     }
@@ -454,9 +455,9 @@ namespace TheArchive.Features.Dev
                     otherModSubMenu?.Build();
                 }
 
-                CreateHeader("Info");
+                CreateHeader(LocalizationCoreService.Get(26, "Info"));
 
-                CreateSimpleButton("Open saves folder", "Open", () => {
+                CreateSimpleButton(LocalizationCoreService.Get(27, "Open saves folder"), LocalizationCoreService.Get(28, "Open"), () => {
                     System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
                     {
                         Arguments = System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath),
@@ -469,7 +470,7 @@ namespace TheArchive.Features.Dev
 
                 CreateHeader($"> {System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath)}", WHITE_GRAY, false);
 
-                CreateSimpleButton("Open mod github", "Open in Browser", () => {
+                CreateSimpleButton(LocalizationCoreService.Get(34, "Open mod github"), LocalizationCoreService.Get(35, "Open in Browser"), () => {
                     Application.OpenURL(ArchiveMod.GITHUB_LINK);
                 });
 
@@ -477,16 +478,16 @@ namespace TheArchive.Features.Dev
 
                 if (ArchiveMod.GIT_IS_DIRTY)
                 {
-                    CreateHeader($"Built with uncommitted changes | <color=red>Git is dirty</color>", ORANGE, false);
+                    CreateHeader(LocalizationCoreService.Get(30, "Built with uncommitted changes | <color=red>Git is dirty</color>"), ORANGE, false);
                 }
 
                 if (Feature.DevMode)
                 {
-                    CreateHeader($"Last Commit Hash: {ArchiveMod.GIT_COMMIT_SHORT_HASH}", WHITE_GRAY, false);
-                    CreateHeader($"Last Commit Date: {ArchiveMod.GIT_COMMIT_DATE}", WHITE_GRAY, false);
+                    CreateHeader(LocalizationCoreService.Format(32, "Last Commit Hash: ", ArchiveMod.GIT_COMMIT_SHORT_HASH), WHITE_GRAY, false);
+                    CreateHeader(LocalizationCoreService.Format(33, "Last Commit Date: ", ArchiveMod.GIT_COMMIT_DATE), WHITE_GRAY, false);
                 }
 
-                CreateHeader($"Currently running GTFO <color=orange>{BuildInfo.Rundown}</color>, build <color=orange>{BuildInfo.BuildNumber}</color>", WHITE_GRAY, false);
+                CreateHeader(LocalizationCoreService.Format(31, "Currently running GTFO <color=orange>{0}</color>, build <color=orange>{1}</color>", BuildInfo.Rundown, BuildInfo.BuildNumber), WHITE_GRAY, false);
 
                 AddToAllSettingsWindows(MainModSettingsScrollWindow);
 
