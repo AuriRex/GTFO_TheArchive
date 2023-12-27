@@ -27,10 +27,5 @@ namespace TheArchive.Core.FeaturesAPI.Components
             LabelText = labelText;
             LabelID = labelId;
         }
-
-        public void SetText(string text)
-        {
-            LabelText = text;
-        }
     }
 }
