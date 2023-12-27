@@ -268,7 +268,7 @@
       "ID": 30,
       "Languages": {
         "English": "Built with uncommitted changes | <color=red>Git is dirty</color>",
-        "Chinese": "构建时存在未提交的更改 | <color=red>Git 有未提交的更改</color>"
+        "Chinese": "构建时存在未提交的更改 | <color=red>Git有未提交的更改</color>"
       }
     },
     {
@@ -359,6 +359,141 @@
       "Languages": {
         "English": "Description",
         "Chinese": "描述"
+      }
+    },
+    {
+      "UntranslatedText": "Color Picker",
+      "Description": "ColorPicker",
+      "ID": 41,
+      "Languages": {
+        "English": "Color Picker",
+        "Chinese": "颜色选择器"
+      }
+    },
+    {
+      "UntranslatedText": "Apply Color",
+      "Description": "ColorPicker",
+      "ID": 42,
+      "Languages": {
+        "English": "Apply Color",
+        "Chinese": "应用颜色"
+      }
+    },
+    {
+      "UntranslatedText": "Apply",
+      "Description": "ColorPicker",
+      "ID": 43,
+      "Languages": {
+        "English": "Apply",
+        "Chinese": "应用"
+      }
+    },
+    {
+      "UntranslatedText": "Close Color Picker",
+      "Description": "ColorPicker",
+      "ID": 44,
+      "Languages": {
+        "English": "Close Color Picker",
+        "Chinese": "关闭颜色选择器"
+      }
+    },
+    {
+      "UntranslatedText": "Cancel",
+      "Description": "",
+      "ID": 45,
+      "Languages": {
+        "English": "Cancel",
+        "Chinese": "取消"
+      }
+    },
+    {
+      "UntranslatedText": "Hex Code",
+      "Description": "",
+      "ID": 46,
+      "Languages": {
+        "English": "Hex Code",
+        "Chinese": "十六进制码"
+      }
+    },
+    {
+      "UntranslatedText": "Copy Color Hex Code",
+      "Description": "ColorPicker",
+      "ID": 47,
+      "Languages": {
+        "English": "Copy Color Hex Code",
+        "Chinese": "复制颜色的十六进制码"
+      }
+    },
+    {
+      "UntranslatedText": "Paste Color Hex Code",
+      "Description": "ColorPicker",
+      "ID": 48,
+      "Languages": {
+        "English": "Paste Color Hex Code",
+        "Chinese": "粘贴颜色的十六进制码"
+      }
+    },
+    {
+      "UntranslatedText": "Copy",
+      "Description": "",
+      "ID": 49,
+      "Languages": {
+        "English": "Copy",
+        "Chinese": "复制"
+      }
+    },
+    {
+      "UntranslatedText": "Paste",
+      "Description": "",
+      "ID": 50,
+      "Languages": {
+        "English": "Paste",
+        "Chinese": "粘贴"
+      }
+    },
+    {
+      "UntranslatedText": "Press any Key!",
+      "Description": "",
+      "ID": 51,
+      "Languages": {
+        "English": "Press any Key!",
+        "Chinese": "按下任意按键！"
+      }
+    },
+    {
+      "UntranslatedText": "Hue",
+      "Description": "ColorPicker",
+      "ID": 52,
+      "Languages": {
+        "English": "Hue",
+        "Chinese": "色调"
+      }
+    },
+    {
+      "UntranslatedText": "Saturation",
+      "Description": "ColorPicker",
+      "ID": 53,
+      "Languages": {
+        "English": "Saturation",
+        "Chinese": "饱和度"
+      }
+    },
+    {
+      "UntranslatedText": "Value",
+      "Description": "",
+      "ID": 54,
+      "Languages": {
+        "English": "Value",
+        "Chinese": "值"
+      }
+    },
+    {
+      "UntranslatedText": "Color",
+      "Description": "",
+      "ID": 55,
+      "Languages": {
+        "English": "Color",
+        "Chinese": "颜色"
       }
     }
   ]

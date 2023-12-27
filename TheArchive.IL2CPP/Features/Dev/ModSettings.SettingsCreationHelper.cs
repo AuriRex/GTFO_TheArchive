@@ -501,7 +501,7 @@ namespace TheArchive.Features.Dev
             {
                 CM_SettingsItem cm_settingsItem;
 
-                if(useLegacyColorInputField)
+                if (useLegacyColorInputField)
                 {
                     CreateSettingsItem(GetNameForSetting(setting), out cm_settingsItem, subMenu: subMenu);
                 }
