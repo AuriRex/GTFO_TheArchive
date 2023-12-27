@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using TheArchive.Interfaces;
 using TheArchive.Loader;
 
 namespace TheArchive.Core.Localization
@@ -81,7 +80,7 @@ namespace TheArchive.Core.Localization
             return string.Format(Get(id, defaultValue), args);
         }
 
-        internal static void RegisterLocalizationService(ILocalizationService service)
+        internal static void RegisterLocalizationService(FeatureLocalizationService service)
         {
             m_localizationServices.Add(service);
         }
@@ -121,7 +120,7 @@ namespace TheArchive.Core.Localization
 
         private static HashSet<ILocalizedTextUpdater> m_textUpdaters = new();
 
-        private static HashSet<ILocalizationService> m_localizationServices = new();
+        private static HashSet<FeatureLocalizationService> m_localizationServices = new();
 
         private static Dictionary<uint, Dictionary<Language, string>> m_texts = new();
     }

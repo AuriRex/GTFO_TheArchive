@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace TheArchive.Core.Localization
+﻿namespace TheArchive.Core.Localization
 {
     public interface ILocalizationService
     {
         Language CurrentLanguage { get; }
-
-        void SetCurrentLanguage(Language language);
 
         string Get(uint id);
 
