@@ -126,7 +126,7 @@ namespace TheArchive.Core.FeaturesAPI
             Security.SetLanguage(Language.Chinese, "安全 / 反作弊");
 
             QualityOfLife.SetLanguage(Language.English, "Quality of Life");
-            QualityOfLife.SetLanguage(Language.Chinese, "QualityOfLife");
+            QualityOfLife.SetLanguage(Language.Chinese, "生活质量");
         }
 
         public static Group Accessibility { get; private set; } = Group.GetOrCreate("Accessibility");
