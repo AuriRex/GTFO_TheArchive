@@ -15,7 +15,15 @@ public class LocalizationTextData
 
 public class FeatureLocalizationData
 {
-    public Dictionary<string, Dictionary<Language, string>> FeaturePropertyTexts { get; set; }
+    public Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> FeatureSettingsTexts { get; set; }
 
-    public List<LocalizationTextData> DynamicTexts { get; set; }
+    public List<LocalizationTextData> ExtraTexts { get; set; }
+}
+
+public enum FSType
+{
+    FSDisplayName,
+    FSDescription,
+    FSHeader,
+    FSLabel
 }

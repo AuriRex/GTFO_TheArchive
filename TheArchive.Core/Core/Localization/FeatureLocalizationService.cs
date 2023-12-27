@@ -1,6 +1,8 @@
-﻿using System;
+﻿using BepInEx;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using TheArchive.Utilities;
 
 namespace TheArchive.Core.Localization
 {
@@ -16,21 +18,27 @@ namespace TheArchive.Core.Localization
         public void Setup(FeatureLocalizationData data)
         {
             LocalizationCoreService.RegisterLocalizationService(this);
-            DynamicTexts.Clear();
-            foreach (var item in data.FeaturePropertyTexts)
+            ExtraTexts.Clear();
+            foreach (var property in data.FeatureSettingsTexts)
             {
-                Dictionary<Language, string> dic = new();
-                foreach (Language lang in Enum.GetValues(typeof(Language)))
+                Dictionary<FSType, Dictionary<Language, string>> typedic = new();
+                foreach (var type in property.Value)
                 {
-                    if (!item.Value.TryGetValue(lang, out var text))
+                    Dictionary<Language, string> dic = new();
+                    foreach (Language lang in Enum.GetValues(typeof(Language)))
                     {
-                        text = item.Value.FirstOrDefault().Value;
+                        if (!type.Value.TryGetValue(lang, out var text))
+                        {
+                            text = type.Value.FirstOrDefault().Value;
+                        }
+                        dic[lang] = text;
                     }
-                    dic[lang] = text;
+                    typedic[type.Key] = dic;
                 }
-                PropertyTexts[item.Key] = dic;
+                FeatureSettingsText[property.Key] = typedic;
             }
-            foreach (var item in data.DynamicTexts)
+
+            foreach (var item in data.ExtraTexts)
             {
                 Dictionary<Language, string> dic = new();
                 foreach (Language lang in Enum.GetValues(typeof(Language)))
@@ -41,22 +49,23 @@ namespace TheArchive.Core.Localization
                     }
                     dic[lang] = text;
                 }
-                DynamicTexts[item.ID] = dic;
+                ExtraTexts[item.ID] = dic;
             }
         }
 
-        public string GetProperty(string propID)
+        public bool TryGetFSText(string propID, FSType type, out string text)
         {
-            if (!PropertyTexts.TryGetValue(propID, out var language) || !language.TryGetValue(CurrentLanguage, out var text))
+            if (!FeatureSettingsText.TryGetValue(propID, out var typedic) || !typedic.TryGetValue(type, out var languages) || !languages.TryGetValue(CurrentLanguage, out text) || text.IsNullOrWhiteSpace() || string.IsNullOrEmpty(text))
             {
-                return null;
+                text = null;
+                return false;
             }
-            return text;
+            return true;
         }
 
         public string Get(uint id)
         {
-            if (!DynamicTexts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text))
+            if (!ExtraTexts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text))
             {
                 return string.Empty;
             }
@@ -100,9 +109,9 @@ namespace TheArchive.Core.Localization
         }
         */
 
-        private Dictionary<uint, Dictionary<Language, string>> DynamicTexts { get; } = new();
+        private Dictionary<uint, Dictionary<Language, string>> ExtraTexts { get; set; } = new();
 
-        private Dictionary<string, Dictionary<Language, string>> PropertyTexts { get; } = new();
+        private Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> FeatureSettingsText { get; set; } = new();
 
         /*
         private Dictionary<ILocalizedTextSetter, uint> m_textSetters { get; } = new();

@@ -148,27 +148,30 @@ namespace TheArchive.Core.FeaturesAPI
                 allproperties.Add(properties);
             }
 
-            var dictionary = new Dictionary<string, Dictionary<Language, string>>();
+            var dictionary = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
 
             foreach (var props in allproperties)
             {
                 foreach (var prop in props)
                 {
-                    var languages = new Dictionary<Language, string>();
-
-                    foreach (Language language in Enum.GetValues(typeof(Language)))
+                    Dictionary<FSType, Dictionary<Language, string>> fsdic = new();
+                    foreach (FSType fstype in Enum.GetValues<FSType>())
                     {
-                        languages[language] = null;
+                        var languages = new Dictionary<Language, string>();
+                        foreach (Language language in Enum.GetValues(typeof(Language)))
+                        {
+                            languages[language] = null;
+                        }
+                        fsdic[fstype] = languages;
                     }
-
-                    dictionary[prop.Key] = languages;
+                    dictionary[prop.Key] = fsdic;
                 }
             }
 
             FeatureLocalizationData data = new()
             {
-                FeaturePropertyTexts = dictionary,
-                DynamicTexts = new()
+                FeatureSettingsTexts = dictionary,
+                ExtraTexts = new()
             };
 
             return data;

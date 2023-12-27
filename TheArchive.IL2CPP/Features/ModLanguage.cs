@@ -22,8 +22,6 @@ public class ModLanguage : Feature
             case global::Localization.Language.Chinese_Simplified:
             case global::Localization.Language.Chinese_Traditional:
                 return Language.Chinese;
-            case global::Localization.Language.English:
-                return Language.English;
             case global::Localization.Language.French:
                 return Language.French;
             case global::Localization.Language.Italian:
@@ -42,9 +40,10 @@ public class ModLanguage : Feature
                 return Language.Japanese;
             case global::Localization.Language.Korean:
                 return Language.Korean;
+            case global::Localization.Language.English:
+            default:
+                return Language.English;
         }
-        // what language?
-        return Language.English;
     }
 
     [ArchivePatch(typeof(Localization.GameDataTextLocalizationService), nameof(global::Localization.GameDataTextLocalizationService.SetCurrentLanguage))]

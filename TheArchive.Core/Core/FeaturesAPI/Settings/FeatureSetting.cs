@@ -2,6 +2,7 @@
 using System;
 using System.Reflection;
 using TheArchive.Core.Attributes.Feature.Settings;
+using TheArchive.Core.Localization;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core.FeaturesAPI.Settings
@@ -34,12 +35,14 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             Prop = prop;
             Type = prop?.GetMethod?.ReturnType;
 
-            var text = featureSettingsHelper.Feature.FeatureInternal.Localization.GetProperty($"{prop.DeclaringType.FullName}.{prop.Name}");
-            if (!text.IsNullOrWhiteSpace() && !string.IsNullOrEmpty(text))
-                DisplayName = text;
+            if (featureSettingsHelper.Feature.FeatureInternal.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSDisplayName, out var displayName))
+                DisplayName = $"> {displayName}";
             else
                 DisplayName = $"> {prop?.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
-            Description = prop?.GetCustomAttribute<FSDescription>()?.Description;
+            if (featureSettingsHelper.Feature.FeatureInternal.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSDescription, out var description))
+                Description = description;
+            else
+                Description = prop?.GetCustomAttribute<FSDescription>()?.Description;
             HeaderAbove = prop?.GetCustomAttribute<FSHeader>();
 
             Identifier = prop?.GetCustomAttribute<FSIdentifier>()?.Identifier ?? ($"{prop.PropertyType.FullName}_{prop.Name}");

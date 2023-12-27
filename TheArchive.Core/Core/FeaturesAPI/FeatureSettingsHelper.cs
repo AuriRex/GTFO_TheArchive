@@ -59,8 +59,7 @@ namespace TheArchive.Core.FeaturesAPI
             if (settingsProperty?.GetCustomAttribute<FSDisplayName>(true) != null)
             {
                 string propID = $"{settingsProperty.DeclaringType.FullName}.{settingsProperty.Name}";
-                string text = feature.FeatureInternal.Localization.GetProperty(propID);
-                if (!text.IsNullOrWhiteSpace() && !string.IsNullOrEmpty(text))
+                if (feature.FeatureInternal.Localization.TryGetFSText(propID, FSType.FSDisplayName, out var text))
                 {
                     DisplayName = text;
                     ArchiveLogger.Msg(ConsoleColor.White, $"{propID}, {text}");
