@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using TheArchive.Core.Localization;
 
 namespace TheArchive.Core.FeaturesAPI.Components
 {
-    public class FLabel : ISettingsComponent, ILocalizedTextSetter
+    public class FLabel : ISettingsComponent
     {
         public string LabelText { get; set; }
         internal string LabelID { get; private set; }

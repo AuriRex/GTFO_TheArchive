@@ -62,7 +62,7 @@ namespace TheArchive.Core.FeaturesAPI
         public static GameBuildInfo BuildInfo { get; internal set; }
 
         /// <summary>
-        /// The <see cref="Feature"/>s DisplayName<br/>
+        /// The <see cref="Feature"/>s Name<br/>
         /// used in Mod Settings
         /// </summary>
         public abstract string Name { get; }
