@@ -383,12 +383,12 @@ namespace TheArchive.Features.Dev
 
                     var inlineSettings = group?.InlineSettings ?? false;
 
-                    CreateHeader(groupName);
+                    CreateHeader(group.DisplayName);
 
                     SubMenu groupSubMenu = null;
                     if (!inlineSettings)
                     {
-                        groupSubMenu = new SubMenu(groupName);
+                        groupSubMenu = new SubMenu(group.DisplayName);
 
                         var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
                         CreateSubMenuControls(groupSubMenu, menuEntryLabelText: LocalizationCoreService.Format(24, "{0} Feature{1} >>", featuresCount, featuresCount == 1 ? string.Empty : "s"));

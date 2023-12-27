@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using TheArchive.Interfaces;
+using TheArchive.Loader;
 
 namespace TheArchive.Core.Localization
 {
@@ -87,7 +88,7 @@ namespace TheArchive.Core.Localization
 
         public static void Init()
         {
-            string dir = string.Concat(Path.GetDirectoryName(ArchiveMod.CORE_PATH), "\\Localization");
+            string dir = string.Concat(Path.GetDirectoryName(ArchiveMod.CORE_PATH), $"\\Localization\\{(LoaderWrapper.IsGameIL2CPP() ? "IL2CPP" : "MONO")}\\");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);

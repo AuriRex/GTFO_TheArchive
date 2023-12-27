@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TheArchive.Core.Localization;
 
 namespace TheArchive.Core.FeaturesAPI
 {
     public static class FeatureGroups
     {
+        static FeatureGroups()
+        {
+            SetupLanguage();
+        }
+
         /// <summary>
         /// Get a <see cref="Group"/> for the given string <paramref name="name"/>
         /// </summary>
@@ -35,6 +41,22 @@ namespace TheArchive.Core.FeaturesAPI
             public string Name { get; private set; }
             public bool InlineSettings { get; internal set; }
             public bool IsNewlyCreated { get; private set; } = true;
+            public string DisplayName => _languages.TryGetValue(LocalizationCoreService.CurrentLanguage, out var text) ? text : Name;
+
+            private Dictionary<Language, string> _languages = new();
+
+            public void SetLanguage(Dictionary<Language, string> languages)
+            {
+                foreach (var lang in languages)
+                {
+                    _languages[lang.Key] = lang.Value;
+                }
+            }
+
+            public void SetLanguage(Language language, string text)
+            {
+                _languages[language] = text;
+            }
 
             public static Group GetOrCreate(string name, Action<Group> groupModification = null)
             {
@@ -63,6 +85,48 @@ namespace TheArchive.Core.FeaturesAPI
             }
 
             public static implicit operator string(Group g) => g.Name; 
+        }
+
+        internal static void SetupLanguage()
+        {
+            Accessibility.SetLanguage(Language.English, "Accessibility");
+            Accessibility.SetLanguage(Language.Chinese, "辅助功能");
+
+            ArchiveCore.SetLanguage(Language.English, "Archive Core");
+            ArchiveCore.SetLanguage(Language.Chinese, "核心");
+
+            Audio.SetLanguage(Language.English, "Audio");
+            Audio.SetLanguage(Language.Chinese, "音频");
+
+            Backport.SetLanguage(Language.English, "Backport");
+            Backport.SetLanguage(Language.Chinese, "反向移植");
+
+            Cosmetic.SetLanguage(Language.English, "Cosmetic");
+            Cosmetic.SetLanguage(Language.Chinese, "美化");
+
+            Dev.SetLanguage(Language.English, "Developer");
+            Dev.SetLanguage(Language.Chinese, "开发者");
+
+            Fixes.SetLanguage(Language.English, "Fixes");
+            Fixes.SetLanguage(Language.Chinese, "修复");
+
+            Hud.SetLanguage(Language.English, "HUD / UI");
+            Hud.SetLanguage(Language.Chinese, "界面");
+
+            LocalProgression.SetLanguage(Language.English, "Local Progression");
+            LocalProgression.SetLanguage(Language.Chinese, "本地进度");
+
+            Special.SetLanguage(Language.English, "Misc");
+            Special.SetLanguage(Language.Chinese, "杂项");
+
+            Presence.SetLanguage(Language.English, "Discord / Steam Presence");
+            Presence.SetLanguage(Language.Chinese, "Discord / Steam 在线状态");
+
+            Security.SetLanguage(Language.English, "Security / Anti Cheat");
+            Security.SetLanguage(Language.Chinese, "安全 / 反作弊");
+
+            QualityOfLife.SetLanguage(Language.English, "Quality of Life");
+            QualityOfLife.SetLanguage(Language.Chinese, "QualityOfLife");
         }
 
         public static Group Accessibility { get; private set; } = Group.GetOrCreate("Accessibility");

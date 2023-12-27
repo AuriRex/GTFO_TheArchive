@@ -32,7 +32,6 @@ namespace TheArchive.Core.Localization
                             text = type.Value.FirstOrDefault().Value;
                         }
                         dic[lang] = text;
-                        ArchiveLogger.Msg(ConsoleColor.Yellow, $"{property.Key}, {type.Key}, {lang}, {text}");
                     }
                     typedic[type.Key] = dic;
                 }

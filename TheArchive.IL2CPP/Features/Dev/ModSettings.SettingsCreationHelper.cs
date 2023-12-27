@@ -457,6 +457,11 @@ namespace TheArchive.Features.Dev
             {
                 if (subMenu == null) return;
 
+                if (menuEntryLabelText == "> Settings")
+                {
+                    menuEntryLabelText = LocalizationCoreService.Get(37, "> Settings");
+                }
+
                 using var _ = subMenu.GetPersistentContenAdditionToken();
 
                 CreateSettingsItem(backButtonText, out var outof_sub_cm_settingsItem, RED, subMenu);

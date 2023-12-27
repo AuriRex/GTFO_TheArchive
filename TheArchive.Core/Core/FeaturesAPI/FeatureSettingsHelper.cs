@@ -59,7 +59,6 @@ namespace TheArchive.Core.FeaturesAPI
                 if (feature.FeatureInternal.Localization.TryGetFSText(propID, FSType.FSDisplayName, out var text))
                 {
                     DisplayName = text;
-                    ArchiveLogger.Msg(ConsoleColor.White, $"{propID}, {text}");
                 }
             }
             else
