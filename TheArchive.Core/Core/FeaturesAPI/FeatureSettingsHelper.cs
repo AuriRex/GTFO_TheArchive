@@ -53,6 +53,7 @@ namespace TheArchive.Core.FeaturesAPI
             Feature = feature;
             Property = settingsProperty;
             SettingType = settingsProperty?.GetMethod?.ReturnType ?? throw new ArgumentNullException(nameof(settingsProperty), $"Settings Property must implement a get method!");
+            DisplayName = settingsProperty?.GetCustomAttribute<FSDisplayName>()?.DisplayName;
             if (settingsProperty?.GetCustomAttribute<FSDisplayName>(true) != null)
             {
                 string propID = $"{settingsProperty.DeclaringType.FullName}.{settingsProperty.Name}";
@@ -60,10 +61,6 @@ namespace TheArchive.Core.FeaturesAPI
                 {
                     DisplayName = text;
                 }
-            }
-            else
-            {
-                DisplayName = settingsProperty?.GetCustomAttribute<FSDisplayName>()?.DisplayName;
             }
         }
 
