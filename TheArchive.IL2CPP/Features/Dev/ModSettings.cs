@@ -393,7 +393,7 @@ namespace TheArchive.Features.Dev
                         var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
                         CreateSubMenuControls(groupSubMenu, menuEntryLabelText: LocalizationCoreService.Format(24, "{0} Feature{1} >>", featuresCount, featuresCount == 1 ? string.Empty : "s"));
                         
-                        CreateHeader(groupName, subMenu: groupSubMenu);
+                        CreateHeader(group.DisplayName, subMenu: groupSubMenu);
                     }
 
                     foreach (var feature in featureSet)

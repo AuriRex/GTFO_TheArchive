@@ -10,6 +10,8 @@ using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
 using static TheArchive.Utilities.SColorExtensions;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
+
 #if Unhollower
 using UnhollowerBaseLib.Attributes;
 #endif
@@ -511,7 +513,7 @@ namespace TheArchive.Features.Dev
 
             public DescriptionPanel()
             {
-                _backgroundPanel = CreateScrollWindow("Description");
+                _backgroundPanel = CreateScrollWindow(LocalizationCoreService.Get(17, "Description"));
                 _backgroundPanel.transform.localPosition = _backgroundPanel.transform.localPosition + new Vector3(1050, 0, 0);
 
                 CreateItem("Header Text", ORANGE, _backgroundPanel.transform, out var headerSWC, out var rectTransHeader, out _headerText);

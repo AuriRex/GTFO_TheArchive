@@ -133,7 +133,7 @@
       "ID": 15,
       "Languages": {
         "English": "Search is WIP, Toggling settings here does not visually update the normal buttons currently!",
-        "Chinese": "搜索是半成品，目前在这里切换设置不会在视觉上更新常规按钮。"
+        "Chinese": "搜索是半成品，目前在这里切换设置不会进行按钮的可视化更新。"
       }
     },
     {
@@ -332,6 +332,24 @@
       "Languages": {
         "English": "> Settings",
         "Chinese": "> 设置"
+      }
+    },
+    {
+      "UntranslatedText": "<<< Back <<<",
+      "Description": "",
+      "ID": 38,
+      "Languages": {
+        "English": "<<< Back <<<",
+        "Chinese": "<<< 返回 <<<"
+      }
+    },
+    {
+      "UntranslatedText": "> ENTER <",
+      "Description": "",
+      "ID": 39,
+      "Languages": {
+        "English": "> ENTER <",
+        "Chinese": "> 进入 <"
       }
     }
   ]
