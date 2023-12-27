@@ -406,6 +406,12 @@ namespace TheArchive.Utilities
             }
         }
 
+        public static IEnumerator NextFrame(Action action)
+        {
+            yield return null;
+            action?.Invoke();
+        }
+
         /*
          * Global.RundownIdToLoad
          * 17 = RD#001
