@@ -18,7 +18,7 @@ namespace TheArchive.Features.Accessibility
 {
     public class Nickname : Feature
     {
-        public override string Name => "NickName";
+        public override string Name => "Nickname";
 
         public override string Group => FeatureGroups.Accessibility;
 
