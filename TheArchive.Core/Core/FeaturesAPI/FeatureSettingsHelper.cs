@@ -1,8 +1,6 @@
-﻿using BepInEx;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI.Components;
@@ -13,7 +11,6 @@ using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
 using UnityEngine;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace TheArchive.Core.FeaturesAPI
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI.Components;
 
 namespace TheArchive.Core.FeaturesAPI.Settings
@@ -15,7 +16,16 @@ namespace TheArchive.Core.FeaturesAPI.Settings
 
         public ButtonSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
         {
-
+            var bt = prop.GetCustomAttribute<FSButtonText>();
+            if (bt != null)
+            {
+                FComponent.ButtonText = bt.FButtonText;
+                var propID = $"{prop.DeclaringType.FullName}.{prop.Name}";
+                if (featureSettingsHelper.Feature.FeatureInternal.Localization.TryGetFSText(propID, Localization.FSType.FSButtonText, out var text))
+                {
+                    FComponent.ButtonText = text;
+                }
+            }
         }
     }
 }

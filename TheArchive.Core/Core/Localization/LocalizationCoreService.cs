@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using TheArchive.Utilities;
+﻿using System.Collections.Generic;
 
 namespace TheArchive.Core.Localization
 {

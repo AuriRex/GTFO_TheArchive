@@ -22,7 +22,7 @@ namespace TheArchive.Core.FeaturesAPI.Components
 
         public bool HasCallback => Callback != null;
 
-        internal Action Callback { get; set; }
+        internal Action Callback { get; set; } = null;
 
         public bool RefreshSubMenu { get; set; } = false;
 

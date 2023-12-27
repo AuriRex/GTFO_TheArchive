@@ -1,7 +1,9 @@
-﻿using TheArchive.Core.Attributes;
+﻿using System;
+using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
 using TheArchive.Features.Dev;
+using TheArchive.Utilities;
 
 namespace TheArchive.Features;
 
@@ -14,6 +16,8 @@ public class ModLanguage : Feature
     public override string Name => "Language";
 
     public override string Description => "Change Language of ModSettings";
+
+    public override string Group => FeatureGroups.ArchiveCore;
 
     private static Language GameLanguageToModLanguage(Localization.Language gameLanguage)
     {
@@ -56,6 +60,7 @@ public class ModLanguage : Feature
             {
                 LocalizationCoreService.SetCurrentLanguage(targetLanguage);
 
+                FeatureInternal.RegenerateAllFeatureSettings();
                 ModSettings.RegenerateModSettingsPage();
             }
         }

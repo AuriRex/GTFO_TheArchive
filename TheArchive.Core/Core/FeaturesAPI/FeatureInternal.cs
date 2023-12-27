@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.Exceptions;
+using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
 using TheArchive.Core.Managers;
@@ -37,6 +37,30 @@ namespace TheArchive.Core.FeaturesAPI
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
         internal IArchiveLogger FeatureLoggerInstance { get; private set; }
         internal Assembly OriginAssembly { get; private set; }
+        internal string Name
+        {
+            get
+            {
+                string propID = $"{_feature.GetType().FullName}.Name";
+                if (Localization.TryGetFSText(propID, FSType.FSDisplayName, out var text))
+                {
+                    return text;
+                }
+                return _feature.Name;
+            }
+        }
+        internal string Description
+        {
+            get
+            {
+                string propID = $"{_feature.GetType().FullName}.Description";
+                if (Localization.TryGetFSText(propID, FSType.FSDescription, out var text))
+                {
+                    return text;
+                }
+                return _feature.Description;
+            }
+        }
 
         private string _asmGroupName;
         internal string AsmGroupName
@@ -135,7 +159,7 @@ namespace TheArchive.Core.FeaturesAPI
         {
             var parentType = feature.GetType();
 
-            var allproperties = new List<Dictionary<string, string>>();
+            var allproperties = new List<Dictionary<string, Type>>();
 
             foreach (var type in GetNestedClasses(parentType))
             {
@@ -143,7 +167,7 @@ namespace TheArchive.Core.FeaturesAPI
                     .Where(prop => prop.GetCustomAttributes<Localized>(true).Any())
                     .ToDictionary(
                         prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
-                        prop => prop.Name
+                        prop => prop.PropertyType
                     );
                 allproperties.Add(properties);
             }
@@ -157,6 +181,13 @@ namespace TheArchive.Core.FeaturesAPI
                     Dictionary<FSType, Dictionary<Language, string>> fsdic = new();
                     foreach (FSType fstype in Enum.GetValues<FSType>())
                     {
+                        if (fstype == FSType.FSButtonText)
+                        {
+                            if (prop.Value != typeof(FButton))
+                            {
+                                continue;
+                            }
+                        }
                         var languages = new Dictionary<Language, string>();
                         foreach (Language language in Enum.GetValues(typeof(Language)))
                         {
@@ -175,6 +206,28 @@ namespace TheArchive.Core.FeaturesAPI
             };
 
             return data;
+        }
+
+        internal static void RegenerateAllFeatureSettings()
+        {
+            foreach (var feature in FeatureManager.Instance.RegisteredFeatures)
+            {
+                feature.FeatureInternal._settingsHelpers.Clear();
+                var settingsProps = feature.GetType().GetProperties()
+                    .Where(pi => pi.GetCustomAttribute<FeatureConfig>() != null);
+                foreach (var prop in settingsProps)
+                {
+                    if ((!prop.SetMethod?.IsStatic ?? true) || (!prop.GetMethod?.IsStatic ?? true))
+                    {
+                        _FILogger.Warning($"Feature \"{feature.Identifier}\" has an invalid property \"{prop.Name}\" with a {nameof(FeatureConfig)} attribute! Make sure it's static with both a get and set method!");
+                    }
+                    else
+                    {
+                        feature.FeatureInternal._settingsHelpers.Add(new FeatureSettingsHelper(feature, prop));
+                    }
+                    feature.FeatureInternal.LoadFeatureSettings();
+                }
+            }
         }
 
         internal void Init(Feature feature)

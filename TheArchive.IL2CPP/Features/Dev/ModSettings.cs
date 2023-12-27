@@ -543,12 +543,12 @@ namespace TheArchive.Features.Dev
                     Color? col = null;
                     if (feature.IsHidden)
                     {
-                        featureName = $"[H] {feature.Name}";
+                        featureName = $"[H] {feature.FeatureInternal.Name}";
                         col = DISABLED;
                     }
                     else
                     {
-                        featureName = feature.Name;
+                        featureName = feature.FeatureInternal.Name;
                     }
 
                     if (feature.RequiresRestart)
@@ -607,8 +607,8 @@ namespace TheArchive.Features.Dev
 
                         var descriptionData = new DescriptionPanel.DescriptionPanelData
                         {
-                            Title = feature.Name,
-                            Description = feature.Description,
+                            Title = feature.FeatureInternal.Name,
+                            Description = feature.FeatureInternal.Description,
                             CriticalInfo = feature.FeatureInternal.CriticalInfo,
                             FeatureOrigin = feature.FeatureInternal.AsmGroupName,
                         };

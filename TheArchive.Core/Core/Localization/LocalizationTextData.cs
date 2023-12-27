@@ -25,5 +25,6 @@ public enum FSType
     FSDisplayName,
     FSDescription,
     FSHeader,
-    FSLabel
+    FSLabel,
+    FSButtonText
 }
