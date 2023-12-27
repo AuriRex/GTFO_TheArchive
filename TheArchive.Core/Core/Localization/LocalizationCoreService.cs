@@ -18,7 +18,7 @@ namespace TheArchive.Core.Localization
                 service.SetCurrentLanguage(CurrentLanguage);
             }
 
-            //UpdateAllTexts();
+            UpdateAllTexts();
         }
 
         public static void UpdateAllTexts()
@@ -42,7 +42,7 @@ namespace TheArchive.Core.Localization
         public static void AddTextSetterDynamic(ILocalizedTextSetter textSetter, uint textId)
         {
             textSetter.SetText(Get(textId));
-            m_textSettersDynamic.Add(textSetter, textId);
+            m_textSetters.Add(textSetter, textId);
         }
 
         public static void SetTextSetter(ILocalizedTextSetter textSetter, uint textId)
@@ -54,7 +54,7 @@ namespace TheArchive.Core.Localization
         public static void SetTextSetterDynamic(ILocalizedTextSetter textSetter, uint textId)
         {
             textSetter.SetText(Get(textId));
-            m_textSettersDynamic[textSetter] = textId;
+            m_textSetters[textSetter] = textId;
         }
 
         public static void AddTextUpdater(ILocalizedTextUpdater textUpdater)
@@ -118,8 +118,6 @@ namespace TheArchive.Core.Localization
         public static Language CurrentLanguage { get; private set; } = Language.English;
 
         private static Dictionary<ILocalizedTextSetter, uint> m_textSetters = new();
-
-        private static Dictionary<ILocalizedTextSetter, uint> m_textSettersDynamic = new();
 
         private static HashSet<ILocalizedTextUpdater> m_textUpdaters = new();
 

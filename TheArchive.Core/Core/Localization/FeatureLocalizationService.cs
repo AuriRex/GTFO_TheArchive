@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TheArchive.Utilities;
 
 namespace TheArchive.Core.Localization
 {
@@ -13,6 +12,7 @@ namespace TheArchive.Core.Localization
         public void SetCurrentLanguage(Language language)
         {
             CurrentLanguage = language;
+            UpdateAllTexts();
         }
 
         public void Setup(FeatureLocalizationData data)
@@ -77,7 +77,6 @@ namespace TheArchive.Core.Localization
             return string.Format(Get(id), args);
         }
 
-        /*
         public void AddTextSetter(ILocalizedTextSetter textSetter, uint textId)
         {
             textSetter.SetText(Get(textId));
@@ -107,16 +106,13 @@ namespace TheArchive.Core.Localization
                 localizedTextUpdater.UpdateText();
             }
         }
-        */
 
         private Dictionary<uint, Dictionary<Language, string>> ExtraTexts { get; set; } = new();
 
         private Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> FeatureSettingsText { get; set; } = new();
 
-        /*
         private Dictionary<ILocalizedTextSetter, uint> m_textSetters { get; } = new();
 
         private HashSet<ILocalizedTextUpdater> m_textUpdaters { get; } = new();
-        */
     }
 }
