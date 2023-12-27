@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.Exceptions;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
@@ -165,7 +166,8 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 var properties = type.GetProperties()
                     .Where(prop => prop.GetCustomAttributes<Localized>(true).Any()
-                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && (prop.Name == "Name" || prop.Name == "Description")))
+                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && (prop.Name == "Name" || prop.Name == "Description"))
+                    || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton))
                     .ToDictionary(
                         prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
                         prop => prop
@@ -189,18 +191,41 @@ namespace TheArchive.Core.FeaturesAPI
                                 continue;
                             }
                         }
-                        if (fstype == FSType.FSButtonText)
+                        if (prop.Value.PropertyType == typeof(FButton))
                         {
-                            if (prop.Value.PropertyType != typeof(FButton))
+                            if (fstype != FSType.FSButtonText)
                             {
                                 continue;
                             }
                         }
-                        var languages = new Dictionary<Language, string>();
-                        foreach (Language language in Enum.GetValues(typeof(Language)))
+                        else if (fstype == FSType.FSButtonText)
                         {
-                            languages[language] = null;
+                            continue;
                         }
+                        if (prop.Value.PropertyType == typeof(FLabel))
+                        {
+                            if (fstype != FSType.FSLabelText)
+                            {
+                                continue;
+                            }
+                        }
+                        else if (fstype == FSType.FSLabelText)
+                        {
+                            continue;
+                        }
+                        if (fstype == FSType.FSHeader)
+                        {
+                            if (prop.Value.GetCustomAttribute<FSHeader>() == null)
+                            {
+                                continue;
+                            }
+                        }
+
+                        var languages = new Dictionary<Language, string>();
+
+                        foreach (Language language in Enum.GetValues(typeof(Language)))
+                            languages[language] = null;
+
                         fsdic[fstype] = languages;
                     }
                     dictionary[prop.Key] = fsdic;
