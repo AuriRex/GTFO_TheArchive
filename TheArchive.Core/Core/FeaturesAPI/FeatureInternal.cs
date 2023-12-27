@@ -191,7 +191,7 @@ namespace TheArchive.Core.FeaturesAPI
                         }
                         if (fstype == FSType.FSButtonText)
                         {
-                            if (prop.Value.DeclaringType != typeof(FButton))
+                            if (prop.Value.PropertyType != typeof(FButton))
                             {
                                 continue;
                             }
