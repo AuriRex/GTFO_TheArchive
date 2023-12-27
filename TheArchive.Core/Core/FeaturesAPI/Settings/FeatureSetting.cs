@@ -44,6 +44,8 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             else
                 Description = prop?.GetCustomAttribute<FSDescription>()?.Description;
             HeaderAbove = prop?.GetCustomAttribute<FSHeader>();
+            if (HeaderAbove != null && featureSettingsHelper.Feature.FeatureInternal.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSHeader, out var headerText))
+                HeaderAbove = new(headerText, HeaderAbove.Color, HeaderAbove.Bold);
 
             Identifier = prop?.GetCustomAttribute<FSIdentifier>()?.Identifier ?? ($"{prop.PropertyType.FullName}_{prop.Name}");
             RundownHint = prop?.GetCustomAttribute<FSRundownHint>()?.Rundowns ?? RundownFlags.None;
