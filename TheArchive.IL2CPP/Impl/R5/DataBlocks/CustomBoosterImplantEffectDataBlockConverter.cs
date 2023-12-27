@@ -37,7 +37,7 @@ namespace TheArchive.Impl.R5.DataBlocks
 
             customBlock.BoosterEffectCategory = (int)baseBlock.BoosterEffectCategory;
 
-            customBlock.Description = Description.GetValue(baseBlock).ToString(); // baseBlock.Description;
+            customBlock.Description = Description.GetValue(baseBlock).ToString(); // baseBlock.DisplayDescription;
             customBlock.DescriptionNegative = DescriptionNegative.GetValue(baseBlock).ToString(); // baseBlock.DescriptionNegative;
 
             customBlock.Effect = (int)Effect.GetValue(baseBlock); //baseBlock.Effect;

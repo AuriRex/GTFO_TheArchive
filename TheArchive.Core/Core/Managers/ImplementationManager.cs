@@ -187,7 +187,7 @@ namespace TheArchive.Core.Managers
         {
             var getter = GetOrFindImplementation<IBaseGameConverter<T>>();
 
-            var blockType = getter.GetBaseGameType(); //DataBlockManager.DataBlockTypes.First(t => t.Name == datablockTypeName);
+            var blockType = getter.GetBaseGameType(); //DataBlockManager.DataBlockTypes.First(t => t.DisplayName == datablockTypeName);
 
             //GetAllBlocks();
             var allBlocks = GameTypeByIdentifier("GameDataBlockBase<>").MakeGenericType(new Type[] { blockType }).GetMethod("GetAllBlocks").Invoke(null, new object[0]);

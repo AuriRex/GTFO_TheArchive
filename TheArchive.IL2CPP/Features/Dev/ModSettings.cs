@@ -544,12 +544,12 @@ namespace TheArchive.Features.Dev
                     Color? col = null;
                     if (feature.IsHidden)
                     {
-                        featureName = $"[H] {feature.FeatureInternal.Name}";
+                        featureName = $"[H] {feature.FeatureInternal.DisplayName}";
                         col = DISABLED;
                     }
                     else
                     {
-                        featureName = feature.FeatureInternal.Name;
+                        featureName = feature.FeatureInternal.DisplayName;
                     }
 
                     if (feature.RequiresRestart)
@@ -608,8 +608,8 @@ namespace TheArchive.Features.Dev
 
                         var descriptionData = new DescriptionPanel.DescriptionPanelData
                         {
-                            Title = feature.FeatureInternal.Name,
-                            Description = feature.FeatureInternal.Description,
+                            Title = feature.FeatureInternal.DisplayName,
+                            Description = feature.FeatureInternal.DisplayDescription,
                             CriticalInfo = feature.FeatureInternal.CriticalInfo,
                             FeatureOrigin = feature.FeatureInternal.AsmGroupName,
                         };

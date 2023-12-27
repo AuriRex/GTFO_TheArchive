@@ -8,7 +8,6 @@ using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
-using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -19,10 +18,8 @@ namespace TheArchive.Features.Accessibility
 {
     public class Nickname : Feature
     {
-        [Localized]
         public override string Name => "NickName";
         public override string Group => FeatureGroups.Accessibility;
-        [Localized]
         public override string Description => "Nickname related settings.\n\nChange your in game nickname, handy color picker included!";
 
         public class NicknameSettings

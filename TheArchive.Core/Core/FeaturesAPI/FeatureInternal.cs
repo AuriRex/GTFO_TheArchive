@@ -37,7 +37,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
         internal IArchiveLogger FeatureLoggerInstance { get; private set; }
         internal Assembly OriginAssembly { get; private set; }
-        internal string Name
+        internal string DisplayName
         {
             get
             {
@@ -49,7 +49,7 @@ namespace TheArchive.Core.FeaturesAPI
                 return _feature.Name;
             }
         }
-        internal string Description
+        internal string DisplayDescription
         {
             get
             {
@@ -159,15 +159,16 @@ namespace TheArchive.Core.FeaturesAPI
         {
             var parentType = feature.GetType();
 
-            var allproperties = new List<Dictionary<string, Type>>();
+            var allproperties = new List<Dictionary<string, PropertyInfo>>();
 
             foreach (var type in GetNestedClasses(parentType))
             {
                 var properties = type.GetProperties()
-                    .Where(prop => prop.GetCustomAttributes<Localized>(true).Any())
+                    .Where(prop => prop.GetCustomAttributes<Localized>(true).Any()
+                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && (prop.Name == "Name" || prop.Name == "Description")))
                     .ToDictionary(
                         prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
-                        prop => prop.PropertyType
+                        prop => prop
                     );
                 allproperties.Add(properties);
             }
@@ -181,9 +182,16 @@ namespace TheArchive.Core.FeaturesAPI
                     Dictionary<FSType, Dictionary<Language, string>> fsdic = new();
                     foreach (FSType fstype in Enum.GetValues<FSType>())
                     {
+                        if (typeof(Feature).IsAssignableFrom(prop.Value.DeclaringType) && (prop.Value.Name == "Name" || prop.Value.Name == "Description"))
+                        {
+                            if (fstype != FSType.FSDisplayName && fstype != FSType.FSDescription)
+                            {
+                                continue;
+                            }
+                        }
                         if (fstype == FSType.FSButtonText)
                         {
-                            if (prop.Value != typeof(FButton))
+                            if (prop.Value.DeclaringType != typeof(FButton))
                             {
                                 continue;
                             }
