@@ -34,7 +34,7 @@ namespace TheArchive.Impl.R5.DataBlocks
             customBlock.Conditions = baseBlock.Conditions.ToSystemList();
             customBlock.Deprecated = baseBlock.Deprecated;
 
-            customBlock.Description = Description.GetValue(baseBlock).ToString(); // baseBlock.DisplayDescription;
+            customBlock.Description = Description.GetValue(baseBlock).ToString(); // baseBlock.Description;
 
             customBlock.DropWeight = baseBlock.DropWeight;
             customBlock.DurationRange = baseBlock.DurationRange;
