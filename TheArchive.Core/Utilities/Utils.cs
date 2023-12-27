@@ -1,5 +1,4 @@
-﻿using Mono.Cecil;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -405,6 +404,12 @@ public static class Utils
             Value = value;
             Type = value.GetType();
         }
+    }
+
+    public static IEnumerator NextFrame(Action action)
+    {
+        yield return null;
+        action?.Invoke();
     }
 
     /*
