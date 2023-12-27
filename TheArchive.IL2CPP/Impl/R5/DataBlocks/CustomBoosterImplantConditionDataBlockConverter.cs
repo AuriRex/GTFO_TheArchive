@@ -33,7 +33,7 @@ namespace TheArchive.Impl.R5.DataBlocks
 
             customBlock.Condition = (int)baseBlock.Condition;
 
-            customBlock.Description = Description.GetValue(baseBlock).ToString(); // baseBlock.DisplayDescription;
+            customBlock.Description = Description.GetValue(baseBlock).ToString(); // baseBlock.Description;
             customBlock.PublicName = PublicName.GetValue(baseBlock).ToString(); // baseBlock.PublicName;
             customBlock.PublicShortName = PublicShortName.GetValue(baseBlock).ToString(); // baseBlock.PublicShortName;
 
