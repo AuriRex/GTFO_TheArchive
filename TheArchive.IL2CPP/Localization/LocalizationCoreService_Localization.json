@@ -351,6 +351,15 @@
         "English": "> ENTER <",
         "Chinese": "> 进入 <"
       }
+    },
+    {
+      "UntranslatedText": "Description",
+      "Description": "DescriptionPanel",
+      "ID": 40,
+      "Languages": {
+        "English": "Description",
+        "Chinese": "描述"
+      }
     }
   ]
 }
