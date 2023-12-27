@@ -137,7 +137,6 @@ namespace TheArchive.Features.Dev
             }
             CM_PageSettings_Setup_Patch.DestroyModSettingsPage();
             CM_PageSettings_Setup_Patch.SetupMainModSettingsPage();
-            ShowMainModSettingsWindow(0);
         }
 
         public static void ShowScrollWindow(CM_ScrollWindow window)
