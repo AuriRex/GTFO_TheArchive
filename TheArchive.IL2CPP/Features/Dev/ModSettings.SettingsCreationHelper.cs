@@ -457,9 +457,12 @@ namespace TheArchive.Features.Dev
             {
                 if (subMenu == null) return;
 
-                menuEntryLabelText = LocalizationCoreService.Get(37, menuEntryLabelText);
-                backButtonText = LocalizationCoreService.Get(38, backButtonText);
-                enterButtonText = LocalizationCoreService.Get(39, enterButtonText);
+                if (menuEntryLabelText == "> Settings")
+                    menuEntryLabelText = LocalizationCoreService.Get(37, menuEntryLabelText);
+                if (backButtonText == "<<< Back <<<")
+                    backButtonText = LocalizationCoreService.Get(38, backButtonText);
+                if (enterButtonText == "> ENTER <")
+                    enterButtonText = LocalizationCoreService.Get(39, enterButtonText);
 
                 using var _ = subMenu.GetPersistentContenAdditionToken();
 
