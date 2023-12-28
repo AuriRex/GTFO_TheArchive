@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI.Components;
 
 namespace TheArchive.Core.FeaturesAPI.Settings

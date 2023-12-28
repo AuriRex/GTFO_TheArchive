@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using TheArchive.Core.Localization;
 
 namespace TheArchive.Core.FeaturesAPI.Settings
 {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BepInEx;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -580,6 +581,13 @@ namespace TheArchive.Utilities
             }
             methodInfo = null;
             return false;
+        }
+
+        public static bool IsNullOrWhiteSpaceOrEmpty(this string value)
+        {
+            if (string.IsNullOrEmpty(value) || value.IsNullOrWhiteSpace())
+                return false;
+            return true;
         }
     }
 }

@@ -268,7 +268,7 @@
       "ID": 30,
       "Languages": {
         "English": "Built with uncommitted changes | <color=red>Git is dirty</color>",
-        "Chinese": "构建时存在未提交的更改 | <color=red>Git有未提交的更改</color>"
+        "Chinese": "构建时存在未提交的更改 | <color=red>Git 有未提交的更改</color>"
       }
     },
     {

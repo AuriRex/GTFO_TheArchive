@@ -162,12 +162,23 @@ namespace TheArchive.Core.FeaturesAPI
 
             var allproperties = new List<Dictionary<string, PropertyInfo>>();
 
+            var enumTypes = new HashSet<Type>();
+
             foreach (var type in GetNestedClasses(parentType))
             {
+                foreach (var nestedType in type.GetNestedTypes())
+                {
+                    if (nestedType.IsEnum)
+                    {
+                        enumTypes.Add(nestedType);
+                    }
+                }
+
                 var properties = type.GetProperties()
-                    .Where(prop => prop.GetCustomAttributes<Localized>(true).Any()
+                    .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
+                    && (prop.GetCustomAttributes<Localized>(true).Any()
                     || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && (prop.Name == "Name" || prop.Name == "Description"))
-                    || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton))
+                    || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton)))
                     .ToDictionary(
                         prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
                         prop => prop
@@ -175,50 +186,45 @@ namespace TheArchive.Core.FeaturesAPI
                 allproperties.Add(properties);
             }
 
-            var dictionary = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
+            var FSTexts = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
 
             foreach (var props in allproperties)
             {
-                foreach (var prop in props)
+                foreach (var propPair in props)
                 {
                     Dictionary<FSType, Dictionary<Language, string>> fsdic = new();
+                    var propType = propPair.Value.PropertyType;
+                    var prop = propPair.Value;
                     foreach (FSType fstype in Enum.GetValues<FSType>())
                     {
-                        if (typeof(Feature).IsAssignableFrom(prop.Value.DeclaringType) && (prop.Value.Name == "Name" || prop.Value.Name == "Description"))
+                        if (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && (prop.Name == "Name" || prop.Name == "Description"))
                         {
                             if (fstype != FSType.FSDisplayName && fstype != FSType.FSDescription)
                             {
                                 continue;
                             }
                         }
-                        if (prop.Value.PropertyType == typeof(FButton))
+                        switch (fstype)
                         {
-                            if (fstype != FSType.FSButtonText)
-                            {
-                                continue;
-                            }
-                        }
-                        else if (fstype == FSType.FSButtonText)
-                        {
-                            continue;
-                        }
-                        if (prop.Value.PropertyType == typeof(FLabel))
-                        {
-                            if (fstype != FSType.FSLabelText)
-                            {
-                                continue;
-                            }
-                        }
-                        else if (fstype == FSType.FSLabelText)
-                        {
-                            continue;
-                        }
-                        if (fstype == FSType.FSHeader)
-                        {
-                            if (prop.Value.GetCustomAttribute<FSHeader>() == null)
-                            {
-                                continue;
-                            }
+                            case FSType.FSDisplayName:
+                            case FSType.FSDescription:
+                                if (propType == typeof(FLabel))
+                                    continue;
+                                break;
+                            case FSType.FSButtonText:
+                                if (propType != typeof(FButton))
+                                    continue;
+                                break;
+                            case FSType.FSLabelText:
+                                if (propType != typeof(FLabel))
+                                    continue;
+                                break;
+                            case FSType.FSHeader:
+                                if (prop.GetCustomAttribute<FSHeader>() == null)
+                                    continue;
+                                break;
+                            default:
+                                break;
                         }
 
                         var languages = new Dictionary<Language, string>();
@@ -228,13 +234,32 @@ namespace TheArchive.Core.FeaturesAPI
 
                         fsdic[fstype] = languages;
                     }
-                    dictionary[prop.Key] = fsdic;
+                    FSTexts[propPair.Key] = fsdic;
                 }
+            }
+
+            var FSETexts = new Dictionary<string, Dictionary<Language, Dictionary<string, string>>>();
+
+            foreach (var type in enumTypes)
+            {
+                var names = Enum.GetNames(type);
+                var enumdic = new Dictionary<Language, Dictionary<string, string>>();
+                foreach (var language in Enum.GetValues<Language>())
+                {
+                    var languagedic = new Dictionary<string, string>();
+                    foreach (var name in names)
+                    {
+                        languagedic[name] = null;
+                    }
+                    enumdic[language] = languagedic;
+                }
+                FSETexts[type.FullName] = enumdic;
             }
 
             FeatureLocalizationData data = new()
             {
-                FeatureSettingsTexts = dictionary,
+                FeatureSettingsTexts = FSTexts,
+                FeatureSettingsEnumTexts = FSETexts,
                 ExtraTexts = new()
             };
 

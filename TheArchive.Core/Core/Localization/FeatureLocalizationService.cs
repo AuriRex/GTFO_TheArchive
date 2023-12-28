@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TheArchive.Utilities;
 
 namespace TheArchive.Core.Localization
 {
@@ -35,7 +36,7 @@ namespace TheArchive.Core.Localization
                     }
                     typedic[type.Key] = dic;
                 }
-                FeatureSettingsText[property.Key] = typedic;
+                FeatureSettingsTexts[property.Key] = typedic;
             }
 
             foreach (var item in data.ExtraTexts)
@@ -51,13 +52,31 @@ namespace TheArchive.Core.Localization
                 }
                 ExtraTexts[item.ID] = dic;
             }
+
+            FeatureSettingsEnumTexts = data.FeatureSettingsEnumTexts;
         }
 
         public bool TryGetFSText(string propID, FSType type, out string text)
         {
-            if (!FeatureSettingsText.TryGetValue(propID, out var typedic) || !typedic.TryGetValue(type, out var languages) || !languages.TryGetValue(CurrentLanguage, out text) || text.IsNullOrWhiteSpace() || string.IsNullOrEmpty(text))
+            if (!FeatureSettingsTexts.TryGetValue(propID, out var typedic) || !typedic.TryGetValue(type, out var languages) || !languages.TryGetValue(CurrentLanguage, out text) || text.IsNullOrWhiteSpace() || string.IsNullOrEmpty(text))
             {
                 text = null;
+                return false;
+            }
+            return true;
+        }
+
+        public bool TryGetFSEnumText(Type enumType, out Dictionary<string, string> enumTexts)
+        {
+            if (enumType == null)
+            {
+                enumTexts = null;
+                return false;
+            }
+            var values = Enum.GetNames(enumType);
+            if (!FeatureSettingsEnumTexts.TryGetValue(enumType.FullName, out var languages) || !languages.TryGetValue(CurrentLanguage, out enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => !p.Value.IsNullOrWhiteSpaceOrEmpty()))
+            {
+                enumTexts = null;
                 return false;
             }
             return true;
@@ -109,7 +128,9 @@ namespace TheArchive.Core.Localization
 
         private Dictionary<uint, Dictionary<Language, string>> ExtraTexts { get; set; } = new();
 
-        private Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> FeatureSettingsText { get; set; } = new();
+        private Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> FeatureSettingsTexts { get; set; } = new();
+
+        private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> FeatureSettingsEnumTexts { get; set; } = new();
 
         private Dictionary<ILocalizedTextSetter, uint> m_textSetters { get; } = new();
 
