@@ -2,19 +2,31 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using TheArchive.Interfaces;
 using TheArchive.Loader;
 
 namespace TheArchive.Core.Localization
 {
     internal class LocalizationCoreService
     {
+        private static IArchiveLogger _logger;
+        private static IArchiveLogger Logger => _logger ??= Loader.LoaderWrapper.CreateLoggerInstance(nameof(LocalizationCoreService), ConsoleColor.Yellow);
+
         public static void SetCurrentLanguage(Language language)
         {
             CurrentLanguage = language;
 
             foreach (var service in m_localizationServices)
             {
-                service.SetCurrentLanguage(CurrentLanguage);
+                try
+                {
+                    service.SetCurrentLanguage(CurrentLanguage);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Exception has been thrown in Feature {service.Feature.Name}-->SetCurrentLanguage. {ex}: {ex.Message}");
+                    Logger.Exception(ex);
+                }
             }
 
             UpdateAllTexts();

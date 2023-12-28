@@ -439,7 +439,7 @@ namespace TheArchive.Core.FeaturesAPI
                     && mi.GetParameters()[1].ParameterType == typeof(bool));
 
 
-            feature.FeatureInternal.Localization.Setup(LocalFiles.LoadFeatureLocalizationText(feature, feature.GetType().Namespace.StartsWith("TheArchive")));
+            feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature, feature.GetType().Namespace.StartsWith("TheArchive")));
 
             foreach (var prop in settingsProps)
             {

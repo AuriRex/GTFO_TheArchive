@@ -2,12 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 
 namespace TheArchive.Core.Localization
 {
     internal class FeatureLocalizationService : ILocalizationService
     {
+        public Feature Feature { get; internal set; }
+
         public Language CurrentLanguage { get; private set; }
 
         public void SetCurrentLanguage(Language language)
@@ -16,8 +19,9 @@ namespace TheArchive.Core.Localization
             UpdateAllTexts();
         }
 
-        public void Setup(FeatureLocalizationData data)
+        public void Setup(Feature feature, FeatureLocalizationData data)
         {
+            Feature = feature;
             LocalizationCoreService.RegisterLocalizationService(this);
             ExtraTexts.Clear();
             foreach (var property in data.FeatureSettingsTexts)
@@ -86,7 +90,7 @@ namespace TheArchive.Core.Localization
         {
             if (!ExtraTexts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text))
             {
-                return string.Empty;
+                return $"UNKNOWN ID {id}";
             }
             return text;
         }
