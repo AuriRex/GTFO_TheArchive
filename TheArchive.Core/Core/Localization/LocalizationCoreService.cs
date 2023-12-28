@@ -92,7 +92,7 @@ namespace TheArchive.Core.Localization
             return string.Format(Get(id, defaultValue), args);
         }
 
-        internal static void RegisterLocalizationService(FeatureLocalizationService service)
+        public static void RegisterLocalizationService(FeatureLocalizationService service)
         {
             m_localizationServices.Add(service);
         }
