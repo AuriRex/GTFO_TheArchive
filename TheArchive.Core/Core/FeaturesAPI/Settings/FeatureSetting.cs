@@ -12,7 +12,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public FeatureSettingsHelper Helper { get; }
         public PropertyInfo Prop { get; }
         public RundownFlags RundownHint { get; }
-        public string DisplayName { get; internal set; }
+        public string DisplayName { get; set; }
         public string Description { get; }
         public string Identifier { get; }
         public bool Readonly { get; }
