@@ -358,7 +358,7 @@ namespace TheArchive.Features.Dev
 
                 if (DevMode)
                 {
-                    CreateHeader("Dev Mode enabled - Hidden Features shown!", DISABLED);
+                    CreateHeader(LocalizationCoreService.Get(56 ,"Dev Mode enabled - Hidden Features shown!"), DISABLED);
                 }
 
                 TheSearchMenu = new SearchMainPage();
@@ -446,8 +446,8 @@ namespace TheArchive.Features.Dev
 
                 if (Feature.DevMode)
                 {
-                    CreateHeader(LocalizationCoreService.Format(32, "Last Commit Hash: ", ArchiveMod.GIT_COMMIT_SHORT_HASH), WHITE_GRAY, false);
-                    CreateHeader(LocalizationCoreService.Format(33, "Last Commit Date: ", ArchiveMod.GIT_COMMIT_DATE), WHITE_GRAY, false);
+                    CreateHeader(LocalizationCoreService.Format(32, "Last Commit Hash: {0}", ArchiveMod.GIT_COMMIT_SHORT_HASH), WHITE_GRAY, false);
+                    CreateHeader(LocalizationCoreService.Format(33, "Last Commit Date: {0}", ArchiveMod.GIT_COMMIT_DATE), WHITE_GRAY, false);
                 }
 
                 CreateHeader(LocalizationCoreService.Format(31, "Currently running GTFO <color=orange>{0}</color>, build <color=orange>{1}</color>", BuildInfo.Rundown, BuildInfo.BuildNumber), WHITE_GRAY, false);
