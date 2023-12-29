@@ -281,21 +281,21 @@
       }
     },
     {
-      "UntranslatedText": "Last Commit Hash: ",
+      "UntranslatedText": "Last Commit Hash: {0}",
       "Description": "",
       "ID": 32,
       "Languages": {
-        "English": "Last Commit Hash: ",
-        "Chinese": "最后一次提交 Hash："
+        "English": "Last Commit Hash: {0}",
+        "Chinese": "最后一次提交 Hash：{0}"
       }
     },
     {
-      "UntranslatedText": "Last Commit Date: ",
+      "UntranslatedText": "Last Commit Date: {0}",
       "Description": "",
       "ID": 33,
       "Languages": {
-        "English": "Last Commit Date: ",
-        "Chinese": "最后一次提交时间："
+        "English": "Last Commit Date: {0}",
+        "Chinese": "最后一次提交时间：{0}"
       }
     },
     {
@@ -494,6 +494,15 @@
       "Languages": {
         "English": "Color",
         "Chinese": "颜色"
+      }
+    },
+    {
+      "UntranslatedText": "Dev Mode enabled - Hidden Features shown!",
+      "Description": "",
+      "ID": 56,
+      "Languages": {
+        "English": "Dev Mode enabled - Hidden Features shown!",
+        "Chinese": "开发者模式已启用 - 显示隐藏特性！"
       }
     }
   ]
