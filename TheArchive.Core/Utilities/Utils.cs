@@ -586,8 +586,8 @@ namespace TheArchive.Utilities
         public static bool IsNullOrWhiteSpaceOrEmpty(this string value)
         {
             if (string.IsNullOrEmpty(value) || value.IsNullOrWhiteSpace())
-                return false;
-            return true;
+                return true;
+            return false;
         }
     }
 }
