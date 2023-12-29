@@ -11,7 +11,7 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "R1 connect to 19087 games";
 
-        public override string Group => FeatureGroups.Special;
+        public override FeatureGroup Group => FeatureGroups.Special;
 
         public override string Description => $"Makes you able to join players who are playing on R1 build <color=orange>{RevisionOverride}</color> even though you're on <color=orange>{kOriginalRevision}</color>.";
 

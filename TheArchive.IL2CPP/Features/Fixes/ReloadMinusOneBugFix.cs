@@ -13,7 +13,7 @@ namespace TheArchive.Features.Fixes
     {
         public override string Name => "99% Reload Fix";
 
-        public override string Group => FeatureGroups.Fixes;
+        public override FeatureGroup Group => FeatureGroups.Fixes;
 
         public override string Description => "Fixes the bug that leaves you with one bullet short in the mag.\n(Currently only for IL2CPP builds)";
 

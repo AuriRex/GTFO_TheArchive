@@ -11,7 +11,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Combat Indicator";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Displays the current drama state of the game.\n(Above the health bar, right side)\n\nBasically a visual representation of what the music is doing.";
 

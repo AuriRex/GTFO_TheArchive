@@ -13,7 +13,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Scan HUD Tweaks";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Adds an overall alarm class counter to the HUD message for door alarms etc";
 
@@ -56,7 +56,7 @@ namespace TheArchive.Features.Hud
                 ChainedPuzzleInstance puzzleInstance;
                 if(allPuzzleInstances.Count > 1)
                 {
-                    // Get the correct ChainedPuzzleInstance if there are multiple; ex: on Reactor Shutdown gameobjects
+                    // GetGroup the correct ChainedPuzzleInstance if there are multiple; ex: on Reactor Shutdown gameobjects
                     puzzleInstance = allPuzzleInstances
                         .Where(cpi =>
                             cpi.m_chainedPuzzleCores.FirstOrDefault(core =>

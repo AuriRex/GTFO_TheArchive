@@ -14,7 +14,7 @@ namespace TheArchive
     public class ArchiveIL2CPPBootstrap : Feature
     {
         public override string Name => nameof(ArchiveIL2CPPBootstrap);
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
         public override string Description => "Hooks into a bunch of important game code in order for this mod to work.";
         public override bool RequiresRestart => true;
 

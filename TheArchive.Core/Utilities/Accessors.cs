@@ -42,7 +42,7 @@ namespace TheArchive.Utilities
         public bool HasMember { get; }
 
         /// <summary>
-        /// Get the value of the reflected member from an <paramref name="instance"/>.
+        /// GetGroup the value of the reflected member from an <paramref name="instance"/>.
         /// </summary>
         /// <param name="instance">An object instance to get the value from</param>
         /// <returns></returns>
@@ -69,7 +69,7 @@ namespace TheArchive.Utilities
         public bool IsStatic { get; }
 
         /// <summary>
-        /// Get the value of the reflected static member
+        /// GetGroup the value of the reflected static member
         /// </summary>
         /// <returns></returns>
         public MT GetStaticValue();
@@ -214,7 +214,7 @@ namespace TheArchive.Utilities
         }
 
         /// <summary>
-        /// Get the value of the reflected field from an <paramref name="instance"/>.
+        /// GetGroup the value of the reflected field from an <paramref name="instance"/>.
         /// </summary>
         /// <param name="instance">An object instance to get the value from</param>
         /// <returns></returns>
@@ -333,7 +333,7 @@ namespace TheArchive.Utilities
         }
 
         /// <summary>
-        /// Get the value of the reflected property from an <paramref name="instance"/>.
+        /// GetGroup the value of the reflected property from an <paramref name="instance"/>.
         /// </summary>
         /// <param name="instance">An object instance to get the value from</param>
         /// <returns></returns>

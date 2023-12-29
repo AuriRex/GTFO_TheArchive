@@ -7,7 +7,6 @@ using TheArchive.Utilities;
 using UnityEngine.CrashReportHandler;
 
 [assembly: ModDefaultFeatureGroupName("TheArchive")]
-[assembly: ModInlineUncategorizedSettingsIntoMainMenu]
 namespace TheArchive
 {
     public class ArchiveIL2CPPModule : IArchiveModule
@@ -20,6 +19,8 @@ namespace TheArchive
         public bool UsesLegacyPatches => false;
 
         public ArchiveLegacyPatcher Patcher { get; set; }
+
+        public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
 
         static ArchiveIL2CPPModule()
         {

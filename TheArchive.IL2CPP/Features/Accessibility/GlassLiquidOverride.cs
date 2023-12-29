@@ -14,7 +14,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Glass Liquid System Override";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override FeatureGroup Group => FeatureGroups.Accessibility;
 
         public override string Description => "Adjust the games \"Glass Liquid System\"\nThe thing that renders the blood splatters etc on your visor.";
 

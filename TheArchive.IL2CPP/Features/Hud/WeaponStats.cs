@@ -18,7 +18,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Show Weapon Stats";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Adds weapon statistics such as damage, clip size and reload speed (and more if applicable) on the weapon select screen.";
 

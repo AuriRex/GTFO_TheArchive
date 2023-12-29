@@ -15,7 +15,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Situation Aware Weapon Switch";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Switch to either your Melee weapon or Primary depending on if you're sneaking around or in combat after depleting all of your throwables, exit a ladder or place down a sentry gun etc.";
 

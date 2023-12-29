@@ -18,7 +18,7 @@ namespace TheArchive.Models
 		public Dictionary<string, Expedition> Expeditions = new Dictionary<string, Expedition>();
 
 		/// <summary>
-		/// Get the count of how many total unique expedition <see cref="Layers"/> <paramref name="layer"/> are currently in <see cref="LayerState"/> <paramref name="state"/><br/>
+		/// GetGroup the count of how many total unique expedition <see cref="Layers"/> <paramref name="layer"/> are currently in <see cref="LayerState"/> <paramref name="state"/><br/>
 		/// For example: how many unique <see cref="Layers.Main"/> objectives have been <see cref="LayerState.Completed"/>
 		/// </summary>
 		/// <param name="layer">The layer to check</param>

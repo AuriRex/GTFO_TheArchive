@@ -12,7 +12,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Reload Sound Cue";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Play a sound cue on reload the moment the bullets have entered your gun.";
 

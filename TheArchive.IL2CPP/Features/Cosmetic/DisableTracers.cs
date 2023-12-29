@@ -14,7 +14,7 @@ namespace TheArchive.Features.Cosmetic
     {
         public override string Name => "Disable Bullet Tracers";
 
-        public override string Group => FeatureGroups.Cosmetic;
+        public override FeatureGroup Group => FeatureGroups.Cosmetic;
 
         public override string Description => "Removes Bullet Tracer Effects";
 

@@ -16,7 +16,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => nameof(CullingHook);
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public new static IArchiveLogger FeatureLogger { get; set; }
 

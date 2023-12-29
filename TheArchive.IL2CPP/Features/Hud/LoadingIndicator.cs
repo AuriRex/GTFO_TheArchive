@@ -16,7 +16,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Loading Indicator";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Displays a little indicator that shows if other players have finished loading yet.";
 

@@ -18,7 +18,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Player Color Override";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override FeatureGroup Group => FeatureGroups.Accessibility;
 
         public override string Description => "Override the built in player colors.";
 

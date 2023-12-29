@@ -1,93 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Core.Localization;
+using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI
 {
     public static class FeatureGroups
     {
+        #region Setup
         static FeatureGroups()
-        {
-            SetupLanguage();
-        }
-
-        /// <summary>
-        /// Get a <see cref="Group"/> for the given string <paramref name="name"/>
-        /// </summary>
-        /// <param name="name">The name of the <see cref="Group"/> to get</param>
-        /// <returns>An existing <see cref="Group"/> or <c>null</c> if it doesn't exist</returns>
-        public static Group Get(string name) => Group.Get(name);
-
-        /// <summary>
-        /// Get or create a <see cref="Group"/> for the given string <paramref name="name"/>
-        /// </summary>
-        /// <param name="name">The name of the <see cref="Group"/> to get or create</param>
-        /// <param name="groupModification">An <seealso cref="Action{Group}"/> that can be used to modify <seealso cref="Group"/> data.</param>
-        /// <returns>An existing <see cref="Group"/> or a new one if it doesn't exist</returns>
-        public static Group GetOrCreate(string name, Action<Group> groupModification = null) => Group.GetOrCreate(name, groupModification);
-
-        // Group System kinda jank ngl haha
-
-        public class Group
-        {
-            private static readonly HashSet<Group> _allGroups = new HashSet<Group>();
-
-            public static Group Get(string name)
-            {
-                return _allGroups.FirstOrDefault(g => g.Name == name);
-            }
-
-            public string Name { get; private set; }
-            public bool InlineSettings { get; internal set; }
-            public bool IsNewlyCreated { get; private set; } = true;
-            public string DisplayName => _languages.TryGetValue(LocalizationCoreService.CurrentLanguage, out var text) ? text : Name;
-
-            private Dictionary<Language, string> _languages = new();
-
-            public void SetLanguage(Dictionary<Language, string> languages)
-            {
-                foreach (var lang in languages)
-                {
-                    _languages[lang.Key] = lang.Value;
-                }
-            }
-
-            public void SetLanguage(Language language, string text)
-            {
-                _languages[language] = text;
-            }
-
-            public static Group GetOrCreate(string name, Action<Group> groupModification = null)
-            {
-                var group = _allGroups.FirstOrDefault(g => g.Name == name);
-
-                if (group != null)
-                    group.IsNewlyCreated = false;
-
-                group ??= new Group(name);
-
-                groupModification?.Invoke(group);
-
-                return group;
-            }
-
-            private Group(string name)
-            {
-                Name = name;
-
-                _allGroups.Add(this);
-            }
-
-            public override string ToString()
-            {
-                return Name;
-            }
-
-            public static implicit operator string(Group g) => g.Name; 
-        }
-
-        internal static void SetupLanguage()
         {
             Accessibility.SetLanguage(Language.English, "Accessibility");
             Accessibility.SetLanguage(Language.Chinese, "辅助功能");
@@ -128,19 +49,119 @@ namespace TheArchive.Core.FeaturesAPI
             QualityOfLife.SetLanguage(Language.English, "Quality of Life");
             QualityOfLife.SetLanguage(Language.Chinese, "生活质量");
         }
+        #endregion
 
-        public static Group Accessibility { get; private set; } = Group.GetOrCreate("Accessibility");
-        internal static Group ArchiveCore { get; private set; } = Group.GetOrCreate("Archive Core");
-        public static Group Audio { get; private set; } = Group.GetOrCreate("Audio");
-        public static Group Backport { get; private set; } = Group.GetOrCreate("Backport");
-        public static Group Cosmetic { get; private set; } = Group.GetOrCreate("Cosmetic");
-        public static Group Dev { get; private set; } = Group.GetOrCreate("Developer");
-        public static Group Fixes { get; private set; } = Group.GetOrCreate("Fixes");
-        public static Group Hud { get; private set; } = Group.GetOrCreate("HUD / UI");
-        public static Group LocalProgression { get; private set; } = Group.GetOrCreate("Local Progression"); // , group => group.InlineSettings = true
-        public static Group Special { get; private set; } = Group.GetOrCreate("Misc");
-        public static Group Presence { get; private set; } = Group.GetOrCreate("Discord / Steam Presence");
-        public static Group Security { get; private set; } = Group.GetOrCreate("Security / Anti Cheat");
-        public static Group QualityOfLife { get; private set; } = Group.GetOrCreate("Quality of Life");
+
+        private static FeatureGroup GetOrCreateArchiveGroup(string name)
+        {
+            var group = ArchiveCoreGroups.FirstOrDefault(g => g.Name == name, null);
+
+            if (group != null)
+                group.IsNewlyCreated = false;
+
+            group ??= new FeatureGroup(name, false, null);
+
+            ArchiveCoreGroups.Add(group);
+
+            return group;
+        }
+
+
+        internal static FeatureGroup GetOrCreateModuleGroup(string name)
+        {
+            var group = ModuleGroups.FirstOrDefault(g => g.Name == name, null);
+
+            if (group != null)
+                group.IsNewlyCreated = false;
+
+            group ??= new FeatureGroup(name, true, null);
+
+            return group;
+        }
+
+        internal static FeatureGroup GetGroup(string name) => AllGroups.FirstOrDefault(g => g.Name == name);
+        internal static FeatureGroup GetModuleGroup(string name) => ModuleGroups.FirstOrDefault(g => g.Name == name);
+        internal static HashSet<FeatureGroup> ArchiveCoreGroups { get; private set; } = new();
+        internal static HashSet<FeatureGroup> ModuleGroups { get; private set; } = new();
+        internal static HashSet<FeatureGroup> AllGroups { get; private set; } = new();
+
+        #region Archive Groups
+        internal static FeatureGroup ArchiveCore { get; private set; } = GetOrCreateModuleGroup(ArchiveMod.ARCHIVE_CORE_FEATUREGROUP);
+        internal static FeatureGroup Accessibility { get; private set; } = GetOrCreateArchiveGroup("Accessibility");
+        internal static FeatureGroup Audio { get; private set; } = GetOrCreateArchiveGroup("Audio");
+        internal static FeatureGroup Backport { get; private set; } = GetOrCreateArchiveGroup("Backport");
+        internal static FeatureGroup Cosmetic { get; private set; } = GetOrCreateArchiveGroup("Cosmetic");
+        internal static FeatureGroup Dev { get; private set; } = GetOrCreateArchiveGroup("Developer");
+        internal static FeatureGroup Fixes { get; private set; } = GetOrCreateArchiveGroup("Fixes");
+        internal static FeatureGroup Hud { get; private set; } = GetOrCreateArchiveGroup("HUD / UI");
+        internal static FeatureGroup LocalProgression { get; private set; } = GetOrCreateArchiveGroup("Local Progression"); // , group => group.InlineSettings = true
+        internal static FeatureGroup Special { get; private set; } = GetOrCreateArchiveGroup("Misc");
+        internal static FeatureGroup Presence { get; private set; } = GetOrCreateArchiveGroup("Discord / Steam Presence");
+        internal static FeatureGroup Security { get; private set; } = GetOrCreateArchiveGroup("Security / Anti Cheat");
+        internal static FeatureGroup QualityOfLife { get; private set; } = GetOrCreateArchiveGroup("Quality of Life");
+        #endregion
+    }
+
+    public class FeatureGroup
+    {
+        public string Name { get; private set; } = string.Empty;
+        internal string DisplayName => _languages.TryGetValue(LocalizationCoreService.CurrentLanguage, out var text) ? text : Name;
+        public bool IsNewlyCreated { get; internal set; } = true;
+        public bool IsModuleGroup { get; internal set; }
+        public FeatureGroup ParentGroup { get; internal set; }
+        public HashSet<FeatureGroup> SubGroups { get; } = new();
+        internal HashSet<Feature> Features { get; } = new();
+
+        private Dictionary<Language, string> _languages = new();
+
+        public FeatureGroup GetOrCreateSubGroup(string name)
+        {
+            var subGroup = SubGroups.FirstOrDefault(g => g.Name == name);
+
+            if (subGroup != null)
+                IsNewlyCreated = false;
+
+            subGroup ??= new FeatureGroup(name, false, this);
+
+            return subGroup;
+        }
+
+        public void SetLanguage(Dictionary<Language, string> languages)
+        {
+            foreach (var lang in languages)
+            {
+                _languages[lang.Key] = lang.Value;
+            }
+        }
+
+        public void SetLanguage(Language language, string text)
+        {
+            _languages[language] = text;
+        }
+
+        internal FeatureGroup(string name, bool moduleGroup = false, FeatureGroup parentGroup = null)
+        {
+            Name = name;
+            if (moduleGroup)
+            {
+                IsModuleGroup = true;
+                FeatureGroups.ModuleGroups.Add(this);
+            }
+            else if (parentGroup != null)
+            {
+                ParentGroup = parentGroup;
+                ParentGroup.SubGroups.Add(this);
+            }
+            FeatureGroups.AllGroups.Add(parentGroup);
+        }
+
+        private FeatureGroup() { }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public static implicit operator string(FeatureGroup g) => g.Name;
     }
 }

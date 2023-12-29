@@ -15,7 +15,7 @@ namespace TheArchive.Features.Fixes
     {
         public override string Name => "Weapons shoot forward";
 
-        public override string Group => FeatureGroups.Fixes;
+        public override FeatureGroup Group => FeatureGroups.Fixes;
 
         public override string Description => "Patches weapons to always shoot into the center of your crosshair.\nMakes shotgun draw & insta-shoot not shoot the floor";
 

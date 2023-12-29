@@ -16,7 +16,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Prioritize Resource Pings";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Resource Packs will be prioritized and show up with special icons and trigger voice lines when pinged by Middle-Mouse-Pings.\n(Yes, disinfect is ammo apparently)";
 

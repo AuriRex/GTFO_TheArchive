@@ -20,7 +20,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Nickname";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override FeatureGroup Group => FeatureGroups.Accessibility;
 
         public override string Description => "Nickname related settings.\n\nChange your in game nickname, handy color picker included!";
 

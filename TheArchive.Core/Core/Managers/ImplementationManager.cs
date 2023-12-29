@@ -49,7 +49,7 @@ namespace TheArchive.Core.Managers
         }
 
         /// <summary>
-        /// Get a (game) type using the specified <paramref name="identifier"/> that has been registered before using <see cref="RegisterGameType"/>
+        /// GetGroup a (game) type using the specified <paramref name="identifier"/> that has been registered before using <see cref="RegisterGameType"/>
         /// </summary>
         /// <param name="identifier"></param>
         /// <returns></returns>

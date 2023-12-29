@@ -14,7 +14,7 @@ public class ModLanguage : Feature
 
     public override string Description => "Change Language of ModSettings";
 
-    public override string Group => FeatureGroups.ArchiveCore;
+    public override FeatureGroup Group => FeatureGroups.ArchiveCore;
 
     public override void Init()
     {

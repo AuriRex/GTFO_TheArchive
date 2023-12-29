@@ -14,7 +14,7 @@ namespace TheArchive.Features.Presence
     {
         public override string Name => "Archive Discord Rich Presence";
 
-        public override string Group => FeatureGroups.Presence;
+        public override FeatureGroup Group => FeatureGroups.Presence;
 
         public override string Description => "Show the current game state in detail on discord.";
 

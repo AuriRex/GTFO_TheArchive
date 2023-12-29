@@ -12,7 +12,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Redirect Settings";
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "Redirect settings load/save location";
 

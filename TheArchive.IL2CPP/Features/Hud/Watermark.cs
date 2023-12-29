@@ -15,7 +15,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Watermark Tweaks";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => $"Configurable to either show your current position, a timer or the mod version in the bottom right:\n - <color=red>X:24</color> <color=green>Y:2</color> <color=blue>Z:-46</color>\n - Timer showing elapsed mission time\n - <#{ColorHex}>{ArchiveMod.MOD_NAME} v{ArchiveMod.VERSION_STRING}</color>";
 

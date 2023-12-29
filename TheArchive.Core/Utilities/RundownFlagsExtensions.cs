@@ -20,7 +20,7 @@ namespace TheArchive.Utilities
         }
 
         /// <summary>
-        /// Get all flags between <paramref name="flags"/> (including) and <paramref name="to"/> (including) set.
+        /// GetGroup all flags between <paramref name="flags"/> (including) and <paramref name="to"/> (including) set.
         /// </summary>
         /// <param name="flags"></param>
         /// <param name="to"></param>
@@ -62,7 +62,7 @@ namespace TheArchive.Utilities
         }
 
         /// <summary>
-        /// Get the lowest flag in the given <paramref name="flags"/>, excluding <see cref="RundownFlags.None"/>
+        /// GetGroup the lowest flag in the given <paramref name="flags"/>, excluding <see cref="RundownFlags.None"/>
         /// </summary>
         /// <param name="flags"></param>
         /// <returns></returns>
@@ -72,7 +72,7 @@ namespace TheArchive.Utilities
         }
 
         /// <summary>
-        /// Get the highest flag in the given <paramref name="flags"/>
+        /// GetGroup the highest flag in the given <paramref name="flags"/>
         /// </summary>
         /// <param name="flags"></param>
         /// <returns></returns>
@@ -82,7 +82,7 @@ namespace TheArchive.Utilities
         }
 
         /// <summary>
-        /// Get the <seealso cref="int"/> Value of a <see cref="ValueAttribute"/> attached to a specific <seealso cref="Enum"/> entry.
+        /// GetGroup the <seealso cref="int"/> Value of a <see cref="ValueAttribute"/> attached to a specific <seealso cref="Enum"/> entry.
         /// </summary>
         /// <typeparam name="T">An <seealso cref="Enum"/></typeparam>
         /// <param name="thisEnum"></param>

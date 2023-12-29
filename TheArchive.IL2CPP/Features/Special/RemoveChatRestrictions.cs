@@ -17,7 +17,7 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "Remove Chat Restrictions";
 
-        public override string Group => FeatureGroups.Special;
+        public override FeatureGroup Group => FeatureGroups.Special;
 
         public override string Description => "Allows the usage of '>' and '<' characters in chat.\n\n(Also enables TextMeshPro RichText tags to be used in chat, don't do stupid things!)";
 

@@ -3357,7 +3357,7 @@ namespace TheArchive.Core.Discord
         }
 
         /// <summary>
-        /// Get the local peer ID for this process.
+        /// GetGroup the local peer ID for this process.
         /// </summary>
         public UInt64 GetPeerId()
         {

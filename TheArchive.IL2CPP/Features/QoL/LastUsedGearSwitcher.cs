@@ -12,7 +12,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Last Used Gear Switcher";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Allows you to swap between the last two used weapons via a keypress";
 

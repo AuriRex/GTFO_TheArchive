@@ -43,7 +43,7 @@ namespace TheArchive.Models.Boosters
         }
 
         /// <summary>
-        /// Get all categories where a new booster should be generated for.
+        /// GetGroup all categories where a new booster should be generated for.
         /// </summary>
         /// <returns></returns>
         public CustomCategory[] GetCategoriesWhereCurrencyCostHasBeenReached()

@@ -30,7 +30,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Weapon Picker Tweaks";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Allows you to Favorite and Hide Gear in the weapon picker.";
 

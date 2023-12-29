@@ -22,7 +22,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal FeatureLocalizationService Localization { get; private set; } = new();
         internal static GameBuildInfo BuildInfo => Feature.BuildInfo;
         internal bool InternalDisabled { get; private set; } = false;
-        internal InternalDisabledReason DisabledReason {get; private set;}
+        internal InternalDisabledReason DisabledReason { get; private set; }
         internal bool HasUpdateMethod => UpdateDelegate != null;
         internal Update UpdateDelegate { get; private set; }
         internal bool HasLateUpdateMethod => LateUpdateDelegate != null;
@@ -38,6 +38,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
         internal IArchiveLogger FeatureLoggerInstance { get; private set; }
         internal Assembly OriginAssembly { get; private set; }
+        internal IArchiveModule ArchiveModule { get; private set; }
         internal string DisplayName
         {
             get
@@ -108,7 +109,7 @@ namespace TheArchive.Core.FeaturesAPI
 
         private FeatureInternal() { }
 
-        internal static void CreateAndAssign(Feature feature)
+        internal static void CreateAndAssign(Feature feature, IArchiveModule module)
         {
             if(_gameStateType == null)
             {
@@ -122,7 +123,7 @@ namespace TheArchive.Core.FeaturesAPI
             feature.FeatureInternal = fi;
             try
             {
-                fi.Init(feature);
+                fi.Init(feature, module);
             }
             catch(TypeLoadException tle)
             {
@@ -288,9 +289,11 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        internal void Init(Feature feature)
+        internal void Init(Feature feature, IArchiveModule module)
         {
             _feature = feature;
+
+            ArchiveModule = module;
 
             var featureType = _feature.GetType();
             OriginAssembly = featureType.Assembly;

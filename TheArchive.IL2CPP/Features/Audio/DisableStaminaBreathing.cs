@@ -10,7 +10,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Disable Breathing (<#8ED7E4>Stamina</color>)";
 
-        public override string Group => FeatureGroups.Audio;
+        public override FeatureGroup Group => FeatureGroups.Audio;
 
         public override string Description => "Disables the player breathing and panting due to running around or enemy encounters in pre-R6 builds.";
 

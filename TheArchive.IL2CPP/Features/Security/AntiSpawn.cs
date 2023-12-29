@@ -21,7 +21,7 @@ namespace TheArchive.Features.Security
     {
         public override string Name => "Anti Spawn";
 
-        public override string Group => FeatureGroups.Security;
+        public override FeatureGroup Group => FeatureGroups.Security;
 
         public override string Description => "Prevents clients from spawning in enemies.";
 

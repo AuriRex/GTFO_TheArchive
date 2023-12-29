@@ -14,7 +14,7 @@ namespace TheArchive.Features.Cosmetic
     {
         public override string Name => "Enable old Hammers";
 
-        public override string Group => FeatureGroups.Cosmetic;
+        public override FeatureGroup Group => FeatureGroups.Cosmetic;
 
         public override string Description => "Re-enable the pre-R6 Hammers:\n<color=orange>Maul</color>, <color=orange>Gavel</color>, <color=orange>Sledge</color> and <color=orange>Mallet</color>";
 

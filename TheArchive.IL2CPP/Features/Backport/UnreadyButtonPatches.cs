@@ -12,7 +12,7 @@ namespace TheArchive.Features.Backport
     {
         public override string Name => "Unready Button";
 
-        public override string Group => FeatureGroups.Backport;
+        public override FeatureGroup Group => FeatureGroups.Backport;
 
         public override string Description => "Allows you to unready in the lobby.";
 

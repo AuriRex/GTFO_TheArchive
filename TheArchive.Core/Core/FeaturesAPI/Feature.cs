@@ -61,6 +61,8 @@ namespace TheArchive.Core.FeaturesAPI
         /// </summary>
         public static GameBuildInfo BuildInfo { get; internal set; }
 
+        public FeatureGroup ModuleGroup => FeatureGroups.GetOrCreateModuleGroup(FeatureInternal.ArchiveModule.ModuleGroup);
+
         /// <summary>
         /// The <see cref="Feature"/>s Name<br/>
         /// used in Mod Settings
@@ -77,7 +79,7 @@ namespace TheArchive.Core.FeaturesAPI
         /// Used to group multiple settings together under one header<br/>
         /// used in Mod Settings
         /// </summary>
-        public virtual string Group => null;
+        public virtual FeatureGroup Group => ModuleGroup;
 
         /// <summary>
         /// If set, prevents calling of <see cref="OnEnable"/> and <see cref="OnDisable"/> methods and only switches the config state of this <see cref="Feature"/>.
@@ -99,7 +101,7 @@ namespace TheArchive.Core.FeaturesAPI
         public virtual bool PlaceSettingsInSubMenu => false;
 
         /// <summary>
-        /// If this <see cref="Feature"/>s settings should be put inside of íts parent menu in the Mod Settings menu
+        /// If this <see cref="Feature"/>s settings should be put inside of its parent menu in the Mod Settings menu
         /// </summary>
         public virtual bool InlineSettingsIntoParentMenu => false;
 

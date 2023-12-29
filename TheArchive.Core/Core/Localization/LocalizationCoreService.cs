@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
+using TheArchive.Utilities;
 
 namespace TheArchive.Core.Localization
 {
@@ -76,7 +77,7 @@ namespace TheArchive.Core.Localization
 
         public static string Get(uint id, string defaultValue = "UNKNOWN ID: {0}")
         {
-            if (!m_texts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text) || text.IsNullOrWhiteSpace() || string.IsNullOrEmpty(text))
+            if (!m_texts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text) || text.IsNullOrWhiteSpaceOrEmpty())
             {
                 if (defaultValue == "UNKNOWN ID: {0}")
                 {
