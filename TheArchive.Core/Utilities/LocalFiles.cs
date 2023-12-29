@@ -465,7 +465,7 @@ namespace TheArchive.Utilities
 
         internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature, bool mainModule)
         {
-            string dir = string.Concat(Path.GetDirectoryName(mainModule ? ArchiveMod.CORE_PATH : feature.FeatureInternal.OriginAssembly.Location), $"\\Localization\\{(LoaderWrapper.IsGameIL2CPP() ? "IL2CPP" : "MONO")}\\");
+            string dir = Path.Combine(Path.GetDirectoryName(mainModule ? ArchiveMod.CORE_PATH : feature.FeatureInternal.OriginAssembly.Location), $"\\Localization\\");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
