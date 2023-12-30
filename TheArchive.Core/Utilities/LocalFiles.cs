@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -473,11 +474,15 @@ namespace TheArchive.Utilities
             var path = Path.Combine(dir, $"{feature.Identifier}_Localization.json");
             if (!File.Exists(path))
             {
-                var data = FeatureInternal.GenerateLocalization(feature);
-                File.WriteAllText(path, JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings));
-                return data;
+                var newData = FeatureInternal.GenerateLocalization(feature);
+                File.WriteAllText(path, JsonConvert.SerializeObject(newData, ArchiveMod.JsonSerializerSettings));
+                return newData;
             }
-            return JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+            var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+            var rdata = FeatureInternal.GenerateLocalization(feature, data);
+            if (rdata.GetHashCode() != data.GetHashCode())
+                File.WriteAllText(path, JsonConvert.SerializeObject(rdata, ArchiveMod.JsonSerializerSettings));
+            return data;
         }
 
         internal static object LoadFeatureConfig(string featureIdentifier, Type configType, bool saveIfNonExistent = true)

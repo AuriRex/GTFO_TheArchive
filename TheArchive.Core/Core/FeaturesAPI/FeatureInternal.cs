@@ -139,7 +139,7 @@ namespace TheArchive.Core.FeaturesAPI
         public delegate void Update();
         public delegate void LateUpdate();
 
-        internal static FeatureLocalizationData GenerateLocalization(Feature feature)
+        internal static FeatureLocalizationData GenerateLocalization(Feature feature, FeatureLocalizationData defaultValue = null)
         {
             var parentType = feature.GetType();
 
@@ -223,7 +223,13 @@ namespace TheArchive.Core.FeaturesAPI
                         var languages = new Dictionary<Language, string>();
 
                         foreach (Language language in Enum.GetValues(typeof(Language)))
-                            languages[language] = null;
+                        {
+                            if (defaultValue == null || defaultValue.FeatureSettingsTexts.TryGetValue(propPair.Key, out var dfsdic) || dfsdic.TryGetValue(fstype, out var dlandic) || dlandic.TryGetValue(language, out var defaultText))
+                            {
+                                defaultText = null;
+                            }
+                            languages[language] = defaultText;
+                        }
 
                         fsdic[fstype] = languages;
                     }
@@ -242,7 +248,11 @@ namespace TheArchive.Core.FeaturesAPI
                     var languagedic = new Dictionary<string, string>();
                     foreach (var name in names)
                     {
-                        languagedic[name] = null;
+                        if (defaultValue == null || defaultValue.FeatureSettingsEnumTexts.TryGetValue(type.FullName, out var dlandic) || dlandic.TryGetValue(language, out var pair) || pair.TryGetValue(name, out var defaultText))
+                        {
+                            defaultText = null;
+                        }
+                        languagedic[name] = defaultText;
                     }
                     enumdic[language] = languagedic;
                 }
