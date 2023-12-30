@@ -224,7 +224,7 @@ namespace TheArchive.Core.FeaturesAPI
 
                         foreach (Language language in Enum.GetValues(typeof(Language)))
                         {
-                            if (defaultValue == null || defaultValue.FeatureSettingsTexts.TryGetValue(propPair.Key, out var dfsdic) || dfsdic.TryGetValue(fstype, out var dlandic) || dlandic.TryGetValue(language, out var defaultText))
+                            if (defaultValue == null || defaultValue.FeatureSettingsTexts == null || !defaultValue.FeatureSettingsTexts.TryGetValue(propPair.Key, out var dfsdic) || !dfsdic.TryGetValue(fstype, out var dlandic) || !dlandic.TryGetValue(language, out var defaultText))
                             {
                                 defaultText = null;
                             }
@@ -248,7 +248,7 @@ namespace TheArchive.Core.FeaturesAPI
                     var languagedic = new Dictionary<string, string>();
                     foreach (var name in names)
                     {
-                        if (defaultValue == null || defaultValue.FeatureSettingsEnumTexts.TryGetValue(type.FullName, out var dlandic) || dlandic.TryGetValue(language, out var pair) || pair.TryGetValue(name, out var defaultText))
+                        if (defaultValue == null || defaultValue.FeatureSettingsEnumTexts == null || !defaultValue.FeatureSettingsEnumTexts.TryGetValue(type.FullName, out var dlandic) || !dlandic.TryGetValue(language, out var pair) || !pair.TryGetValue(name, out var defaultText))
                         {
                             defaultText = null;
                         }

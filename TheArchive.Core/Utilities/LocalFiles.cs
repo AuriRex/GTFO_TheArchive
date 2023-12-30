@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using TheArchive.Core;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
@@ -479,9 +475,11 @@ namespace TheArchive.Utilities
                 return newData;
             }
             var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+            var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
             var rdata = FeatureInternal.GenerateLocalization(feature, data);
-            if (rdata.GetHashCode() != data.GetHashCode())
-                File.WriteAllText(path, JsonConvert.SerializeObject(rdata, ArchiveMod.JsonSerializerSettings));
+            var rjson = JsonConvert.SerializeObject(rdata, ArchiveMod.JsonSerializerSettings);
+            if (rjson.ComputeSHA256() != json.ComputeSHA256())
+                File.WriteAllText(path, rjson);
             return data;
         }
 
