@@ -263,7 +263,7 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 FeatureSettingsTexts = FSTexts,
                 FeatureSettingsEnumTexts = FSETexts,
-                ExtraTexts = defaultValue?.ExtraTexts
+                ExtraTexts = defaultValue?.ExtraTexts ?? new()
             };
 
             return data;
@@ -298,10 +298,10 @@ namespace TheArchive.Core.FeaturesAPI
         {
             _feature = feature;
 
-            feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature, feature.GetType().Namespace.StartsWith("TheArchive")));
-
             var featureType = _feature.GetType();
             OriginAssembly = featureType.Assembly;
+
+            feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature, feature.GetType().Namespace.StartsWith("TheArchive")));
 
             _FILogger.Msg(ConsoleColor.Black, "-");
             _FILogger.Msg(ConsoleColor.Green, $"Initializing {_feature.Identifier} ...");
