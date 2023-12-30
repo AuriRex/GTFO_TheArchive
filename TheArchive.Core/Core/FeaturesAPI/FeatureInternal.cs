@@ -263,7 +263,7 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 FeatureSettingsTexts = FSTexts,
                 FeatureSettingsEnumTexts = FSETexts,
-                ExtraTexts = new()
+                ExtraTexts = defaultValue?.ExtraTexts
             };
 
             return data;
