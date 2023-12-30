@@ -288,6 +288,8 @@ namespace TheArchive.Core.FeaturesAPI
         {
             _feature = feature;
 
+            feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature, feature.GetType().Namespace.StartsWith("TheArchive")));
+
             var featureType = _feature.GetType();
             OriginAssembly = featureType.Assembly;
 
@@ -433,9 +435,6 @@ namespace TheArchive.Core.FeaturesAPI
                     && mi.GetParameters().Length == 2
                     && (mi.GetParameters()[0].ParameterType == _lgAreaType || mi.GetParameters()[0].ParameterType == typeof(object))
                     && mi.GetParameters()[1].ParameterType == typeof(bool));
-
-
-            feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature, feature.GetType().Namespace.StartsWith("TheArchive")));
 
             foreach (var prop in settingsProps)
             {
