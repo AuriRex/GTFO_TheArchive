@@ -465,7 +465,7 @@ namespace TheArchive.Utilities
 
         internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature, bool mainModule)
         {
-            string dir = Path.Combine(Path.GetDirectoryName(mainModule ? ArchiveMod.CORE_PATH : feature.FeatureInternal.OriginAssembly.Location), $"\\Localization\\");
+            string dir = Path.Combine(Path.GetDirectoryName(mainModule ? ArchiveMod.CORE_PATH : feature.FeatureInternal.OriginAssembly.Location), $"Localization");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);

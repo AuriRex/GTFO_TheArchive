@@ -1,9 +1,7 @@
-﻿using BepInEx;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Utilities;
 
 namespace TheArchive.Core.Localization
 {
@@ -62,7 +60,7 @@ namespace TheArchive.Core.Localization
 
         public bool TryGetFSText(string propID, FSType type, out string text)
         {
-            if (!FeatureSettingsTexts.TryGetValue(propID, out var typedic) || !typedic.TryGetValue(type, out var languages) || !languages.TryGetValue(CurrentLanguage, out text) || text.IsNullOrWhiteSpaceOrEmpty())
+            if (!FeatureSettingsTexts.TryGetValue(propID, out var typedic) || !typedic.TryGetValue(type, out var languages) || !languages.TryGetValue(CurrentLanguage, out text) || string.IsNullOrWhiteSpace(text))
             {
                 text = null;
                 return false;
@@ -78,7 +76,7 @@ namespace TheArchive.Core.Localization
                 return false;
             }
             var values = Enum.GetNames(enumType);
-            if (!FeatureSettingsEnumTexts.TryGetValue(enumType.FullName, out var languages) || !languages.TryGetValue(CurrentLanguage, out enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => p.Value.IsNullOrWhiteSpaceOrEmpty()))
+            if (!FeatureSettingsEnumTexts.TryGetValue(enumType.FullName, out var languages) || !languages.TryGetValue(CurrentLanguage, out enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => string.IsNullOrWhiteSpace(p.Value)))
             {
                 enumTexts = null;
                 return false;

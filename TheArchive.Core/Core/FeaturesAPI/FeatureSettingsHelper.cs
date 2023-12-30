@@ -9,7 +9,6 @@ using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
-using TheArchive.Utilities;
 using UnityEngine;
 
 namespace TheArchive.Core.FeaturesAPI
@@ -57,7 +56,7 @@ namespace TheArchive.Core.FeaturesAPI
             if (settingsProperty?.GetCustomAttribute<FSDisplayName>(true) != null)
             {
                 string propID = $"{settingsProperty.DeclaringType.FullName}.{settingsProperty.Name}";
-                if (feature.FeatureInternal.Localization.TryGetFSText(propID, FSType.FSDisplayName, out var text))
+                if (Localization.TryGetFSText(propID, FSType.FSDisplayName, out var text))
                 {
                     DisplayName = text;
                 }
@@ -197,5 +196,7 @@ namespace TheArchive.Core.FeaturesAPI
         {
             return Instance ?? Property.GetValue(host);
         }
+
+        internal FeatureLocalizationService Localization => Feature.FeatureInternal.Localization;
     }
 }

@@ -1,5 +1,4 @@
-﻿using BepInEx;
-using System;
+﻿using System;
 using System.Reflection;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.Localization;
@@ -35,16 +34,16 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             Prop = prop;
             Type = prop?.GetMethod?.ReturnType;
 
-            if (featureSettingsHelper.Feature.FeatureInternal.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSDisplayName, out var displayName))
+            if (featureSettingsHelper.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSDisplayName, out var displayName))
                 DisplayName = $"> {displayName}";
             else
                 DisplayName = $"> {prop?.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
-            if (featureSettingsHelper.Feature.FeatureInternal.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSDescription, out var description))
+            if (featureSettingsHelper.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSDescription, out var description))
                 Description = description;
             else
                 Description = prop?.GetCustomAttribute<FSDescription>()?.Description;
             HeaderAbove = prop?.GetCustomAttribute<FSHeader>();
-            if (HeaderAbove != null && featureSettingsHelper.Feature.FeatureInternal.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSHeader, out var headerText))
+            if (HeaderAbove != null && featureSettingsHelper.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSHeader, out var headerText))
                 HeaderAbove = new(headerText, HeaderAbove.Color, HeaderAbove.Bold);
 
             Identifier = prop?.GetCustomAttribute<FSIdentifier>()?.Identifier ?? ($"{prop.PropertyType.FullName}_{prop.Name}");

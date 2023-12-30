@@ -1,5 +1,4 @@
-﻿using BepInEx;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -583,11 +582,17 @@ namespace TheArchive.Utilities
             return false;
         }
 
-        public static bool IsNullOrWhiteSpaceOrEmpty(this string value)
+        public static HashSet<Type> GetNestedClasses(Type type)
         {
-            if (string.IsNullOrEmpty(value) || value.IsNullOrWhiteSpace())
-                return true;
-            return false;
+            var types = new List<Type> { type };
+            foreach (var nestedType in type.GetNestedTypes())
+            {
+                if (!nestedType.IsClass)
+                    continue;
+
+                types.AddRange(GetNestedClasses(nestedType));
+            }
+            return types.ToHashSet();
         }
     }
 }

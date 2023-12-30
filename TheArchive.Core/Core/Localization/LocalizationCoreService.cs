@@ -1,10 +1,7 @@
-﻿using BepInEx;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using TheArchive.Interfaces;
-using TheArchive.Loader;
-using TheArchive.Utilities;
 
 namespace TheArchive.Core.Localization
 {
@@ -51,19 +48,7 @@ namespace TheArchive.Core.Localization
             m_textSetters.Add(textSetter, textId);
         }
 
-        public static void AddTextSetterDynamic(ILocalizedTextSetter textSetter, uint textId)
-        {
-            textSetter.SetText(Get(textId));
-            m_textSetters.Add(textSetter, textId);
-        }
-
         public static void SetTextSetter(ILocalizedTextSetter textSetter, uint textId)
-        {
-            textSetter.SetText(Get(textId));
-            m_textSetters[textSetter] = textId;
-        }
-
-        public static void SetTextSetterDynamic(ILocalizedTextSetter textSetter, uint textId)
         {
             textSetter.SetText(Get(textId));
             m_textSetters[textSetter] = textId;
@@ -77,7 +62,7 @@ namespace TheArchive.Core.Localization
 
         public static string Get(uint id, string defaultValue = "UNKNOWN ID: {0}")
         {
-            if (!m_texts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text) || text.IsNullOrWhiteSpaceOrEmpty())
+            if (!m_texts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text) || string.IsNullOrWhiteSpace(text))
             {
                 if (defaultValue == "UNKNOWN ID: {0}")
                 {
@@ -100,7 +85,7 @@ namespace TheArchive.Core.Localization
 
         public static void Init()
         {
-            string dir = string.Concat(Path.GetDirectoryName(ArchiveMod.CORE_PATH), $"\\Localization\\{(LoaderWrapper.IsGameIL2CPP() ? "IL2CPP" : "MONO")}\\");
+            string dir = Path.Combine(Path.GetDirectoryName(ArchiveMod.CORE_PATH), $"Localization");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -111,8 +96,8 @@ namespace TheArchive.Core.Localization
                 File.WriteAllText(path, JsonConvert.SerializeObject(new(), ArchiveMod.JsonSerializerSettings));
                 return;
             }
-            var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
-            foreach (var item in data.ExtraTexts)
+            var data = JsonConvert.DeserializeObject<List<LocalizationTextData>>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+            foreach (var item in data)
             {
                 Dictionary<Language, string> dic = new();
                 foreach (Language lang in Enum.GetValues(typeof(Language)))
