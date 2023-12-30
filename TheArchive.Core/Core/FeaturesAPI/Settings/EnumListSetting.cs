@@ -18,7 +18,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
 
             foreach (var option in Options)
             {
-                if (featureSettingsHelper.Feature.FeatureInternal.Localization.TryGetFSEnumText(EnumType, out var dic) && dic.TryGetValue(option, out var text))
+                if (featureSettingsHelper.Localization.TryGetFSEnumText(EnumType, out var dic) && dic.TryGetValue(option, out var text))
                     Map.Add(text, Enum.Parse(EnumType, option));
                 else
                     Map.Add(option, Enum.Parse(EnumType, option));

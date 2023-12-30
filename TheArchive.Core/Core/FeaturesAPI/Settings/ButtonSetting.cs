@@ -16,7 +16,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public ButtonSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
         {
             var propID = $"{prop.DeclaringType.FullName}.{prop.Name}";
-            if (featureSettingsHelper.Feature.FeatureInternal.Localization.TryGetFSText(propID, Localization.FSType.FSButtonText, out var text))
+            if (featureSettingsHelper.Localization.TryGetFSText(propID, Localization.FSType.FSButtonText, out var text))
             {
                 FComponent.ButtonText = text;
             }

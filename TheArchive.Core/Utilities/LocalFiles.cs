@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using TheArchive.Core;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
@@ -465,7 +462,7 @@ namespace TheArchive.Utilities
 
         internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature, bool mainModule)
         {
-            string dir = string.Concat(Path.GetDirectoryName(mainModule ? ArchiveMod.CORE_PATH : feature.FeatureInternal.OriginAssembly.Location), $"\\Localization\\{(LoaderWrapper.IsGameIL2CPP() ? "IL2CPP" : "MONO")}\\");
+            string dir = Path.Combine(Path.GetDirectoryName(mainModule ? ArchiveMod.CORE_PATH : feature.FeatureInternal.OriginAssembly.Location), "Localization");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -473,11 +470,17 @@ namespace TheArchive.Utilities
             var path = Path.Combine(dir, $"{feature.Identifier}_Localization.json");
             if (!File.Exists(path))
             {
-                var data = FeatureInternal.GenerateLocalization(feature);
-                File.WriteAllText(path, JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings));
-                return data;
+                var newData = FeatureInternal.GenerateLocalization(feature);
+                File.WriteAllText(path, JsonConvert.SerializeObject(newData, ArchiveMod.JsonSerializerSettings));
+                return newData;
             }
-            return JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+            var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+            var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
+            var rdata = FeatureInternal.GenerateLocalization(feature, data);
+            var rjson = JsonConvert.SerializeObject(rdata, ArchiveMod.JsonSerializerSettings);
+            if (rjson.ComputeSHA256() != json.ComputeSHA256())
+                File.WriteAllText(path, rjson);
+            return data;
         }
 
         internal static object LoadFeatureConfig(string featureIdentifier, Type configType, bool saveIfNonExistent = true)

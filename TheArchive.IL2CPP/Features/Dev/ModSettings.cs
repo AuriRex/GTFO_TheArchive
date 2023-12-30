@@ -358,7 +358,7 @@ namespace TheArchive.Features.Dev
 
                 if (DevMode)
                 {
-                    CreateHeader(LocalizationCoreService.Get(56 ,"Dev Mode enabled - Hidden Features shown!"), DISABLED);
+                    CreateHeader(LocalizationCoreService.Get(56, "Dev Mode enabled - Hidden Features shown!"), DISABLED);
                 }
 
                 TheSearchMenu = new SearchMainPage();
