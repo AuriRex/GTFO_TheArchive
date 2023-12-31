@@ -207,11 +207,11 @@
     }
   },
   {
-    "UntranslatedText": "{0} Feature{1} >>",
+    "UntranslatedText": "{0} Feature{1}",
     "Description": "",
     "ID": 24,
     "Languages": {
-      "English": "{0} Feature{1} >>",
+      "English": "{0} Feature{1}",
       "Chinese": "{0}个特性"
     }
   },
@@ -501,6 +501,15 @@
     "Languages": {
       "English": "Dev Mode enabled - Hidden Features shown!",
       "Chinese": "开发者模式已启用 - 显示隐藏特性！"
+    }
+  },
+  {
+    "UntranslatedText": "{0} SubGroup{1}",
+    "Description": "",
+    "ID": 57,
+    "Languages": {
+      "English": "{0} SubGroup{1}",
+      "Chinese": "{0}个分组"
     }
   }
 ]
