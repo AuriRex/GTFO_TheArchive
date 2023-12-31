@@ -782,4 +782,18 @@ public static class Utils
 
         return sortedList;
     }
+    
+    public static bool TryParseRundownKey(string rundownKey, out uint rundownID)
+    {
+        // "Local_31"
+        var parts = rundownKey.Split('_');
+
+        if(parts.Length < 2)
+        {
+            rundownID = 0;
+            return false;
+        }
+
+        return uint.TryParse(parts[1], out rundownID);
+    }
 }

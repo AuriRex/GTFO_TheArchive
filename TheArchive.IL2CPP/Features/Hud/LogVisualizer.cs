@@ -1,17 +1,19 @@
 ﻿using CellMenu;
 using GameData;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
 using TMPro;
 using UnityEngine;
-using static TheArchive.Features.Hud.LogVisualizer;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Hud
@@ -20,19 +22,59 @@ namespace TheArchive.Features.Hud
     [RundownConstraint(RundownFlags.RundownEight, RundownFlags.Latest)]
     public class LogVisualizer : Feature
     {
-        
-
         public override string Name => "Log Visualizer";
 
         public override string Group => FeatureGroups.Hud;
 
-        public override string Description => "";
+        public override string Description => "Missing some logs for <i>that Achievement</i>, huh?";
 
+        [FeatureConfig]
+        public static LogVisualizerSettings Settings { get; set; }
+
+        public class LogVisualizerSettings
+        {
+            [FSHide]
+            public bool DebugPrint { get; set; } = false;
+
+            [FSDisplayName("Show Total Log Count")]
+            [FSDescription("Shows overall log count and per rundown count under the title at the top after selecting one.")]
+            public bool ShowTotalCount { get; set; } = true;
+
+            [FSDisplayName("Show Log Count for Rundowns")]
+            [FSDescription("Shows the total count for each rundown on the rundown selection menu.")]
+            public bool ShowCountPerRundownSelectionButton { get; set; } = true;
+
+            [FSDisplayName("Show Log Count on Expeditions")]
+            [FSDescription("Shows the total count of logs in each expedition.")]
+            public bool ShowCountPerExpedition { get; set; } = true;
+
+            [FSHeader(":// In Expedition Display")]
+            [FSDisplayName("Enable")]
+            [FSDescription("Shows you the logs available in the current expedition on the Objectives screen.")]
+            public bool ShowInExpeditionDisplay { get; set; } = true;
+
+            [FSDisplayName("Show Zone Spoiler")]
+            [FSDescription("Displays the Zone a log is in.")]
+            public bool EnableSpoilers { get; set; } = false;
+
+            [FSHeader(":// Colors")]
+            [FSDisplayName("Color: Logs Incomplete")]
+            public SColor ColorNormal { get; set; } = SColor.WHITE;
+
+            [FSDisplayName("Color: All Logs Gotten")]
+            public SColor ColorAllGotten { get; set; } = SColor.ORANGE;
+
+            [FSDisplayName("Color: No Logs Available")]
+            public SColor ColorNoLogs { get; set; } = new SColor(0.5f, 0.5f, 0.5f);
+        }
 
         public override bool ShouldInit()
         {
             return !IsPlayingModded;
         }
+
+        private static string _noLogsAvailableText = "N/A";
+        private static string _pageObjectives_NoLogsAvailableText = "Logs N/A";
 
         public override void Init()
         {
@@ -40,7 +82,23 @@ namespace TheArchive.Features.Hud
             LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<CM_LogDisplayItem>();
         }
 
-        private static eGameStateName _eGameStateName_InLevel = GetEnumFromName<eGameStateName>(nameof(eGameStateName.InLevel));
+        public override void OnFeatureSettingChanged(FeatureSetting setting)
+        {
+            if (setting.Identifier.EndsWith(nameof(Settings.ShowInExpeditionDisplay)))
+            {
+                if(Settings.ShowInExpeditionDisplay)
+                {
+                    var createdThisFrame = GetOrCreateLogDisplayRoot(MainMenuGuiLayer.Current?.PageObjectives?.m_artifactInventoryDisplay, out var logDisplay);
+                    InitializeLogDisplayForActiveExpedition(logDisplay, createdThisFrame);
+                }
+                else
+                {
+                    DisableLogDisplayRoot();
+                }
+            }
+        }
+
+        private static readonly eGameStateName _eGameStateName_InLevel = GetEnumFromName<eGameStateName>(nameof(eGameStateName.InLevel));
 
         public override void OnEnable()
         {
@@ -48,6 +106,9 @@ namespace TheArchive.Features.Hud
                 return;
 
             TryDiscoverAllLogsFromDataBlocks();
+
+            if (!Settings.ShowInExpeditionDisplay)
+                return;
 
             var createdThisFrame = GetOrCreateLogDisplayRoot(MainMenuGuiLayer.Current?.PageObjectives?.m_artifactInventoryDisplay, out var logDisplay);
 
@@ -65,7 +126,7 @@ namespace TheArchive.Features.Hud
 
         public void OnGameStateChanged(eGameStateName state)
         {
-            if(state == _eGameStateName_InLevel)
+            if(state == _eGameStateName_InLevel && Settings.ShowInExpeditionDisplay)
             {
                 var createdThisFrame = GetOrCreateLogDisplayRoot(MainMenuGuiLayer.Current?.PageObjectives?.m_artifactInventoryDisplay, out var logDisplay);
                 InitializeLogDisplayForActiveExpedition(logDisplay, createdThisFrame);
@@ -74,7 +135,7 @@ namespace TheArchive.Features.Hud
 
         public override void OnDisable()
         {
-            DestroyLogDisplayRoot();
+            DisableLogDisplayRoot();
             // TODO: Cleanup Log texts on RundownScreen(s)
         }
 
@@ -86,7 +147,7 @@ namespace TheArchive.Features.Hud
             var expTier = expedition.tier;
             var rundownKey = expedition.rundownKey.data;
 
-            FeatureLogger.Debug($"GameState == InLevel: Initializing LogDisplay for expedition: {rundownKey} {expTier} {expIndex}");
+            FeatureLogger.Debug($"Initializing LogDisplay for expedition: Rundown: {rundownKey}, Tier: {expTier}, Index: {expIndex}");
 
             var logs = GetLogsForExpedition(rundownKey, expTier, expIndex);
 
@@ -106,7 +167,7 @@ namespace TheArchive.Features.Hud
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 
-        public record class LogToExpedition
+        public record class LogInExpedition
         {
             public uint Rundown { get; set; }
             public uint ExpeditionTier { get; set; }
@@ -122,11 +183,9 @@ namespace TheArchive.Features.Hud
             public override string ToString()
             {
                 var rd = RundownDataBlock.GetBlock(Rundown);
-                return $"{rd.StorytellingData.Title.ToString().Split('\n')[1].Replace("TITLE: ", string.Empty)}: {char.ConvertFromUtf32(65 + (int)ExpeditionTier)}{ExpeditionNumber + 1}: {LogFileName} | ID: {LogId} | Audio: {IsAudioLog} | {DimensionIndex} | ZONE_{(ZoneOverride >= 0 ? ZoneOverride : Zone)}";
+                return $"{rd?.StorytellingData?.Title?.ToString().Split('\n')[1].Replace("TITLE: ", string.Empty)}: {char.ConvertFromUtf32(65 + (int)ExpeditionTier)}{ExpeditionNumber + 1}: {LogFileName} | ID: {LogId} | Audio: {IsAudioLog} | {DimensionIndex} | ZONE_{(ZoneOverride >= 0 ? ZoneOverride : Zone)}";
             }
         }
-
-        private static List<LogToExpedition> _allLogs = new List<LogToExpedition>();
 
         public override void OnDatablocksReady()
         {
@@ -139,6 +198,9 @@ namespace TheArchive.Features.Hud
             if (_logsDiscovered)
                 return;
 
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             var setupDB = GameSetupDataBlock.GetAllBlocks()[0];
 
             foreach (var loadedRundownDBIDs in setupDB.RundownIdsToLoad)
@@ -150,50 +212,43 @@ namespace TheArchive.Features.Hud
 
                 var rundownID = rundownDB.persistentID;
 
-                // iterate tier
-                // iterate expedition
-                // iterate level layout(s)
-                // create LogToExpedition (include dimension info? idk)
-
-                IterateTier(rundownDB.TierA, 0, rundownID);
-                IterateTier(rundownDB.TierB, 1, rundownID);
-                IterateTier(rundownDB.TierC, 2, rundownID);
-                IterateTier(rundownDB.TierD, 3, rundownID);
-                IterateTier(rundownDB.TierE, 4, rundownID);
-
+                IterateTier(rundownDB.TierA, rundownID, 0);
+                IterateTier(rundownDB.TierB, rundownID, 1);
+                IterateTier(rundownDB.TierC, rundownID, 2);
+                IterateTier(rundownDB.TierD, rundownID, 3);
+                IterateTier(rundownDB.TierE, rundownID, 4);
             }
 
             _allLogs = _allLogs.Distinct().ToList();
 
             _logsDiscovered = true;
 
-            foreach (var log in _allLogs)
+            /*foreach (var log in _allLogs)
             {
                 FeatureLogger.Info($"{log}");
-            }
+            }*/
 
-            FeatureLogger.Info("-----");
-            FeatureLogger.Success($"{_allLogs.Count} total log files");
+            stopwatch.Stop();
 
-
-            FeatureLogger.Info("-----");
+            FeatureLogger.Success($"Discovered {_allLogs.Count} total log files in DataBlocks in {stopwatch.Elapsed}");
         }
 
-        private static void IterateTier(Il2CppSystem.Collections.Generic.List<ExpeditionInTierData> tiers, uint tierthing, uint rundown)
+        #region DataBlockTraversal
+        private static void IterateTier(Il2CppSystem.Collections.Generic.List<ExpeditionInTierData> tiers, uint rundownID, uint expTier)
         {
             if (tiers == null)
                 return;
 
-            uint c = 0;
-            uint i = 0;
+            uint expNumber = 0;
+            uint expIndex = 0;
             foreach(var expedition in tiers)
             {
                 if (expedition == null)
                     return;
 
-                IterateLayer(expedition.LevelLayoutData, tierthing, rundown, c, eDimensionIndex.Reality, i);
-                IterateLayer(expedition.SecondaryLayout, tierthing, rundown, c, eDimensionIndex.Reality, i);
-                IterateLayer(expedition.ThirdLayout, tierthing, rundown, c, eDimensionIndex.Reality, i);
+                IterateLayer(expedition.LevelLayoutData, rundownID, expTier, expNumber, expIndex, eDimensionIndex.Reality);
+                IterateLayer(expedition.SecondaryLayout, rundownID, expTier, expNumber, expIndex, eDimensionIndex.Reality);
+                IterateLayer(expedition.ThirdLayout, rundownID, expTier, expNumber, expIndex, eDimensionIndex.Reality);
 
                 foreach(var dimensionData in expedition.DimensionDatas)
                 {
@@ -213,12 +268,12 @@ namespace TheArchive.Features.Hud
                                 if (logFile.FileContent.Id == 0)
                                     continue;
 
-                                var info = new LogToExpedition
+                                var info = new LogInExpedition
                                 {
-                                    Rundown = rundown,
-                                    ExpeditionTier = tierthing,
-                                    ExpeditionNumber = c,
-                                    ExpeditionIndex = i,
+                                    Rundown = rundownID,
+                                    ExpeditionTier = expTier,
+                                    ExpeditionNumber = expNumber,
+                                    ExpeditionIndex = expIndex,
                                     LogFileName = logFile.FileName,
                                     LogId = logFile.FileContent.Id,
                                     IsAudioLog = logFile.AttachedAudioFile != 0,
@@ -226,21 +281,23 @@ namespace TheArchive.Features.Hud
                                     Zone = 0,
                                     ZoneOverride = 0,
                                 };
-                                _allLogs.Add(info);
+
+                                AddLog(info);
                             }
                         }
                     }
 
-                    IterateLayer(dimensionDB.DimensionData.LevelLayoutData, tierthing, rundown, c, dimensionIndex, i);
+                    IterateLayer(dimensionDB.DimensionData.LevelLayoutData, rundownID, expTier, expNumber, expIndex, dimensionIndex);
                 }
 
                 if(expedition.Accessibility != eExpeditionAccessibility.AlwayBlock)
-                    c++;
-                i++;
+                    expNumber++;
+
+                expIndex++;
             }
         }
 
-        private static void IterateLayer(uint layoutDataId, uint tier, uint rundown, uint expeditionNum, eDimensionIndex dimensionIndex, uint expeditionIndex)
+        private static void IterateLayer(uint layoutDataId, uint rundown, uint tier, uint expeditionNum, uint expeditionIndex, eDimensionIndex dimensionIndex)
         {
             if (layoutDataId == 0)
                 return;
@@ -256,10 +313,7 @@ namespace TheArchive.Features.Hud
                 {
                     foreach (var term in zone.SpecificTerminalSpawnDatas)
                     {
-                        if (term.LocalLogFiles == null)
-                            continue;
-
-                        TerminalToLogs(tier, rundown, expeditionNum, dimensionIndex, level, zone, term, expeditionIndex);
+                        TerminalToLogs(level, zone, term, rundown, tier, expeditionNum, expeditionIndex, dimensionIndex);
                     }
                 }
                 
@@ -267,24 +321,24 @@ namespace TheArchive.Features.Hud
                 {
                     foreach (var term in zone.TerminalPlacements)
                     {
-                        if (term.LocalLogFiles == null)
-                            continue;
-
-                        TerminalToLogs(tier, rundown, expeditionNum, dimensionIndex, level, zone, term, expeditionIndex);
+                        TerminalToLogs(level, zone, term, rundown, tier, expeditionNum, expeditionIndex, dimensionIndex);
                     }
                 }
                 
             }
         }
 
-        private static void TerminalToLogs(uint tier, uint rundown, uint expeditionNum, eDimensionIndex dimensionIndex, LevelLayoutDataBlock level, ExpeditionZoneData zone, TerminalPlacementData term, uint expeditionIndex)
+        private static void TerminalToLogs(LevelLayoutDataBlock level, ExpeditionZoneData zone, TerminalPlacementData term, uint rundown, uint tier, uint expeditionNum, uint expeditionIndex, eDimensionIndex dimensionIndex)
         {
+            if (term?.LocalLogFiles == null)
+                return;
+
             foreach (var logFile in term.LocalLogFiles)
             {
                 if (logFile.FileContent.Id == 0)
                     continue;
 
-                var info = new LogToExpedition
+                var info = new LogInExpedition
                 {
                     Rundown = rundown,
                     ExpeditionTier = tier,
@@ -298,45 +352,89 @@ namespace TheArchive.Features.Hud
                     ZoneOverride = zone.AliasOverride,
                 };
 
-                _allLogs.Add(info);
+                AddLog(info);
             }
         }
+        #endregion DataBlockTraversal
 
-        public static Achievement_ReadAllLogs GetReadAllLogsInstance()
+        #region LogsRelateStuff
+        private static List<LogInExpedition> _allLogs = new();
+        // RundownID
+        private static readonly Dictionary<uint, List<LogInExpedition>> _rundownLogLookup = new();
+        // RundownID, Tier, ExpeditionIndex
+        private static readonly Dictionary<uint, Dictionary<uint, Dictionary<uint, List<LogInExpedition>>>> _logLookup = new();
+
+        private static void AddLog(LogInExpedition log)
         {
-            if (AchievementManager.Current?.m_allAchievements == null)
-                return null;
+            _allLogs.Add(log);
 
-            foreach(var ach in AchievementManager.Current.m_allAchievements)
+            if(!_rundownLogLookup.TryGetValue(log.Rundown, out var rundownList))
             {
-                if (ach.GetIl2CppType().Name == nameof(Achievement_ReadAllLogs))
-                    return ach.TryCastTo<Achievement_ReadAllLogs>();
+                rundownList = new List<LogInExpedition>();
+                _rundownLogLookup.Add(log.Rundown, rundownList);
             }
 
-            return null;
+            rundownList.Add(log);
+
+
+            if (!_logLookup.TryGetValue(log.Rundown, out var tierDict))
+            {
+                tierDict = new();
+                _logLookup.Add(log.Rundown, tierDict);
+            }
+
+            if (!tierDict.TryGetValue(log.ExpeditionTier, out var expeditionDict))
+            {
+                expeditionDict = new();
+                tierDict.Add(log.ExpeditionTier, expeditionDict);
+            }
+
+            if (!expeditionDict.TryGetValue(log.ExpeditionIndex, out var logList))
+            {
+                logList = new List<LogInExpedition>();
+                expeditionDict.Add(log.ExpeditionIndex, logList);
+            }
+
+            logList.Add(log);
+        }
+
+        private static readonly IReadOnlyList<LogInExpedition> _emptyList = new List<LogInExpedition>();
+        public static IReadOnlyList<LogInExpedition> GetAllLogsFromExpedition(uint rundownID, uint expTier, uint expIndex)
+        {
+            if (_logLookup.TryGetValue(rundownID, out var tierDict)
+                && tierDict.TryGetValue(expTier, out var expeditionDict)
+                && expeditionDict.TryGetValue(expIndex, out var logList))
+                return logList;
+
+            return _emptyList;
+        }
+
+        public static IReadOnlyList<LogInExpedition> GetAllLogsFromRundown(uint rundownID)
+        {
+            if (_rundownLogLookup.TryGetValue(rundownID, out var logList))
+                return logList;
+
+            return _emptyList;
         }
 
         private static readonly ISet<LogEntry> _emptyLogSet = new HashSet<LogEntry>();
         public ISet<LogEntry> GetLogsForExpedition(string rundownKey, eRundownTier eExpTier, int expIndex)
         {
-#warning TODO
-            //throw new NotImplementedException();
+            var expTier = (uint)eExpTier - 1;
 
-            var expTier = (int)eExpTier - 1;
-
-            if (!int.TryParse(rundownKey.Split('_')[1], out var rundownId))
+            if (!TryParseRundownKey(rundownKey, out var rundownID))
             {
                 FeatureLogger.Warning($"Failed to parse Rundown ID from \"{rundownKey}\" (Tier: {expTier}, Index: {expIndex})");
                 return _emptyLogSet;
             }
 
-            var ral = GetReadAllLogsInstance();
+            var ral = GetReadAllLogsAchievementInstance();
 
             if (ral == null || ral.m_allLogs == null || ral.m_readLogsOnStart == null)
                 return _emptyLogSet;
 
-            var logsForExpedition = _allLogs.Where(log => log.Rundown == rundownId && log.ExpeditionTier == expTier && log.ExpeditionIndex == expIndex && ral.m_allLogs.Contains(log.LogId));
-            var logsIHave = _allLogs.Where(log => log.Rundown == rundownId && log.ExpeditionTier == expTier && log.ExpeditionIndex == expIndex && ral.m_readLogsOnStart.Contains(log.LogId));
+            var logsForExpedition = GetAllLogsFromExpedition(rundownID, expTier, (uint)expIndex);
+            var logsIHave = logsForExpedition.Where(log => ral.m_readLogsOnStart.Contains(log.LogId));
 
             var logsForExpeditionDistinct = logsForExpedition.Select(log => log.LogId).Distinct().ToArray();
             var logsIHaveDistinct = logsIHave.Select(log => log.LogId).Distinct().ToArray();
@@ -349,10 +447,25 @@ namespace TheArchive.Features.Hud
                 if (log == null)
                     continue;
 
-                set.Add(new LogEntry(id, log.LogFileName, logsIHaveDistinct.Any(lih => lih == id), log));
+                set.Add(new LogEntry(id, log.LogFileName, collected: logsIHaveDistinct.Any(lih => lih == id), log));
             }
 
             return set;
+        }
+        #endregion LogsRelateStuff
+
+        public static Achievement_ReadAllLogs GetReadAllLogsAchievementInstance()
+        {
+            if (AchievementManager.Current?.m_allAchievements == null)
+                return null;
+
+            foreach (var ach in AchievementManager.Current.m_allAchievements)
+            {
+                if (ach.GetIl2CppType().Name == nameof(Achievement_ReadAllLogs))
+                    return ach.TryCastTo<Achievement_ReadAllLogs>();
+            }
+
+            return null;
         }
 
         [ArchivePatch(typeof(Achievement_ReadAllLogs), nameof(Achievement_ReadAllLogs.OnPlayFabLoginSuccess))]
@@ -360,37 +473,35 @@ namespace TheArchive.Features.Hud
         {
             public static void Postfix(Achievement_ReadAllLogs __instance)
             {
-                /*foreach(var log in __instance.m_readLogsOnStart)
-                {
-                    
-                }*/
+                var allLogsForAchievement = _allLogs.Where(log => __instance.m_allLogs.Contains(log.LogId)).ToList();
+                var allLogsForAchievementDistinct = allLogsForAchievement.Select(log => log.LogId).Distinct().ToArray();
 
-                //
-                var wtfIsGoingON = _allLogs.Where(log => !__instance.m_allLogs.Contains(log.LogId)).ToList();
-
-                var allLogs = _allLogs.Where(log => __instance.m_allLogs.Contains(log.LogId)).ToList();
-                var allLogsDistinct = _allLogs.Select(log => log.LogId).Distinct().ToArray();
-
-                var logsIhave = allLogs.Where(log => __instance.m_readLogsOnStart.Contains(log.LogId));
+                var logsIhave = allLogsForAchievement.Where(log => __instance.m_readLogsOnStart.Contains(log.LogId));
                 var logsIHaveDistinct = logsIhave.Select(log => log.LogId).Distinct().ToArray();
 
-                FeatureLogger.Notice($"{logsIHaveDistinct.Length}/{allLogsDistinct.Length} Logs found!");
+                FeatureLogger.Notice($"{logsIHaveDistinct.Length}/{allLogsForAchievementDistinct.Length} Logs found!");
 
+                if (!Settings.DebugPrint)
+                    return;
+
+                FeatureLogger.Notice("Printing all obtained logs:");
                 foreach(var log in logsIhave)
                 {
                     FeatureLogger.Info($"{log}");
                 }
                 FeatureLogger.Success("---");
 
-                FeatureLogger.Fail("Missing ones?:");
-                foreach(var logInfo in wtfIsGoingON)
+                FeatureLogger.Fail("Logs not required for Achievement:");
+                var logsThatArentAchievementRequired = _allLogs.Where(log => !__instance.m_allLogs.Contains(log.LogId)).ToList();
+                foreach (var logInfo in logsThatArentAchievementRequired)
                 {
                     FeatureLogger.Success(logInfo.ToString());
                 }
 
-                var abcdefg = __instance.m_allLogs.ToSystemList().Where(id => !_allLogs.Any(log => log.LogId == id));
+                var logsThatCouldntBeFoundInLevels = __instance.m_allLogs.ToSystemList().Where(id => !_allLogs.Any(log => log.LogId == id));
 
-                foreach(var logId in abcdefg)
+                FeatureLogger.Fail("Logs that weren't found in any level?:");
+                foreach(var logId in logsThatCouldntBeFoundInLevels)
                 {
                     FeatureLogger.Notice($"Missing Log: {logId}");
                 }
@@ -398,6 +509,54 @@ namespace TheArchive.Features.Hud
         }
 
         private static readonly string[] _br = new string[] { "<br>" };
+
+        [ArchivePatch(typeof(CM_PageRundown_New), nameof(CM_PageRundown_New.UpdateHeaderText))]
+        internal static class CM_PageRundown_New_UpdateHeaderText_Patch
+        {
+            public static void Postfix(CM_PageRundown_New __instance)
+            {
+                //FeatureLogger.Debug($"{nameof(CM_PageRundown_New_UpdateHeaderText_Patch)} called.");
+
+                if (!Settings.ShowTotalCount)
+                    return;
+
+                var ogHeader = __instance.m_textRundownHeader;
+
+                var currentRundownID = __instance.m_currentRundownData?.persistentID ?? 0;
+
+                var title = ogHeader.text.Contains("<br>") ? ogHeader.text.Split(_br, StringSplitOptions.None)[0] : ogHeader.text;
+
+                if (string.IsNullOrWhiteSpace(title))
+                    title = __instance.m_customHeader;
+
+                var rel = GetReadAllLogsAchievementInstance();
+
+                if (rel == null || rel.m_allLogs == null || rel.m_readLogsOnStart == null)
+                    return;
+
+                var countTotal = 0;
+                var countReadLogs = 0;
+
+                if(currentRundownID == 0)
+                {
+                    countTotal = rel.m_allLogs.Count;
+                    countReadLogs = rel.m_readLogsOnStart.Count;
+                }
+                else
+                {
+                    var allLogsFromRundown = GetAllLogsFromRundown(currentRundownID).Where(log => rel.m_allLogs.Contains(log.LogId));
+                    var allLogsFromRundownIHave = allLogsFromRundown.Where(log => rel.m_readLogsOnStart.Contains(log.LogId));
+
+                    var allLogsDistinct = allLogsFromRundown.Select(log => log.LogId).Distinct().ToArray();
+                    var allLogsIHaveDistinct = allLogsFromRundownIHave.Select(log => log.LogId).Distinct().ToArray();
+
+                    countTotal = allLogsDistinct.Length;
+                    countReadLogs = allLogsIHaveDistinct.Length;
+                }
+
+                __instance.m_textRundownHeader.SetText($"{title}<br><size=70%>Total Logs: ({countReadLogs} / {countTotal})</size>");
+            }
+        }
 
         //UpdateRundownSelectionButton(CM_RundownSelection rundownSelection, System.UInt32 rundownId)
         [ArchivePatch(typeof(CM_PageRundown_New), nameof(CM_PageRundown_New.UpdateRundownSelectionButton))]
@@ -410,6 +569,9 @@ namespace TheArchive.Features.Hud
             {
                 //FeatureLogger.Debug($"Updating Rundown Selection Logs Text for Rundown ID \"{rundownId}\" ...");
 
+                if (!Settings.ShowCountPerRundownSelectionButton)
+                    return;
+
                 var text = rundownSelection.m_rundownText;
 
                 if (text == null)
@@ -417,19 +579,32 @@ namespace TheArchive.Features.Hud
 
                 var rundownText = text.text.Contains("<br>") ? text.text.Split(_br, StringSplitOptions.None)[0] : text.text;
 
-                var ral = GetReadAllLogsInstance();
+                var ral = GetReadAllLogsAchievementInstance();
 
                 if (ral == null || ral.m_allLogs == null || ral.m_readLogsOnStart == null)
                     return;
 
-                var logsForRundown = _allLogs.Where(log => log.Rundown == rundownId && ral.m_allLogs.Contains(log.LogId));
-                var logsIHave = _allLogs.Where(log => log.Rundown == rundownId && ral.m_readLogsOnStart.Contains(log.LogId));
+                var logsForRundown = GetAllLogsFromRundown((uint)rundownId).Where(log => ral.m_allLogs.Contains(log.LogId));
+                var logsIHave = logsForRundown.Where(log => ral.m_readLogsOnStart.Contains(log.LogId));
 
                 var logsForRundownDistinct = logsForRundown.Select(log => log.LogId).Distinct().ToArray();
                 var logsIHaveDistinct = logsIHave.Select(log => log.LogId).Distinct().ToArray();
 
 
-                var logsText = $"<br><size=60%>Logs: ({logsIHaveDistinct.Length} / {logsForRundownDistinct.Length})</size>";
+                SColor color = Settings.ColorNormal;
+                var logCountText = $"{logsIHaveDistinct.Length} / {logsForRundownDistinct.Length}";
+
+                if(logsForRundownDistinct.Length == 0)
+                {
+                    color = Settings.ColorNoLogs;
+                    logCountText = _noLogsAvailableText;
+                }
+                else if(logsIHaveDistinct.Length == logsForRundownDistinct.Length)
+                {
+                    color = Settings.ColorAllGotten;
+                }
+
+                var logsText = $"<br><size=60%><{color.ToHexString()}>Logs: ({logCountText})</color></size>";
 
                 rundownSelection.m_rundownText.SetText($"{rundownText}{logsText}");
 
@@ -458,9 +633,12 @@ namespace TheArchive.Features.Hud
             {
                 //FeatureLogger.Debug($"{nameof(CM_ExpeditionIcon_New)}{nameof(CM_ExpeditionIcon_New.SetStatus)}() called for \"{__instance.FullName}\".");
 
+                if (!Settings.ShowCountPerExpedition)
+                    return;
+
                 var originalStatus = __instance.m_statusText.text.Contains("<br>") ? __instance.m_statusText.text.Split(_br, StringSplitOptions.None)[0] : __instance.m_statusText.text;
 
-                var ral = GetReadAllLogsInstance();
+                var ral = GetReadAllLogsAchievementInstance();
 
                 if (ral == null || ral.m_allLogs == null || ral.m_readLogsOnStart == null)
                     return;
@@ -468,7 +646,8 @@ namespace TheArchive.Features.Hud
                 var expIndex = __instance.ExpIndex;
                 var expTier = (int)__instance.Tier - 1;
 
-                if(!int.TryParse(__instance.RundownKey.Split('_')[1], out var rundownId))
+                
+                if(!TryParseRundownKey(__instance.RundownKey, out var rundownID))
                 {
                     FeatureLogger.Warning($"Failed to parse Rundown ID from \"{__instance.RundownKey}\" ({__instance.FullName})");
                     return;
@@ -476,26 +655,26 @@ namespace TheArchive.Features.Hud
 
                 __instance.m_hostingFriendsCountText.transform.localPosition = _new_friendsHostingTextPos;
 
-                var logsForExpedition = _allLogs.Where(log => log.Rundown == rundownId && log.ExpeditionTier == expTier && log.ExpeditionIndex == expIndex && ral.m_allLogs.Contains(log.LogId));
-                var logsIHave = _allLogs.Where(log => log.Rundown == rundownId && log.ExpeditionTier == expTier && log.ExpeditionIndex == expIndex && ral.m_readLogsOnStart.Contains(log.LogId));
+                var logsForExpedition = _allLogs.Where(log => log.Rundown == rundownID && log.ExpeditionTier == expTier && log.ExpeditionIndex == expIndex && ral.m_allLogs.Contains(log.LogId));
+                var logsIHave = _allLogs.Where(log => log.Rundown == rundownID && log.ExpeditionTier == expTier && log.ExpeditionIndex == expIndex && ral.m_readLogsOnStart.Contains(log.LogId));
 
                 var logsForExpeditionDistinct = logsForExpedition.Select(log => log.LogId).Distinct().ToArray();
                 var logsIHaveDistinct = logsIHave.Select(log => log.LogId).Distinct().ToArray();
 
+                SColor color = Settings.ColorNormal;
                 string logsText = $"{logsIHaveDistinct.Length} / {logsForExpeditionDistinct.Length}";
-                string prefixColor = "<#FFF>";
 
-                if(logsForExpeditionDistinct.Length == 0)
+                if (logsForExpeditionDistinct.Length == 0)
                 {
-                    logsText = "N/A";
-                    prefixColor = "<#777>";
+                    logsText = _noLogsAvailableText;
+                    color = Settings.ColorNoLogs;
                 }
                 else if(logsIHaveDistinct.Length == logsForExpeditionDistinct.Length)
                 {
-                    prefixColor = "<color=orange>";
+                    color = Settings.ColorAllGotten;
                 }
 
-                __instance.m_statusText.SetText($"{originalStatus}<br>{prefixColor}Logs: ({logsText})</color>");
+                __instance.m_statusText.SetText($"{originalStatus}<br><{color.ToHexString()}>Logs: ({logsText})</color>");
             }
         }
 
@@ -506,9 +685,9 @@ namespace TheArchive.Features.Hud
             public readonly uint logId;
             public readonly string logName;
             public readonly bool collected;
-            public readonly LogToExpedition details;
+            public readonly LogInExpedition details;
 
-            public LogEntry(uint id, string logFileName, bool collected, LogToExpedition details)
+            public LogEntry(uint id, string logFileName, bool collected, LogInExpedition details)
             {
                 logId = id;
                 logName = logFileName;
@@ -520,8 +699,6 @@ namespace TheArchive.Features.Hud
         public class CM_LogDisplayRoot : MonoBehaviour
         {
             public CM_LogDisplayRoot(IntPtr ptr) : base(ptr) { }
-
-            public static readonly string NoLogsAvailableText = "Logs N/A";
 
             public Vector3 LocalItemRootPos { get; internal set; }
             public static Vector3 ItemDistance { get; private set; } = new Vector3(0, -45, 0);
@@ -565,7 +742,7 @@ namespace TheArchive.Features.Hud
             {
                 if (_items.Count == 0)
                 {
-                    HeaderText.SetText(NoLogsAvailableText);
+                    HeaderText.SetText(_pageObjectives_NoLogsAvailableText);
                     return;
                 }
 
@@ -648,20 +825,17 @@ namespace TheArchive.Features.Hud
 
         private static CM_LogDisplayRoot _logDisplayRoot = null;
 
-        private void DestroyLogDisplayRoot()
+        private static void DisableLogDisplayRoot()
         {
-            _logDisplayRoot.gameObject.SetActive(false);
-
-            /*_logDisplayRoot.SafeDestroyGO();
-            _logDisplayRoot = null;*/
+            _logDisplayRoot?.gameObject?.SetActive(false);
         }
 
         /// <summary>
-        /// 
+        /// Gets or creates the Log Display UI elements for the <seealso cref="CM_PageObjectives"/> screen
         /// </summary>
-        /// <param name="artifactInvDisplay"></param>
-        /// <param name="logDisplayRoot"></param>
-        /// <param name="isFromStartup"></param>
+        /// <param name="artifactInvDisplay">The <seealso cref="CM_ArtifactInventoryDisplay"/> to clone</param>
+        /// <param name="logDisplayRoot">Newly created <seealso cref="CM_LogDisplayRoot"/> object</param>
+        /// <param name="isFromStartup">Set to true if called from startup, otherwise ignore</param>
         /// <returns>If the object was created this frame</returns>
         public static bool GetOrCreateLogDisplayRoot(CM_ArtifactInventoryDisplay artifactInvDisplay, out CM_LogDisplayRoot logDisplayRoot, bool isFromStartup = false)
         {
@@ -753,7 +927,7 @@ namespace TheArchive.Features.Hud
         {
             public static void Postfix(CM_ArtifactInventoryDisplay __instance)
             {
-                FeatureLogger.Notice($"{nameof(CM_ArtifactInventoryDisplay)} Setup called!");
+                //FeatureLogger.Notice($"{nameof(CM_ArtifactInventoryDisplay)} Setup called!");
                 GetOrCreateLogDisplayRoot(__instance, out _, isFromStartup: true);
             }
         }
