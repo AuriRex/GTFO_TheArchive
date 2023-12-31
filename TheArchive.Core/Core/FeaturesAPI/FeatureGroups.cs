@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Core.Localization;
-using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI
 {
@@ -67,7 +66,7 @@ namespace TheArchive.Core.FeaturesAPI
         }
 
 
-        internal static FeatureGroup GetOrCreateModuleGroup(string name)
+        internal static FeatureGroup GetOrCreateModuleGroup(string name, Dictionary<Language, string> groupLanguages = null)
         {
             var group = ModuleGroups.FirstOrDefault(g => g.Name == name, null);
 
@@ -75,6 +74,9 @@ namespace TheArchive.Core.FeaturesAPI
                 group.IsNewlyCreated = false;
 
             group ??= new FeatureGroup(name, true, null);
+
+            if (groupLanguages != null)
+                group.SetLanguage(groupLanguages);
 
             return group;
         }

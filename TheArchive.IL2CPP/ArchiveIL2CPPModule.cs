@@ -1,8 +1,10 @@
 ﻿using GameData;
 using LevelGeneration;
 using System;
+using System.Collections.Generic;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Localization;
 using TheArchive.Utilities;
 using UnityEngine.CrashReportHandler;
 
@@ -21,6 +23,11 @@ namespace TheArchive
         public ArchiveLegacyPatcher Patcher { get; set; }
 
         public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
+
+        public Dictionary<Language, string> ModuleGroupLanguages => new()
+        {
+            { Language.English, "Archive Core" }
+        };
 
         static ArchiveIL2CPPModule()
         {

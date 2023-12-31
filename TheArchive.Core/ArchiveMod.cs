@@ -527,8 +527,10 @@ namespace TheArchive
             ArchiveLogger.Info($"Initializing module \"{moduleType.FullName}\" ...");
             var module = (IArchiveModule) Activator.CreateInstance(moduleType);
 
-            if (module.ModuleGroup.IsNullOrWhiteSpaceOrEmpty())
+            if (string.IsNullOrWhiteSpace(module.ModuleGroup))
                 throw new Exception($"ArchiveModule: {module.GetType().FullName}, {nameof(IArchiveModule.ModuleGroup)} can not be null!");
+
+            FeatureGroups.GetOrCreateModuleGroup(module.ModuleGroup, module.ModuleGroupLanguages);
 
             foreach(var type in moduleType.Assembly.GetTypes())
             {

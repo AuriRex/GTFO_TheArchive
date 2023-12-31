@@ -363,9 +363,9 @@ namespace TheArchive.Features.Dev
 
                 TheSearchMenu = new SearchMainPage();
 
-                BuildFeatureGroup(FeatureGroups.ArchiveCoreGroups, null);
+                BuildFeatureGroup(FeatureGroups.ArchiveCoreGroups);
 
-                BuildFeatureGroup(FeatureGroups.ModuleGroups, null);
+                BuildFeatureGroup(FeatureGroups.ModuleGroups);
 
                 IEnumerable<Feature> features;
                 if (Feature.DevMode)
@@ -462,19 +462,17 @@ namespace TheArchive.Features.Dev
                 FeatureLogger.Debug($"It took {_setupStopwatch.Elapsed:ss\\.fff} seconds to run {nameof(SetupMainModSettingsPage)}!");
             }
 
-            private static void BuildFeatureGroup(HashSet<FeatureGroup> groups, SubMenu parentMenu)
+            private static void BuildFeatureGroup(HashSet<FeatureGroup> groups, SubMenu parentMenu = null)
             {
                 foreach (var group in groups.OrderBy(kvp => kvp.Name))
                 {
-                    ArchiveLogger.Notice($"Group: {group.Name}, parentMenu: {(parentMenu != null ? parentMenu.Title : "null")}");
-
                     var groupName = group.Name;
                     var featureSet = group.Features.OrderBy(fs => fs.Name);
 
                     if (groupName == FeatureGroups.Dev && !Feature.DevMode)
                         continue;
 
-                    if (!Feature.DevMode && featureSet.All(f => f.IsHidden))
+                    if (!Feature.DevMode && featureSet.All(f => f.IsHidden) && !group.SubGroups.Any())
                         continue;
 
                     CreateHeader(group.DisplayName, subMenu: parentMenu);
@@ -482,13 +480,23 @@ namespace TheArchive.Features.Dev
                     SubMenu groupSubMenu = new SubMenu(group.DisplayName);
 
                     var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
-                    CreateSubMenuControls(groupSubMenu, placeIntoMenu: parentMenu, menuEntryLabelText: LocalizationCoreService.Format(24, "{0} Feature{1} >>", featuresCount, featuresCount == 1 ? string.Empty : "s"));
+                    var subGroupsCount = group.SubGroups.Count();
+                    string featureText = LocalizationCoreService.Format(24, "{0} Feature{1}", featuresCount, featuresCount == 1 ? string.Empty : "s");
+                    string subGroupText = LocalizationCoreService.Format(57, "{2} SubGroup{3}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
+                    string menuEntryLabelText = string.Empty;
+                    if (featuresCount > 0 && subGroupsCount > 0)
+                        menuEntryLabelText = $"{featureText}, {subGroupsCount} >>";
+                    else if (featuresCount == 0 && subGroupsCount > 0)
+                        menuEntryLabelText = $"{subGroupText} >>";
+                    else if (featuresCount > 0 && subGroupsCount == 0)
+                        menuEntryLabelText = $"{featureText} >>";
+
+                    CreateSubMenuControls(groupSubMenu, placeIntoMenu: parentMenu, menuEntryLabelText: menuEntryLabelText);
 
                     CreateHeader(group.DisplayName, subMenu: groupSubMenu);
 
                     foreach (var feature in featureSet)
                     {
-                        ArchiveLogger.Notice($"Group: {group.Name}, Feature: {feature.Name}");
                         SetupEntriesForFeature(feature, groupSubMenu);
                     }
 
@@ -496,7 +504,7 @@ namespace TheArchive.Features.Dev
 
                     groupSubMenu?.Build();
 
-                    CreateSpacer();
+                    CreateSpacer(parentMenu);
                 }
             }
 
