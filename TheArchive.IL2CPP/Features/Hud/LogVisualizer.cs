@@ -176,14 +176,14 @@ namespace TheArchive.Features.Hud
             public string LogFileName { get; set; }
             public uint LogId { get; set; }
             public bool IsAudioLog { get; set; }
-            public eDimensionIndex DimensionIndex { get; internal set; }
+            public int DimensionIndex { get; internal set; }
             public int Zone { get; internal set; }
             public int ZoneOverride { get; internal set; }
 
             public override string ToString()
             {
                 var rd = RundownDataBlock.GetBlock(Rundown);
-                return $"{rd?.StorytellingData?.Title?.ToString().Split('\n')[1].Replace("TITLE: ", string.Empty)}: {char.ConvertFromUtf32(65 + (int)ExpeditionTier)}{ExpeditionNumber + 1}: {LogFileName} | ID: {LogId} | Audio: {IsAudioLog} | {DimensionIndex} | ZONE_{(ZoneOverride >= 0 ? ZoneOverride : Zone)}";
+                return $"{rd?.StorytellingData?.Title?.ToString().Split('\n')[1].Replace("TITLE: ", string.Empty)}: {char.ConvertFromUtf32(65 + (int)ExpeditionTier)}{ExpeditionNumber + 1}: {LogFileName} | ID: {LogId} | Audio: {IsAudioLog} | {(eDimensionIndex) DimensionIndex} | ZONE_{(ZoneOverride >= 0 ? ZoneOverride : Zone)}";
             }
         }
 
@@ -212,11 +212,11 @@ namespace TheArchive.Features.Hud
 
                 var rundownID = rundownDB.persistentID;
 
-                IterateTier(rundownDB.TierA, rundownID, 0);
-                IterateTier(rundownDB.TierB, rundownID, 1);
-                IterateTier(rundownDB.TierC, rundownID, 2);
-                IterateTier(rundownDB.TierD, rundownID, 3);
-                IterateTier(rundownDB.TierE, rundownID, 4);
+                DataBlockTraversal.IterateTier(rundownDB.TierA, rundownID, 0);
+                DataBlockTraversal.IterateTier(rundownDB.TierB, rundownID, 1);
+                DataBlockTraversal.IterateTier(rundownDB.TierC, rundownID, 2);
+                DataBlockTraversal.IterateTier(rundownDB.TierD, rundownID, 3);
+                DataBlockTraversal.IterateTier(rundownDB.TierE, rundownID, 4);
             }
 
             _allLogs = _allLogs.Distinct().ToList();
@@ -234,125 +234,128 @@ namespace TheArchive.Features.Hud
         }
 
         #region DataBlockTraversal
-        private static void IterateTier(Il2CppSystem.Collections.Generic.List<ExpeditionInTierData> tiers, uint rundownID, uint expTier)
+        private static class DataBlockTraversal
         {
-            if (tiers == null)
-                return;
-
-            uint expNumber = 0;
-            uint expIndex = 0;
-            foreach(var expedition in tiers)
+            public static void IterateTier(Il2CppSystem.Collections.Generic.List<ExpeditionInTierData> tiers, uint rundownID, uint expTier)
             {
-                if (expedition == null)
+                if (tiers == null)
                     return;
 
-                IterateLayer(expedition.LevelLayoutData, rundownID, expTier, expNumber, expIndex, eDimensionIndex.Reality);
-                IterateLayer(expedition.SecondaryLayout, rundownID, expTier, expNumber, expIndex, eDimensionIndex.Reality);
-                IterateLayer(expedition.ThirdLayout, rundownID, expTier, expNumber, expIndex, eDimensionIndex.Reality);
-
-                foreach(var dimensionData in expedition.DimensionDatas)
+                uint expNumber = 0;
+                uint expIndex = 0;
+                foreach(var expedition in tiers)
                 {
-                    var dimensionDB = DimensionDataBlock.GetBlock(dimensionData.DimensionData);
+                    if (expedition == null)
+                        return;
 
-                    var dimensionIndex = dimensionData.DimensionIndex;
+                    IterateLayer(expedition.LevelLayoutData, rundownID, expTier, expNumber, expIndex, eDimensionIndex.Reality);
+                    IterateLayer(expedition.SecondaryLayout, rundownID, expTier, expNumber, expIndex, eDimensionIndex.Reality);
+                    IterateLayer(expedition.ThirdLayout, rundownID, expTier, expNumber, expIndex, eDimensionIndex.Reality);
 
-                    if(dimensionDB.DimensionData.StaticTerminalPlacements != null)
+                    foreach(var dimensionData in expedition.DimensionDatas)
                     {
-                        foreach (var term in dimensionDB.DimensionData.StaticTerminalPlacements)
-                        {
-                            if (term.LocalLogFiles == null)
-                                continue;
+                        var dimensionDB = DimensionDataBlock.GetBlock(dimensionData.DimensionData);
 
-                            foreach (var logFile in term.LocalLogFiles)
+                        var dimensionIndex = dimensionData.DimensionIndex;
+
+                        if(dimensionDB.DimensionData.StaticTerminalPlacements != null)
+                        {
+                            foreach (var term in dimensionDB.DimensionData.StaticTerminalPlacements)
                             {
-                                if (logFile.FileContent.Id == 0)
+                                if (term.LocalLogFiles == null)
                                     continue;
 
-                                var info = new LogInExpedition
+                                foreach (var logFile in term.LocalLogFiles)
                                 {
-                                    Rundown = rundownID,
-                                    ExpeditionTier = expTier,
-                                    ExpeditionNumber = expNumber,
-                                    ExpeditionIndex = expIndex,
-                                    LogFileName = logFile.FileName,
-                                    LogId = logFile.FileContent.Id,
-                                    IsAudioLog = logFile.AttachedAudioFile != 0,
-                                    DimensionIndex = dimensionIndex,
-                                    Zone = 0,
-                                    ZoneOverride = 0,
-                                };
+                                    if (logFile.FileContent.Id == 0)
+                                        continue;
 
-                                AddLog(info);
+                                    var info = new LogInExpedition
+                                    {
+                                        Rundown = rundownID,
+                                        ExpeditionTier = expTier,
+                                        ExpeditionNumber = expNumber,
+                                        ExpeditionIndex = expIndex,
+                                        LogFileName = logFile.FileName,
+                                        LogId = logFile.FileContent.Id,
+                                        IsAudioLog = logFile.AttachedAudioFile != 0,
+                                        DimensionIndex = (int)dimensionIndex,
+                                        Zone = 0,
+                                        ZoneOverride = 0,
+                                    };
+
+                                    AddLog(info);
+                                }
                             }
                         }
+
+                        IterateLayer(dimensionDB.DimensionData.LevelLayoutData, rundownID, expTier, expNumber, expIndex, dimensionIndex);
                     }
 
-                    IterateLayer(dimensionDB.DimensionData.LevelLayoutData, rundownID, expTier, expNumber, expIndex, dimensionIndex);
+                    if(expedition.Accessibility != eExpeditionAccessibility.AlwayBlock)
+                        expNumber++;
+
+                    expIndex++;
                 }
-
-                if(expedition.Accessibility != eExpeditionAccessibility.AlwayBlock)
-                    expNumber++;
-
-                expIndex++;
             }
-        }
 
-        private static void IterateLayer(uint layoutDataId, uint rundown, uint tier, uint expeditionNum, uint expeditionIndex, eDimensionIndex dimensionIndex)
-        {
-            if (layoutDataId == 0)
-                return;
-
-            var level = LevelLayoutDataBlock.GetBlock(layoutDataId);
-
-            if (level == null)
-                return;
-
-            foreach(var zone in level.Zones)
+            private static void IterateLayer(uint layoutDataId, uint rundown, uint tier, uint expeditionNum, uint expeditionIndex, eDimensionIndex dimensionIndex)
             {
-                if(zone.SpecificTerminalSpawnDatas != null)
+                if (layoutDataId == 0)
+                    return;
+
+                var level = LevelLayoutDataBlock.GetBlock(layoutDataId);
+
+                if (level == null)
+                    return;
+
+                foreach(var zone in level.Zones)
                 {
-                    foreach (var term in zone.SpecificTerminalSpawnDatas)
+                    if(zone.SpecificTerminalSpawnDatas != null)
                     {
-                        TerminalToLogs(level, zone, term, rundown, tier, expeditionNum, expeditionIndex, dimensionIndex);
+                        foreach (var term in zone.SpecificTerminalSpawnDatas)
+                        {
+                            TerminalToLogs(level, zone, term, rundown, tier, expeditionNum, expeditionIndex, dimensionIndex);
+                        }
                     }
-                }
                 
-                if(zone.TerminalPlacements != null)
-                {
-                    foreach (var term in zone.TerminalPlacements)
+                    if(zone.TerminalPlacements != null)
                     {
-                        TerminalToLogs(level, zone, term, rundown, tier, expeditionNum, expeditionIndex, dimensionIndex);
+                        foreach (var term in zone.TerminalPlacements)
+                        {
+                            TerminalToLogs(level, zone, term, rundown, tier, expeditionNum, expeditionIndex, dimensionIndex);
+                        }
                     }
-                }
                 
+                }
             }
-        }
 
-        private static void TerminalToLogs(LevelLayoutDataBlock level, ExpeditionZoneData zone, TerminalPlacementData term, uint rundown, uint tier, uint expeditionNum, uint expeditionIndex, eDimensionIndex dimensionIndex)
-        {
-            if (term?.LocalLogFiles == null)
-                return;
-
-            foreach (var logFile in term.LocalLogFiles)
+            private static void TerminalToLogs(LevelLayoutDataBlock level, ExpeditionZoneData zone, TerminalPlacementData term, uint rundown, uint tier, uint expeditionNum, uint expeditionIndex, eDimensionIndex dimensionIndex)
             {
-                if (logFile.FileContent.Id == 0)
-                    continue;
+                if (term?.LocalLogFiles == null)
+                    return;
 
-                var info = new LogInExpedition
+                foreach (var logFile in term.LocalLogFiles)
                 {
-                    Rundown = rundown,
-                    ExpeditionTier = tier,
-                    ExpeditionNumber = expeditionNum,
-                    ExpeditionIndex = expeditionIndex,
-                    LogFileName = logFile.FileName,
-                    LogId = logFile.FileContent.Id,
-                    IsAudioLog = logFile.AttachedAudioFile != 0,
-                    DimensionIndex = dimensionIndex,
-                    Zone = zone.Alias == 0 ? level.ZoneAliasStart + (int)zone.LocalIndex : zone.Alias,
-                    ZoneOverride = zone.AliasOverride,
-                };
+                    if (logFile.FileContent.Id == 0)
+                        continue;
 
-                AddLog(info);
+                    var info = new LogInExpedition
+                    {
+                        Rundown = rundown,
+                        ExpeditionTier = tier,
+                        ExpeditionNumber = expeditionNum,
+                        ExpeditionIndex = expeditionIndex,
+                        LogFileName = logFile.FileName,
+                        LogId = logFile.FileContent.Id,
+                        IsAudioLog = logFile.AttachedAudioFile != 0,
+                        DimensionIndex = (int)dimensionIndex,
+                        Zone = zone.Alias == 0 ? level.ZoneAliasStart + (int)zone.LocalIndex : zone.Alias,
+                        ZoneOverride = zone.AliasOverride,
+                    };
+
+                    AddLog(info);
+                }
             }
         }
         #endregion DataBlockTraversal
