@@ -2,7 +2,8 @@
 
 public struct SColor
 {
-    public static readonly SColor WHITE = new SColor();
+    public static readonly SColor WHITE = new SColor(1f, 1f, 1f);
+    public static readonly SColor BLACK = new SColor(0f, 0f, 0f);
 
     public static readonly SColor ORANGE = new SColor(1f, 0.5f, 0.05f, 1f);
     public static readonly SColor RED = new SColor(0.8f, 0.1f, 0.1f, 1f);
