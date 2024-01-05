@@ -13,6 +13,12 @@ using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
 using TMPro;
+#if Unhollower
+using UnhollowerBaseLib.Attributes;
+#endif
+#if Il2CppInterop
+using Il2CppInterop.Runtime.Attributes;
+#endif
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
 
@@ -55,7 +61,7 @@ namespace TheArchive.Features.Hud
 
             [FSDisplayName("Show Zone Spoiler")]
             [FSDescription("Displays the Zone a log is in.")]
-            public bool EnableSpoilers { get; set; } = false;
+            public SpoilerMode Spoilers { get; set; } = SpoilerMode.Never;
 
             [FSHeader(":// Colors")]
             [FSDisplayName("Color: Logs Incomplete")]
@@ -66,6 +72,13 @@ namespace TheArchive.Features.Hud
 
             [FSDisplayName("Color: No Logs Available")]
             public SColor ColorNoLogs { get; set; } = new SColor(0.5f, 0.5f, 0.5f);
+
+            public enum SpoilerMode
+            {
+                Never,
+                OnceDiscovered,
+                Always
+            }
         }
 
         public override bool ShouldInit()
@@ -75,6 +88,7 @@ namespace TheArchive.Features.Hud
 
         private static string _noLogsAvailableText = "N/A";
         private static string _pageObjectives_NoLogsAvailableText = "Logs N/A";
+        public static string _pageObjectives_Item_LogUnknownText = "???";
 
         public override void Init()
         {
@@ -84,17 +98,24 @@ namespace TheArchive.Features.Hud
 
         public override void OnFeatureSettingChanged(FeatureSetting setting)
         {
-            if (setting.Identifier.EndsWith(nameof(Settings.ShowInExpeditionDisplay)))
+            if (setting.Identifier.EndsWith(nameof(Settings.ShowInExpeditionDisplay))
+                || setting.Identifier.EndsWith(nameof(Settings.Spoilers)))
             {
-                if(Settings.ShowInExpeditionDisplay)
-                {
-                    var createdThisFrame = GetOrCreateLogDisplayRoot(MainMenuGuiLayer.Current?.PageObjectives?.m_artifactInventoryDisplay, out var logDisplay);
-                    InitializeLogDisplayForActiveExpedition(logDisplay, createdThisFrame);
-                }
-                else
-                {
-                    DisableLogDisplayRoot();
-                }
+                OnLogDisplaySettingChanged();
+            }
+        }
+
+        private void OnLogDisplaySettingChanged()
+        {
+            var createdThisFrame = GetOrCreateLogDisplayRoot(MainMenuGuiLayer.Current?.PageObjectives?.m_artifactInventoryDisplay, out var logDisplay);
+
+            if (Settings.ShowInExpeditionDisplay)
+            {
+                InitializeAndEnableLogDisplayForActiveExpedition(logDisplay, createdThisFrame);
+            }
+            else
+            {
+                logDisplay.DisableDisplay();
             }
         }
 
@@ -120,7 +141,7 @@ namespace TheArchive.Features.Hud
             if((eGameStateName)CurrentGameState == _eGameStateName_InLevel)
             {
                 // We are in level, update log display
-                InitializeLogDisplayForActiveExpedition(logDisplay, createdThisFrame);
+                InitializeAndEnableLogDisplayForActiveExpedition(logDisplay, createdThisFrame);
             }
         }
 
@@ -129,7 +150,7 @@ namespace TheArchive.Features.Hud
             if(state == _eGameStateName_InLevel && Settings.ShowInExpeditionDisplay)
             {
                 var createdThisFrame = GetOrCreateLogDisplayRoot(MainMenuGuiLayer.Current?.PageObjectives?.m_artifactInventoryDisplay, out var logDisplay);
-                InitializeLogDisplayForActiveExpedition(logDisplay, createdThisFrame);
+                InitializeAndEnableLogDisplayForActiveExpedition(logDisplay, createdThisFrame);
             }
         }
 
@@ -139,7 +160,7 @@ namespace TheArchive.Features.Hud
             // TODO: Cleanup Log texts on RundownScreen(s)
         }
 
-        private void InitializeLogDisplayForActiveExpedition(CM_LogDisplayRoot logDisplay, bool createdThisFrame)
+        private void InitializeAndEnableLogDisplayForActiveExpedition(CM_LogDisplayRoot logDisplay, bool createdThisFrame)
         {
             var expedition = RundownManager.GetActiveExpeditionData();
 
@@ -151,18 +172,19 @@ namespace TheArchive.Features.Hud
 
             var logs = GetLogsForExpedition(rundownKey, expTier, expIndex);
 
-            if (createdThisFrame)
-            {
-                // Turns out waiting one frame after cloning something fixes weird behaviour with old values/GOs persisting
-                LoaderWrapper.StartCoroutine(NextFrame(() =>
-                {
-                    logDisplay.Initialize(logs);
-                }));
-            }
-            else
+            if (!createdThisFrame)
             {
                 logDisplay.Initialize(logs);
+                logDisplay.EnableDisplay();
+                return;
             }
+
+            // Turns out waiting one frame after cloning something fixes weird behaviour with old values/GOs persisting
+            LoaderWrapper.StartCoroutine(NextFrame(() =>
+            {
+                logDisplay.Initialize(logs);
+                logDisplay.EnableDisplay();
+            }));
         }
 
         public static new IArchiveLogger FeatureLogger { get; set; }
@@ -646,8 +668,8 @@ namespace TheArchive.Features.Hud
                 if (ral == null || ral.m_allLogs == null || ral.m_readLogsOnStart == null)
                     return;
 
-                var expIndex = __instance.ExpIndex;
-                var expTier = (int)__instance.Tier - 1;
+                var expIndex = (uint)__instance.ExpIndex;
+                var expTier = (uint)__instance.Tier - 1;
 
                 
                 if(!TryParseRundownKey(__instance.RundownKey, out var rundownID))
@@ -658,8 +680,9 @@ namespace TheArchive.Features.Hud
 
                 __instance.m_hostingFriendsCountText.transform.localPosition = _new_friendsHostingTextPos;
 
-                var logsForExpedition = _allLogs.Where(log => log.Rundown == rundownID && log.ExpeditionTier == expTier && log.ExpeditionIndex == expIndex && ral.m_allLogs.Contains(log.LogId));
-                var logsIHave = _allLogs.Where(log => log.Rundown == rundownID && log.ExpeditionTier == expTier && log.ExpeditionIndex == expIndex && ral.m_readLogsOnStart.Contains(log.LogId));
+                
+                var logsForExpedition = GetAllLogsFromExpedition(rundownID, expTier, expIndex).Where(log => ral.m_allLogs.Contains(log.LogId));
+                var logsIHave = logsForExpedition.Where(log => ral.m_readLogsOnStart.Contains(log.LogId));
 
                 var logsForExpeditionDistinct = logsForExpedition.Select(log => log.LogId).Distinct().ToArray();
                 var logsIHaveDistinct = logsIHave.Select(log => log.LogId).Distinct().ToArray();
@@ -711,7 +734,18 @@ namespace TheArchive.Features.Hud
 
             public static string PrefabGOName { get; internal set; }
 
-            private List<CM_LogDisplayItem> _items = new List<CM_LogDisplayItem>();
+
+            private readonly List<CM_LogDisplayItem> _items = new();
+
+            public void EnableDisplay()
+            {
+                gameObject.SetActive(true);
+            }
+
+            public void DisableDisplay()
+            {
+                gameObject.SetActive(false);
+            }
 
             public void SetLogCollected(uint logId)
             {
@@ -726,6 +760,7 @@ namespace TheArchive.Features.Hud
                 UpdateHeaderText();
             }
 
+            [HideFromIl2Cpp]
             public void Initialize(ISet<LogEntry> logs)
             {
                 Cleanup();
@@ -734,7 +769,16 @@ namespace TheArchive.Features.Hud
                 {
                     foreach (var entry in logs)
                     {
-                        CreateItem(entry.logId, entry.logName, entry.collected);
+                        string spoilerText;
+                        if(entry.details.Zone == 0 && entry.details.ZoneOverride == 0)
+                        {
+                            spoilerText = ((eDimensionIndex)entry.details.DimensionIndex).ToString().Replace("_", " ");
+                        }
+                        else
+                        {
+                            spoilerText = $"ZONE_{(entry.details.ZoneOverride > 0 ? entry.details.ZoneOverride : entry.details.Zone)}";
+                        }
+                        CreateItem(entry.logId, entry.logName, entry.collected, spoilerText);
                     }
                 }
 
@@ -754,7 +798,15 @@ namespace TheArchive.Features.Hud
                 HeaderText.SetText($"Logs: ({collectedAmount} / {_items.Count})");
             }
 
-            private void CreateItem(uint logid, string logName, bool collected)
+            public void UpdateItemVisuals()
+            {
+                foreach (var item in _items)
+                {
+                    item.UpdateVisuals();
+                }
+            }
+
+            private void CreateItem(uint logid, string logName, bool collected, string spoiler)
             {
                 var offset = _items.Count * ItemDistance;
 
@@ -773,6 +825,7 @@ namespace TheArchive.Features.Hud
 
                 logDisplayItem.LogID = logid;
                 logDisplayItem.LogName = logName;
+                logDisplayItem.Spoiler = spoiler;
 
                 logDisplayItem.SetCollected(collected);
 
@@ -796,8 +849,6 @@ namespace TheArchive.Features.Hud
         {
             public CM_LogDisplayItem(IntPtr ptr) : base(ptr) { }
 
-            public static string LogUnknownText { get; private set; } = "???";
-
             public TextMeshPro Text;
             public SpriteRenderer Divider;
             public SpriteRenderer Gradient;
@@ -805,21 +856,35 @@ namespace TheArchive.Features.Hud
             public bool Collected { get; private set; }
             public uint LogID { get; internal set; } = 0;
             public string LogName { get; internal set; } = string.Empty;
+            public string Spoiler { get; internal set; }
 
-            internal void SetCollected(bool collected)
+            public void SetCollected(bool collected)
             {
                 Collected = collected;
 
-                if (collected)
+                UpdateVisuals();
+            }
+
+            public void UpdateVisuals()
+            {
+                string specialText = string.Empty;
+
+                if (Settings.Spoilers == LogVisualizerSettings.SpoilerMode.Always
+                    || (Settings.Spoilers == LogVisualizerSettings.SpoilerMode.OnceDiscovered && Collected))
                 {
-                    Text.SetText(LogName);
+                    specialText = $" <#999><size=75%>[{Spoiler}]</size></color>";
+                }
+
+                if (Collected)
+                {
+                    Text.SetText($"{LogName}{specialText}");
                     Text.color = Color.white;
                     Divider.color = Color.green;
                     Gradient.color = Color.green.WithAlpha(0.025f);
                     return;
                 }
 
-                Text.SetText(LogUnknownText);
+                Text.SetText($"{_pageObjectives_Item_LogUnknownText}{specialText}");
                 Text.color = Color.gray;
                 Divider.color = Color.red;
                 Gradient.color = Color.red.WithAlpha(0.025f);
@@ -830,7 +895,7 @@ namespace TheArchive.Features.Hud
 
         private static void DisableLogDisplayRoot()
         {
-            _logDisplayRoot?.gameObject?.SetActive(false);
+            _logDisplayRoot?.DisableDisplay();
         }
 
         /// <summary>
@@ -844,7 +909,6 @@ namespace TheArchive.Features.Hud
         {
             if (artifactInvDisplay == null || _logDisplayRoot != null)
             {
-                _logDisplayRoot?.gameObject?.SetActive(true);
                 logDisplayRoot = _logDisplayRoot;
                 return false;
             }
@@ -906,6 +970,7 @@ namespace TheArchive.Features.Hud
             CM_LogDisplayRoot.PrefabGOName = logItemPrefab.gameObject.name;
 
             _logDisplayRoot = logDisplayRoot;
+            rootGO.SetActive(false);
 
             UnityEngine.Object.DontDestroyOnLoad(_logDisplayRoot.gameObject);
             _logDisplayRoot.gameObject.hideFlags = HideFlags.HideAndDontSave;
