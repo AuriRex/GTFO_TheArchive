@@ -66,7 +66,7 @@ namespace TheArchive.Core.FeaturesAPI
         }
 
 
-        internal static FeatureGroup GetOrCreateModuleGroup(string name, Dictionary<Language, string> groupLanguages = null)
+        public static FeatureGroup GetOrCreateModuleGroup(string name, Dictionary<Language, string> groupLanguages = null)
         {
             var group = ModuleGroups.FirstOrDefault(g => g.Name == name, null);
 

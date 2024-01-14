@@ -502,5 +502,14 @@
       "English": "Dev Mode enabled - Hidden Features shown!",
       "Chinese": "开发者模式已启用 - 显示隐藏特性！"
     }
+  },
+  {
+    "UntranslatedText": "{0} SubGroup{1}",
+    "Description": "",
+    "ID": 56,
+    "Languages": {
+      "English": "{0} SubGroup{1}",
+      "Chinese": "{0}个分组"
+    }
   }
 ]
