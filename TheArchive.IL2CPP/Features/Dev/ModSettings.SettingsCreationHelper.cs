@@ -798,7 +798,7 @@ namespace TheArchive.Features.Dev
 
             public static string GetEnumListItemName(EnumListSetting setting)
             {
-                var str = string.Join(", ", setting.CurrentSelectedValues());
+                var str = string.Join(", ", setting.CurrentSelectedValuesName());
 
                 if (string.IsNullOrWhiteSpace(str))
                 {
