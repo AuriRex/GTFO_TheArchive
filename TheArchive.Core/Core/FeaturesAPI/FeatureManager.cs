@@ -267,7 +267,6 @@ namespace TheArchive.Core.FeaturesAPI
             }
             RegisteredFeatures.Add(feature);
             feature.Group.Features.Add(feature);
-            ArchiveLogger.Notice($"Add Feature, Group: {feature.Group.Name}, Feature: {feature.Name}");
         }
 
         public void EnableFeature(Feature feature, bool setConfig = true)

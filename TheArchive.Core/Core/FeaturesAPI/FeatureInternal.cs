@@ -729,7 +729,7 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 _FILogger.Info($"Loading config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
 
-                var configInstance = LocalFiles.LoadFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
+                var configInstance = LocalFiles.LoadFeatureConfig(ArchiveModule.GetType().Assembly.GetName().Name, $"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
 
                 settingsHelper.SetupViaFeatureInstance(configInstance);
 
@@ -754,7 +754,7 @@ namespace TheArchive.Core.FeaturesAPI
 
                 var configInstance = settingsHelper.GetFeatureInstance();
 
-                LocalFiles.SaveFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType, configInstance);
+                LocalFiles.SaveFeatureConfig(ArchiveModule.GetType().Assembly.GetName().Name, $"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType, configInstance);
 
                 settingsHelper.IsDirty = false;
             }

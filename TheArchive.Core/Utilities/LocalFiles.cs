@@ -438,19 +438,22 @@ namespace TheArchive.Utilities
             File.WriteAllText(path, JsonConvert.SerializeObject(config, ArchiveMod.JsonSerializerSettings));
         }
 
-        internal static object LoadFeatureConfig(string featureIdentifier, Type configType, out bool fileExists, bool saveIfNonExistent = true)
+        internal static object LoadFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, out bool fileExists, bool saveIfNonExistent = true)
         {
             if (string.IsNullOrWhiteSpace(featureIdentifier)) throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
             if (configType == null) throw new ArgumentNullException($"Parameter {nameof(configType)} may not be null.");
 
-            var path = Path.Combine(FeatureConfigsDirectoryPath, $"{featureIdentifier}_{configType.Name}.json");
+            var moduleSettingsPath = Path.Combine(FeatureConfigsDirectoryPath, moduleIdentifier);
+            if (!Directory.Exists(moduleSettingsPath)) Directory.CreateDirectory(moduleSettingsPath);
+
+            var path = Path.Combine(moduleSettingsPath, $"{featureIdentifier}_{configType.Name}.json");
 
             if (!File.Exists(path))
             {
                 var newT = Activator.CreateInstance(configType);
                 if (saveIfNonExistent)
                 {
-                    SaveFeatureConfig(featureIdentifier, configType, newT);
+                    SaveFeatureConfig(moduleIdentifier, featureIdentifier, configType, newT);
                 }
                 fileExists = false;
                 return newT;
@@ -483,18 +486,21 @@ namespace TheArchive.Utilities
             return data;
         }
 
-        internal static object LoadFeatureConfig(string featureIdentifier, Type configType, bool saveIfNonExistent = true)
+        internal static object LoadFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, bool saveIfNonExistent = true)
         {
-            return LoadFeatureConfig(featureIdentifier, configType, out _, saveIfNonExistent);
+            return LoadFeatureConfig(moduleIdentifier, featureIdentifier, configType, out _, saveIfNonExistent);
         }
 
-        internal static void SaveFeatureConfig(string featureIdentifier, Type configType, object configInstance)
+        internal static void SaveFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, object configInstance)
         {
             if (string.IsNullOrWhiteSpace(featureIdentifier)) throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
             if (configType == null) throw new ArgumentNullException($"Parameter {nameof(configType)} may not be null.");
             if (configInstance == null) throw new ArgumentNullException($"Parameter {nameof(configInstance)} may not be null.");
 
-            var path = Path.Combine(FeatureConfigsDirectoryPath, $"{featureIdentifier}_{configType.Name}.json");
+            var moduleSettingsPath = Path.Combine(FeatureConfigsDirectoryPath, moduleIdentifier);
+            if (!Directory.Exists(moduleSettingsPath)) Directory.CreateDirectory(moduleSettingsPath);
+
+            var path = Path.Combine(moduleSettingsPath, $"{featureIdentifier}_{configType.Name}.json");
 
             ArchiveLogger.Debug($"Saving Feature Setting to: {path}");
             File.WriteAllText(path, JsonConvert.SerializeObject(configInstance, ArchiveMod.JsonSerializerSettings));
