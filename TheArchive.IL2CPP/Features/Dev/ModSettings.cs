@@ -482,14 +482,14 @@ namespace TheArchive.Features.Dev
                     var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
                     var subGroupsCount = group.SubGroups.Count();
                     string featureText = LocalizationCoreService.Format(24, "{0} Feature{1}", featuresCount, featuresCount == 1 ? string.Empty : "s");
-                    string subGroupText = LocalizationCoreService.Format(57, "{2} SubGroup{3}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
+                    string subGroupText = LocalizationCoreService.Format(57, "{0} SubGroup{1}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
                     string menuEntryLabelText = string.Empty;
                     if (featuresCount > 0 && subGroupsCount > 0)
-                        menuEntryLabelText = $"{featureText}, {subGroupsCount} >>";
+                        menuEntryLabelText = $"{featureText}, {subGroupsCount}";
                     else if (featuresCount == 0 && subGroupsCount > 0)
-                        menuEntryLabelText = $"{subGroupText} >>";
+                        menuEntryLabelText = $"{subGroupText}";
                     else if (featuresCount > 0 && subGroupsCount == 0)
-                        menuEntryLabelText = $"{featureText} >>";
+                        menuEntryLabelText = $"{featureText}";
 
                     CreateSubMenuControls(groupSubMenu, placeIntoMenu: parentMenu, menuEntryLabelText: menuEntryLabelText);
 

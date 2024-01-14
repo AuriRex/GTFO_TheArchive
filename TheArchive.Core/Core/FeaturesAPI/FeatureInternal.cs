@@ -82,7 +82,7 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 if (InternalDisabled)
                 {
-                    return $"<#F00>DISABLED</color>: {DisabledReason}";
+                    return string.Format("<#F00>{0}</color>: {1}", LocalizationCoreService.Get(2, "DISABLED"), DisabledReason);
                 }
 
                 return string.Empty;
