@@ -51,14 +51,14 @@ namespace TheArchive.Core.FeaturesAPI
         #endregion
 
 
-        private static FeatureGroup GetOrCreateArchiveGroup(string name)
+        private static FeatureGroup GetOrCreateArchiveGroup(string name, bool dev = false)
         {
             var group = ArchiveCoreGroups.FirstOrDefault(g => g.Name == name, null);
 
             if (group != null)
                 group.IsNewlyCreated = false;
 
-            group ??= new FeatureGroup(name, false, null);
+            group ??= new FeatureGroup(name, false, null, dev);
 
             ArchiveCoreGroups.Add(group);
 
@@ -89,18 +89,18 @@ namespace TheArchive.Core.FeaturesAPI
 
         #region Archive Groups
         internal static FeatureGroup ArchiveCore { get; private set; } = GetOrCreateModuleGroup(ArchiveMod.ARCHIVE_CORE_FEATUREGROUP);
-        internal static FeatureGroup Accessibility { get; private set; } = GetOrCreateArchiveGroup("Accessibility");
-        internal static FeatureGroup Audio { get; private set; } = GetOrCreateArchiveGroup("Audio");
-        internal static FeatureGroup Backport { get; private set; } = GetOrCreateArchiveGroup("Backport");
-        internal static FeatureGroup Cosmetic { get; private set; } = GetOrCreateArchiveGroup("Cosmetic");
-        internal static FeatureGroup Dev { get; private set; } = GetOrCreateArchiveGroup("Developer");
-        internal static FeatureGroup Fixes { get; private set; } = GetOrCreateArchiveGroup("Fixes");
-        internal static FeatureGroup Hud { get; private set; } = GetOrCreateArchiveGroup("HUD / UI");
-        internal static FeatureGroup LocalProgression { get; private set; } = GetOrCreateArchiveGroup("Local Progression"); // , group => group.InlineSettings = true
-        internal static FeatureGroup Special { get; private set; } = GetOrCreateArchiveGroup("Misc");
-        internal static FeatureGroup Presence { get; private set; } = GetOrCreateArchiveGroup("Discord / Steam Presence");
-        internal static FeatureGroup Security { get; private set; } = GetOrCreateArchiveGroup("Security / Anti Cheat");
-        internal static FeatureGroup QualityOfLife { get; private set; } = GetOrCreateArchiveGroup("Quality of Life");
+        public static FeatureGroup Accessibility { get; private set; } = GetOrCreateArchiveGroup("Accessibility");
+        public static FeatureGroup Audio { get; private set; } = GetOrCreateArchiveGroup("Audio");
+        public static FeatureGroup Backport { get; private set; } = GetOrCreateArchiveGroup("Backport");
+        public static FeatureGroup Cosmetic { get; private set; } = GetOrCreateArchiveGroup("Cosmetic");
+        public static FeatureGroup Dev { get; private set; } = GetOrCreateArchiveGroup("Developer", true);
+        public static FeatureGroup Fixes { get; private set; } = GetOrCreateArchiveGroup("Fixes");
+        public static FeatureGroup Hud { get; private set; } = GetOrCreateArchiveGroup("HUD / UI");
+        public static FeatureGroup LocalProgression { get; private set; } = GetOrCreateArchiveGroup("Local Progression"); // , group => group.InlineSettings = true
+        public static FeatureGroup Special { get; private set; } = GetOrCreateArchiveGroup("Misc");
+        public static FeatureGroup Presence { get; private set; } = GetOrCreateArchiveGroup("Discord / Steam Presence");
+        public static FeatureGroup Security { get; private set; } = GetOrCreateArchiveGroup("Security / Anti Cheat");
+        public static FeatureGroup QualityOfLife { get; private set; } = GetOrCreateArchiveGroup("Quality of Life");
         #endregion
     }
 
@@ -109,21 +109,22 @@ namespace TheArchive.Core.FeaturesAPI
         public string Name { get; private set; } = string.Empty;
         internal string DisplayName => _languages.TryGetValue(LocalizationCoreService.CurrentLanguage, out var text) ? text : Name;
         public bool IsNewlyCreated { get; internal set; } = true;
-        public bool IsModuleGroup { get; internal set; }
-        public FeatureGroup ParentGroup { get; internal set; }
+        public bool IsModuleGroup { get; internal set; } = false;
+        public bool IsHidden { get; private set; } = false;
+        public FeatureGroup ParentGroup { get; internal set; } = null;
         public HashSet<FeatureGroup> SubGroups { get; } = new();
         internal HashSet<Feature> Features { get; } = new();
 
         private Dictionary<Language, string> _languages = new();
 
-        public FeatureGroup GetOrCreateSubGroup(string name)
+        public FeatureGroup GetOrCreateSubGroup(string name, bool dev = false)
         {
             var subGroup = SubGroups.FirstOrDefault(g => g.Name == name);
 
             if (subGroup != null)
                 IsNewlyCreated = false;
 
-            subGroup ??= new FeatureGroup(name, false, this);
+            subGroup ??= new FeatureGroup(name, false, this, dev);
 
             return subGroup;
         }
@@ -141,9 +142,10 @@ namespace TheArchive.Core.FeaturesAPI
             _languages[language] = text;
         }
 
-        internal FeatureGroup(string name, bool moduleGroup = false, FeatureGroup parentGroup = null)
+        internal FeatureGroup(string name, bool moduleGroup = false, FeatureGroup parentGroup = null, bool dev = false)
         {
             Name = name;
+            IsHidden = dev;
             if (moduleGroup)
             {
                 IsModuleGroup = true;

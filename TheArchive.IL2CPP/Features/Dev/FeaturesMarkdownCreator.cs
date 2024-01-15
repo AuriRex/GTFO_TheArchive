@@ -61,9 +61,9 @@ namespace TheArchive.Features.Dev
                 }
 
 
-                if(group == FeatureGroups.Dev)
+                if(group.IsHidden)
                 {
-                    FeatureLogger.Info("Skipping Dev Group!");
+                    FeatureLogger.Info("Skipping Hidden Group!");
                     continue;
                 }
 

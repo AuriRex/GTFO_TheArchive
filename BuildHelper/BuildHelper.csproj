@@ -31,7 +31,7 @@
 
 	<Target Name="Buildthing" AfterTargets="Build">
 		<Message Importance="High" Text="[#0] Cleaning out directory" />
-		<Exec Command="REM&#xD;&#xA;		  if exist $(MSBuildProjectDirectory)\..\out\TheArchive.Core.dll del $(MSBuildProjectDirectory)\..\out\TheArchive.Core.dll&#xD;&#xA;		  if exist $(MSBuildProjectDirectory)\..\out\TheArchive.Core.pdb del $(MSBuildProjectDirectory)\..\out\TheArchive.Core.pdb" />
+		<Exec Command="REM&#xD;&#xA;		  if exist $(MSBuildProjectDirectory)\..\out\TheArchive.Core.dll del $(MSBuildProjectDirectory)\..\out\TheArchive.Core.dll&#xD;&#xA;		  if exist $(MSBuildProjectDirectory)\..\out\TheArchive.Core.pdb del $(MSBuildProjectDirectory)\..\out\TheArchive.Core.pdb 			  if exist &quot;$(SolutionDir)out\Localization&quot; rmdir /S /Q &quot;$(SolutionDir)out\Localization&quot;" />
 
 		<Message Importance="High" Text="[#0.1] Building Core Mod" />
 		<MSBuild Projects="$(MSBuildProjectDirectory)\..\TheArchive.Core\TheArchive.Core.csproj" ContinueOnError="false" BuildInParallel="false" />
@@ -89,10 +89,12 @@
 			  dotnet clean -f $(TargetFramework) -c $(Configuration)
 			  dotnet build -f $(TargetFramework) -c $(Configuration)
 			  
-			  ECHO [#4] Copying $(Configuration) TheArchive.Core.dll to out directory.
+			  ECHO [#4] Copying $(Configuration) TheArchive.Core.dll to out\Localization directory.
 			  if exist &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.dll&quot; copy /y &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.dll&quot; &quot;$(SolutionDir)out\&quot;
-			  if exist &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb&quot; copy /y &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb&quot; &quot;$(SolutionDir)out\&quot;" />
-		
+			  if exist &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb&quot; copy /y &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb&quot; &quot;$(SolutionDir)out\&quot;
+			  
+			  ECHO [#5] Copying Localizations to out directory.
+			  if exist &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\Localizations&quot; xcopy /E /Y /I &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\Localizations&quot; &quot;$(SolutionDir)out\Localization&quot;" />
 	</Target>
 	
 	<PropertyGroup>

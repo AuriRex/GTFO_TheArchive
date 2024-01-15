@@ -365,6 +365,11 @@ namespace TheArchive.Features.Dev
 
                 BuildFeatureGroup(FeatureGroups.ArchiveCoreGroups);
 
+                if (FeatureGroups.ModuleGroups.Count > 1)
+                {
+                    CreateHeader(LocalizationCoreService.Get(58, "Add-ons"));
+                }
+
                 BuildFeatureGroup(FeatureGroups.ModuleGroups);
 
                 IEnumerable<Feature> features;
@@ -383,40 +388,6 @@ namespace TheArchive.Features.Dev
 
                 var featureAssembliesSet = features.Select(f => f.GetType().Assembly).ToHashSet();
                 var featureAssemblies = featureAssembliesSet.OrderBy(asm => asm.GetName().Name);
-
-                /*
-                CreateHeader(LocalizationCoreService.Get(25, "Uncategorized"), DISABLED);
-
-                foreach (var featureAsm in featureAssemblies)
-                {
-                    var featuresFromMod = features.Where(f => f.GetType().Assembly == featureAsm);
-                    featuresFromMod = featuresFromMod.OrderBy(f => f.Name);
-
-                    var headerTitle = featureAsm.GetCustomAttribute<ModDefaultFeatureGroupName>()?.DefaultGroupName ?? featureAsm.GetName().Name;
-                    bool inlineSettings = featureAsm.GetCustomAttribute<ModInlineUncategorizedSettingsIntoModuleMenu>() != null;
-
-                    CreateHeader(headerTitle);
-
-                    SubMenu otherModSubMenu = null;
-                    if (!inlineSettings)
-                    {
-                        otherModSubMenu = new SubMenu(headerTitle);
-                        var featuresCount = featuresFromMod.Where(f => !f.IsHidden || DevMode).Count();
-                        CreateSubMenuControls(otherModSubMenu, menuEntryLabelText: LocalizationCoreService.Format(24, "{0} Feature{1} >>", featuresCount, featuresCount == 1 ? string.Empty : "s"));
-
-                        CreateHeader(headerTitle, subMenu: otherModSubMenu);
-                    }
-
-                    foreach (var feature in featuresFromMod)
-                    {
-                        SetupEntriesForFeature(feature, otherModSubMenu);
-                    }
-
-                    CreateSpacer();
-
-                    otherModSubMenu?.Build();
-                }
-                */
 
                 CreateHeader(LocalizationCoreService.Get(26, "Info"));
 
@@ -469,7 +440,7 @@ namespace TheArchive.Features.Dev
                     var groupName = group.Name;
                     var featureSet = group.Features.OrderBy(fs => fs.Name);
 
-                    if (groupName == FeatureGroups.Dev && !Feature.DevMode)
+                    if (group.IsHidden && !Feature.DevMode)
                         continue;
 
                     if (!Feature.DevMode && featureSet.All(f => f.IsHidden) && !group.SubGroups.Any())
@@ -482,7 +453,7 @@ namespace TheArchive.Features.Dev
                     var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
                     var subGroupsCount = group.SubGroups.Count();
                     string featureText = LocalizationCoreService.Format(24, "{0} Feature{1}", featuresCount, featuresCount == 1 ? string.Empty : "s");
-                    string subGroupText = LocalizationCoreService.Format(57, "{0} SubGroup{1}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
+                    string subGroupText = LocalizationCoreService.Format(57, "{0} Subgroup{1}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
                     string menuEntryLabelText = string.Empty;
                     if (featuresCount > 0 && subGroupsCount > 0)
                         menuEntryLabelText = $"{featureText}, {subGroupsCount}";

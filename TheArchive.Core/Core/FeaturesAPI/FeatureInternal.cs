@@ -19,7 +19,7 @@ namespace TheArchive.Core.FeaturesAPI
 {
     internal class FeatureInternal
     {
-        internal FeatureLocalizationService Localization { get; private set; } = new();
+        internal FeatureLocalizationService Localization { get; } = new();
         internal static GameBuildInfo BuildInfo => Feature.BuildInfo;
         internal bool InternalDisabled { get; private set; } = false;
         internal InternalDisabledReason DisabledReason { get; private set; }
@@ -35,6 +35,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal bool AllAdditionalSettingsAreHidden { get; private set; } = true;
         internal bool InitialEnabledState { get; private set; } = false;
         internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
+        internal FeatureExtraSettingsService ExtraSettings { get; } = new();
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
         internal IArchiveLogger FeatureLoggerInstance { get; private set; }
         internal Assembly OriginAssembly { get; private set; }
@@ -304,7 +305,7 @@ namespace TheArchive.Core.FeaturesAPI
             var featureType = _feature.GetType();
             OriginAssembly = featureType.Assembly;
 
-            feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature, feature.GetType().Namespace.StartsWith("TheArchive")));
+            feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature));
 
             _FILogger.Msg(ConsoleColor.Black, "-");
             _FILogger.Msg(ConsoleColor.Green, $"Initializing {_feature.Identifier} ...");
@@ -692,6 +693,8 @@ namespace TheArchive.Core.FeaturesAPI
 
             try
             {
+                ExtraSettings.Setup(_feature);
+                ExtraSettings.LoadAllSettings();
                 _feature.Init();
             }
             catch(Exception ex)
@@ -971,6 +974,7 @@ namespace TheArchive.Core.FeaturesAPI
             try
             {
                 _feature.OnQuit();
+                ExtraSettings.SaveAllSettings();
             }
             catch (Exception ex)
             {

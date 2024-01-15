@@ -463,9 +463,9 @@ namespace TheArchive.Utilities
             return JsonConvert.DeserializeObject(File.ReadAllText(path), configType, ArchiveMod.JsonSerializerSettings);
         }
 
-        internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature, bool mainModule)
+        internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature)
         {
-            string dir = Path.Combine(Path.GetDirectoryName(mainModule ? ArchiveMod.CORE_PATH : feature.FeatureInternal.OriginAssembly.Location), "Localization");
+            string dir = Path.Combine(Path.GetDirectoryName(feature.ModuleGroup == ArchiveMod.ARCHIVE_CORE_FEATUREGROUP ? ArchiveMod.CORE_PATH : feature.FeatureInternal.OriginAssembly.Location), "Localization");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);

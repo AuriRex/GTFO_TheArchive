@@ -85,7 +85,7 @@ namespace TheArchive.Core.Localization
 
         public static void Init()
         {
-            string dir = Path.Combine(Path.GetDirectoryName(ArchiveMod.CORE_PATH), $"Localization");
+            string dir = Path.Combine(Path.GetDirectoryName(ArchiveMod.CORE_PATH), "Localization");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
