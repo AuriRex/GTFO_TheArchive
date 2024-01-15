@@ -9,24 +9,27 @@ public class FeatureExtraSetting : Attribute
 {
     internal string FullPath { get; set; }
 
-    internal string CustomPath { get; set; }
+    internal string PathUnderSettings { get; set; }
 
     internal string Alias { get; set; }
+
+    internal bool SaveOnQuit { get; set; }
 
     internal PropertyInfo PropertyInfo { get; set; }
 
     internal Feature Feature { get; set; }
 
-    public FeatureExtraSetting(string path, string alias = null)
+    public FeatureExtraSetting(string path, bool saveOnQuit = true, string alias = null)
     {
-        CustomPath = path;
+        PathUnderSettings = path;
         Alias = alias;
+        SaveOnQuit = saveOnQuit;
     }
 
     internal void Setup(Feature feature, PropertyInfo propertyInfo)
     {
         Feature = feature;
-        FullPath = Path.Combine(Path.GetDirectoryName(feature.FeatureInternal.ArchiveModule.GetType().Assembly.Location), "Settings", $"{CustomPath}.json");
+        FullPath = Path.Combine(Path.GetDirectoryName(feature.FeatureInternal.ArchiveModule.GetType().Assembly.Location), "Settings", $"{PathUnderSettings}.json");
         PropertyInfo = propertyInfo;
     }
 
@@ -38,10 +41,13 @@ public class FeatureExtraSetting : Attribute
         PropertyInfo.SetValue(Feature, JsonConvert.DeserializeObject(File.ReadAllText(FullPath), PropertyInfo.PropertyType, ArchiveMod.JsonSerializerSettings));
     }
 
-    internal void Save()
+    internal void Save(bool force = false)
     {
-        var root = Path.GetDirectoryName(FullPath);
-        if (!Directory.Exists(root)) Directory.CreateDirectory(root);
-        File.WriteAllText(FullPath, JsonConvert.SerializeObject(PropertyInfo.GetValue(Feature), ArchiveMod.JsonSerializerSettings));
+        if (Feature.IsApplicationQuitting && SaveOnQuit || force)
+        {
+            var root = Path.GetDirectoryName(FullPath);
+            if (!Directory.Exists(root)) Directory.CreateDirectory(root);
+            File.WriteAllText(FullPath, JsonConvert.SerializeObject(PropertyInfo.GetValue(Feature), ArchiveMod.JsonSerializerSettings));
+        }
     }
 }

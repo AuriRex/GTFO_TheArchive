@@ -17,7 +17,7 @@ internal class FeatureExtraSettingsService : IFeatureExtraSettingService
                 continue;
 
             var setting = prop.GetCustomAttribute<FeatureExtraSetting>();
-            _featureExtraSettings[string.IsNullOrEmpty(setting.Alias) ? setting.CustomPath : setting.Alias] = setting;
+            _featureExtraSettings[string.IsNullOrEmpty(setting.Alias) ? setting.PathUnderSettings : setting.Alias] = setting;
             setting.Setup(_feature, prop);
         }
     }
@@ -50,7 +50,7 @@ internal class FeatureExtraSettingsService : IFeatureExtraSettingService
     {
         if (_featureExtraSettings.TryGetValue(name, out var setting))
         {
-            setting.Save();
+            setting.Save(true);
         }
     }
 
