@@ -94,7 +94,7 @@
 			  if exist &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb&quot; copy /y &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\bin\$(Configuration)\TheArchive.Core.pdb&quot; &quot;$(SolutionDir)out\&quot;
 			  
 			  ECHO [#5] Copying Localizations to out directory.
-			  if exist &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\Localizations&quot; xcopy /E /Y /I &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\Resources\Localizations&quot; &quot;$(SolutionDir)out\Localization&quot;" />
+			  if exist &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\Localization&quot; xcopy /E /Y /I &quot;$(MSBuildProjectDirectory)\..\TheArchive.Core\Localization&quot; &quot;$(SolutionDir)out\Localization&quot;" />
 	</Target>
 	
 	<PropertyGroup>
