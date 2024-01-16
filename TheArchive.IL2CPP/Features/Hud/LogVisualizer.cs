@@ -772,11 +772,16 @@ namespace TheArchive.Features.Hud
                         string spoilerText;
                         if(entry.details.Zone == 0 && entry.details.ZoneOverride == 0)
                         {
-                            spoilerText = ((eDimensionIndex)entry.details.DimensionIndex).ToString().Replace("_", " ");
+                            spoilerText = $"DIM_{entry.details.DimensionIndex}";
                         }
                         else
                         {
                             spoilerText = $"ZONE_{(entry.details.ZoneOverride > 0 ? entry.details.ZoneOverride : entry.details.Zone)}";
+
+                            if (((eDimensionIndex)entry.details.DimensionIndex) != eDimensionIndex.Reality)
+                            {
+                                spoilerText = $"{spoilerText}, DIM_{entry.details.DimensionIndex}";
+                            }
                         }
                         CreateItem(entry.logId, entry.logName, entry.collected, spoilerText);
                     }
@@ -827,7 +832,7 @@ namespace TheArchive.Features.Hud
                 logDisplayItem.LogName = logName;
                 logDisplayItem.Spoiler = spoiler;
 
-                logDisplayItem.SetCollected(collected);
+                logDisplayItem.SetCollected(collected, true);
 
                 instance.gameObject.SetActive(true);
 
@@ -854,13 +859,15 @@ namespace TheArchive.Features.Hud
             public SpriteRenderer Gradient;
 
             public bool Collected { get; private set; }
+            public bool CollectedOnStart { get; private set; }
             public uint LogID { get; internal set; } = 0;
             public string LogName { get; internal set; } = string.Empty;
             public string Spoiler { get; internal set; }
 
-            public void SetCollected(bool collected)
+            public void SetCollected(bool collected, bool alreadyCollectedOnLevelStart = false)
             {
                 Collected = collected;
+                CollectedOnStart = alreadyCollectedOnLevelStart;
 
                 UpdateVisuals();
             }
@@ -880,6 +887,13 @@ namespace TheArchive.Features.Hud
                     Text.SetText($"{LogName}{specialText}");
                     Text.color = Color.white;
                     Divider.color = Color.green;
+
+                    if(CollectedOnStart)
+                    {
+                        Gradient.color = Color.white.WithAlpha(0.025f);
+                        return;
+                    }
+
                     Gradient.color = Color.green.WithAlpha(0.025f);
                     return;
                 }
@@ -948,6 +962,7 @@ namespace TheArchive.Features.Hud
 
             gradient.transform.localScale = new Vector3(1, 1f / 3f, 1);
             gradient.transform.localPosition = gradient.transform.localPosition + new Vector3(0, 30, 0);
+            gradient.gameObject.SetActive(true);
 
             artifactCounter.name = "LogDisplayItem";
 
