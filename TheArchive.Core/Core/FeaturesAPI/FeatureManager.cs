@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
-using static TheArchive.Core.FeaturesAPI.FeatureInternal;
 
 namespace TheArchive.Core.FeaturesAPI
 {

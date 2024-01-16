@@ -9,6 +9,7 @@ using TheArchive.Core;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
+using TheArchive.Core.ModulesAPI;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
@@ -225,6 +226,7 @@ namespace TheArchive
         internal static void OnApplicationQuit()
         {
             FeatureManager.Instance.OnApplicationQuit();
+            ModuleSettingManager.OnApplicationQuit();
         }
 
         private static void LoadConfig()
@@ -387,6 +389,7 @@ namespace TheArchive
             }
 
             FeatureManager.Instance.OnDatablocksReady();
+            ModuleSettingManager.OnGameDataInited();
 
             DataBlocksReady?.Invoke();
         }

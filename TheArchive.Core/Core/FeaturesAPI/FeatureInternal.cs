@@ -35,7 +35,6 @@ namespace TheArchive.Core.FeaturesAPI
         internal bool AllAdditionalSettingsAreHidden { get; private set; } = true;
         internal bool InitialEnabledState { get; private set; } = false;
         internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
-        internal FeatureExtraSettingsService ExtraSettings { get; } = new();
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
         internal IArchiveLogger FeatureLoggerInstance { get; private set; }
         internal Assembly OriginAssembly { get; private set; }
@@ -693,8 +692,6 @@ namespace TheArchive.Core.FeaturesAPI
 
             try
             {
-                ExtraSettings.Setup(_feature);
-                ExtraSettings.LoadAllSettings();
                 _feature.Init();
             }
             catch(Exception ex)
@@ -974,7 +971,6 @@ namespace TheArchive.Core.FeaturesAPI
             try
             {
                 _feature.OnQuit();
-                ExtraSettings.SaveAllSettings();
             }
             catch (Exception ex)
             {

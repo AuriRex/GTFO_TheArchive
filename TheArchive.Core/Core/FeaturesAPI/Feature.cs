@@ -24,7 +24,6 @@ namespace TheArchive.Core.FeaturesAPI
         public bool HasAdditionalSettings => FeatureInternal.HasAdditionalSettings;
         public bool AllAdditionalSettingsAreHidden => FeatureInternal.AllAdditionalSettingsAreHidden;
         public IEnumerable<FeatureSettingsHelper> SettingsHelpers => FeatureInternal.Settings;
-        public IFeatureExtraSettingService ExtraSettings => FeatureInternal.ExtraSettings;
         public void RequestRestart() => FeatureManager.RequestRestart(this);
         public void RevokeRestartRequest() => FeatureManager.RevokeRestartRequest(this);
 
