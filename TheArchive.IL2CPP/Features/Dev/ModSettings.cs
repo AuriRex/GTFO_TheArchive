@@ -456,7 +456,7 @@ namespace TheArchive.Features.Dev
                     string subGroupText = LocalizationCoreService.Format(57, "{0} Subgroup{1}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
                     string menuEntryLabelText = string.Empty;
                     if (featuresCount > 0 && subGroupsCount > 0)
-                        menuEntryLabelText = $"{featureText}, {subGroupsCount}";
+                        menuEntryLabelText = $"{featureText}, {subGroupText}";
                     else if (featuresCount == 0 && subGroupsCount > 0)
                         menuEntryLabelText = $"{subGroupText}";
                     else if (featuresCount > 0 && subGroupsCount == 0)
