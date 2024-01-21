@@ -1,9 +1,10 @@
-﻿using TheArchive.Core.Attributes;
+﻿using System.Runtime.CompilerServices;
+using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
-using TheArchive.Features.Dev;
+using TheArchive.Interfaces;
 
-namespace TheArchive.Features;
+namespace TheArchive.Features.Dev;
 
 [HideInModSettings]
 [EnableFeatureByDefault]
@@ -16,11 +17,31 @@ public class ModLanguage : Feature
 
     public override string Group => FeatureGroups.ArchiveCore;
 
+
+    public static new IArchiveLogger FeatureLogger { get; set; }
+
     public override void Init()
     {
         LocalizationCoreService.Init();
     }
 
+    public static bool TrySetLanguage(Language targetLanguage)
+    {
+        if (targetLanguage != LocalizationCoreService.CurrentLanguage)
+        {
+            FeatureLogger.Notice($"Setting Language to {targetLanguage}.");
+            LocalizationCoreService.SetCurrentLanguage(targetLanguage);
+
+            FeatureInternal.RegenerateAllFeatureSettings();
+            ModSettings.RegenerateModSettingsPage();
+            return true;
+        }
+        return false;
+    }
+
+#if IL2CPP
+    // Inline so it doesn't throw TypeLoadException on R4/R5
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Language GameLanguageToModLanguage(Localization.Language gameLanguage)
     {
         switch (gameLanguage)
@@ -52,19 +73,18 @@ public class ModLanguage : Feature
         }
     }
 
-    [ArchivePatch(typeof(Localization.GameDataTextLocalizationService), nameof(global::Localization.GameDataTextLocalizationService.SetCurrentLanguage))]
+    [RundownConstraint(Utilities.Utils.RundownFlags.RundownSix, Utilities.Utils.RundownFlags.Latest)]
+    [ArchivePatch(null, nameof(global::Localization.GameDataTextLocalizationService.SetCurrentLanguage))]
     private class GameDataTextLocalizationService__SetCurrentLanguage__Patch
     {
+        public static System.Type Type() => typeof(Localization.GameDataTextLocalizationService);
+
         private static void Postfix(Localization.Language language)
         {
             Language targetLanguage = GameLanguageToModLanguage(language);
-            if (targetLanguage != LocalizationCoreService.CurrentLanguage)
-            {
-                LocalizationCoreService.SetCurrentLanguage(targetLanguage);
-
-                FeatureInternal.RegenerateAllFeatureSettings();
-                ModSettings.RegenerateModSettingsPage();
-            }
+            ModLanguageLegacy.StoreLanguage(targetLanguage);
+            TrySetLanguage(targetLanguage);
         }
     }
+#endif
 }
