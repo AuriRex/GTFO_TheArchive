@@ -301,10 +301,10 @@ namespace TheArchive.Core.FeaturesAPI
             var featureType = _feature.GetType();
             OriginAssembly = featureType.Assembly;
 
-            feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature, feature.GetType().Namespace.StartsWith("TheArchive")));
-
             _FILogger.Msg(ConsoleColor.Black, "-");
             _FILogger.Msg(ConsoleColor.Green, $"Initializing {_feature.Identifier} ...");
+
+            feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature, featureType.Namespace.StartsWith("TheArchive")));
 
             if (_usedIdentifiers.Contains(_feature.Identifier))
             {

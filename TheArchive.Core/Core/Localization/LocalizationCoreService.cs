@@ -93,7 +93,7 @@ namespace TheArchive.Core.Localization
             var path = Path.Combine(dir, $"{nameof(LocalizationCoreService)}_Localization.json");
             if (!File.Exists(path))
             {
-                File.WriteAllText(path, JsonConvert.SerializeObject(new(), ArchiveMod.JsonSerializerSettings));
+                File.WriteAllText(path, JsonConvert.SerializeObject(new List<LocalizationTextData>(), ArchiveMod.JsonSerializerSettings));
                 return;
             }
             var data = JsonConvert.DeserializeObject<List<LocalizationTextData>>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
