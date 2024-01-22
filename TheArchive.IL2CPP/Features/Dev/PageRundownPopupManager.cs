@@ -24,50 +24,14 @@ namespace TheArchive.Features.Dev
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 
-        public override void Init()
+        private static void Empty()
         {
-            LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<ILoveWhenTheThingCrashesBecauseIdkYaaaaay>();
+
         }
 
-        public class ILoveWhenTheThingCrashesBecauseIdkYaaaaay : MonoBehaviour
-        {
-            protected PopupMessage _0;
-            protected PopupMessage _1;
-            protected PopupMessage _2;
-            protected PopupMessage _3;
-            protected PopupMessage _4;
-            protected PopupMessage _5;
-            protected PopupMessage _6;
-            protected PopupMessage _7;
-            protected PopupMessage _8;
-            protected PopupMessage _9;
-
-            public const int MAX_POPUPS = 10;
-
-            private int _count = 0;
-
-            public ILoveWhenTheThingCrashesBecauseIdkYaaaaay(IntPtr ptr) : base(ptr) { }
-
-            // Idk why but it seems to even work above 10 messages lmaoo
-            public void MagicJankCache(PopupMessage popupMessage)
-            {
-                var field = typeof(ILoveWhenTheThingCrashesBecauseIdkYaaaaay).GetField($"_{_count}", AnyBindingFlagss);
-
-                if (field == null)
-                    throw new InvalidOperationException("Please fix this, thanks!");
-
-                field.SetValue(this, popupMessage);
-
-                _count++;
-                if(_count >= MAX_POPUPS)
-                {
-                    _count = 0;
-                }
-            }
-        }
+        public static Action EmptyAction { get; private set; } = new(Empty);
 
         private static readonly Queue<PopupMessage> _popupQueue = new Queue<PopupMessage>();
-        private static ILoveWhenTheThingCrashesBecauseIdkYaaaaay _cache;
 
         public static void ShowPopup(PopupMessage popupMessage)
         {
@@ -86,12 +50,10 @@ namespace TheArchive.Features.Dev
                 if (enabledListener == null)
                 {
                     enabledListener = pageRD.AddComponent<ModSettings.OnEnabledListener>();
-                    _cache = pageRD.AddComponent<ILoveWhenTheThingCrashesBecauseIdkYaaaaay>();
 
                     enabledListener.OnEnabledSelf += PageRundownEnabled;
                 }
 
-                _cache.MagicJankCache(popupMessage);
                 _popupQueue.Enqueue(popupMessage);
                 return;
             }

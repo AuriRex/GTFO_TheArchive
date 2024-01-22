@@ -148,8 +148,9 @@ namespace TheArchive.Features.Dev
                 BlinkTimeInterval = 0.2f,
                 Header = "<#440144>TheArchive Update Checker</color>",
                 UpperText = updateText,
+                LowerText = string.Empty,
                 PopupType = PopupType.BoosterImplantMissed,
-                OnCloseCallback = new System.Action(() => { }),
+                OnCloseCallback = PageRundownPopupManager.EmptyAction,
             });
         }
     }
