@@ -495,9 +495,19 @@ namespace TheArchive.Utilities
 
         public static bool FlagsContain(RundownFlags flags, RundownID id)
         {
+            if (flags == RundownFlags.None)
+                return false;
+
+            if (id == RundownID.RundownUnknown)
+                return false;
+
+            var latestFlags = GetLatestRundownFlags();
+
+            if (flags == RundownFlags.Latest)
+                flags = latestFlags;
+
             if (id == RundownID.Latest)
                 id = GetLatestRundownID();
-            if (id == RundownID.RundownUnknown) return false;
 
             if (!Enum.TryParse(id.ToString(), out RundownFlags currentRundown))
             {
