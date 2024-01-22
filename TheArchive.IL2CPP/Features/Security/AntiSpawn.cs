@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
@@ -42,6 +43,7 @@ namespace TheArchive.Features.Security
             [FSDescription("What to do with griefers that are trying to spawn in enemies.")]
             public PunishmentMode Punishment { get; set; } = PunishmentMode.Kick;
 
+            [Localized]
             public enum PunishmentMode
             {
                 NoneAndLog,

@@ -28,6 +28,7 @@ namespace TheArchive.Features.QoL
             public KeyCode QuickSwitchKey { get; set; } = KeyCode.X;
 
             [FSHide]
+            [FSDisplayName("Prints Debug Info")]
             [FSDescription("Prints debug info to the console")]
             public bool DebugLog { get; set; } = false;
         }

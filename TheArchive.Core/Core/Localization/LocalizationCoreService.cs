@@ -83,6 +83,28 @@ namespace TheArchive.Core.Localization
             m_localizationServices.Add(service);
         }
 
+        public static void RegisterInLocalizaion(Type type)
+        {
+            m_typesToCheck.Add(type);
+        }
+
+        private static void InspectTypeAndGenerateLocalization()
+        {
+            foreach (var type in m_typesToCheck)
+            {
+                string id = type.DeclaringType.FullName;
+                if (type.IsEnum)
+                {
+                    
+                    continue;
+                }
+                if (type.IsClass)
+                {
+
+                }
+            }
+        }
+
         public static void Init()
         {
             string dir = Path.Combine(Path.GetDirectoryName(ArchiveMod.CORE_PATH), "Localization");
@@ -121,5 +143,11 @@ namespace TheArchive.Core.Localization
         private static HashSet<FeatureLocalizationService> m_localizationServices = new();
 
         private static Dictionary<uint, Dictionary<Language, string>> m_texts = new();
+
+        private static HashSet<Type> m_typesToCheck = new();
+
+        private static Dictionary<string, Dictionary<Language, Dictionary<string, string>>> m_coreEnumTexts = new();
+
+        private static Dictionary<string, Dictionary<Language, string>> m_coreText = new();
     }
 }

@@ -6,6 +6,7 @@ using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -37,6 +38,7 @@ namespace TheArchive.Features.Accessibility
             public float VolumeOverrideValue { get; set; } = 0.1f;
 
             [FSHide, Obsolete]
+            [FSDisplayName("Volume Override")]
             public float VolumeOverride { get; set; } = 10f;
 
             [FSDisplayName("Volume Interpolation (Seconds)")]
@@ -52,6 +54,7 @@ namespace TheArchive.Features.Accessibility
             [FSDescription("Press if for some reason the audio volume settings don't seem to be back at their default values even though they should be.")]
             public FButton OopsMySoundSomehowBrokePleaseReset { get; set; } = new FButton("Reset Volume");
 
+            [Localized]
             public enum FocusChangeMode
             {
                 Default,

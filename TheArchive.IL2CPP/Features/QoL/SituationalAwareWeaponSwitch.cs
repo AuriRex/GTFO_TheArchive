@@ -5,6 +5,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
@@ -46,6 +47,7 @@ namespace TheArchive.Features.QoL
             [FSDescription("The states in which the game should switch to Melee instead of your Primary weapon.")]
             public List<DramaState> PreferMeleeStates { get; set; } = new List<DramaState>();
 
+            [Localized]
             public enum DramaState
             {
                 ElevatorIdle,

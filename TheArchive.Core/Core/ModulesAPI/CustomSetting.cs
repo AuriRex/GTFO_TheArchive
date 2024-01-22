@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace TheArchive.Core.ModulesAPI;
 
-public class ModuleSetting<T> : IModuleSetting where T : new()
+public class CustomSetting<T> : ICustomSetting where T : new()
 {
     internal string FullPath { get; private set; }
 
@@ -12,23 +12,23 @@ public class ModuleSetting<T> : IModuleSetting where T : new()
 
     public T Value { get; set; }
 
-    private Action AfterLoad { get; set; }
+    private Action<T> AfterLoad { get; set; }
 
     public bool SaveOnQuit { get; private set; }
 
-    private WhenToLoad m_whenToLoad;
+    private LoadingTime LoadingTime;
 
-    WhenToLoad IModuleSetting.LoadTime => m_whenToLoad;
+    LoadingTime ICustomSetting.LoadingTime => LoadingTime;
 
-    public ModuleSetting(string path, T defaultValue, Action afterLoad = null, WhenToLoad whenToLoad = WhenToLoad.Immediately, bool saveOnQuit = true)
+    public CustomSetting(string path, T defaultValue, Action<T> afterLoad = null, LoadingTime loadingTime = LoadingTime.Immediately, bool saveOnQuit = true)
     {
         FilePath = path;
         FullPath = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "Settings", $"{FilePath}.json");
         Value = defaultValue;
         AfterLoad = afterLoad;
         SaveOnQuit = saveOnQuit;
-        m_whenToLoad = whenToLoad;
-        ModuleSettingManager.RegisterModuleSetting(this);
+        LoadingTime = loadingTime;
+        CustomSettingManager.RegisterModuleSetting(this);
     }
 
     public void Load()
@@ -39,8 +39,8 @@ public class ModuleSetting<T> : IModuleSetting where T : new()
         {
             Value = JsonConvert.DeserializeObject<T>(File.ReadAllText(FullPath), ArchiveMod.JsonSerializerSettings);
         }
-        Action afterLoad = AfterLoad;
-        if (afterLoad != null) afterLoad();
+        Action<T> afterLoad = AfterLoad;
+        if (afterLoad != null) afterLoad(Value);
     }
 
     public void Save()
@@ -51,18 +51,18 @@ public class ModuleSetting<T> : IModuleSetting where T : new()
     }
 }
 
-public interface IModuleSetting
+public interface ICustomSetting
 {
     void Load();
 
     void Save();
 
-    WhenToLoad LoadTime { get; }
+    LoadingTime LoadingTime { get; }
 
     bool SaveOnQuit { get; }
 }
 
-public enum WhenToLoad
+public enum LoadingTime
 {
     None,
     Immediately,

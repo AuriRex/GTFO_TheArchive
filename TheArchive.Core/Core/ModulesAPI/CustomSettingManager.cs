@@ -5,13 +5,13 @@ using TheArchive.Loader;
 
 namespace TheArchive.Core.ModulesAPI;
 
-internal static class ModuleSettingManager
+internal static class CustomSettingManager
 {
-    private static readonly IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(ModuleSettingManager), ConsoleColor.DarkRed);
+    private static readonly IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(CustomSettingManager), ConsoleColor.DarkRed);
 
-    public static void RegisterModuleSetting(IModuleSetting setting)
+    public static void RegisterModuleSetting(ICustomSetting setting)
     {
-        if (setting.LoadTime == WhenToLoad.Immediately)
+        if (setting.LoadingTime == LoadingTime.Immediately)
         {
             try
             {
@@ -49,7 +49,7 @@ internal static class ModuleSettingManager
         {
             try
             {
-                if (setting.LoadTime == WhenToLoad.AfterGameDataInited)
+                if (setting.LoadingTime == LoadingTime.AfterGameDataInited)
                     setting.Load();
             }
             catch (Exception ex)
@@ -60,5 +60,5 @@ internal static class ModuleSettingManager
         }
     }
 
-    private static readonly HashSet<IModuleSetting> _moduleSettings = new();
+    private static readonly HashSet<ICustomSetting> _moduleSettings = new();
 }

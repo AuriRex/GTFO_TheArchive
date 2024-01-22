@@ -1,5 +1,6 @@
 ﻿using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Features.Dev;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -26,6 +27,7 @@ namespace TheArchive.Features.Hud
         {
             public CombatIndicatorStyle Style { get; set; } = CombatIndicatorStyle.Simple;
 
+            [Localized]
             public enum CombatIndicatorStyle
             {
                 Simple,

@@ -152,10 +152,10 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 foreach (var nestedType in type.GetNestedTypes())
                 {
+                    if (!nestedType.GetCustomAttributes<Localized>(true).Any())
+                        continue;
                     if (nestedType.IsEnum)
-                    {
                         enumTypes.Add(nestedType);
-                    }
                 }
 
                 var properties = type.GetProperties()
@@ -193,7 +193,14 @@ namespace TheArchive.Core.FeaturesAPI
                         switch (fstype)
                         {
                             case FSType.FSDisplayName:
+                                if (prop.GetCustomAttribute<FSDisplayName>() == null)
+                                    continue;
+                                if (propType == typeof(FLabel))
+                                    continue;
+                                break;
                             case FSType.FSDescription:
+                                if (prop.GetCustomAttribute<FSDescription>() == null)
+                                    continue;
                                 if (propType == typeof(FLabel))
                                     continue;
                                 break;
@@ -994,7 +1001,7 @@ namespace TheArchive.Core.FeaturesAPI
             internal MethodInfo FinalizerPatchMethod { get; private set; }
             internal MethodInfo ILManipulatorPatchMethod { get; private set; }
 
-            public FeaturePatchInfo(MethodBase original, MethodInfo prefix, MethodInfo postfix, MethodInfo transpiler, MethodInfo finalizer, MethodInfo ilManipulator, ArchivePatch archivePatch, bool wrapTryCatch = true)
+            public FeaturePatchInfo(MethodBase original, MethodInfo prefix, MethodInfo postfix, MethodInfo transpiler, MethodInfo finalizer, MethodInfo ilManipulator, ArchivePatch archivePatch, bool wrapTryCatch = true, int priority = -1)
             {
                 OriginalMethod = original;
 

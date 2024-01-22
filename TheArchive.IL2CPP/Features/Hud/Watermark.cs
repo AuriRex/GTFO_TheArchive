@@ -4,6 +4,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -43,6 +44,7 @@ namespace TheArchive.Features.Hud
             [FSDescription("Decimal precision to show on the XYZ coords.")]
             public DecimalPrecision Precision { get; set; } = DecimalPrecision.One;
 
+            [Localized]
             public enum DecimalPrecision
             {
                 None,
@@ -50,6 +52,7 @@ namespace TheArchive.Features.Hud
                 Two,
             }
 
+            [Localized]
             public enum WatermarkMode
             {
                 Mod,

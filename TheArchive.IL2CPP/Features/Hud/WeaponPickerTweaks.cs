@@ -22,6 +22,7 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 using static TheArchive.Utilities.Utils;
 using static TheArchive.Features.Hud.WeaponPickerTweaks.WeaponPickerTweaksSettings;
+using TheArchive.Core.Localization;
 
 namespace TheArchive.Features.Hud
 {
@@ -116,6 +117,7 @@ namespace TheArchive.Features.Hud
                 return entry;
             }
 
+            [Localized]
             public enum SortMode
             {
                 Default,
@@ -161,6 +163,7 @@ namespace TheArchive.Features.Hud
                 public uint Index { get; set; } = 0;
             }
 
+            [Localized]
             public enum ItemFavState
             {
                 Favorite,

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -61,6 +62,7 @@ namespace TheArchive.Features.Accessibility
             [FSDescription("Only pick the nickname color if the whole name is colored.\n\nExample:\n<#404>Nickname</color> -> <#0c0>use as player color</color>\n<#404>Nick</color>name -> <#c00>don't use as player color</color>")]
             public bool OnlyColorIfWholeNameIsColored { get; set; } = true;
 
+            [Localized]
             public enum ColorizationMode
             {
                 /// <summary>Only use nickname colors if applicable</summary>

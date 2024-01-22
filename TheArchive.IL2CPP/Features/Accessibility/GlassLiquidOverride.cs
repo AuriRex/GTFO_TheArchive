@@ -5,6 +5,7 @@ using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Accessibility
@@ -27,6 +28,7 @@ namespace TheArchive.Features.Accessibility
             [FSDescription("Turning this off stops the Glass Liquid System from updating.\n\nMake sure that nothing's left on your visor or else it'll be stuck there until you re-enable this setting.")]
             public bool EnableGlassLiquidSystem { get; set; } = true;
 
+            [FSDisplayName("Quality")]
             [FSDescription("The resolution used to render the liquid effects.\n\nIncreasing this settings might decrease performance on weaker hardware!")]
             public GlassLiquidSystemQuality Quality { get; set; } = GlassLiquidSystemQuality.Default;
 
@@ -40,6 +42,7 @@ namespace TheArchive.Features.Accessibility
             public bool CompletelyDisable { get; set; } = false;
         }
 
+        [Localized]
         public enum GlassLiquidSystemQuality
         {
             VeryBad = 1,

@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
@@ -63,6 +64,8 @@ namespace TheArchive.Features.Cosmetic
             [FSDescription("Adds a third of the blue component as green to the current color if the green component is below that amount.\n\nBasically makes blue look blue instead of purple.")]
             public bool BlueIsBlue { get; set; } = true;
 
+
+            [Localized]
             public enum LocalOverrideMode
             {
                 Default,
@@ -70,6 +73,8 @@ namespace TheArchive.Features.Cosmetic
                 UsePlayerColor
             }
 
+
+            [Localized]
             public enum GlowstickType
             {
                 Green,

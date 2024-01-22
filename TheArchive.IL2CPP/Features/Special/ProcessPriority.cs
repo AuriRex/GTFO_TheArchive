@@ -3,6 +3,7 @@ using System.Diagnostics;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 
 namespace TheArchive.Features.Special
 {
@@ -19,6 +20,7 @@ namespace TheArchive.Features.Special
         {
             public PriorityClass Priority { get; set; } = PriorityClass.AboveNormal;
 
+            [Localized]
             public enum PriorityClass
             {
                 High,
