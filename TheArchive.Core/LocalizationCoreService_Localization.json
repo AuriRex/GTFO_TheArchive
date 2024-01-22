@@ -5,7 +5,8 @@
     "ID": 1,
     "Languages": {
       "English": "Enabled",
-      "Chinese": "已启用"
+      "Chinese": "已启用",
+      "German": "Aktiviert"
     }
   },
   {
@@ -14,7 +15,8 @@
     "ID": 2,
     "Languages": {
       "English": "Disabled",
-      "Chinese": "已禁用"
+      "Chinese": "已禁用",
+      "German": "Deaktiviert"
     }
   },
   {
@@ -23,7 +25,8 @@
     "ID": 3,
     "Languages": {
       "English": "Mod Settings",
-      "Chinese": "插件设置"
+      "Chinese": "插件设置",
+      "German": "Mod Einstellungen"
     }
   },
   {
@@ -32,7 +35,8 @@
     "ID": 4,
     "Languages": {
       "English": "Automated",
-      "Chinese": "自动"
+      "Chinese": "自动",
+      "German": "Automatisiert"
     }
   },
   {
@@ -41,7 +45,8 @@
     "ID": 5,
     "Languages": {
       "English": "None",
-      "Chinese": "无"
+      "Chinese": "无",
+      "German": "Nichts"
     }
   },
   {
@@ -50,7 +55,8 @@
     "ID": 6,
     "Languages": {
       "English": "On",
-      "Chinese": "启用"
+      "Chinese": "启用",
+      "German": "Ein"
     }
   },
   {
@@ -59,7 +65,8 @@
     "ID": 7,
     "Languages": {
       "English": "Off",
-      "Chinese": "禁用"
+      "Chinese": "禁用",
+      "German": "Aus"
     }
   },
   {
@@ -68,7 +75,8 @@
     "ID": 8,
     "Languages": {
       "English": "Pick Color",
-      "Chinese": "选取颜色"
+      "Chinese": "选取颜色",
+      "German": "Farbe wählen"
     }
   },
   {
@@ -77,7 +85,8 @@
     "ID": 9,
     "Languages": {
       "English": "Search",
-      "Chinese": "搜索"
+      "Chinese": "搜索",
+      "German": "Suchen"
     }
   },
   {
@@ -86,7 +95,8 @@
     "ID": 10,
     "Languages": {
       "English": "Search Options",
-      "Chinese": "搜索选项"
+      "Chinese": "搜索选项",
+      "German": "Such-Einstellungen"
     }
   },
   {
@@ -95,7 +105,8 @@
     "ID": 11,
     "Languages": {
       "English": "Search All Features:",
-      "Chinese": "搜索所有功能："
+      "Chinese": "搜索所有功能：",
+      "German": "Alle Features Durchsuchen"
     }
   },
   {
@@ -104,7 +115,8 @@
     "ID": 12,
     "Languages": {
       "English": "Query",
-      "Chinese": "查询"
+      "Chinese": "查询",
+      "German": "Suchtext"
     }
   },
   {
@@ -113,7 +125,8 @@
     "ID": 13,
     "Languages": {
       "English": "Search Results",
-      "Chinese": "查询结果"
+      "Chinese": "查询结果",
+      "German": "Suchergebnisse"
     }
   },
   {
@@ -122,7 +135,8 @@
     "ID": 14,
     "Languages": {
       "English": "Start Search",
-      "Chinese": "开始查询"
+      "Chinese": "开始查询",
+      "German": "Suchen"
     }
   },
   {
@@ -131,7 +145,8 @@
     "ID": 15,
     "Languages": {
       "English": "Search is WIP, Toggling settings here does not visually update the normal buttons currently!",
-      "Chinese": "搜索是半成品，目前在这里切换设置不会进行按钮的可视化更新。"
+      "Chinese": "搜索是半成品，目前在这里切换设置不会进行按钮的可视化更新。",
+      "German": "Die Such-Funktion ist WIP, hier geänderte Einstellungen werden in den normalen Einstellungen optisch nicht geändert!"
     }
   },
   {
@@ -140,7 +155,8 @@
     "ID": 16,
     "Languages": {
       "English": "Title",
-      "Chinese": "搜索标题"
+      "Chinese": "搜索标题",
+      "German": "Titel"
     }
   },
   {
@@ -149,7 +165,8 @@
     "ID": 17,
     "Languages": {
       "English": "Description",
-      "Chinese": "搜索描述"
+      "Chinese": "搜索描述",
+      "German": "Beschreibung"
     }
   },
   {
@@ -158,7 +175,8 @@
     "ID": 18,
     "Languages": {
       "English": "SubSettings Title",
-      "Chinese": "搜索子项设置标题"
+      "Chinese": "搜索子项设置标题",
+      "German": "Untereinstellungs-Titel"
     }
   },
   {
@@ -167,7 +185,8 @@
     "ID": 19,
     "Languages": {
       "English": "SubSettings Description",
-      "Chinese": "搜索子项设置描述"
+      "Chinese": "搜索子项设置描述",
+      "German": "Untereinstellungs-Beschreibung"
     }
   },
   {
@@ -176,7 +195,8 @@
     "ID": 20,
     "Languages": {
       "English": "Nothing found! :(",
-      "Chinese": "无结果！ :("
+      "Chinese": "无结果！ :(",
+      "German": "Nichts gefunden! :("
     }
   },
   {
@@ -185,7 +205,8 @@
     "ID": 21,
     "Languages": {
       "English": "Found {0} Feature{1}!",
-      "Chinese": "找到{0}个特性！"
+      "Chinese": "找到{0}个特性！",
+      "German": "{0} Feature{1} gefunden!"
     }
   },
   {
@@ -194,7 +215,8 @@
     "ID": 22,
     "Languages": {
       "English": "Query: <color=orange>{0}</color>",
-      "Chinese": "查询"
+      "Chinese": "查询",
+      "German": "Suche: <color=orange>{0}</color>"
     }
   },
   {
@@ -203,7 +225,8 @@
     "ID": 23,
     "Languages": {
       "English": "Settings",
-      "Chinese": "设置"
+      "Chinese": "设置",
+      "German": "Einstellungen"
     }
   },
   {
@@ -212,7 +235,8 @@
     "ID": 24,
     "Languages": {
       "English": "{0} Feature{1} >>",
-      "Chinese": "{0}个特性"
+      "Chinese": "{0}个特性",
+      "German": "{0} Feature{1} >>"
     }
   },
   {
@@ -221,7 +245,8 @@
     "ID": 25,
     "Languages": {
       "English": "Uncategorized",
-      "Chinese": "未分类"
+      "Chinese": "未分类",
+      "German": "Unkategorisiert"
     }
   },
   {
@@ -230,7 +255,8 @@
     "ID": 26,
     "Languages": {
       "English": "Info",
-      "Chinese": "信息"
+      "Chinese": "信息",
+      "German": "Info"
     }
   },
   {
@@ -239,7 +265,8 @@
     "ID": 27,
     "Languages": {
       "English": "Open saves folder",
-      "Chinese": "打开保存文件夹"
+      "Chinese": "打开保存文件夹",
+      "German": "Speicher-Ordner öffnen"
     }
   },
   {
@@ -248,7 +275,8 @@
     "ID": 28,
     "Languages": {
       "English": "Open",
-      "Chinese": "打开"
+      "Chinese": "打开",
+      "German": "Öffnen"
     }
   },
   {
@@ -257,7 +285,8 @@
     "ID": 29,
     "Languages": {
       "English": "Close",
-      "Chinese": "关闭"
+      "Chinese": "关闭",
+      "German": "Schließen"
     }
   },
   {
@@ -266,7 +295,8 @@
     "ID": 30,
     "Languages": {
       "English": "Built with uncommitted changes | <color=red>Git is dirty</color>",
-      "Chinese": "构建时存在未提交的更改 | <color=red>Git 有未提交的更改</color>"
+      "Chinese": "构建时存在未提交的更改 | <color=red>Git 有未提交的更改</color>",
+      "German": "Mit uncommitteten änderungen kompiliert | <color=red>Git is dirty</color>"
     }
   },
   {
@@ -275,7 +305,8 @@
     "ID": 31,
     "Languages": {
       "English": "Currently running GTFO <color=orange>{0}</color>, build <color=orange>{1}</color>",
-      "Chinese": "当前 GTFO 版本 <color=orange>{0}</color>， 版本号 <color=orange>{1}</color>"
+      "Chinese": "当前 GTFO 版本 <color=orange>{0}</color>， 版本号 <color=orange>{1}</color>",
+      "German": "Läuft auf GTFO <color=orange>{0}</color>, build <color=orange>{1}</color>"
     }
   },
   {
@@ -284,7 +315,8 @@
     "ID": 32,
     "Languages": {
       "English": "Last Commit Hash: {0}",
-      "Chinese": "最后一次提交 Hash：{0}"
+      "Chinese": "最后一次提交 Hash：{0}",
+      "German": "Letzter Commit Hash: {0}"
     }
   },
   {
@@ -293,7 +325,8 @@
     "ID": 33,
     "Languages": {
       "English": "Last Commit Date: {0}",
-      "Chinese": "最后一次提交时间：{0}"
+      "Chinese": "最后一次提交时间：{0}",
+      "German": "Letztes Commit Datum: {0}"
     }
   },
   {
@@ -302,7 +335,8 @@
     "ID": 34,
     "Languages": {
       "English": "Open mod github",
-      "Chinese": "打开插件 GitHub 仓库"
+      "Chinese": "打开插件 GitHub 仓库",
+      "German": "Mod github seite öffnen"
     }
   },
   {
@@ -311,7 +345,8 @@
     "ID": 35,
     "Languages": {
       "English": "Open in Browser",
-      "Chinese": "在浏览器打开"
+      "Chinese": "在浏览器打开",
+      "German": "Im Browser öffnen"
     }
   },
   {
@@ -320,7 +355,8 @@
     "ID": 36,
     "Languages": {
       "English": "> Search! <",
-      "Chinese": "> 搜索 <"
+      "Chinese": "> 搜索 <",
+      "German": "> Suchen! <"
     }
   },
   {
@@ -329,7 +365,8 @@
     "ID": 37,
     "Languages": {
       "English": "> Settings",
-      "Chinese": "> 设置"
+      "Chinese": "> 设置",
+      "German": "> Einstellungen"
     }
   },
   {
@@ -338,7 +375,8 @@
     "ID": 38,
     "Languages": {
       "English": "<<< Back <<<",
-      "Chinese": "<<< 返回 <<<"
+      "Chinese": "<<< 返回 <<<",
+      "German": "<<< Zurück <<<"
     }
   },
   {
@@ -347,7 +385,8 @@
     "ID": 39,
     "Languages": {
       "English": "> ENTER <",
-      "Chinese": "> 进入 <"
+      "Chinese": "> 进入 <",
+      "German": "> Öffnen <"
     }
   },
   {
@@ -356,7 +395,8 @@
     "ID": 40,
     "Languages": {
       "English": "Description",
-      "Chinese": "描述"
+      "Chinese": "描述",
+      "German": "Beschreibung"
     }
   },
   {
@@ -365,7 +405,8 @@
     "ID": 41,
     "Languages": {
       "English": "Color Picker",
-      "Chinese": "颜色选择器"
+      "Chinese": "颜色选择器",
+      "German": "Farbwähler"
     }
   },
   {
@@ -374,7 +415,8 @@
     "ID": 42,
     "Languages": {
       "English": "Apply Color",
-      "Chinese": "应用颜色"
+      "Chinese": "应用颜色",
+      "German": "Farbe auswählen"
     }
   },
   {
@@ -383,7 +425,8 @@
     "ID": 43,
     "Languages": {
       "English": "Apply",
-      "Chinese": "应用"
+      "Chinese": "应用",
+      "German": "Übernehmen"
     }
   },
   {
@@ -392,7 +435,8 @@
     "ID": 44,
     "Languages": {
       "English": "Close Color Picker",
-      "Chinese": "关闭颜色选择器"
+      "Chinese": "关闭颜色选择器",
+      "German": "Farbwähler schließen"
     }
   },
   {
@@ -401,7 +445,8 @@
     "ID": 45,
     "Languages": {
       "English": "Cancel",
-      "Chinese": "取消"
+      "Chinese": "取消",
+      "German": "Abbrechen"
     }
   },
   {
@@ -410,7 +455,8 @@
     "ID": 46,
     "Languages": {
       "English": "Hex Code",
-      "Chinese": "十六进制码"
+      "Chinese": "十六进制码",
+      "German": "Hex-Code"
     }
   },
   {
@@ -419,7 +465,8 @@
     "ID": 47,
     "Languages": {
       "English": "Copy Color Hex Code",
-      "Chinese": "复制颜色的十六进制码"
+      "Chinese": "复制颜色的十六进制码",
+      "German": "Farben Hex-Code kopieren"
     }
   },
   {
@@ -428,7 +475,8 @@
     "ID": 48,
     "Languages": {
       "English": "Paste Color Hex Code",
-      "Chinese": "粘贴颜色的十六进制码"
+      "Chinese": "粘贴颜色的十六进制码",
+      "German": "Farben Hex-Code einfügen"
     }
   },
   {
@@ -437,7 +485,8 @@
     "ID": 49,
     "Languages": {
       "English": "Copy",
-      "Chinese": "复制"
+      "Chinese": "复制",
+      "German": "Kopieren"
     }
   },
   {
@@ -446,7 +495,8 @@
     "ID": 50,
     "Languages": {
       "English": "Paste",
-      "Chinese": "粘贴"
+      "Chinese": "粘贴",
+      "German": "Einfügen"
     }
   },
   {
@@ -455,7 +505,8 @@
     "ID": 51,
     "Languages": {
       "English": "Press any Key!",
-      "Chinese": "按下任意按键！"
+      "Chinese": "按下任意按键！",
+      "German": "Eine Taste drücken!"
     }
   },
   {
@@ -464,7 +515,8 @@
     "ID": 52,
     "Languages": {
       "English": "Hue",
-      "Chinese": "色调"
+      "Chinese": "色调",
+      "German": "Farbton"
     }
   },
   {
@@ -473,7 +525,8 @@
     "ID": 53,
     "Languages": {
       "English": "Saturation",
-      "Chinese": "饱和度"
+      "Chinese": "饱和度",
+      "German": "Sättigung"
     }
   },
   {
@@ -482,7 +535,8 @@
     "ID": 54,
     "Languages": {
       "English": "Value",
-      "Chinese": "值"
+      "Chinese": "值",
+      "German": "Wert"
     }
   },
   {
@@ -491,7 +545,8 @@
     "ID": 55,
     "Languages": {
       "English": "Color",
-      "Chinese": "颜色"
+      "Chinese": "颜色",
+      "German": "Farbe"
     }
   },
   {
@@ -500,7 +555,8 @@
     "ID": 56,
     "Languages": {
       "English": "Dev Mode enabled - Hidden Features shown!",
-      "Chinese": "开发者模式已启用 - 显示隐藏特性！"
+      "Chinese": "开发者模式已启用 - 显示隐藏特性！",
+      "German": "Entwicklermodus aktiviert - Versteckte Features sichtbar!"
     }
   }
 ]
