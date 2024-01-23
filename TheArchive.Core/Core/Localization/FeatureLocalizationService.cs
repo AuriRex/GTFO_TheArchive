@@ -105,7 +105,17 @@ namespace TheArchive.Core.Localization
 
         public string Format(uint id, params object[] args)
         {
-            return string.Format(Get(id), args);
+            try
+            {
+                return string.Format(Get(id), args);
+            }
+            catch(FormatException ex)
+            {
+                var message = $"{nameof(FormatException)} thrown in {nameof(Format)} for id {id}!";
+                Feature.FeatureLogger.Error(message);
+                Feature.FeatureLogger.Exception(ex);
+                return message;
+            }
         }
 
         public void AddTextSetter(ILocalizedTextSetter textSetter, uint textId)
