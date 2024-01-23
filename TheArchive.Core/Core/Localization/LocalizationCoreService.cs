@@ -10,78 +10,15 @@ namespace TheArchive.Core.Localization
         private static IArchiveLogger _logger;
         private static IArchiveLogger Logger => _logger ??= Loader.LoaderWrapper.CreateLoggerInstance(nameof(LocalizationCoreService), ConsoleColor.Yellow);
 
-        public static void SetCurrentLanguage(Language language)
-        {
-            CurrentLanguage = language;
+        public static Language CurrentLanguage { get; private set; } = Language.English;
 
-            foreach (var service in m_localizationServices)
-            {
-                try
-                {
-                    service.SetCurrentLanguage(CurrentLanguage);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Exception has been thrown in Feature {service.Feature.Name}-->SetCurrentLanguage. {ex}: {ex.Message}");
-                    Logger.Exception(ex);
-                }
-            }
+        private static readonly Dictionary<ILocalizedTextSetter, uint> _textSetters = new();
 
-            UpdateAllTexts();
-        }
+        private static readonly HashSet<ILocalizedTextUpdater> _textUpdaters = new();
 
-        public static void UpdateAllTexts()
-        {
-            foreach (KeyValuePair<ILocalizedTextSetter, uint> keyValuePair in m_textSetters)
-            {
-                keyValuePair.Key.SetText(Get(keyValuePair.Value));
-            }
-            foreach (ILocalizedTextUpdater localizedTextUpdater in m_textUpdaters)
-            {
-                localizedTextUpdater.UpdateText();
-            }
-        }
+        private static readonly HashSet<FeatureLocalizationService> _localizationServices = new();
 
-        public static void AddTextSetter(ILocalizedTextSetter textSetter, uint textId)
-        {
-            textSetter.SetText(Get(textId));
-            m_textSetters.Add(textSetter, textId);
-        }
-
-        public static void SetTextSetter(ILocalizedTextSetter textSetter, uint textId)
-        {
-            textSetter.SetText(Get(textId));
-            m_textSetters[textSetter] = textId;
-        }
-
-        public static void AddTextUpdater(ILocalizedTextUpdater textUpdater)
-        {
-            textUpdater.UpdateText();
-            m_textUpdaters.Add(textUpdater);
-        }
-
-        public static string Get(uint id, string defaultValue = "UNKNOWN ID: {0}")
-        {
-            if (!m_texts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text) || string.IsNullOrWhiteSpace(text))
-            {
-                if (defaultValue == "UNKNOWN ID: {0}")
-                {
-                    defaultValue = string.Format(defaultValue, id);
-                }
-                return defaultValue;
-            }
-            return text;
-        }
-
-        public static string Format(uint id, string defaultValue = "UNKNOWN ID: {0}", params object[] args)
-        {
-            return string.Format(Get(id, defaultValue), args);
-        }
-
-        public static void RegisterLocalizationService(FeatureLocalizationService service)
-        {
-            m_localizationServices.Add(service);
-        }
+        private static readonly Dictionary<uint, Dictionary<Language, string>> _texts = new();
 
         public static void Init()
         {
@@ -108,18 +45,81 @@ namespace TheArchive.Core.Localization
                     }
                     dic[lang] = text;
                 }
-                m_texts[item.ID] = dic;
+                _texts[item.ID] = dic;
             }
         }
 
-        public static Language CurrentLanguage { get; private set; } = Language.English;
+        public static void SetCurrentLanguage(Language language)
+        {
+            CurrentLanguage = language;
 
-        private static Dictionary<ILocalizedTextSetter, uint> m_textSetters = new();
+            foreach (var service in _localizationServices)
+            {
+                try
+                {
+                    service.SetCurrentLanguage(CurrentLanguage);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Exception has been thrown in Feature {service.Feature.Name}-->SetCurrentLanguage. {ex}: {ex.Message}");
+                    Logger.Exception(ex);
+                }
+            }
 
-        private static HashSet<ILocalizedTextUpdater> m_textUpdaters = new();
+            UpdateAllTexts();
+        }
 
-        private static HashSet<FeatureLocalizationService> m_localizationServices = new();
+        public static void UpdateAllTexts()
+        {
+            foreach (KeyValuePair<ILocalizedTextSetter, uint> keyValuePair in _textSetters)
+            {
+                keyValuePair.Key.SetText(Get(keyValuePair.Value));
+            }
+            foreach (ILocalizedTextUpdater localizedTextUpdater in _textUpdaters)
+            {
+                localizedTextUpdater.UpdateText();
+            }
+        }
 
-        private static Dictionary<uint, Dictionary<Language, string>> m_texts = new();
+        public static void AddTextSetter(ILocalizedTextSetter textSetter, uint textId)
+        {
+            textSetter.SetText(Get(textId));
+            _textSetters.Add(textSetter, textId);
+        }
+
+        public static void SetTextSetter(ILocalizedTextSetter textSetter, uint textId)
+        {
+            textSetter.SetText(Get(textId));
+            _textSetters[textSetter] = textId;
+        }
+
+        public static void AddTextUpdater(ILocalizedTextUpdater textUpdater)
+        {
+            textUpdater.UpdateText();
+            _textUpdaters.Add(textUpdater);
+        }
+
+        public static string Get(uint id, string defaultValue = "UNKNOWN ID: {0}")
+        {
+            if (!_texts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text) || string.IsNullOrWhiteSpace(text))
+            {
+                if (defaultValue == "UNKNOWN ID: {0}")
+                {
+                    defaultValue = string.Format(defaultValue, id);
+                }
+                return defaultValue;
+            }
+            return text;
+        }
+
+        public static string Format(uint id, string defaultValue = "UNKNOWN ID: {0}", params object[] args)
+        {
+            return string.Format(Get(id, defaultValue), args);
+        }
+
+        public static void RegisterLocalizationService(FeatureLocalizationService service)
+        {
+            _localizationServices.Add(service);
+        }
     }
 }

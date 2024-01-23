@@ -11,17 +11,21 @@ namespace TheArchive.Core.Localization
 
         public Language CurrentLanguage { get; private set; }
 
-        public void SetCurrentLanguage(Language language)
-        {
-            CurrentLanguage = language;
-            UpdateAllTexts();
-        }
+        private readonly Dictionary<uint, Dictionary<Language, string>> _extraTexts = new();
+
+        private readonly Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> _featureSettingsTexts = new();
+
+        private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> _featureSettingsEnumTexts = new();
+
+        private readonly Dictionary<ILocalizedTextSetter, uint> _textSetters = new();
+
+        private readonly HashSet<ILocalizedTextUpdater> _textUpdaters = new();
 
         public void Setup(Feature feature, FeatureLocalizationData data)
         {
             Feature = feature;
             LocalizationCoreService.RegisterLocalizationService(this);
-            ExtraTexts.Clear();
+            _extraTexts.Clear();
             foreach (var property in data.FeatureSettingsTexts)
             {
                 Dictionary<FSType, Dictionary<Language, string>> typedic = new();
@@ -38,7 +42,7 @@ namespace TheArchive.Core.Localization
                     }
                     typedic[type.Key] = dic;
                 }
-                FeatureSettingsTexts[property.Key] = typedic;
+                _featureSettingsTexts[property.Key] = typedic;
             }
 
             foreach (var item in data.ExtraTexts)
@@ -52,15 +56,21 @@ namespace TheArchive.Core.Localization
                     }
                     dic[lang] = text;
                 }
-                ExtraTexts[item.ID] = dic;
+                _extraTexts[item.ID] = dic;
             }
 
-            FeatureSettingsEnumTexts = data.FeatureSettingsEnumTexts;
+            _featureSettingsEnumTexts = data.FeatureSettingsEnumTexts;
+        }
+
+        public void SetCurrentLanguage(Language language)
+        {
+            CurrentLanguage = language;
+            UpdateAllTexts();
         }
 
         public bool TryGetFSText(string propID, FSType type, out string text)
         {
-            if (!FeatureSettingsTexts.TryGetValue(propID, out var typedic) || !typedic.TryGetValue(type, out var languages) || !languages.TryGetValue(CurrentLanguage, out text) || string.IsNullOrWhiteSpace(text))
+            if (!_featureSettingsTexts.TryGetValue(propID, out var typedic) || !typedic.TryGetValue(type, out var languages) || !languages.TryGetValue(CurrentLanguage, out text) || string.IsNullOrWhiteSpace(text))
             {
                 text = null;
                 return false;
@@ -76,7 +86,7 @@ namespace TheArchive.Core.Localization
                 return false;
             }
             var values = Enum.GetNames(enumType);
-            if (!FeatureSettingsEnumTexts.TryGetValue(enumType.FullName, out var languages) || !languages.TryGetValue(CurrentLanguage, out enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => string.IsNullOrWhiteSpace(p.Value)))
+            if (!_featureSettingsEnumTexts.TryGetValue(enumType.FullName, out var languages) || !languages.TryGetValue(CurrentLanguage, out enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => string.IsNullOrWhiteSpace(p.Value)))
             {
                 enumTexts = null;
                 return false;
@@ -86,7 +96,7 @@ namespace TheArchive.Core.Localization
 
         public string Get(uint id)
         {
-            if (!ExtraTexts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text))
+            if (!_extraTexts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text))
             {
                 return $"UNKNOWN ID {id}";
             }
@@ -101,41 +111,31 @@ namespace TheArchive.Core.Localization
         public void AddTextSetter(ILocalizedTextSetter textSetter, uint textId)
         {
             textSetter.SetText(Get(textId));
-            m_textSetters.Add(textSetter, textId);
+            _textSetters.Add(textSetter, textId);
         }
 
         public void SetTextSetter(ILocalizedTextSetter textSetter, uint textId)
         {
             textSetter.SetText(Get(textId));
-            m_textSetters[textSetter] = textId;
+            _textSetters[textSetter] = textId;
         }
 
         public void AddTextUpdater(ILocalizedTextUpdater textUpdater)
         {
             textUpdater.UpdateText();
-            m_textUpdaters.Add(textUpdater);
+            _textUpdaters.Add(textUpdater);
         }
 
         public void UpdateAllTexts()
         {
-            foreach (KeyValuePair<ILocalizedTextSetter, uint> keyValuePair in m_textSetters)
+            foreach (KeyValuePair<ILocalizedTextSetter, uint> keyValuePair in _textSetters)
             {
                 keyValuePair.Key.SetText(Get(keyValuePair.Value));
             }
-            foreach (ILocalizedTextUpdater localizedTextUpdater in m_textUpdaters)
+            foreach (ILocalizedTextUpdater localizedTextUpdater in _textUpdaters)
             {
                 localizedTextUpdater.UpdateText();
             }
         }
-
-        private Dictionary<uint, Dictionary<Language, string>> ExtraTexts { get; set; } = new();
-
-        private Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> FeatureSettingsTexts { get; set; } = new();
-
-        private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> FeatureSettingsEnumTexts { get; set; } = new();
-
-        private Dictionary<ILocalizedTextSetter, uint> m_textSetters { get; } = new();
-
-        private HashSet<ILocalizedTextUpdater> m_textUpdaters { get; } = new();
     }
 }

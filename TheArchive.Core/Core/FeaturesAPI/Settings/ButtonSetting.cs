@@ -9,6 +9,9 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public string ButtonText => FComponent.ButtonText;
         public string ButtonID => FComponent.ButtonID;
 
+        /// <summary>
+        /// This Callback fires even if the Feature is disabled whenever the button is pressed!
+        /// </summary>
         public Action Callback => FComponent.Callback;
 
         public bool RefreshSubMenu => FComponent.RefreshSubMenu;

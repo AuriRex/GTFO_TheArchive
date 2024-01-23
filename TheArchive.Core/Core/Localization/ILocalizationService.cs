@@ -14,19 +14,4 @@
 
         void AddTextUpdater(ILocalizedTextUpdater textUpdater);
     }
-
-    public enum Language
-    {
-        English,
-        French,
-        Italian,
-        German,
-        Spanish,
-        Russian,
-        Portuguese_Brazil,
-        Polish,
-        Japanese,
-        Korean,
-        Chinese
-    }
 }

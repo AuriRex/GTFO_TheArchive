@@ -139,161 +139,6 @@ namespace TheArchive.Core.FeaturesAPI
         public delegate void Update();
         public delegate void LateUpdate();
 
-        internal static FeatureLocalizationData GenerateLocalization(Feature feature, FeatureLocalizationData defaultValue = null)
-        {
-            var parentType = feature.GetType();
-
-            var allproperties = new List<Dictionary<string, PropertyInfo>>();
-
-            var enumTypes = new HashSet<Type>();
-
-            foreach (var type in GetNestedClasses(parentType))
-            {
-                foreach (var nestedType in type.GetNestedTypes())
-                {
-                    if (nestedType.IsEnum)
-                    {
-                        enumTypes.Add(nestedType);
-                    }
-                }
-
-                var properties = type.GetProperties()
-                    .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
-                    && (prop.GetCustomAttributes<Localized>(true).Any()
-                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && (prop.Name == "Name" || prop.Name == "Description"))
-                    || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton)))
-                    .ToDictionary(
-                        prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
-                        prop => prop
-                    );
-                allproperties.Add(properties);
-            }
-
-            var FSTexts = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
-
-            foreach (var props in allproperties)
-            {
-                foreach (var propPair in props)
-                {
-                    Dictionary<FSType, Dictionary<Language, string>> fsdic = new();
-                    var propType = propPair.Value.PropertyType;
-                    var prop = propPair.Value;
-                    foreach (FSType fstype in Enum.GetValues(typeof(FSType)))
-                    {
-                        if (typeof(Feature).IsAssignableFrom(prop.DeclaringType))
-                        {
-                            if (prop.Name == "Name")
-                                if (fstype != FSType.FName)
-                                    continue;
-                            if (prop.Name == "Description")
-                                if (fstype != FSType.FDescription)
-                                    continue;
-                        }
-                        switch (fstype)
-                        {
-                            case FSType.FSDisplayName:
-                            case FSType.FSDescription:
-                                if (propType == typeof(FLabel))
-                                    continue;
-                                break;
-                            case FSType.FSButtonText:
-                                if (propType != typeof(FButton))
-                                    continue;
-                                break;
-                            case FSType.FSLabelText:
-                                if (propType != typeof(FLabel))
-                                    continue;
-                                break;
-                            case FSType.FSHeader:
-                                if (prop.GetCustomAttribute<FSHeader>() == null)
-                                    continue;
-                                break;
-                            case FSType.FName:
-                                if (prop.Name != "Name")
-                                    continue;
-                                break;
-                            case FSType.FDescription:
-                                if (prop.Name != "Description")
-                                    continue;
-                                break;
-                            default:
-                                continue;
-                        }
-
-                        var languages = new Dictionary<Language, string>();
-
-                        foreach (Language language in Enum.GetValues(typeof(Language)))
-                        {
-                            if (defaultValue == null || defaultValue.FeatureSettingsTexts == null || !defaultValue.FeatureSettingsTexts.TryGetValue(propPair.Key, out var dfsdic) || !dfsdic.TryGetValue(fstype, out var dlandic) || !dlandic.TryGetValue(language, out var defaultText))
-                            {
-                                defaultText = null;
-                            }
-                            languages[language] = defaultText;
-                        }
-
-                        fsdic[fstype] = languages;
-                    }
-                    FSTexts[propPair.Key] = fsdic;
-                }
-            }
-
-            var FSETexts = new Dictionary<string, Dictionary<Language, Dictionary<string, string>>>();
-
-            foreach (var type in enumTypes)
-            {
-                var names = Enum.GetNames(type);
-                var enumdic = new Dictionary<Language, Dictionary<string, string>>();
-                foreach (Language language in Enum.GetValues(typeof(Language)))
-                {
-                    var languagedic = new Dictionary<string, string>();
-                    foreach (var name in names)
-                    {
-                        if (defaultValue == null || defaultValue.FeatureSettingsEnumTexts == null || !defaultValue.FeatureSettingsEnumTexts.TryGetValue(type.FullName, out var dlandic) || !dlandic.TryGetValue(language, out var pair) || !pair.TryGetValue(name, out var defaultText))
-                        {
-                            defaultText = null;
-                        }
-                        languagedic[name] = defaultText;
-                    }
-                    enumdic[language] = languagedic;
-                }
-                FSETexts[type.FullName] = enumdic;
-            }
-
-            FeatureLocalizationData data = new()
-            {
-                FeatureSettingsTexts = FSTexts,
-                FeatureSettingsEnumTexts = FSETexts,
-                ExtraTexts = defaultValue?.ExtraTexts ?? new()
-            };
-
-            return data;
-        }
-
-        internal static void RegenerateAllFeatureSettings()
-        {
-            foreach (var feature in FeatureManager.Instance.RegisteredFeatures)
-            {
-                feature.FeatureInternal.SaveFeatureSettings();
-
-                feature.FeatureInternal._settingsHelpers.Clear();
-                var settingsProps = feature.GetType().GetProperties()
-                    .Where(pi => pi.GetCustomAttribute<FeatureConfig>() != null);
-                foreach (var prop in settingsProps)
-                {
-                    if ((!prop.SetMethod?.IsStatic ?? true) || (!prop.GetMethod?.IsStatic ?? true))
-                    {
-                        _FILogger.Warning($"Feature \"{feature.Identifier}\" has an invalid property \"{prop.Name}\" with a {nameof(FeatureConfig)} attribute! Make sure it's static with both a get and set method!");
-                    }
-                    else
-                    {
-                        feature.FeatureInternal._settingsHelpers.Add(new FeatureSettingsHelper(feature, prop));
-                    }
-                }
-
-                feature.FeatureInternal.LoadFeatureSettings();
-            }
-        }
-
         internal void Init(Feature feature)
         {
             _feature = feature;
@@ -757,6 +602,31 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
+        internal static void RegenerateAllFeatureSettings()
+        {
+            foreach (var feature in FeatureManager.Instance.RegisteredFeatures)
+            {
+                feature.FeatureInternal.SaveFeatureSettings();
+
+                feature.FeatureInternal._settingsHelpers.Clear();
+                var settingsProps = feature.GetType().GetProperties()
+                    .Where(pi => pi.GetCustomAttribute<FeatureConfig>() != null);
+                foreach (var prop in settingsProps)
+                {
+                    if ((!prop.SetMethod?.IsStatic ?? true) || (!prop.GetMethod?.IsStatic ?? true))
+                    {
+                        _FILogger.Warning($"Feature \"{feature.Identifier}\" has an invalid property \"{prop.Name}\" with a {nameof(FeatureConfig)} attribute! Make sure it's static with both a get and set method!");
+                    }
+                    else
+                    {
+                        feature.FeatureInternal._settingsHelpers.Add(new FeatureSettingsHelper(feature, prop));
+                    }
+                }
+
+                feature.FeatureInternal.LoadFeatureSettings();
+            }
+        }
+
         private void ApplyPatches()
         {
             if (InternalDisabled) return;
@@ -974,6 +844,136 @@ namespace TheArchive.Core.FeaturesAPI
                 _FILogger.Error($"Exception thrown during {nameof(Feature.OnQuit)} in Feature {_feature.Identifier}!");
                 _FILogger.Exception(ex);
             }
+        }
+
+        internal static FeatureLocalizationData GenerateLocalization(Feature feature, FeatureLocalizationData defaultValue = null)
+        {
+            var parentType = feature.GetType();
+
+            var allproperties = new List<Dictionary<string, PropertyInfo>>();
+
+            var enumTypes = new HashSet<Type>();
+
+            foreach (var type in GetNestedClasses(parentType))
+            {
+                foreach (var nestedType in type.GetNestedTypes())
+                {
+                    if (nestedType.IsEnum)
+                    {
+                        enumTypes.Add(nestedType);
+                    }
+                }
+
+                var properties = type.GetProperties()
+                    .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
+                    && (prop.GetCustomAttributes<Localized>(true).Any()
+                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && (prop.Name == "Name" || prop.Name == "Description"))
+                    || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton)))
+                    .ToDictionary(
+                        prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
+                        prop => prop
+                    );
+                allproperties.Add(properties);
+            }
+
+            var FSTexts = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
+
+            foreach (var props in allproperties)
+            {
+                foreach (var propPair in props)
+                {
+                    Dictionary<FSType, Dictionary<Language, string>> fsdic = new();
+                    var propType = propPair.Value.PropertyType;
+                    var prop = propPair.Value;
+                    foreach (FSType fstype in Enum.GetValues(typeof(FSType)))
+                    {
+                        if (typeof(Feature).IsAssignableFrom(prop.DeclaringType))
+                        {
+                            if (prop.Name == "Name")
+                                if (fstype != FSType.FName)
+                                    continue;
+                            if (prop.Name == "Description")
+                                if (fstype != FSType.FDescription)
+                                    continue;
+                        }
+                        switch (fstype)
+                        {
+                            case FSType.FSDisplayName:
+                            case FSType.FSDescription:
+                                if (propType == typeof(FLabel))
+                                    continue;
+                                break;
+                            case FSType.FSButtonText:
+                                if (propType != typeof(FButton))
+                                    continue;
+                                break;
+                            case FSType.FSLabelText:
+                                if (propType != typeof(FLabel))
+                                    continue;
+                                break;
+                            case FSType.FSHeader:
+                                if (prop.GetCustomAttribute<FSHeader>() == null)
+                                    continue;
+                                break;
+                            case FSType.FName:
+                                if (prop.Name != "Name")
+                                    continue;
+                                break;
+                            case FSType.FDescription:
+                                if (prop.Name != "Description")
+                                    continue;
+                                break;
+                            default:
+                                continue;
+                        }
+
+                        var languages = new Dictionary<Language, string>();
+
+                        foreach (Language language in Enum.GetValues(typeof(Language)))
+                        {
+                            if (defaultValue == null || defaultValue.FeatureSettingsTexts == null || !defaultValue.FeatureSettingsTexts.TryGetValue(propPair.Key, out var dfsdic) || !dfsdic.TryGetValue(fstype, out var dlandic) || !dlandic.TryGetValue(language, out var defaultText))
+                            {
+                                defaultText = null;
+                            }
+                            languages[language] = defaultText;
+                        }
+
+                        fsdic[fstype] = languages;
+                    }
+                    FSTexts[propPair.Key] = fsdic;
+                }
+            }
+
+            var FSETexts = new Dictionary<string, Dictionary<Language, Dictionary<string, string>>>();
+
+            foreach (var type in enumTypes)
+            {
+                var names = Enum.GetNames(type);
+                var enumdic = new Dictionary<Language, Dictionary<string, string>>();
+                foreach (Language language in Enum.GetValues(typeof(Language)))
+                {
+                    var languagedic = new Dictionary<string, string>();
+                    foreach (var name in names)
+                    {
+                        if (defaultValue == null || defaultValue.FeatureSettingsEnumTexts == null || !defaultValue.FeatureSettingsEnumTexts.TryGetValue(type.FullName, out var dlandic) || !dlandic.TryGetValue(language, out var pair) || !pair.TryGetValue(name, out var defaultText))
+                        {
+                            defaultText = null;
+                        }
+                        languagedic[name] = defaultText;
+                    }
+                    enumdic[language] = languagedic;
+                }
+                FSETexts[type.FullName] = enumdic;
+            }
+
+            FeatureLocalizationData data = new()
+            {
+                FeatureSettingsTexts = FSTexts,
+                FeatureSettingsEnumTexts = FSETexts,
+                ExtraTexts = defaultValue?.ExtraTexts ?? new()
+            };
+
+            return data;
         }
 
         private class FeaturePatchInfo
