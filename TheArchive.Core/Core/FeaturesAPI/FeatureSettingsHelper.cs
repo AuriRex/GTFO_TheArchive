@@ -52,15 +52,7 @@ namespace TheArchive.Core.FeaturesAPI
             Feature = feature;
             Property = settingsProperty;
             SettingType = settingsProperty?.GetMethod?.ReturnType ?? throw new ArgumentNullException(nameof(settingsProperty), $"Settings Property must implement a get method!");
-            DisplayName = settingsProperty?.GetCustomAttribute<FSDisplayName>()?.DisplayName;
-            if (settingsProperty?.GetCustomAttribute<FSDisplayName>(true) != null)
-            {
-                string propID = $"{settingsProperty.DeclaringType.FullName}.{settingsProperty.Name}";
-                if (Localization.TryGetFSText(propID, FSType.FSDisplayName, out var text))
-                {
-                    DisplayName = text;
-                }
-            }
+            SetDisplayName(settingsProperty);
         }
 
         protected FeatureSettingsHelper() { }
@@ -178,6 +170,24 @@ namespace TheArchive.Core.FeaturesAPI
         {
             if(ForceEnableDebugLogging || !Feature.GameDataInited)
                 _logger.Debug(msg);
+        }
+
+        private void SetDisplayName(PropertyInfo settingsProperty)
+        {
+            DisplayName = settingsProperty?.GetCustomAttribute<FSDisplayName>()?.DisplayName;
+            if (settingsProperty?.GetCustomAttribute<FSDisplayName>(true) != null)
+            {
+                string propID = $"{settingsProperty.DeclaringType.FullName}.{settingsProperty.Name}";
+                if (Localization.TryGetFSText(propID, FSType.FSDisplayName, out var text))
+                {
+                    DisplayName = text;
+                }
+            }
+        }
+
+        internal void RefreshDisplayName()
+        {
+            SetDisplayName(Property);
         }
 
         internal virtual void SetupViaFeatureInstance(object configInstance) => SetupViaInstanceOnHost(Feature, configInstance);

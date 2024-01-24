@@ -563,7 +563,7 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        internal void LoadFeatureSettings()
+        internal void LoadFeatureSettings(bool refreshDisplayName = false)
         {
             if (InternalDisabled) return;
 
@@ -572,6 +572,9 @@ namespace TheArchive.Core.FeaturesAPI
                 _FILogger.Info($"Loading config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
 
                 var configInstance = LocalFiles.LoadFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
+
+                if (refreshDisplayName)
+                    settingsHelper.RefreshDisplayName();
 
                 settingsHelper.SetupViaFeatureInstance(configInstance);
 
@@ -602,29 +605,10 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        internal static void RegenerateAllFeatureSettings()
+        internal void SaveAndReloadFeatureSettings()
         {
-            foreach (var feature in FeatureManager.Instance.RegisteredFeatures)
-            {
-                feature.FeatureInternal.SaveFeatureSettings();
-
-                feature.FeatureInternal._settingsHelpers.Clear();
-                var settingsProps = feature.GetType().GetProperties()
-                    .Where(pi => pi.GetCustomAttribute<FeatureConfig>() != null);
-                foreach (var prop in settingsProps)
-                {
-                    if ((!prop.SetMethod?.IsStatic ?? true) || (!prop.GetMethod?.IsStatic ?? true))
-                    {
-                        _FILogger.Warning($"Feature \"{feature.Identifier}\" has an invalid property \"{prop.Name}\" with a {nameof(FeatureConfig)} attribute! Make sure it's static with both a get and set method!");
-                    }
-                    else
-                    {
-                        feature.FeatureInternal._settingsHelpers.Add(new FeatureSettingsHelper(feature, prop));
-                    }
-                }
-
-                feature.FeatureInternal.LoadFeatureSettings();
-            }
+            SaveFeatureSettings();
+            LoadFeatureSettings(refreshDisplayName: true);
         }
 
         private void ApplyPatches()
@@ -843,6 +827,14 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 _FILogger.Error($"Exception thrown during {nameof(Feature.OnQuit)} in Feature {_feature.Identifier}!");
                 _FILogger.Exception(ex);
+            }
+        }
+
+        internal static void ReloadAllFeatureSettings()
+        {
+            foreach (var feature in FeatureManager.Instance.RegisteredFeatures)
+            {
+                feature.FeatureInternal.SaveAndReloadFeatureSettings();
             }
         }
 

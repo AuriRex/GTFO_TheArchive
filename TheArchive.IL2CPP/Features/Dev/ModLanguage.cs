@@ -32,7 +32,7 @@ public class ModLanguage : Feature
             FeatureLogger.Notice($"Setting Language to {targetLanguage}.");
             LocalizationCoreService.SetCurrentLanguage(targetLanguage);
 
-            FeatureInternal.RegenerateAllFeatureSettings();
+            FeatureInternal.ReloadAllFeatureSettings();
             ModSettings.RegenerateModSettingsPage();
             return true;
         }
