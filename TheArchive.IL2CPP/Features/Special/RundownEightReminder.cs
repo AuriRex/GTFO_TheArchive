@@ -96,8 +96,9 @@ namespace TheArchive.Features.Special
                 BlinkTimeInterval = 0.2f,
                 Header = "<#F00>Rundown 8 Reminder</color>",
                 UpperText = updateText,
+                LowerText = string.Empty,
                 PopupType = PopupType.BoosterImplantMissed,
-                OnCloseCallback = new System.Action(() => { })
+                OnCloseCallback = PageRundownPopupManager.EmptyAction,
             });
         }
     }
