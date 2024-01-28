@@ -173,6 +173,7 @@ namespace TheArchive.Core.FeaturesAPI
                 }
 
                 var properties = GetFSProperties(type);
+                var inlineProps = new List<Dictionary<string, PropertyInfo>>();
                 foreach (var propPair in properties)
                 {
                     var prop = propPair.Value;
@@ -180,10 +181,11 @@ namespace TheArchive.Core.FeaturesAPI
                     {
                         properties.Remove(propPair.Key);
                         var externalProps = GetFSProperties(prop.PropertyType);
-                        allproperties.Add(externalProps);
+                        inlineProps.Add(externalProps);
                     }
                 }
                 allproperties.Add(properties);
+                allproperties.AddRange(inlineProps);
             }
 
             var FSTexts = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
