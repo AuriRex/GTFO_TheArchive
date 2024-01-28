@@ -2,7 +2,7 @@
 
 namespace TheArchive.Core.Localization;
 
-public class LocalizationTextData
+internal class LocalizationTextData
 {
     public string UntranslatedText { get; set; }
 
@@ -13,7 +13,12 @@ public class LocalizationTextData
     public Dictionary<Language, string> Languages { get; set; }
 }
 
-public class FeatureLocalizationData
+internal class FeatureExternalLocalizationData
+{
+    public Dictionary<string, Dictionary<Language, Dictionary<string, string>>> ExternEnumTexts { get; set; }
+}
+
+internal class FeatureInternalLocalizationData
 {
     public Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> FeatureSettingsTexts { get; set; }
 
@@ -22,7 +27,14 @@ public class FeatureLocalizationData
     public List<LocalizationTextData> ExtraTexts { get; set; }
 }
 
-public enum FSType
+internal class FeatureLocalizationData
+{
+    public FeatureInternalLocalizationData Internal { get; set; } = new();
+
+    public FeatureExternalLocalizationData External { get; set; } = new();
+}
+
+internal enum FSType
 {
     FName,
     FDescription,

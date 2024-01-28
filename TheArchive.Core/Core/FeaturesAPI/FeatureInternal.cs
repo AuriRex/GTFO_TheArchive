@@ -154,7 +154,7 @@ namespace TheArchive.Core.FeaturesAPI
                     );
         }
 
-        internal static FeatureLocalizationData GenerateLocalization(Feature feature, FeatureLocalizationData defaultValue = null)
+        internal static FeatureInternalLocalizationData GenerateLocalization(Feature feature, FeatureInternalLocalizationData defaultValue = null)
         {
             var parentType = feature.GetType();
 
@@ -283,7 +283,7 @@ namespace TheArchive.Core.FeaturesAPI
                 FSETexts[type.FullName] = enumdic;
             }
 
-            FeatureLocalizationData data = new()
+            FeatureInternalLocalizationData data = new()
             {
                 FeatureSettingsTexts = FSTexts,
                 FeatureSettingsEnumTexts = FSETexts,
@@ -724,6 +724,8 @@ namespace TheArchive.Core.FeaturesAPI
                 InternalyDisableFeature(InternalDisabledReason.MainInitMethodFailed);
                 return;
             }
+
+            _feature.FeatureInternal.Localization.CheckExternLocalization();
 
             if (FeatureManager.IsEnabledInConfig(_feature))
             {

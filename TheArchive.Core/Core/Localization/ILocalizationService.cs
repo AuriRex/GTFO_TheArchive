@@ -1,4 +1,6 @@
-﻿namespace TheArchive.Core.Localization
+﻿using System;
+
+namespace TheArchive.Core.Localization
 {
     public interface ILocalizationService
     {
@@ -13,6 +15,8 @@
         void SetTextSetter(ILocalizedTextSetter textSetter, uint textId);
 
         void AddTextUpdater(ILocalizedTextUpdater textUpdater);
+
+        void RegisterExternType(Type type);
     }
 
     public enum Language

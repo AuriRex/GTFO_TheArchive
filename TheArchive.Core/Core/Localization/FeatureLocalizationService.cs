@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Utilities;
 
 namespace TheArchive.Core.Localization
 {
@@ -20,9 +23,11 @@ namespace TheArchive.Core.Localization
         public void Setup(Feature feature, FeatureLocalizationData data)
         {
             Feature = feature;
+            LocalizationData = data;
             LocalizationCoreService.RegisterLocalizationService(this);
+
             ExtraTexts.Clear();
-            foreach (var property in data.FeatureSettingsTexts)
+            foreach (var property in data.Internal.FeatureSettingsTexts)
             {
                 Dictionary<FSType, Dictionary<Language, string>> typedic = new();
                 foreach (var type in property.Value)
@@ -41,7 +46,7 @@ namespace TheArchive.Core.Localization
                 FeatureSettingsTexts[property.Key] = typedic;
             }
 
-            foreach (var item in data.ExtraTexts)
+            foreach (var item in data.Internal.ExtraTexts)
             {
                 Dictionary<Language, string> dic = new();
                 foreach (Language lang in Enum.GetValues(typeof(Language)))
@@ -55,7 +60,9 @@ namespace TheArchive.Core.Localization
                 ExtraTexts[item.ID] = dic;
             }
 
-            FeatureSettingsEnumTexts = data.FeatureSettingsEnumTexts;
+            FeatureSettingsEnumTexts = data.Internal.FeatureSettingsEnumTexts;
+
+            ExternEnumTexts = data.External.ExternEnumTexts ?? new();
         }
 
         public bool TryGetFSText(string propID, FSType type, out string text)
@@ -78,8 +85,11 @@ namespace TheArchive.Core.Localization
             var values = Enum.GetNames(enumType);
             if (!FeatureSettingsEnumTexts.TryGetValue(enumType.FullName, out var languages) || !languages.TryGetValue(CurrentLanguage, out enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => string.IsNullOrWhiteSpace(p.Value)))
             {
-                enumTexts = null;
-                return false;
+                if (!ExternEnumTexts.TryGetValue(enumType.FullName, out languages) || !languages.TryGetValue(CurrentLanguage, out enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => string.IsNullOrWhiteSpace(p.Value)))
+                {
+                    enumTexts = null;
+                    return false;
+                }
             }
             return true;
         }
@@ -128,11 +138,70 @@ namespace TheArchive.Core.Localization
             }
         }
 
+        public void RegisterExternType(Type type)
+        {
+            RegisteredExternTypes.Add(type);
+        }
+
+        public void CheckExternLocalization()
+        {
+            if (!RegisteredExternTypes.Any())
+                return;
+
+            foreach (var type in RegisteredExternTypes)
+            {
+                var key = type.FullName;
+
+                if (type.IsEnum)
+                {
+                    if (ExternEnumTexts.ContainsKey(key))
+                        continue;
+
+                    var names = Enum.GetNames(type);
+                    var enumdic = new Dictionary<Language, Dictionary<string, string>>();
+                    foreach (Language language in Enum.GetValues(typeof(Language)))
+                    {
+                        var languagedic = new Dictionary<string, string>();
+                        foreach (var name in names)
+                        {
+                            languagedic[name] = null;
+                        }
+                        enumdic[language] = languagedic;
+                    }
+                    ExternEnumTexts[key] = enumdic;
+                }
+            }
+
+            LocalizationData.External.ExternEnumTexts = ExternEnumTexts;
+            var rjson = JsonConvert.SerializeObject(LocalizationData);
+            string dir = Path.Combine(Path.GetDirectoryName(Feature.ModuleGroup == ArchiveMod.ARCHIVE_CORE_FEATUREGROUP ? ArchiveMod.CORE_PATH : Feature.FeatureInternal.OriginAssembly.Location), "Localization");
+            var path = Path.Combine(dir, $"{Feature.Identifier}_Localization.json");
+            if (File.Exists(path))
+            {
+                var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+                var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
+                if (rjson.ComputeSHA256() != json.ComputeSHA256())
+                {
+                    File.WriteAllText(path, JsonConvert.SerializeObject(LocalizationData, ArchiveMod.JsonSerializerSettings));
+                }
+            }
+            else
+            {
+                File.WriteAllText(path, JsonConvert.SerializeObject(LocalizationData, ArchiveMod.JsonSerializerSettings));
+            }
+        }
+
+        private FeatureLocalizationData LocalizationData { get; set; }
+
+        private HashSet<Type> RegisteredExternTypes { get; } = new();
+
         private Dictionary<uint, Dictionary<Language, string>> ExtraTexts { get; set; } = new();
 
         private Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> FeatureSettingsTexts { get; set; } = new();
 
         private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> FeatureSettingsEnumTexts { get; set; } = new();
+
+        private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> ExternEnumTexts { get; set; } = new();
 
         private Dictionary<ILocalizedTextSetter, uint> m_textSetters { get; } = new();
 
