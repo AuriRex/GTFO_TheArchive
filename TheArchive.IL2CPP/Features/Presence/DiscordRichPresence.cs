@@ -23,7 +23,7 @@ namespace TheArchive.Features.Presence
 
         public override bool SkipInitialOnEnable => true;
 
-        [Localized]
+        [InlineLocalized]
         [FeatureConfig]
         public static RichPresenceSettings DiscordRPCSettings { get; set; }
 

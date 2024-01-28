@@ -177,7 +177,7 @@ namespace TheArchive.Core.FeaturesAPI
                 foreach (var propPair in properties)
                 {
                     var prop = propPair.Value;
-                    if (prop.GetCustomAttributes<Localized>(false).Any() && prop.PropertyType.IsClass)
+                    if (prop.GetCustomAttribute<InlineLocalized>() != null && prop.PropertyType.IsClass)
                     {
                         properties.Remove(propPair.Key);
                         var externalProps = GetFSProperties(prop.PropertyType);

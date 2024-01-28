@@ -1,9 +1,8 @@
 ﻿using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
-using TheArchive.Features.Dev;
 
-namespace TheArchive.Features;
+namespace TheArchive.Features.Dev;
 
 [HideInModSettings]
 [EnableFeatureByDefault]
