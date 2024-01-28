@@ -140,6 +140,20 @@ namespace TheArchive.Core.FeaturesAPI
         public delegate void Update();
         public delegate void LateUpdate();
 
+        private static Dictionary<string, PropertyInfo> GetFSProperties(Type type)
+        {
+            return type.GetProperties()
+                    .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
+                    && (prop.GetCustomAttributes<Localized>(true).Any()
+                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && (prop.Name == "Name" && prop.PropertyType.FullName != $"{typeof(Feature).FullName}.{nameof(Feature.Name)}"
+                    || prop.Name == "Description" && prop.PropertyType.FullName != $"{typeof(Feature).FullName}.{nameof(Feature.Description)}"))
+                    || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton)))
+                    .ToDictionary(
+                        prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
+                        prop => prop
+                    );
+        }
+
         internal static FeatureLocalizationData GenerateLocalization(Feature feature, FeatureLocalizationData defaultValue = null)
         {
             var parentType = feature.GetType();
@@ -158,15 +172,17 @@ namespace TheArchive.Core.FeaturesAPI
                         enumTypes.Add(nestedType);
                 }
 
-                var properties = type.GetProperties()
-                    .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
-                    && (prop.GetCustomAttributes<Localized>(true).Any()
-                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && (prop.Name == "Name" || prop.Name == "Description"))
-                    || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton)))
-                    .ToDictionary(
-                        prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
-                        prop => prop
-                    );
+                var properties = GetFSProperties(type);
+                foreach (var propPair in properties)
+                {
+                    var prop = propPair.Value;
+                    if (prop.GetCustomAttributes<Localized>(false).Any() && prop.PropertyType.IsClass)
+                    {
+                        properties.Remove(propPair.Key);
+                        var externalProps = GetFSProperties(prop.PropertyType);
+                        allproperties.Add(externalProps);
+                    }
+                }
                 allproperties.Add(properties);
             }
 
