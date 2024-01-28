@@ -220,7 +220,7 @@ namespace TheArchive.Features.Dev
             {
                 if(value)
                 {
-                    SetRestartInfoText($"<color=red><b>Restart required for some settings to apply!</b></color>");
+                    SetRestartInfoText(LocalizationCoreService.Get(59, "<color=red><b>Restart required for some settings to apply!</b></color>"));
                 }
                 else
                 {
