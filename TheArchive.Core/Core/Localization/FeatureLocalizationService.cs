@@ -61,7 +61,7 @@ namespace TheArchive.Core.Localization
 
             FeatureSettingsEnumTexts = data.Internal.FeatureSettingsEnumTexts;
 
-            ExternEnumTexts = data.External.ExternEnumTexts ?? new();
+            ExternalEnumTexts = data.External.ExternalEnumTexts ?? new();
         }
 
         public bool TryGetFSText(string propID, FSType type, out string text)
@@ -84,7 +84,7 @@ namespace TheArchive.Core.Localization
             var values = Enum.GetNames(enumType);
             if (!FeatureSettingsEnumTexts.TryGetValue(enumType.FullName, out var languages) || !languages.TryGetValue(CurrentLanguage, out enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => string.IsNullOrWhiteSpace(p.Value)))
             {
-                if (!ExternEnumTexts.TryGetValue(enumType.FullName, out languages) || !languages.TryGetValue(CurrentLanguage, out enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => string.IsNullOrWhiteSpace(p.Value)))
+                if (!ExternalEnumTexts.TryGetValue(enumType.FullName, out languages) || !languages.TryGetValue(CurrentLanguage, out enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => string.IsNullOrWhiteSpace(p.Value)))
                 {
                     enumTexts = null;
                     return false;
@@ -137,9 +137,9 @@ namespace TheArchive.Core.Localization
             }
         }
 
-        public void RegisterExternType(Type type)
+        public void RegisterExternType<T>()
         {
-            RegisteredExternTypes.Add(type);
+            RegisteredExternTypes.Add(typeof(T));
         }
 
         public void CheckExternLocalization()
@@ -153,7 +153,7 @@ namespace TheArchive.Core.Localization
 
                 if (type.IsEnum)
                 {
-                    if (ExternEnumTexts.ContainsKey(key))
+                    if (ExternalEnumTexts.ContainsKey(key))
                         continue;
 
                     var names = Enum.GetNames(type);
@@ -167,12 +167,12 @@ namespace TheArchive.Core.Localization
                         }
                         enumdic[language] = languagedic;
                     }
-                    ExternEnumTexts[key] = enumdic;
+                    ExternalEnumTexts[key] = enumdic;
                 }
             }
 
-            LocalizationData.External.ExternEnumTexts = ExternEnumTexts;
-            var rjson = JsonConvert.SerializeObject(LocalizationData);
+            LocalizationData.External.ExternalEnumTexts = ExternalEnumTexts;
+            var rjson = JsonConvert.SerializeObject(LocalizationData, ArchiveMod.JsonSerializerSettings);
             string dir = Path.Combine(Path.GetDirectoryName(Feature.ModuleGroup == ArchiveMod.ARCHIVE_CORE_FEATUREGROUP ? ArchiveMod.CORE_PATH : Feature.FeatureInternal.OriginAssembly.Location), "Localization");
             var path = Path.Combine(dir, $"{Feature.Identifier}_Localization.json");
             if (File.Exists(path))
@@ -200,7 +200,7 @@ namespace TheArchive.Core.Localization
 
         private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> FeatureSettingsEnumTexts { get; set; } = new();
 
-        private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> ExternEnumTexts { get; set; } = new();
+        private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> ExternalEnumTexts { get; set; } = new();
 
         private Dictionary<ILocalizedTextSetter, uint> m_textSetters { get; } = new();
 

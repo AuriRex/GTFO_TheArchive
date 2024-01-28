@@ -16,7 +16,7 @@ namespace TheArchive.Core.Localization
 
         void AddTextUpdater(ILocalizedTextUpdater textUpdater);
 
-        void RegisterExternType(Type type);
+        void RegisterExternType<T>();
     }
 
     public enum Language

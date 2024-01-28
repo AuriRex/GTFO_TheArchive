@@ -13,9 +13,16 @@ internal class LocalizationTextData
     public Dictionary<Language, string> Languages { get; set; }
 }
 
+internal class ArchiveCoreLocalizationData
+{
+    public List<LocalizationTextData> Texts { get; set; } = new();
+
+    public Dictionary<string, Dictionary<Language, Dictionary<string, string>>> EnumTexts { get; set; }
+}
+
 internal class FeatureExternalLocalizationData
 {
-    public Dictionary<string, Dictionary<Language, Dictionary<string, string>>> ExternEnumTexts { get; set; }
+    public Dictionary<string, Dictionary<Language, Dictionary<string, string>>> ExternalEnumTexts { get; set; }
 }
 
 internal class FeatureInternalLocalizationData
