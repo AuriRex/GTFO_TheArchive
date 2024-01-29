@@ -145,8 +145,7 @@ namespace TheArchive.Core.FeaturesAPI
             return type.GetProperties()
                     .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
                     && (prop.GetCustomAttributes<Localized>(true).Any()
-                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && ((prop.Name == "Name" && prop.PropertyType.FullName != $"{typeof(Feature).FullName}.{nameof(Feature.Name)}")
-                    || (prop.Name == "Description" && prop.PropertyType.FullName != $"{typeof(Feature).FullName}.{nameof(Feature.Description)}")))
+                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && ((prop.Name == nameof(Feature.Name) && prop.DeclaringType.FullName != typeof(Feature).FullName) || (prop.Name == nameof(Feature.Description) && prop.DeclaringType.FullName != typeof(Feature).FullName)))
                     || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton)))
                     .ToDictionary(
                         prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
@@ -896,6 +895,9 @@ namespace TheArchive.Core.FeaturesAPI
         {
             if (!_feature.Enabled) return;
 
+            if (setting.RequiresRestart)
+                _feature.RequestRestart();
+
             try
             {
                 _feature.OnFeatureSettingChanged(setting);
@@ -1021,7 +1023,7 @@ namespace TheArchive.Core.FeaturesAPI
             internal MethodInfo FinalizerPatchMethod { get; private set; }
             internal MethodInfo ILManipulatorPatchMethod { get; private set; }
 
-            public FeaturePatchInfo(MethodBase original, MethodInfo prefix, MethodInfo postfix, MethodInfo transpiler, MethodInfo finalizer, MethodInfo ilManipulator, ArchivePatch archivePatch, bool wrapTryCatch = true, int priority = -1)
+            public FeaturePatchInfo(MethodBase original, MethodInfo prefix, MethodInfo postfix, MethodInfo transpiler, MethodInfo finalizer, MethodInfo ilManipulator, ArchivePatch archivePatch, bool wrapTryCatch = true)
             {
                 OriginalMethod = original;
 

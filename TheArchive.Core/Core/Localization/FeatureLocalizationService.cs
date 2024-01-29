@@ -1,9 +1,12 @@
-﻿using System;
+﻿using BepInEx;
+using Clonesoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TheArchive.Core.Localization
 {
@@ -102,6 +105,23 @@ namespace TheArchive.Core.Localization
             return text;
         }
 
+
+        public string Get<T>(T value)
+        {
+            Type type = typeof(T);
+            if (type.IsEnum)
+            {
+                var values = Enum.GetNames(type);
+                if (!ExternalEnumTexts.TryGetValue(type.FullName, out var languages) || !languages.TryGetValue(CurrentLanguage, out var enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => string.IsNullOrWhiteSpace(p.Value)) || !enumTexts.TryGetValue(value.ToString(), out var text))
+                {
+                    return value.ToString();
+                }
+                return text;
+            }
+            return value.ToString();
+        }
+
+
         public string Format(uint id, params object[] args)
         {
             return string.Format(Get(id), args);
@@ -154,7 +174,10 @@ namespace TheArchive.Core.Localization
                 if (type.IsEnum)
                 {
                     if (ExternalEnumTexts.ContainsKey(key))
+                    {
+                        ExternalEnumTexts[key] = ExternalEnumTexts[key].OrderBy(p => p.Key).ToDictionary(p => p.Key, p => p.Value);
                         continue;
+                    }
 
                     var names = Enum.GetNames(type);
                     var enumdic = new Dictionary<Language, Dictionary<string, string>>();
@@ -189,7 +212,6 @@ namespace TheArchive.Core.Localization
                 File.WriteAllText(path, JsonConvert.SerializeObject(LocalizationData, ArchiveMod.JsonSerializerSettings));
             }
         }
-
         private FeatureLocalizationData LocalizationData { get; set; }
 
         private HashSet<Type> RegisteredExternTypes { get; } = new();

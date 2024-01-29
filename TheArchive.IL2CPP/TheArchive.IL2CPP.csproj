@@ -169,7 +169,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Properties\" />
-		<Folder Include="Localization\" />
 	</ItemGroup>
 
 	<PropertyGroup>

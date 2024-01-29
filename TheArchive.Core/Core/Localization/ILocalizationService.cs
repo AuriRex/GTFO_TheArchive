@@ -8,6 +8,8 @@ namespace TheArchive.Core.Localization
 
         string Get(uint id);
 
+        string Get<T>(T value);
+
         string Format(uint id, params object[] args);
 
         void AddTextSetter(ILocalizedTextSetter textSetter, uint textId);
@@ -22,6 +24,7 @@ namespace TheArchive.Core.Localization
     public enum Language
     {
         English,
+        Chinese,
         French,
         Italian,
         German,
@@ -30,7 +33,6 @@ namespace TheArchive.Core.Localization
         Portuguese_Brazil,
         Polish,
         Japanese,
-        Korean,
-        Chinese
+        Korean
     }
 }
