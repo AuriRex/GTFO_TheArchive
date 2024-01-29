@@ -32,6 +32,7 @@ namespace TheArchive.Features.Accessibility
 
         public class PlayerColorOverrideSettings
         {
+            [FSDisplayName("Mode")]
             public ColorizationMode Mode { get; set; } = ColorizationMode.NicknameOnly;
 
             [FSDisplayName("Your Color")]

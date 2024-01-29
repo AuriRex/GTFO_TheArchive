@@ -145,8 +145,8 @@ namespace TheArchive.Core.FeaturesAPI
             return type.GetProperties()
                     .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
                     && (prop.GetCustomAttributes<Localized>(true).Any()
-                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && (prop.Name == "Name" && prop.PropertyType.FullName != $"{typeof(Feature).FullName}.{nameof(Feature.Name)}"
-                    || prop.Name == "Description" && prop.PropertyType.FullName != $"{typeof(Feature).FullName}.{nameof(Feature.Description)}"))
+                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && ((prop.Name == "Name" && prop.PropertyType.FullName != $"{typeof(Feature).FullName}.{nameof(Feature.Name)}")
+                    || (prop.Name == "Description" && prop.PropertyType.FullName != $"{typeof(Feature).FullName}.{nameof(Feature.Description)}")))
                     || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton)))
                     .ToDictionary(
                         prop => $"{prop.DeclaringType.FullName}.{prop.Name}",

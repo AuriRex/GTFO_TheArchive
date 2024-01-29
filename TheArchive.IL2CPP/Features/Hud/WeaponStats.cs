@@ -114,6 +114,8 @@ namespace TheArchive.Features.Hud
         {
             Instance = this;
 
+            Localization.RegisterExternType<FSSlider.RoundTo>();
+
             if (Settings.IsFirstTime)
             {
                 Settings.StatsToDisplay = new List<Stats>()
