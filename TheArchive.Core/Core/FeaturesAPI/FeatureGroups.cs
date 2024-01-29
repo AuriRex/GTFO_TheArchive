@@ -88,7 +88,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal static HashSet<FeatureGroup> AllGroups { get; private set; } = new();
 
         #region Archive Groups
-        internal static FeatureGroup ArchiveCore { get; private set; } = GetOrCreateModuleGroup(ArchiveMod.ARCHIVE_CORE_FEATUREGROUP);
+        internal static FeatureGroup ArchiveCore { get; private set; } = GetOrCreateArchiveGroup(ArchiveMod.ARCHIVE_CORE_FEATUREGROUP);
         public static FeatureGroup Accessibility { get; private set; } = GetOrCreateArchiveGroup("Accessibility");
         public static FeatureGroup Audio { get; private set; } = GetOrCreateArchiveGroup("Audio");
         public static FeatureGroup Backport { get; private set; } = GetOrCreateArchiveGroup("Backport");

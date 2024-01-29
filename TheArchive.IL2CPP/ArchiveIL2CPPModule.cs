@@ -26,7 +26,8 @@ namespace TheArchive
 
         public Dictionary<Language, string> ModuleGroupLanguages => new()
         {
-            { Language.English, "Archive Core" }
+            { Language.English, "Archive Core" },
+            { Language.Chinese, "Archive 核心" }
         };
 
         static ArchiveIL2CPPModule()

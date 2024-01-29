@@ -443,6 +443,9 @@ namespace TheArchive.Features.Dev
                     if (group.IsHidden && !Feature.DevMode)
                         continue;
 
+                    if (!group.SubGroups.Any() && !group.Features.Any())
+                        continue;
+
                     if (!Feature.DevMode && featureSet.All(f => f.IsHidden) && !group.SubGroups.Any())
                         continue;
 
