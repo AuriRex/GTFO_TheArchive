@@ -105,19 +105,21 @@ namespace TheArchive.Core.Localization
 
         public string Get<T>(T value) where T : class, Enum
         {
-            Type type = typeof(T);
+            return Get(typeof(T), value);
+        }
+
+        public string Get(Type type, object value)
+        {
             if (type.IsEnum)
             {
-                var values = Enum.GetNames(type);
-                if (!ExternalEnumTexts.TryGetValue(type.FullName, out var languages) || !languages.TryGetValue(CurrentLanguage, out var enumTexts) || enumTexts.Count != values.Length || enumTexts.Any(p => string.IsNullOrWhiteSpace(p.Value)) || !enumTexts.TryGetValue(value.ToString(), out var text))
+                if (TryGetFSEnumText(type, out var dic) && dic.TryGetValue(value.ToString(), out var text))
                 {
-                    return value.ToString();
+                    return text;
                 }
-                return text;
+                return value.ToString();
             }
             return value.ToString();
         }
-
 
         public string Format(uint id, params object[] args)
         {

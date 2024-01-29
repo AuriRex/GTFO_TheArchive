@@ -200,10 +200,10 @@ namespace TheArchive.Core.FeaturesAPI
                     {
                         if (typeof(Feature).IsAssignableFrom(prop.DeclaringType))
                         {
-                            if (prop.Name == "Name")
+                            if (prop.Name == nameof(Feature.Name))
                                 if (fstype != FSType.FName)
                                     continue;
-                            if (prop.Name == "Description")
+                            if (prop.Name == nameof(Feature.Description))
                                 if (fstype != FSType.FDescription)
                                     continue;
                         }
