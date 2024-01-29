@@ -1,12 +1,9 @@
-﻿using BepInEx;
-using Clonesoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace TheArchive.Core.Localization
 {
@@ -106,7 +103,7 @@ namespace TheArchive.Core.Localization
         }
 
 
-        public string Get<T>(T value)
+        public string Get<T>(T value) where T : class, Enum
         {
             Type type = typeof(T);
             if (type.IsEnum)

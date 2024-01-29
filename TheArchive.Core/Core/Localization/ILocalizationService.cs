@@ -8,7 +8,7 @@ namespace TheArchive.Core.Localization
 
         string Get(uint id);
 
-        string Get<T>(T value);
+        string Get<T>(T value) where T : class, Enum;
 
         string Format(uint id, params object[] args);
 

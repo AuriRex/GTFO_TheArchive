@@ -145,7 +145,7 @@ namespace TheArchive.Core.FeaturesAPI
             return type.GetProperties()
                     .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
                     && (prop.GetCustomAttributes<Localized>(true).Any()
-                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && ((prop.Name == nameof(Feature.Name) && prop.DeclaringType.FullName != typeof(Feature).FullName) || (prop.Name == nameof(Feature.Description) && prop.DeclaringType.FullName != typeof(Feature).FullName)))
+                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && prop.DeclaringType.FullName != typeof(Feature).FullName && (prop.Name == nameof(Feature.Name) || prop.Name == nameof(Feature.Description)))
                     || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton)))
                     .ToDictionary(
                         prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
@@ -234,11 +234,11 @@ namespace TheArchive.Core.FeaturesAPI
                                     continue;
                                 break;
                             case FSType.FName:
-                                if (prop.Name != "Name")
+                                if (prop.Name != nameof(Feature.Name) || !typeof(Feature).IsAssignableFrom(prop.DeclaringType))
                                     continue;
                                 break;
                             case FSType.FDescription:
-                                if (prop.Name != "Description")
+                                if (prop.Name != nameof(Feature.Description) || !typeof(Feature).IsAssignableFrom(prop.DeclaringType))
                                     continue;
                                 break;
                             default:
