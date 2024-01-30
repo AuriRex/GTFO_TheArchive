@@ -43,7 +43,7 @@ namespace TheArchive.Core.FeaturesAPI
         {
             get
             {
-                string propID = $"{_feature.GetType().FullName}.Name";
+                string propID = $"{_feature.GetType().FullName}.{nameof(Feature.Name)}";
                 if (Localization.TryGetFSText(propID, FSType.FName, out var text))
                 {
                     return text;
@@ -55,7 +55,7 @@ namespace TheArchive.Core.FeaturesAPI
         {
             get
             {
-                string propID = $"{_feature.GetType().FullName}.Description";
+                string propID = $"{_feature.GetType().FullName}.{nameof(Feature.Description)}";
                 if (Localization.TryGetFSText(propID, FSType.FDescription, out var text))
                 {
                     return text;

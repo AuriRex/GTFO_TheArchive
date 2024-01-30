@@ -102,7 +102,7 @@ namespace TheArchive.Core.Localization
         }
 
 
-        public string Get<T>(T value) where T : class, Enum
+        public string Get<T>(T value) where T : Enum
         {
             return Get(typeof(T), value);
         }
