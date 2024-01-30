@@ -235,7 +235,8 @@
     "ID": 24,
     "Languages": {
       "English": "{0} Feature{1}",
-      "Chinese": "{0}个特性"
+      "Chinese": "{0}个特性",
+      "German": "{0} Feature{1}"
     }
   },
   {
@@ -294,7 +295,8 @@
     "ID": 30,
     "Languages": {
       "English": "Built with uncommitted changes | <color=red>Git is dirty</color>",
-      "Chinese": "使用未提交的更改构建 | <color=red>Git 有未提交的更改</color>"
+      "Chinese": "使用未提交的更改构建 | <color=red>Git 有未提交的更改</color>",
+      "German": "Mit uncommitteten änderungen kompiliert | <color=red>Git is dirty</color>"
     }
   },
   {
@@ -323,7 +325,8 @@
     "ID": 33,
     "Languages": {
       "English": "Last Commit Date: {0}",
-      "Chinese": "最后一次提交 Date：{0}"
+      "Chinese": "最后一次提交 Date：{0}",
+      "German": "Letzter Commit Hash: {0}"
     }
   },
   {
