@@ -11,7 +11,7 @@ namespace TheArchive.Features.Dev;
 [DisallowInGameToggle]
 public class ModLanguage : Feature
 {
-    public override string Name => "Language";
+    public override string Name => "Mod Language";
 
     public override string Description => "Change Language of ModSettings";
 

@@ -31,6 +31,11 @@ internal class ModLanguageLegacy : Feature
         public Language Language { get; set; } = Language.English;
     }
 
+    public override void Init()
+    {
+        Localization.RegisterExternType<Language>();
+    }
+
     public static void StoreLanguage(Language language)
     {
         if(Settings.Language != language)
