@@ -1,8 +1,10 @@
 ﻿namespace TheArchive.Core.Localization
 {
+    [Localized]
     public enum Language
     {
-        English,
+        English = 0,
+        Chinese = 1,
         French,
         Italian,
         German,
@@ -11,7 +13,6 @@
         Portuguese_Brazil,
         Polish,
         Japanese,
-        Korean,
-        Chinese
+        Korean
     }
 }
