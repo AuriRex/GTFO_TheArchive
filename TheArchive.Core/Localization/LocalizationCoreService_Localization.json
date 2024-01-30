@@ -215,7 +215,7 @@
     "ID": 22,
     "Languages": {
       "English": "Query: <color=orange>{0}</color>",
-      "Chinese": "查询",
+      "Chinese": "查询：<color=orange>{0}</color>",
       "German": "Suche: <color=orange>{0}</color>"
     }
   },
