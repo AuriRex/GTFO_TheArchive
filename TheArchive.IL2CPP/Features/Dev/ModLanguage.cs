@@ -17,7 +17,6 @@ public class ModLanguage : Feature
 
     public override FeatureGroup Group => FeatureGroups.ArchiveCore;
 
-
     public static new IArchiveLogger FeatureLogger { get; set; }
 
     public override void Init()
