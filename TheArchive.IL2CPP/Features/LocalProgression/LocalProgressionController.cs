@@ -15,7 +15,7 @@ namespace TheArchive.Features.LocalProgression
     {
         public override string Name => "Local Progression";
 
-        public override string Group => FeatureGroups.LocalProgression;
+        public override FeatureGroup Group => FeatureGroups.LocalProgression;
 
         public override bool InlineSettingsIntoParentMenu => true;
 

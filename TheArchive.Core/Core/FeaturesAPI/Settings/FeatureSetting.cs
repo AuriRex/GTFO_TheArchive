@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.Localization;
 using static TheArchive.Utilities.Utils;
@@ -25,6 +26,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public bool SpacerAbove { get; private set; }
         public FSHeader HeaderAbove { get; private set; }
         public bool HideInModSettings { get; private set; }
+        public bool RequiresRestart { get; private set; }
 
         public object WrappedInstance { get; set; }
 
@@ -33,11 +35,12 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             Helper = featureSettingsHelper;
             Prop = prop;
             Type = prop?.GetMethod?.ReturnType;
+            RequiresRestart = prop?.GetCustomAttribute<RequiresRestart>() != null;
 
             if (featureSettingsHelper.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSDisplayName, out var displayName))
-                DisplayName = $"> {displayName}";
+                DisplayName = $">{(RequiresRestart ? " <color=red>[!]</color>" : "")} {displayName}";
             else
-                DisplayName = $"> {prop?.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
+                DisplayName = $">{(RequiresRestart ? " <color=red>[!]</color>" : "")} {prop?.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
             if (featureSettingsHelper.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSDescription, out var description))
                 Description = description;
             else

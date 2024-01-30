@@ -230,13 +230,12 @@
     }
   },
   {
-    "UntranslatedText": "{0} Feature{1} >>",
+    "UntranslatedText": "{0} Feature{1}",
     "Description": "",
     "ID": 24,
     "Languages": {
-      "English": "{0} Feature{1} >>",
-      "Chinese": "{0}个特性",
-      "German": "{0} Feature{1} >>"
+      "English": "{0} Feature{1}",
+      "Chinese": "{0}个特性"
     }
   },
   {
@@ -295,8 +294,7 @@
     "ID": 30,
     "Languages": {
       "English": "Built with uncommitted changes | <color=red>Git is dirty</color>",
-      "Chinese": "构建时存在未提交的更改 | <color=red>Git 有未提交的更改</color>",
-      "German": "Mit uncommitteten änderungen kompiliert | <color=red>Git is dirty</color>"
+      "Chinese": "使用未提交的更改构建 | <color=red>Git 有未提交的更改</color>"
     }
   },
   {
@@ -325,8 +323,7 @@
     "ID": 33,
     "Languages": {
       "English": "Last Commit Date: {0}",
-      "Chinese": "最后一次提交时间：{0}",
-      "German": "Letztes Commit Datum: {0}"
+      "Chinese": "最后一次提交 Date：{0}"
     }
   },
   {
@@ -557,6 +554,26 @@
       "English": "Dev Mode enabled - Hidden Features shown!",
       "Chinese": "开发者模式已启用 - 显示隐藏特性！",
       "German": "Entwicklermodus aktiviert - Versteckte Features sichtbar!"
+    }
+  },
+  {
+    "UntranslatedText": "{0} Subgroup{1}",
+    "Description": "",
+    "ID": 57,
+    "Languages": {
+      "English": "{0} Subgroup{1}",
+      "Chinese": "{0}个分组",
+      "German": null
+    }
+  },
+  {
+    "UntranslatedText": "Add-ons",
+    "Description": "",
+    "ID": 58,
+    "Languages": {
+      "English": "Add-ons",
+      "Chinese": "附加模块",
+      "German": null
     }
   }
 ]

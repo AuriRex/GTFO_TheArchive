@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
@@ -13,7 +12,6 @@ using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
-using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Dev
 {
@@ -22,7 +20,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Mod Settings (this)";
         
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "<color=red>WARNING!</color> Disabling this makes you unable to change settings in game via this very menu after a restart!";
 
@@ -222,7 +220,7 @@ namespace TheArchive.Features.Dev
             {
                 if(value)
                 {
-                    SetRestartInfoText($"<color=red><b>Restart required for some settings to apply!</b></color>");
+                    SetRestartInfoText(LocalizationCoreService.Get(59, "<color=red><b>Restart required for some settings to apply!</b></color>"));
                 }
                 else
                 {
@@ -365,45 +363,14 @@ namespace TheArchive.Features.Dev
 
                 TheSearchMenu = new SearchMainPage();
 
-                var odereredGroups = FeatureManager.Instance.GroupedFeatures.OrderBy(kvp => kvp.Key);
+                BuildFeatureGroup(FeatureGroups.ArchiveCoreGroups);
 
-                foreach (var kvp in odereredGroups)
+                if (FeatureGroups.ModuleGroups.Count > 1)
                 {
-                    var groupName = kvp.Key;
-                    var featureSet = kvp.Value.OrderBy(fs => fs.Name);
-
-                    if (groupName == FeatureGroups.Dev && !Feature.DevMode)
-                        continue;
-
-                    if (!Feature.DevMode && featureSet.All(f => f.IsHidden))
-                        continue;
-
-                    var group = FeatureGroups.Get(groupName);
-
-                    var inlineSettings = group?.InlineSettings ?? false;
-
-                    CreateHeader(group.DisplayName);
-
-                    SubMenu groupSubMenu = null;
-                    if (!inlineSettings)
-                    {
-                        groupSubMenu = new SubMenu(group.DisplayName);
-
-                        var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
-                        CreateSubMenuControls(groupSubMenu, menuEntryLabelText: LocalizationCoreService.Format(24, "{0} Feature{1} >>", featuresCount, featuresCount == 1 ? string.Empty : "s"));
-                        
-                        CreateHeader(group.DisplayName, subMenu: groupSubMenu);
-                    }
-
-                    foreach (var feature in featureSet)
-                    {
-                        SetupEntriesForFeature(feature, groupSubMenu);
-                    }
-
-                    groupSubMenu?.Build();
-
-                    CreateSpacer();
+                    CreateHeader(LocalizationCoreService.Get(58, "Add-ons"));
                 }
+
+                BuildFeatureGroup(FeatureGroups.ModuleGroups);
 
                 IEnumerable<Feature> features;
                 if (Feature.DevMode)
@@ -421,38 +388,6 @@ namespace TheArchive.Features.Dev
 
                 var featureAssembliesSet = features.Select(f => f.GetType().Assembly).ToHashSet();
                 var featureAssemblies = featureAssembliesSet.OrderBy(asm => asm.GetName().Name);
-
-                CreateHeader(LocalizationCoreService.Get(25, "Uncategorized"), DISABLED);
-
-                foreach (var featureAsm in featureAssemblies)
-                {
-                    var featuresFromMod = features.Where(f => f.GetType().Assembly == featureAsm);
-                    featuresFromMod = featuresFromMod.OrderBy(f => f.Name);
-
-                    var headerTitle = featureAsm.GetCustomAttribute<ModDefaultFeatureGroupName>()?.DefaultGroupName ?? featureAsm.GetName().Name;
-                    bool inlineSettings = featureAsm.GetCustomAttribute<ModInlineUncategorizedSettingsIntoMainMenu>() != null;
-
-                    CreateHeader(headerTitle);
-
-                    SubMenu otherModSubMenu = null;
-                    if (!inlineSettings)
-                    {
-                        otherModSubMenu = new SubMenu(headerTitle);
-                        var featuresCount = featuresFromMod.Where(f => !f.IsHidden || DevMode).Count();
-                        CreateSubMenuControls(otherModSubMenu, menuEntryLabelText: LocalizationCoreService.Format(24, "{0} Feature{1} >>", featuresCount, featuresCount == 1 ? string.Empty : "s"));
-
-                        CreateHeader(headerTitle, subMenu: otherModSubMenu);
-                    }
-
-                    foreach (var feature in featuresFromMod)
-                    {
-                        SetupEntriesForFeature(feature, otherModSubMenu);
-                    }
-
-                    CreateSpacer();
-
-                    otherModSubMenu?.Build();
-                }
 
                 CreateHeader(LocalizationCoreService.Get(26, "Info"));
 
@@ -496,6 +431,55 @@ namespace TheArchive.Features.Dev
 
                 _setupStopwatch.Stop();
                 FeatureLogger.Debug($"It took {_setupStopwatch.Elapsed:ss\\.fff} seconds to run {nameof(SetupMainModSettingsPage)}!");
+            }
+
+            private static void BuildFeatureGroup(HashSet<FeatureGroup> groups, SubMenu parentMenu = null)
+            {
+                foreach (var group in groups.OrderBy(kvp => kvp.Name))
+                {
+                    var groupName = group.Name;
+                    var featureSet = group.Features.OrderBy(fs => fs.Name);
+
+                    if (group.IsHidden && !Feature.DevMode)
+                        continue;
+
+                    if (!group.SubGroups.Any() && !group.Features.Any())
+                        continue;
+
+                    if (!Feature.DevMode && featureSet.All(f => f.IsHidden) && !group.SubGroups.Any())
+                        continue;
+
+                    CreateHeader(group.DisplayName, subMenu: parentMenu);
+
+                    SubMenu groupSubMenu = new SubMenu(group.DisplayName);
+
+                    var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
+                    var subGroupsCount = group.SubGroups.Count();
+                    string featureText = LocalizationCoreService.Format(24, "{0} Feature{1}", featuresCount, featuresCount == 1 ? string.Empty : "s");
+                    string subGroupText = LocalizationCoreService.Format(57, "{0} Subgroup{1}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
+                    string menuEntryLabelText = string.Empty;
+                    if (featuresCount > 0 && subGroupsCount > 0)
+                        menuEntryLabelText = $"{featureText}, {subGroupText}";
+                    else if (featuresCount == 0 && subGroupsCount > 0)
+                        menuEntryLabelText = $"{subGroupText}";
+                    else if (featuresCount > 0 && subGroupsCount == 0)
+                        menuEntryLabelText = $"{featureText}";
+
+                    CreateSubMenuControls(groupSubMenu, placeIntoMenu: parentMenu, menuEntryLabelText: menuEntryLabelText);
+
+                    CreateHeader(group.DisplayName, subMenu: groupSubMenu);
+
+                    foreach (var feature in featureSet)
+                    {
+                        SetupEntriesForFeature(feature, groupSubMenu);
+                    }
+
+                    BuildFeatureGroup(group.SubGroups, groupSubMenu);
+
+                    groupSubMenu?.Build();
+
+                    CreateSpacer(parentMenu);
+                }
             }
 
             private static int _versionClickedCounter = 0;

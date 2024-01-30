@@ -8,7 +8,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Disable HUD Sway";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override FeatureGroup Group => FeatureGroups.Accessibility;
 
         public override string Description => "Disables the in-game HUD sway while walking / jumping around.";
 

@@ -21,7 +21,7 @@ namespace TheArchive.Features.LocalProgression
     {
         public override string Name => "Local Boosters";
 
-        public override string Group => FeatureGroups.LocalProgression;
+        public override FeatureGroup Group => FeatureGroups.LocalProgression;
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 

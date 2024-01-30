@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
+using TheArchive.Utilities;
 
 namespace TheArchive.Core.Localization
 {
@@ -9,45 +12,6 @@ namespace TheArchive.Core.Localization
     {
         private static IArchiveLogger _logger;
         private static IArchiveLogger Logger => _logger ??= Loader.LoaderWrapper.CreateLoggerInstance(nameof(LocalizationCoreService), ConsoleColor.Yellow);
-
-        public static Language CurrentLanguage { get; private set; } = Language.English;
-
-        private static readonly Dictionary<ILocalizedTextSetter, uint> _textSetters = new();
-
-        private static readonly HashSet<ILocalizedTextUpdater> _textUpdaters = new();
-
-        private static readonly HashSet<FeatureLocalizationService> _localizationServices = new();
-
-        private static readonly Dictionary<uint, Dictionary<Language, string>> _texts = new();
-
-        public static void Init()
-        {
-            string dir = Path.Combine(Path.GetDirectoryName(ArchiveMod.CORE_PATH), $"Localization");
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-            var path = Path.Combine(dir, $"{nameof(LocalizationCoreService)}_Localization.json");
-            if (!File.Exists(path))
-            {
-                File.WriteAllText(path, JsonConvert.SerializeObject(new List<LocalizationTextData>(), ArchiveMod.JsonSerializerSettings));
-                return;
-            }
-            var data = JsonConvert.DeserializeObject<List<LocalizationTextData>>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
-            foreach (var item in data)
-            {
-                Dictionary<Language, string> dic = new();
-                foreach (Language lang in Enum.GetValues(typeof(Language)))
-                {
-                    if (!item.Languages.TryGetValue(lang, out var text))
-                    {
-                        text = item.UntranslatedText;
-                    }
-                    dic[lang] = text;
-                }
-                _texts[item.ID] = dic;
-            }
-        }
 
         public static void SetCurrentLanguage(Language language)
         {
@@ -112,6 +76,31 @@ namespace TheArchive.Core.Localization
             return text;
         }
 
+        public static string Get<T>(T value) where T : Enum
+        {
+            Type type = typeof(T);
+            if (type.IsEnum)
+            {
+                if (!_enumTexts.TryGetValue(type.FullName, out var languages) || !languages.TryGetValue(CurrentLanguage, out var enumTexts) || enumTexts.Any(p => string.IsNullOrWhiteSpace(p.Value)))
+                {
+                    return value.ToString();
+                }
+                List<string> result = new();
+                foreach (var v in Enum.GetValues(type))
+                {
+                    if (!value.HasFlag((T)v))
+                        continue;
+                    if (!enumTexts.TryGetValue(v.ToString(), out var tvalue))
+                    {
+                        return value.ToString();
+                    }
+                    result.Add(tvalue);
+                }
+                return string.Join(", ", result);
+            }
+            return value.ToString();
+        }
+
         public static string Format(uint id, string defaultValue = "UNKNOWN ID: {0}", params object[] args)
         {
             return string.Format(Get(id, defaultValue), args);
@@ -121,5 +110,117 @@ namespace TheArchive.Core.Localization
         {
             _localizationServices.Add(service);
         }
+
+        public static void RegisterInLocalizaion(Type type)
+        {
+            _typesToCheck.Add(type);
+        }
+
+        public static void Init()
+        {
+            string dir = Path.Combine(Path.GetDirectoryName(ArchiveMod.CORE_PATH), "Localization");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            var path = Path.Combine(dir, $"{nameof(LocalizationCoreService)}_Localization.json");
+            if (!File.Exists(path))
+            {
+                LocalizationData = new();
+                File.WriteAllText(path, JsonConvert.SerializeObject(LocalizationData, ArchiveMod.JsonSerializerSettings));
+                return;
+            }
+            LocalizationData = JsonConvert.DeserializeObject<ArchiveCoreLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+
+            foreach (var item in LocalizationData.Texts)
+            {
+                Dictionary<Language, string> dic = new();
+                foreach (Language lang in Enum.GetValues(typeof(Language)))
+                {
+                    if (!item.Languages.TryGetValue(lang, out var text))
+                    {
+                        text = item.UntranslatedText;
+                    }
+                    dic[lang] = text;
+                }
+                _texts[item.ID] = dic;
+            }
+
+            _enumTexts = LocalizationData.EnumTexts;
+
+            RegisterType<FeatureInternal.InternalDisabledReason>();
+            CheckLocalization();
+        }
+
+        public static void RegisterType<T>()
+        {
+            RegisterTypes.Add(typeof(T));
+        }
+
+        public static void CheckLocalization()
+        {
+            if (!RegisterTypes.Any())
+                return;
+
+            foreach (var type in RegisterTypes)
+            {
+                var key = type.FullName;
+
+                if (type.IsEnum)
+                {
+                    if (_enumTexts.ContainsKey(key))
+                        continue;
+
+                    var names = Enum.GetNames(type);
+                    var enumdic = new Dictionary<Language, Dictionary<string, string>>();
+                    foreach (Language language in Enum.GetValues(typeof(Language)))
+                    {
+                        var languagedic = new Dictionary<string, string>();
+                        foreach (var name in names)
+                        {
+                            languagedic[name] = null;
+                        }
+                        enumdic[language] = languagedic;
+                    }
+                    _enumTexts[key] = enumdic;
+                }
+            }
+
+            LocalizationData.EnumTexts = _enumTexts;
+            var rjson = JsonConvert.SerializeObject(LocalizationData, ArchiveMod.JsonSerializerSettings);
+            string dir = Path.Combine(Path.GetDirectoryName(ArchiveMod.CORE_PATH), "Localization");
+            var path = Path.Combine(dir, $"{nameof(LocalizationCoreService)}_Localization.json");
+            if (File.Exists(path))
+            {
+                var data = JsonConvert.DeserializeObject<ArchiveCoreLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+                var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
+                if (rjson.ComputeSHA256() != json.ComputeSHA256())
+                {
+                    File.WriteAllText(path, JsonConvert.SerializeObject(LocalizationData, ArchiveMod.JsonSerializerSettings));
+                }
+            }
+            else
+            {
+                File.WriteAllText(path, JsonConvert.SerializeObject(LocalizationData, ArchiveMod.JsonSerializerSettings));
+            }
+        }
+
+        private static HashSet<Type> RegisterTypes = new HashSet<Type>();
+
+        private static ArchiveCoreLocalizationData LocalizationData = new ArchiveCoreLocalizationData();
+
+        public static Language CurrentLanguage { get; private set; } = Language.English;
+
+        private static Dictionary<ILocalizedTextSetter, uint> _textSetters = new();
+
+        private static HashSet<ILocalizedTextUpdater> _textUpdaters = new();
+
+        private static HashSet<FeatureLocalizationService> _localizationServices = new();
+
+        private static Dictionary<uint, Dictionary<Language, string>> _texts = new();
+
+        private static HashSet<Type> _typesToCheck = new();
+
+        private static Dictionary<string, Dictionary<Language, Dictionary<string, string>>> _enumTexts = new();
     }
 }

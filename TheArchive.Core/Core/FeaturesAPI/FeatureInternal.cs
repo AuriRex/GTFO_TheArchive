@@ -19,10 +19,10 @@ namespace TheArchive.Core.FeaturesAPI
 {
     internal class FeatureInternal
     {
-        internal FeatureLocalizationService Localization { get; private set; } = new();
+        internal FeatureLocalizationService Localization { get; } = new();
         internal static GameBuildInfo BuildInfo => Feature.BuildInfo;
         internal bool InternalDisabled { get; private set; } = false;
-        internal InternalDisabledReason DisabledReason {get; private set;}
+        internal InternalDisabledReason DisabledReason { get; private set; }
         internal bool HasUpdateMethod => UpdateDelegate != null;
         internal Update UpdateDelegate { get; private set; }
         internal bool HasLateUpdateMethod => LateUpdateDelegate != null;
@@ -38,6 +38,7 @@ namespace TheArchive.Core.FeaturesAPI
         internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
         internal IArchiveLogger FeatureLoggerInstance { get; private set; }
         internal Assembly OriginAssembly { get; private set; }
+        internal IArchiveModule ArchiveModule { get; private set; }
         internal string DisplayName
         {
             get
@@ -68,7 +69,7 @@ namespace TheArchive.Core.FeaturesAPI
         {
             get
             {
-                if(string.IsNullOrEmpty(_asmGroupName))
+                if (string.IsNullOrEmpty(_asmGroupName))
                 {
                     _asmGroupName = OriginAssembly.GetCustomAttribute<ModDefaultFeatureGroupName>()?.DefaultGroupName ?? OriginAssembly.GetName().Name;
                 }
@@ -81,7 +82,7 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 if (InternalDisabled)
                 {
-                    return string.Format("<#F00>{0}</color>: {1}", LocalizationCoreService.Get(2, "DISABLED"), DisabledReason);
+                    return string.Format("<#F00>{0}</color>: {1}", LocalizationCoreService.Get(2, "DISABLED"), LocalizationCoreService.Get(DisabledReason));
                 }
 
                 return string.Empty;
@@ -108,13 +109,13 @@ namespace TheArchive.Core.FeaturesAPI
 
         private FeatureInternal() { }
 
-        internal static void CreateAndAssign(Feature feature)
+        internal static void CreateAndAssign(Feature feature, IArchiveModule module)
         {
-            if(_gameStateType == null)
+            if (_gameStateType == null)
             {
                 _gameStateType = ImplementationManager.GameTypeByIdentifier("eGameStateName");
             }
-            if(_lgAreaType == null)
+            if (_lgAreaType == null)
             {
                 _lgAreaType = ImplementationManager.GameTypeByIdentifier("LG_Area");
             }
@@ -122,9 +123,9 @@ namespace TheArchive.Core.FeaturesAPI
             feature.FeatureInternal = fi;
             try
             {
-                fi.Init(feature);
+                fi.Init(feature, module);
             }
-            catch(TypeLoadException tle)
+            catch (TypeLoadException tle)
             {
                 _FILogger.Error($"Initialization of {fi._feature.Identifier} failed! - {tle.GetType().FullName}");
                 _FILogger.Warning($"!!! PLEASE FIX THIS !!!");
@@ -139,17 +140,19 @@ namespace TheArchive.Core.FeaturesAPI
         public delegate void Update();
         public delegate void LateUpdate();
 
-        internal void Init(Feature feature)
+        internal void Init(Feature feature, IArchiveModule module)
         {
             _feature = feature;
+
+            ArchiveModule = module;
 
             var featureType = _feature.GetType();
             OriginAssembly = featureType.Assembly;
 
+            feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature));
+
             _FILogger.Msg(ConsoleColor.Black, "-");
             _FILogger.Msg(ConsoleColor.Green, $"Initializing {_feature.Identifier} ...");
-
-            feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature, featureType.Namespace.StartsWith("TheArchive")));
 
             if (_usedIdentifiers.Contains(_feature.Identifier))
             {
@@ -194,7 +197,7 @@ namespace TheArchive.Core.FeaturesAPI
                     DisabledReason |= InternalDisabledReason.DisabledViaShouldInit;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _FILogger.Error($"{nameof(Feature.ShouldInit)} method on {nameof(Feature)} failed: {ex}: {ex.Message}");
                 _FILogger.Exception(ex);
@@ -234,7 +237,7 @@ namespace TheArchive.Core.FeaturesAPI
                     && AnyBuildConstraintMatches(mi));
 
             var lateUpdateDelegate = lateUpdateMethod?.CreateDelegate(typeof(LateUpdate), _feature);
-            if(lateUpdateDelegate != null)
+            if (lateUpdateDelegate != null)
             {
                 _FILogger.Debug($"{nameof(LateUpdate)} method found.");
                 LateUpdateDelegate = (LateUpdate)lateUpdateDelegate;
@@ -251,7 +254,7 @@ namespace TheArchive.Core.FeaturesAPI
                     && pi.GetMethod.IsStatic
                     && pi.GetMethod.ReturnType == typeof(bool));
 
-            if(_isEnabledPropertyInfo != null)
+            if (_isEnabledPropertyInfo != null)
             {
                 _FILogger.Debug($"Found IsEnabled property \"{_isEnabledPropertyInfo.Name}\" on Feature {_feature.Identifier}.");
             }
@@ -263,7 +266,7 @@ namespace TheArchive.Core.FeaturesAPI
                     && pi.GetMethod.IsStatic
                     && pi.GetMethod.ReturnType == typeof(IArchiveLogger));
 
-            if(staticLoggerInstancePropertyInfo != null)
+            if (staticLoggerInstancePropertyInfo != null)
             {
                 _FILogger.Debug($"Found FeatureLogger property \"{staticLoggerInstancePropertyInfo.Name}\" on Feature {_feature.Identifier}. Populating ...");
                 staticLoggerInstancePropertyInfo.SetValue(null, FeatureLoggerInstance);
@@ -307,9 +310,9 @@ namespace TheArchive.Core.FeaturesAPI
 
             var potentialPatchTypes = featureType.GetNestedTypes(Utils.AnyBindingFlagss).Where(nt => nt.GetCustomAttribute<ArchivePatch>() != null);
 
-            foreach(var type in potentialPatchTypes)
+            foreach (var type in potentialPatchTypes)
             {
-                if(AnyRundownConstraintMatches(type) && AnyBuildConstraintMatches(type))
+                if (AnyRundownConstraintMatches(type) && AnyBuildConstraintMatches(type))
                 {
                     _patchTypes.Add(type);
                     continue;
@@ -350,14 +353,14 @@ namespace TheArchive.Core.FeaturesAPI
                                 && AnyRundownConstraintMatches(mi)
                                 && AnyBuildConstraintMatches(mi));
 
-                        if(typeMethod != null)
+                        if (typeMethod != null)
                         {
                             if (!typeMethod.IsStatic)
                             {
                                 throw new ArchivePatchMethodNotStaticException($"Method \"{typeMethod.Name}\" in Feature \"{feature.Identifier}\" must be static!");
                             }
 
-                            archivePatchInfo.Type = (Type) typeMethod.Invoke(null, null);
+                            archivePatchInfo.Type = (Type)typeMethod.Invoke(null, null);
                             _FILogger.Debug($"Discovered target Type for Patch \"{patchType.FullName}\" to be \"{archivePatchInfo.Type?.FullName ?? "TYPE NOT FOUND"}\"");
                         }
                         else
@@ -374,10 +377,10 @@ namespace TheArchive.Core.FeaturesAPI
 
                     if (parameterTypesMethod != null)
                     {
-                        if(!parameterTypesMethod.IsStatic)
+                        if (!parameterTypesMethod.IsStatic)
                             throw new ArchivePatchMethodNotStaticException($"Method \"{parameterTypesMethod.Name}\" in Feature \"{feature.Identifier}\" must be static!");
 
-                        archivePatchInfo.ParameterTypes = (Type[]) parameterTypesMethod.Invoke(null, null);
+                        archivePatchInfo.ParameterTypes = (Type[])parameterTypesMethod.Invoke(null, null);
                     }
 
                     if (string.IsNullOrWhiteSpace(archivePatchInfo.MethodName))
@@ -388,12 +391,12 @@ namespace TheArchive.Core.FeaturesAPI
                                 && AnyRundownConstraintMatches(mi)
                                 && AnyBuildConstraintMatches(mi));
                         _FILogger.Debug($"Invoking static MethodNameProvider method {patchType.Name}.{methodNameMethod.Name} on {_feature.Identifier}");
-                        archivePatchInfo.MethodName = (string) methodNameMethod.Invoke(null, null);
+                        archivePatchInfo.MethodName = (string)methodNameMethod.Invoke(null, null);
                     }
 
                     MethodBase original;
 
-                    switch(archivePatchInfo.MethodType)
+                    switch (archivePatchInfo.MethodType)
                     {
                         default:
                         case ArchivePatch.PatchMethodType.Method:
@@ -416,7 +419,7 @@ namespace TheArchive.Core.FeaturesAPI
                             original = archivePatchInfo.Type.GetConstructor(Utils.AnyBindingFlagss, null, archivePatchInfo.ParameterTypes, null);
                             break;
                     }
-                    
+
 
                     if (original == null)
                     {
@@ -457,7 +460,7 @@ namespace TheArchive.Core.FeaturesAPI
                         transpilerMethodInfo = null;
                     }
 
-                    if(ilManipulatorMethodInfo != null && originalMethodIsNative)
+                    if (ilManipulatorMethodInfo != null && originalMethodIsNative)
                     {
                         _FILogger.Error($"Can't apply ILManipulator \"{ilManipulatorMethodInfo.Name}\" on native method \"{original.Name}\" from IL2CPP Type \"{original.DeclaringType.FullName}\"!");
                         _FILogger.Warning("This ILManipulator is going to be skipped, things might break!");
@@ -480,7 +483,7 @@ namespace TheArchive.Core.FeaturesAPI
                     try
                     {
                         var initMethod = patchTypeMethods
-                            .FirstOrDefault(mi => mi.IsStatic 
+                            .FirstOrDefault(mi => mi.IsStatic
                                 && (mi.Name == "Init" || mi.GetCustomAttribute<IsInitMethod>() != null)
                                 && AnyRundownConstraintMatches(mi)
                                 && AnyBuildConstraintMatches(mi));
@@ -499,7 +502,7 @@ namespace TheArchive.Core.FeaturesAPI
                             }
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _FILogger.Error($"Static Init method on {_feature.Identifier} failed! - {ex}: {ex.Message}");
                         _FILogger.Exception(ex);
@@ -507,7 +510,7 @@ namespace TheArchive.Core.FeaturesAPI
                         return;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _FILogger.Error($"Patch discovery for \"{archivePatchInfo.Type?.FullName ?? $"TYPE NOT FOUND - PatchType:{patchType.FullName}"}\" failed: {ex}: {ex.Message}");
                     _FILogger.Exception(ex);
@@ -518,7 +521,7 @@ namespace TheArchive.Core.FeaturesAPI
 
             try
             {
-                if(!_feature.LateShouldInit())
+                if (!_feature.LateShouldInit())
                 {
                     InternalyDisableFeature(InternalDisabledReason.DisabledViaLateShouldInit);
                     return;
@@ -536,13 +539,15 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 _feature.Init();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _FILogger.Error($"Main Feature Init method on {_feature.Identifier} failed! - {ex}: {ex.Message}");
                 _FILogger.Exception(ex);
                 InternalyDisableFeature(InternalDisabledReason.MainInitMethodFailed);
                 return;
             }
+
+            _feature.FeatureInternal.Localization.CheckExternLocalization();
 
             if (FeatureManager.IsEnabledInConfig(_feature))
             {
@@ -557,7 +562,7 @@ namespace TheArchive.Core.FeaturesAPI
         private void AfterInit()
         {
             InitialEnabledState = _feature.Enabled;
-            if(_feature.BelongsToGroup)
+            if (_feature.BelongsToGroup)
             {
                 FeatureManager.AddGroupedFeature(_feature);
             }
@@ -571,11 +576,9 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 _FILogger.Info($"Loading config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
 
-                var configInstance = LocalFiles.LoadFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
-
+                var configInstance = LocalFiles.LoadFeatureConfig(ArchiveModule.GetType().Assembly.GetName().Name, $"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
                 if (refreshDisplayName)
                     settingsHelper.RefreshDisplayName();
-
                 settingsHelper.SetupViaFeatureInstance(configInstance);
 
                 if (settingsHelper.Settings.Any(fs => !fs.HideInModSettings))
@@ -589,7 +592,7 @@ namespace TheArchive.Core.FeaturesAPI
 
             foreach (var settingsHelper in _settingsHelpers)
             {
-                if(!settingsHelper.IsDirty)
+                if (!settingsHelper.IsDirty)
                 {
                     _FILogger.Info($"Config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) does not need saving!");
                     continue;
@@ -599,7 +602,7 @@ namespace TheArchive.Core.FeaturesAPI
 
                 var configInstance = settingsHelper.GetFeatureInstance();
 
-                LocalFiles.SaveFeatureConfig($"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType, configInstance);
+                LocalFiles.SaveFeatureConfig(ArchiveModule.GetType().Assembly.GetName().Name, $"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType, configInstance);
 
                 settingsHelper.IsDirty = false;
             }
@@ -615,7 +618,7 @@ namespace TheArchive.Core.FeaturesAPI
         {
             if (InternalDisabled) return;
 
-            foreach(var patchInfo in _patchInfos)
+            foreach (var patchInfo in _patchInfos)
             {
                 try
                 {
@@ -627,7 +630,7 @@ namespace TheArchive.Core.FeaturesAPI
                         finalizer: patchInfo.HarmonyFinalizerMethod,
                         ilmanipulator: patchInfo.HarmonyILManipulatorMethod);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _FILogger.Error($"Patch {patchInfo.ArchivePatchInfo.Type.FullName}.{patchInfo.ArchivePatchInfo.MethodName}() failed! {ex}: {ex.Message}");
                     _FILogger.Exception(ex);
@@ -645,13 +648,13 @@ namespace TheArchive.Core.FeaturesAPI
 
             _feature.Enabled = true;
             _isEnabledPropertyInfo?.SetValue(null, true);
-            if(callOnEnable)
+            if (callOnEnable)
             {
                 try
                 {
                     _feature.OnEnable();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _FILogger.Error($"Exception thrown during {nameof(Feature.OnEnable)} in Feature {_feature.Identifier}!");
                     _FILogger.Exception(ex);
@@ -720,6 +723,9 @@ namespace TheArchive.Core.FeaturesAPI
         {
             if (!_feature.Enabled) return;
 
+            if (setting.RequiresRestart)
+                _feature.RequestRestart();
+
             try
             {
                 _feature.OnFeatureSettingChanged(setting);
@@ -733,7 +739,7 @@ namespace TheArchive.Core.FeaturesAPI
 
         internal bool MarkSettingsDirty(object settings)
         {
-            foreach(var helper in Settings)
+            foreach (var helper in Settings)
             {
                 if (helper.Instance == settings)
                 {
@@ -753,7 +759,7 @@ namespace TheArchive.Core.FeaturesAPI
             try
             {
                 object gameState = state;
-                if(_onGameStateChangedMethodUsesGameEnum)
+                if (_onGameStateChangedMethodUsesGameEnum)
                 {
                     gameState = Enum.ToObject(_gameStateType, state);
                 }
@@ -838,7 +844,20 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        internal static FeatureLocalizationData GenerateLocalization(Feature feature, FeatureLocalizationData defaultValue = null)
+        private static Dictionary<string, PropertyInfo> GetFSProperties(Type type)
+        {
+            return type.GetProperties()
+                    .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
+                    && (prop.GetCustomAttributes<Localized>(true).Any()
+                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && prop.DeclaringType.FullName != typeof(Feature).FullName && (prop.Name == nameof(Feature.Name) || prop.Name == nameof(Feature.Description)))
+                    || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton)))
+                    .ToDictionary(
+                        prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
+                        prop => prop
+                    );
+        }
+
+        internal static FeatureInternalLocalizationData GenerateLocalization(Feature feature, FeatureInternalLocalizationData defaultValue = null)
         {
             var parentType = feature.GetType();
 
@@ -850,22 +869,26 @@ namespace TheArchive.Core.FeaturesAPI
             {
                 foreach (var nestedType in type.GetNestedTypes())
                 {
+                    if (!nestedType.GetCustomAttributes<Localized>(true).Any())
+                        continue;
                     if (nestedType.IsEnum)
-                    {
                         enumTypes.Add(nestedType);
-                    }
                 }
 
-                var properties = type.GetProperties()
-                    .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
-                    && (prop.GetCustomAttributes<Localized>(true).Any()
-                    || (typeof(Feature).IsAssignableFrom(prop.DeclaringType) && (prop.Name == "Name" || prop.Name == "Description"))
-                    || prop.PropertyType == typeof(FLabel) || prop.PropertyType == typeof(FButton)))
-                    .ToDictionary(
-                        prop => $"{prop.DeclaringType.FullName}.{prop.Name}",
-                        prop => prop
-                    );
+                var properties = GetFSProperties(type);
+                var inlineProps = new List<Dictionary<string, PropertyInfo>>();
+                foreach (var propPair in properties)
+                {
+                    var prop = propPair.Value;
+                    if (prop.GetCustomAttribute<InlineLocalized>() != null && prop.PropertyType.IsClass)
+                    {
+                        properties.Remove(propPair.Key);
+                        var externalProps = GetFSProperties(prop.PropertyType);
+                        inlineProps.Add(externalProps);
+                    }
+                }
                 allproperties.Add(properties);
+                allproperties.AddRange(inlineProps);
             }
 
             var FSTexts = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
@@ -881,17 +904,24 @@ namespace TheArchive.Core.FeaturesAPI
                     {
                         if (typeof(Feature).IsAssignableFrom(prop.DeclaringType))
                         {
-                            if (prop.Name == "Name")
+                            if (prop.Name == nameof(Feature.Name))
                                 if (fstype != FSType.FName)
                                     continue;
-                            if (prop.Name == "Description")
+                            if (prop.Name == nameof(Feature.Description))
                                 if (fstype != FSType.FDescription)
                                     continue;
                         }
                         switch (fstype)
                         {
                             case FSType.FSDisplayName:
+                                if (prop.GetCustomAttribute<FSDisplayName>() == null)
+                                    continue;
+                                if (propType == typeof(FLabel))
+                                    continue;
+                                break;
                             case FSType.FSDescription:
+                                if (prop.GetCustomAttribute<FSDescription>() == null)
+                                    continue;
                                 if (propType == typeof(FLabel))
                                     continue;
                                 break;
@@ -908,11 +938,11 @@ namespace TheArchive.Core.FeaturesAPI
                                     continue;
                                 break;
                             case FSType.FName:
-                                if (prop.Name != "Name")
+                                if (prop.Name != nameof(Feature.Name) || !typeof(Feature).IsAssignableFrom(prop.DeclaringType))
                                     continue;
                                 break;
                             case FSType.FDescription:
-                                if (prop.Name != "Description")
+                                if (prop.Name != nameof(Feature.Description) || !typeof(Feature).IsAssignableFrom(prop.DeclaringType))
                                     continue;
                                 break;
                             default:
@@ -958,7 +988,7 @@ namespace TheArchive.Core.FeaturesAPI
                 FSETexts[type.FullName] = enumdic;
             }
 
-            FeatureLocalizationData data = new()
+            FeatureInternalLocalizationData data = new()
             {
                 FeatureSettingsTexts = FSTexts,
                 FeatureSettingsEnumTexts = FSETexts,
@@ -1025,7 +1055,7 @@ namespace TheArchive.Core.FeaturesAPI
 
         internal bool Store<T>(string key, T obj)
         {
-            if(_storage.TryGetValue(key, out var _))
+            if (_storage.TryGetValue(key, out var _))
             {
                 return false;
             }
@@ -1037,11 +1067,11 @@ namespace TheArchive.Core.FeaturesAPI
         {
             if (_storage.TryGetValue(key, out var val))
             {
-                value = (T) val;
+                value = (T)val;
                 return true;
             }
             value = default;
-            return false; 
+            return false;
         }
 
         internal void RequestDisable(string reason)

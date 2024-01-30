@@ -9,6 +9,7 @@ using System.Text;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Utilities;
 using static TheArchive.Features.Hud.WeaponStats.WeaponStatsSettings;
 
@@ -18,9 +19,11 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Show Weapon Stats";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Adds weapon statistics such as damage, clip size and reload speed (and more if applicable) on the weapon select screen.";
+
+        public static WeaponStats Instance { get; set; }
 
         [FeatureConfig]
         public static WeaponStatsSettings Settings { get; set; }
@@ -51,6 +54,7 @@ namespace TheArchive.Features.Hud
             [FSHide]
             public bool IsFirstTime { get; set; } = true;
 
+            [Localized]
             public enum Stats
             {
                 Damage,
@@ -68,6 +72,7 @@ namespace TheArchive.Features.Hud
                 FalloffEnd,
             }
 
+            [Localized]
             public enum MeleeStats
             {
                 Damage,
@@ -107,7 +112,11 @@ namespace TheArchive.Features.Hud
 
         public override void Init()
         {
-            if(Settings.IsFirstTime)
+            Instance = this;
+
+            Localization.RegisterExternType<FSSlider.RoundTo>();
+
+            if (Settings.IsFirstTime)
             {
                 Settings.StatsToDisplay = new List<Stats>()
                 {
@@ -187,26 +196,26 @@ namespace TheArchive.Features.Hud
         public const string DIVIDER = " | ";
         public const string CLOSE_COLOR_TAG = "</color>";
 
-        public static string Short_MeleeLight { get; } = ".Lgt";
-        public static string Short_MeleeCharged { get; } = ".Hvy";
+        public static string Short_MeleeLight => Instance.Localization.Get(1);
+        public static string Short_MeleeCharged => Instance.Localization.Get(2);
 
-        public static string Short_MeleeCanRunWhileCharging { get; } = "Run";
-        public static string Short_MeleeSleepingEnemiesMultiplier { get; } = "Zzz";
-        public static string Short_EnvironmentMultiplier { get; } = "Env";
+        public static string Short_MeleeCanRunWhileCharging => Instance.Localization.Get(3);
+        public static string Short_MeleeSleepingEnemiesMultiplier => Instance.Localization.Get(4);
+        public static string Short_EnvironmentMultiplier => Instance.Localization.Get(5);
 
-        public static string Short_Damage { get; } = "Dmg";
-        public static string Short_Clip { get; } = "Clp";
-        public static string Short_MaxAmmo { get; } = "Max";
-        public static string Short_Reload { get; } = "Rld";
-        public static string Short_Stagger { get; } = "Stgr";
-        public static string Short_Precision { get; } = "Pcsn";
-        public static string Short_PierceCount { get; } = "Prc";
-        public static string Short_ShotgunPelletCount { get; } = "Sh";
-        public static string Short_ShotgunSpread { get; } = "Sh.Sprd";
-        public static string Short_BurstShotCount { get; } = "Brst";
-        public static string Short_BurstDelay { get; } = "Brst.Dly";
-        public static string Short_FalloffDistanceClose { get; } = "Dst.C";
-        public static string Short_FalloffDistanceFar { get; } = "Dst.F";
+        public static string Short_Damage => Instance.Localization.Get(6);
+        public static string Short_Clip => Instance.Localization.Get(7);
+        public static string Short_MaxAmmo => Instance.Localization.Get(8);
+        public static string Short_Reload => Instance.Localization.Get(9);
+        public static string Short_Stagger => Instance.Localization.Get(10);
+        public static string Short_Precision => Instance.Localization.Get(11);
+        public static string Short_PierceCount => Instance.Localization.Get(12);
+        public static string Short_ShotgunPelletCount => Instance.Localization.Get(13);
+        public static string Short_ShotgunSpread => Instance.Localization.Get(14);
+        public static string Short_BurstShotCount => Instance.Localization.Get(15);
+        public static string Short_BurstDelay => Instance.Localization.Get(16);
+        public static string Short_FalloffDistanceClose => Instance.Localization.Get(17);
+        public static string Short_FalloffDistanceFar => Instance.Localization.Get(18);
 
         //public void LoadData(GearIDRange idRange, bool clickable, bool detailedInfo)
 #if IL2CPP

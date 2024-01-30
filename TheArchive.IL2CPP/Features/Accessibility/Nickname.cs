@@ -8,6 +8,7 @@ using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -20,7 +21,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Nickname";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override FeatureGroup Group => FeatureGroups.Accessibility;
 
         public override string Description => "Nickname related settings.\n\nChange your in game nickname, handy color picker included!";
 
@@ -48,6 +49,7 @@ namespace TheArchive.Features.Accessibility
             public bool AllowRemoteTMPTags { get; set; } = true;
 
             [FSHide]
+            [FSDisplayName("Has Migrated")]
             public bool HasMigrated { get; set; } = false;
 
             [FSHide]
@@ -382,6 +384,7 @@ namespace TheArchive.Features.Accessibility
             }
         }
 
+        [Localized]
         public enum NicknameMode
         {
             Normal,

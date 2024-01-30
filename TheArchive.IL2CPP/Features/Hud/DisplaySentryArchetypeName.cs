@@ -18,7 +18,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Display Sentry Type";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Display the Sentry Type (<color=orange>Sniper</color>, <color=orange>Burst</color>, <color=orange>Auto</color>, <color=orange>Shotgun</color>) for remote players instead of the nondescript \"<color=orange>Sentry Gun</color>\" on the map screen.";
 

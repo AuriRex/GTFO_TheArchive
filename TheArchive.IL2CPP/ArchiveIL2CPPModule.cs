@@ -1,13 +1,14 @@
 ﻿using GameData;
 using LevelGeneration;
 using System;
+using System.Collections.Generic;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Localization;
 using TheArchive.Utilities;
 using UnityEngine.CrashReportHandler;
 
 [assembly: ModDefaultFeatureGroupName("TheArchive")]
-[assembly: ModInlineUncategorizedSettingsIntoMainMenu]
 namespace TheArchive
 {
     public class ArchiveIL2CPPModule : IArchiveModule
@@ -20,6 +21,14 @@ namespace TheArchive
         public bool UsesLegacyPatches => false;
 
         public ArchiveLegacyPatcher Patcher { get; set; }
+
+        public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
+
+        public Dictionary<Language, string> ModuleGroupLanguages => new()
+        {
+            { Language.English, "Archive Core" },
+            { Language.Chinese, "Archive 核心" }
+        };
 
         static ArchiveIL2CPPModule()
         {

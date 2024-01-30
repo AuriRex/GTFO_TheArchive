@@ -10,7 +10,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => nameof(DramaManagerNoDebugLog);
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "Prevent DramaManager debug log spam on R1 to R3.";
 

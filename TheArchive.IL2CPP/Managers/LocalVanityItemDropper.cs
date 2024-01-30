@@ -61,7 +61,7 @@ namespace TheArchive.Managers
         /// <returns>True if anything dropped</returns>
         public bool DropRandomFromGroup(uint groupID, LocalVanityItemStorage playerData, bool silentDrop = false)
         {
-            if(TryGetGroup(groupID, out var itemGroup) && !itemGroup.HasAllOwned(playerData))
+            if (TryGetGroup(groupID, out var itemGroup) && !itemGroup.HasAllOwned(playerData))
             {
                 Logger.Msg(ConsoleColor.Magenta, $"Attempting drop of 1 Vanity Item from group \"{itemGroup.Name}\"");
 

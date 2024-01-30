@@ -16,7 +16,7 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "Copy Lobby ID Format";
 
-        public override string Group => FeatureGroups.Special;
+        public override FeatureGroup Group => FeatureGroups.Special;
 
         public override string Description => "Customize copied lobby code from the 'Copy Lobby ID'-Button on the loadout and settings screens with a custom format.";
 

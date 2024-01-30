@@ -1,4 +1,5 @@
 ﻿using System;
+using TheArchive.Core.Localization;
 
 namespace TheArchive.Core.Attributes.Feature.Settings
 {
@@ -20,6 +21,7 @@ namespace TheArchive.Core.Attributes.Feature.Settings
             Rounding = rounding;
         }
 
+        [Localized]
         public enum SliderStyle
         {
             FloatPercent,
@@ -30,6 +32,7 @@ namespace TheArchive.Core.Attributes.Feature.Settings
             IntMinMax
         }
 
+        [Localized]
         public enum RoundTo
         {
             NoRounding = -1,

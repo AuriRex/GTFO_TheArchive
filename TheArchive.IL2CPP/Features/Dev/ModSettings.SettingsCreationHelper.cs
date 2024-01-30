@@ -924,7 +924,7 @@ namespace TheArchive.Features.Dev
                     {
                         if (setting.TopLevelReadonly || setting.Readonly)
                         {
-                            CreateHeader(entry.Key.ToString(), subMenu: dynamicMenu);
+                            CreateHeader(entry.KeyName, subMenu: dynamicMenu);
                         }
                         else
                         {

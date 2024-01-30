@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using TheArchive.Core.Localization;
 
 namespace TheArchive.Core.FeaturesAPI.Settings
 {
@@ -10,8 +11,11 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public Type DictKeyType { get; }
         public Type DictValueType { get; }
 
+        internal FeatureLocalizationService Localization { get; }
+
         public GenericDictionarySetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
         {
+            Localization = featureSettingsHelper.Localization;
             DictKeyType = Type.GenericTypeArguments[0];
             DictValueType = Type.GenericTypeArguments[1];
         }
@@ -51,6 +55,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             public GenericDictionarySetting Parent { get; private set; }
             public Type KeyType { get; private set; }
             public Type EntryType { get; private set; }
+            public string KeyName { get; private set; }
             public object Key { get; private set; }
             public object Value { get; private set; }
             public DynamicFeatureSettingsHelper Helper { get; private set; }
@@ -62,6 +67,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
                 EntryType = entryType;
                 Key = key;
                 Value = instance;
+                KeyName = gds.Localization.Get(KeyType, Key);
 
                 Helper = new DynamicFeatureSettingsHelper(Parent.Helper.Feature, Parent.Helper).Initialize(entryType, instance);
             }

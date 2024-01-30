@@ -21,7 +21,7 @@ namespace TheArchive.Features.LocalProgression
     {
         public override string Name => "Local Vanity";
 
-        public override string Group => FeatureGroups.LocalProgression;
+        public override FeatureGroup Group => FeatureGroups.LocalProgression;
 
 #if IL2CPP
         [ArchivePatch(typeof(DropServerClientAPIViaPlayFab), nameof(DropServerClientAPIViaPlayFab.GetInventoryPlayerDataAsync))]

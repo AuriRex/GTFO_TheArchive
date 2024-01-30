@@ -17,7 +17,7 @@ namespace TheArchive.Features.Fixes
     {
         public override string Name => "Interaction Fix";
 
-        public override string Group => FeatureGroups.Fixes;
+        public override FeatureGroup Group => FeatureGroups.Fixes;
 
         public override string Description => "Prevents resource packs from getting interrupted from other interacts.\nMost notably: running past lockers etc\n\n(Text might sometimes disappear)";
 

@@ -16,7 +16,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Enhanced Expedition Timer";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "A more accurate mission timer.";
 

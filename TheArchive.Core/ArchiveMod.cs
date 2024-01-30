@@ -9,6 +9,7 @@ using TheArchive.Core;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
+using TheArchive.Core.ModulesAPI;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
@@ -35,6 +36,8 @@ namespace TheArchive
         public const uint GTFO_STEAM_APPID = 493520;
 
         public const string MTFO_GUID = "com.dak.MTFO";
+
+        public const string ARCHIVE_CORE_FEATUREGROUP = "Archive Core";
 
         public static readonly string CORE_PATH = Assembly.GetAssembly(typeof(ArchiveMod)).Location;
 
@@ -223,6 +226,7 @@ namespace TheArchive
         internal static void OnApplicationQuit()
         {
             FeatureManager.Instance.OnApplicationQuit();
+            CustomSettingManager.OnApplicationQuit();
         }
 
         private static void LoadConfig()
@@ -264,12 +268,7 @@ namespace TheArchive
             }
         }
 
-        public static void RegisterArchiveModule(Type moduleType)
-        {
-            RegisterModule(moduleType);
-        }
-
-        public static bool RegisterModule(Type moduleType)
+        public static bool RegisterArchiveModule(Type moduleType)
         {
             if (moduleType == null) throw new ArgumentException("Module can't be null!");
             if (_moduleTypes.Contains(moduleType)) throw new ArgumentException($"Module \"{moduleType.Name}\" is already registered!");
@@ -388,6 +387,7 @@ namespace TheArchive
             }
 
             FeatureManager.Instance.OnDatablocksReady();
+            CustomSettingManager.OnGameDataInited();
 
             DataBlocksReady?.Invoke();
         }
@@ -479,11 +479,11 @@ namespace TheArchive
             }
         }
 
-        private static void InspectType(Type type)
+        private static void InspectType(Type type, IArchiveModule module)
         {
             if(typeof(Feature).IsAssignableFrom(type) && type != typeof(Feature))
             {
-                FeatureManager.Instance.InitFeature(type);
+                FeatureManager.Instance.InitFeature(type, module);
                 return;
             }
 
@@ -528,9 +528,14 @@ namespace TheArchive
             ArchiveLogger.Info($"Initializing module \"{moduleType.FullName}\" ...");
             var module = (IArchiveModule) Activator.CreateInstance(moduleType);
 
+            if (string.IsNullOrWhiteSpace(module.ModuleGroup))
+                throw new Exception($"ArchiveModule: {module.GetType().FullName}, {nameof(IArchiveModule.ModuleGroup)} can not be null!");
+
+            FeatureGroups.GetOrCreateModuleGroup(module.ModuleGroup, module.ModuleGroupLanguages);
+
             foreach(var type in moduleType.Assembly.GetTypes())
             {
-                InspectType(type);
+                InspectType(type, module);
             }
 
             _moduleAssemblies.Add(moduleType.Assembly);

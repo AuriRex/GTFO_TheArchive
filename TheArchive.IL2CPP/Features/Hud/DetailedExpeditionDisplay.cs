@@ -13,7 +13,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Detailed Expedition Display";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Adds the current Rundown Number into the Header as well as onto the Map, Objectives and Success screens.";
 

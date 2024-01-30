@@ -13,7 +13,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Sentry Markers";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override FeatureGroup Group => FeatureGroups.Accessibility;
 
         public override string Description => "Add hud markers onto placed down sentry guns and tweak how those are shown.";
 

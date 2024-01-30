@@ -11,7 +11,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Skip Intro";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Automatically presses inject at the start of the game";
 

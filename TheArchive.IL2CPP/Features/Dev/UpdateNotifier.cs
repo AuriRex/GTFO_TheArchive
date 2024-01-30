@@ -20,7 +20,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Update Notifier";
 
-        public override string Group => FeatureGroups.ArchiveCore;
+        public override FeatureGroup Group => FeatureGroups.ArchiveCore;
 
         public override string Description => "Shows a popup whenever a new version is available.";
 

@@ -9,6 +9,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Features.Accessibility;
 using TheArchive.Features.Dev;
@@ -23,7 +24,7 @@ namespace TheArchive.Features.Security
     {
         public override string Name => "Player Lobby Management";
 
-        public override string Group => FeatureGroups.Security;
+        public override FeatureGroup Group => FeatureGroups.Security;
 
         public override string Description => "Allows you to open a players steam profile by clicking on their name as well as kick and ban players as host.";
 
@@ -43,6 +44,7 @@ namespace TheArchive.Features.Security
             public bool PreferOpeningProfileLinksInSteamOverlay { get; set; } = true;
 
             [FSHeader("Lobby Color Settings")]
+            [FSDisplayName("Lobby Colors")]
             public LobbyColorSettings LobbyColors { get; set; } = new LobbyColorSettings();
 
             [FSHeader("Other")]
@@ -111,6 +113,7 @@ namespace TheArchive.Features.Security
             }
         }
 
+        [Localized]
         public enum PlayerRelationShip
         {
             None,

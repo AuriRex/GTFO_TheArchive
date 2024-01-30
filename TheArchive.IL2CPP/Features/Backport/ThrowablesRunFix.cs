@@ -12,7 +12,7 @@ namespace TheArchive.Features.Backport
 
         public override string Description => "Prevents you from accidentally throwing your C-Foam nade / Glowsticks whenever you start running / jumping";
 
-        public override string Group => FeatureGroups.Backport;
+        public override FeatureGroup Group => FeatureGroups.Backport;
 
         public static void DontDownThrowingWeapon(PLOC_Base __instance)
         {

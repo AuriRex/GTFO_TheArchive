@@ -10,7 +10,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Maul/Gavel Checksum Patch";
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "Fixes the Maul and Gavel hammers having the same icon.";
 

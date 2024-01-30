@@ -13,7 +13,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Hud Pro Mode (Disable HUD)";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Force disable <i><u>ALL</u></i> HUD layers unless re-enabled via the submenu.\n\nMain purpose is for video production";
 

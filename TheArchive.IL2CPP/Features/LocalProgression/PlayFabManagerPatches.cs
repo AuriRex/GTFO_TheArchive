@@ -25,7 +25,7 @@ namespace TheArchive.Features.LocalProgression
     {
         public override string Name => nameof(PlayFabManagerPatches);
 
-        public override string Group => FeatureGroups.LocalProgression;
+        public override FeatureGroup Group => FeatureGroups.LocalProgression;
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 

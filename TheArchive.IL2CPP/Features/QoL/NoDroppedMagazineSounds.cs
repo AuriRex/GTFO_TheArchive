@@ -11,7 +11,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "No Magazine Drop Sound";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Removes the <i>globalally audible</i> sound whenever a magazine drops on the floor after a reload.";
 

@@ -2,6 +2,7 @@
 using System;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Core.Settings;
@@ -14,7 +15,7 @@ namespace TheArchive.Features.Presence
     {
         public override string Name => "Archive Discord Rich Presence";
 
-        public override string Group => FeatureGroups.Presence;
+        public override FeatureGroup Group => FeatureGroups.Presence;
 
         public override string Description => "Show the current game state in detail on discord.";
 
@@ -22,6 +23,7 @@ namespace TheArchive.Features.Presence
 
         public override bool SkipInitialOnEnable => true;
 
+        [InlineLocalized]
         [FeatureConfig]
         public static RichPresenceSettings DiscordRPCSettings { get; set; }
 

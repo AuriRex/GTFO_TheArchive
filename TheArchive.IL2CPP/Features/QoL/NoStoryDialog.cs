@@ -17,7 +17,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Remove Story Dialog";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Removes all level-based voice events that come with subtitles.\naka Schaeffer-be-gone";
 

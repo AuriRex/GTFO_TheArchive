@@ -11,7 +11,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Force Expedition Seeds";
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => $"Force Seeds used to randomize objectives, boxes and enemies spawns.\n\n<#F00>(Master only!)</color>\n(Probably doesn't work in multiplayer, idk ... haven't tested it :p)";
 

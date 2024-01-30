@@ -7,7 +7,6 @@ using TheArchive.Core.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
-using static TheArchive.Core.FeaturesAPI.FeatureInternal;
 
 namespace TheArchive.Core.FeaturesAPI
 {
@@ -247,16 +246,16 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        public void InitFeature(Type type)
+        public void InitFeature(Type type, IArchiveModule module)
         {
             Feature feature = (Feature) Activator.CreateInstance(type);
-            InitFeature(feature);
+            InitFeature(feature, module);
             CheckSpecialFeatures();
         }
 
-        private void InitFeature(Feature feature)
+        private void InitFeature(Feature feature, IArchiveModule module)
         {
-            FeatureInternal.CreateAndAssign(feature);
+            FeatureInternal.CreateAndAssign(feature, module);
             if (feature.Enabled)
             {
                 if (feature.FeatureInternal.HasUpdateMethod)
@@ -265,6 +264,7 @@ namespace TheArchive.Core.FeaturesAPI
                     _activeLateUpdateMethods.Add(feature.FeatureInternal.LateUpdateDelegate);
             }
             RegisteredFeatures.Add(feature);
+            feature.Group.Features.Add(feature);
         }
 
         public void EnableFeature(Feature feature, bool setConfig = true)

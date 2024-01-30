@@ -1,10 +1,14 @@
-﻿namespace TheArchive.Core.Localization
+﻿using System;
+
+namespace TheArchive.Core.Localization
 {
     public interface ILocalizationService
     {
         Language CurrentLanguage { get; }
 
         string Get(uint id);
+
+        string Get<T>(T value) where T : class, Enum;
 
         string Format(uint id, params object[] args);
 
@@ -13,5 +17,7 @@
         void SetTextSetter(ILocalizedTextSetter textSetter, uint textId);
 
         void AddTextUpdater(ILocalizedTextUpdater textUpdater);
+
+        void RegisterExternType<T>();
     }
 }
