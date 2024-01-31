@@ -25,6 +25,8 @@ namespace TheArchive.Features.Hud
 
         public static WeaponStats Instance { get; set; }
 
+        public override Type[] LocalizationExternalTypes => new Type[] { typeof(FSSlider.RoundTo) };
+
         [FeatureConfig]
         public static WeaponStatsSettings Settings { get; set; }
 
@@ -113,8 +115,6 @@ namespace TheArchive.Features.Hud
         public override void Init()
         {
             Instance = this;
-
-            Localization.RegisterExternType<FSSlider.RoundTo>();
 
             if (Settings.IsFirstTime)
             {

@@ -547,8 +547,6 @@ namespace TheArchive.Core.FeaturesAPI
                 return;
             }
 
-            _feature.FeatureInternal.Localization.CheckExternLocalization();
-
             if (FeatureManager.IsEnabledInConfig(_feature))
             {
                 Enable(!_feature.SkipInitialOnEnable);
@@ -844,7 +842,7 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        private static Dictionary<string, PropertyInfo> GetFSProperties(Type type)
+        internal static Dictionary<string, PropertyInfo> GetFSProperties(Type type)
         {
             return type.GetProperties()
                     .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
@@ -857,13 +855,15 @@ namespace TheArchive.Core.FeaturesAPI
                     );
         }
 
-        internal static FeatureInternalLocalizationData GenerateLocalization(Feature feature, FeatureInternalLocalizationData defaultValue = null)
+        internal static FeatureLocalizationData GenerateFeatureLocalization(Feature feature, FeatureLocalizationData defaultData = null)
         {
             var parentType = feature.GetType();
 
             var allproperties = new List<Dictionary<string, PropertyInfo>>();
-
             var enumTypes = new HashSet<Type>();
+
+            var FSTexts = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
+            var FSEnumTexts = new Dictionary<string, Dictionary<Language, Dictionary<string, string>>>();
 
             foreach (var type in GetNestedClasses(parentType))
             {
@@ -874,24 +874,8 @@ namespace TheArchive.Core.FeaturesAPI
                     if (nestedType.IsEnum)
                         enumTypes.Add(nestedType);
                 }
-
-                var properties = GetFSProperties(type);
-                var inlineProps = new List<Dictionary<string, PropertyInfo>>();
-                foreach (var propPair in properties)
-                {
-                    var prop = propPair.Value;
-                    if (prop.GetCustomAttribute<InlineLocalized>() != null && prop.PropertyType.IsClass)
-                    {
-                        properties.Remove(propPair.Key);
-                        var externalProps = GetFSProperties(prop.PropertyType);
-                        inlineProps.Add(externalProps);
-                    }
-                }
-                allproperties.Add(properties);
-                allproperties.AddRange(inlineProps);
+                allproperties.Add(GetFSProperties(type));
             }
-
-            var FSTexts = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
 
             foreach (var props in allproperties)
             {
@@ -953,7 +937,7 @@ namespace TheArchive.Core.FeaturesAPI
 
                         foreach (Language language in Enum.GetValues(typeof(Language)))
                         {
-                            if (defaultValue == null || defaultValue.FeatureSettingsTexts == null || !defaultValue.FeatureSettingsTexts.TryGetValue(propPair.Key, out var dfsdic) || !dfsdic.TryGetValue(fstype, out var dlandic) || !dlandic.TryGetValue(language, out var defaultText))
+                            if (defaultData == null || defaultData.Internal.FeatureSettingsTexts == null || !defaultData.Internal.FeatureSettingsTexts.TryGetValue(propPair.Key, out var dfsdic) || !dfsdic.TryGetValue(fstype, out var dlandic) || !dlandic.TryGetValue(language, out var defaultText))
                             {
                                 defaultText = null;
                             }
@@ -966,8 +950,6 @@ namespace TheArchive.Core.FeaturesAPI
                 }
             }
 
-            var FSETexts = new Dictionary<string, Dictionary<Language, Dictionary<string, string>>>();
-
             foreach (var type in enumTypes)
             {
                 var names = Enum.GetNames(type);
@@ -977,7 +959,7 @@ namespace TheArchive.Core.FeaturesAPI
                     var languagedic = new Dictionary<string, string>();
                     foreach (var name in names)
                     {
-                        if (defaultValue == null || defaultValue.FeatureSettingsEnumTexts == null || !defaultValue.FeatureSettingsEnumTexts.TryGetValue(type.FullName, out var dlandic) || !dlandic.TryGetValue(language, out var pair) || !pair.TryGetValue(name, out var defaultText))
+                        if (defaultData == null || defaultData.Internal.FeatureSettingsEnumTexts == null || !defaultData.Internal.FeatureSettingsEnumTexts.TryGetValue(type.FullName, out var dlandic) || !dlandic.TryGetValue(language, out var pair) || !pair.TryGetValue(name, out var defaultText))
                         {
                             defaultText = null;
                         }
@@ -985,17 +967,143 @@ namespace TheArchive.Core.FeaturesAPI
                     }
                     enumdic[language] = languagedic;
                 }
-                FSETexts[type.FullName] = enumdic;
+                FSEnumTexts[type.FullName] = enumdic;
             }
 
-            FeatureInternalLocalizationData data = new()
+            FeatureInternalLocalizationData internalData = new()
             {
                 FeatureSettingsTexts = FSTexts,
-                FeatureSettingsEnumTexts = FSETexts,
-                ExtraTexts = defaultValue?.ExtraTexts ?? new()
+                FeatureSettingsEnumTexts = FSEnumTexts,
+                ExtraTexts = defaultData?.Internal?.ExtraTexts ?? new()
             };
 
-            return data;
+            var externalAllproperties = new List<Dictionary<string, PropertyInfo>>();
+            var externalEnumTypes = new HashSet<Type>();
+            var externalFSTexts = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
+            var externalFSEnumTexts = new Dictionary<string, Dictionary<Language, Dictionary<string, string>>>();
+
+            foreach (var externalType in feature.LocalizationExternalTypes)
+            {
+                if (externalType.IsClass)
+                {
+                    foreach (var type in GetNestedClasses(externalType))
+                    {
+                        foreach (var nestedType in type.GetNestedTypes())
+                        {
+                            if (!nestedType.GetCustomAttributes<Localized>(true).Any())
+                                continue;
+                            if (nestedType.IsEnum)
+                                externalEnumTypes.Add(nestedType);
+                        }
+                        externalAllproperties.Add(GetFSProperties(type));
+                    }
+
+                    foreach (var props in externalAllproperties)
+                    {
+                        foreach (var propPair in props)
+                        {
+                            Dictionary<FSType, Dictionary<Language, string>> fsdic = new();
+                            var propType = propPair.Value.PropertyType;
+                            var prop = propPair.Value;
+                            foreach (FSType fstype in Enum.GetValues(typeof(FSType)))
+                            {
+                                if (typeof(Feature).IsAssignableFrom(prop.DeclaringType))
+                                {
+                                    if (prop.Name == nameof(Feature.Name))
+                                        if (fstype != FSType.FName)
+                                            continue;
+                                    if (prop.Name == nameof(Feature.Description))
+                                        if (fstype != FSType.FDescription)
+                                            continue;
+                                }
+                                switch (fstype)
+                                {
+                                    case FSType.FSDisplayName:
+                                        if (prop.GetCustomAttribute<FSDisplayName>() == null)
+                                            continue;
+                                        if (propType == typeof(FLabel))
+                                            continue;
+                                        break;
+                                    case FSType.FSDescription:
+                                        if (prop.GetCustomAttribute<FSDescription>() == null)
+                                            continue;
+                                        if (propType == typeof(FLabel))
+                                            continue;
+                                        break;
+                                    case FSType.FSButtonText:
+                                        if (propType != typeof(FButton))
+                                            continue;
+                                        break;
+                                    case FSType.FSLabelText:
+                                        if (propType != typeof(FLabel))
+                                            continue;
+                                        break;
+                                    case FSType.FSHeader:
+                                        if (prop.GetCustomAttribute<FSHeader>() == null)
+                                            continue;
+                                        break;
+                                    case FSType.FName:
+                                        if (prop.Name != nameof(Feature.Name) || !typeof(Feature).IsAssignableFrom(prop.DeclaringType))
+                                            continue;
+                                        break;
+                                    case FSType.FDescription:
+                                        if (prop.Name != nameof(Feature.Description) || !typeof(Feature).IsAssignableFrom(prop.DeclaringType))
+                                            continue;
+                                        break;
+                                    default:
+                                        continue;
+                                }
+
+                                var languages = new Dictionary<Language, string>();
+
+                                foreach (Language language in Enum.GetValues(typeof(Language)))
+                                {
+                                    if (defaultData == null || defaultData.External.ExternalFeatureSettingsTexts == null || !defaultData.External.ExternalFeatureSettingsTexts.TryGetValue(propPair.Key, out var dfsdic) || !dfsdic.TryGetValue(fstype, out var dlandic) || !dlandic.TryGetValue(language, out var defaultText))
+                                    {
+                                        defaultText = null;
+                                    }
+                                    languages[language] = defaultText;
+                                }
+
+                                fsdic[fstype] = languages;
+                            }
+                            externalFSTexts[propPair.Key] = fsdic;
+                        }
+                    }
+                }
+                else if (externalType.IsEnum)
+                {
+                    externalEnumTypes.Add(externalType);
+                }
+
+                foreach (var type in externalEnumTypes)
+                {
+                    var names = Enum.GetNames(type);
+                    var enumdic = new Dictionary<Language, Dictionary<string, string>>();
+                    foreach (Language language in Enum.GetValues(typeof(Language)))
+                    {
+                        var languagedic = new Dictionary<string, string>();
+                        foreach (var name in names)
+                        {
+                            if (defaultData == null || defaultData.External.ExternalEnumTexts == null || !defaultData.External.ExternalEnumTexts.TryGetValue(type.FullName, out var dlandic) || !dlandic.TryGetValue(language, out var pair) || !pair.TryGetValue(name, out var defaultText))
+                            {
+                                defaultText = null;
+                            }
+                            languagedic[name] = defaultText;
+                        }
+                        enumdic[language] = languagedic;
+                    }
+                    externalFSEnumTexts[type.FullName] = enumdic;
+                }
+            }
+
+            FeatureExternalLocalizationData ExternalData = new()
+            {
+                ExternalFeatureSettingsTexts = externalFSTexts,
+                ExternalEnumTexts = externalFSEnumTexts
+            };
+
+            return new() { Internal = internalData, External = ExternalData };
         }
 
         private class FeaturePatchInfo

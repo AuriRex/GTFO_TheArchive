@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Utilities;
 
 namespace TheArchive.Core.Localization
 {
@@ -165,64 +163,7 @@ namespace TheArchive.Core.Localization
             }
         }
 
-        public void RegisterExternType<T>()
-        {
-            _registeredExternTypes.Add(typeof(T));
-        }
-
-        public void CheckExternLocalization()
-        {
-            if (!_registeredExternTypes.Any())
-                return;
-
-            foreach (var type in _registeredExternTypes)
-            {
-                var key = type.FullName;
-
-                if (type.IsEnum)
-                {
-                    if (_externalEnumTexts.ContainsKey(key))
-                    {
-                        _externalEnumTexts[key] = _externalEnumTexts[key].OrderBy(p => p.Key).ToDictionary(p => p.Key, p => p.Value);
-                        continue;
-                    }
-
-                    var names = Enum.GetNames(type);
-                    var enumdic = new Dictionary<Language, Dictionary<string, string>>();
-                    foreach (Language language in Enum.GetValues(typeof(Language)))
-                    {
-                        var languagedic = new Dictionary<string, string>();
-                        foreach (var name in names)
-                        {
-                            languagedic[name] = null;
-                        }
-                        enumdic[language] = languagedic;
-                    }
-                    _externalEnumTexts[key] = enumdic;
-                }
-            }
-
-            _localizationData.External.ExternalEnumTexts = _externalEnumTexts;
-            var rjson = JsonConvert.SerializeObject(_localizationData, ArchiveMod.JsonSerializerSettings);
-            string dir = Path.Combine(Path.GetDirectoryName(Feature.ModuleGroup == ArchiveMod.ARCHIVE_CORE_FEATUREGROUP ? ArchiveMod.CORE_PATH : Feature.FeatureInternal.OriginAssembly.Location), "Localization");
-            var path = Path.Combine(dir, $"{Feature.Identifier}_Localization.json");
-            if (File.Exists(path))
-            {
-                var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
-                var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
-                if (rjson.ComputeSHA256() != json.ComputeSHA256())
-                {
-                    File.WriteAllText(path, JsonConvert.SerializeObject(_localizationData, ArchiveMod.JsonSerializerSettings));
-                }
-            }
-            else
-            {
-                File.WriteAllText(path, JsonConvert.SerializeObject(_localizationData, ArchiveMod.JsonSerializerSettings));
-            }
-        }
         private FeatureLocalizationData _localizationData { get; set; }
-
-        private HashSet<Type> _registeredExternTypes { get; } = new();
 
         private Dictionary<uint, Dictionary<Language, string>> _extraTexts { get; set; } = new();
 

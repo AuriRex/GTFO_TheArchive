@@ -2,7 +2,6 @@
 using System;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Core.Localization;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Core.Settings;
@@ -23,7 +22,8 @@ namespace TheArchive.Features.Presence
 
         public override bool SkipInitialOnEnable => true;
 
-        [InlineLocalized]
+        public override Type[] LocalizationExternalTypes => new Type[] { typeof(RichPresenceSettings) };
+
         [FeatureConfig]
         public static RichPresenceSettings DiscordRPCSettings { get; set; }
 

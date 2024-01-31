@@ -27,6 +27,7 @@ namespace TheArchive.Features.QoL
             [FSDescription("Plays the sound event below,\nit's a little janky and might not work depending on the sound, sorry!")]
             public FButton TestSoundButton { get; set; } = new FButton("Play Sound");
 
+            [FSDisplayName("Sound Event")]
             [FSDescription("The sound event to play whenever the reaload has happend.")]
             public string SoundEvent { get; set; } = nameof(AK.EVENTS.HACKING_PUZZLE_CORRECT);
             

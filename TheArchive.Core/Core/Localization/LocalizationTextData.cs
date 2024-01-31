@@ -22,6 +22,7 @@ internal class ArchiveCoreLocalizationData
 
 internal class FeatureExternalLocalizationData
 {
+    public Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> ExternalFeatureSettingsTexts { get; set; }
     public Dictionary<string, Dictionary<Language, Dictionary<string, string>>> ExternalEnumTexts { get; set; }
 }
 

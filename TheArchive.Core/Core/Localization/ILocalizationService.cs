@@ -17,7 +17,5 @@ namespace TheArchive.Core.Localization
         void SetTextSetter(ILocalizedTextSetter textSetter, uint textId);
 
         void AddTextUpdater(ILocalizedTextUpdater textUpdater);
-
-        void RegisterExternType<T>();
     }
 }

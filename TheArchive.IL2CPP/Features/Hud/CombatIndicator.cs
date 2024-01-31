@@ -1,4 +1,5 @@
 ﻿using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
 using TheArchive.Features.Dev;
@@ -25,6 +26,7 @@ namespace TheArchive.Features.Hud
 
         public class CombatIndicatorSettings
         {
+            [FSDisplayName("Style")]
             public CombatIndicatorStyle Style { get; set; } = CombatIndicatorStyle.Simple;
 
             [Localized]

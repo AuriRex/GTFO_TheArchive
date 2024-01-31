@@ -465,7 +465,6 @@ namespace TheArchive.Utilities
 
         internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature)
         {
-            var result = new FeatureLocalizationData();
             string dir = Path.Combine(Path.GetDirectoryName(feature.ModuleGroup == ArchiveMod.ARCHIVE_CORE_FEATUREGROUP ? ArchiveMod.CORE_PATH : feature.FeatureInternal.OriginAssembly.Location), "Localization");
             if (!Directory.Exists(dir))
             {
@@ -474,22 +473,19 @@ namespace TheArchive.Utilities
             var path = Path.Combine(dir, $"{feature.Identifier}_Localization.json");
             if (!File.Exists(path))
             {
-                var newData = FeatureInternal.GenerateLocalization(feature);
-                result.Internal = newData;
+                var newData = FeatureInternal.GenerateFeatureLocalization(feature);
                 File.WriteAllText(path, JsonConvert.SerializeObject(newData, ArchiveMod.JsonSerializerSettings));
-                return result;
+                return newData;
             }
             else
             {
                 var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
                 var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
-                var rdata = FeatureInternal.GenerateLocalization(feature, data.Internal);
-                result.Internal = rdata;
-                result.External = data.External;
-                var rjson = JsonConvert.SerializeObject(result, ArchiveMod.JsonSerializerSettings);
+                var rdata = FeatureInternal.GenerateFeatureLocalization(feature, data);
+                var rjson = JsonConvert.SerializeObject(rdata, ArchiveMod.JsonSerializerSettings);
                 if (rjson.ComputeSHA256() != json.ComputeSHA256())
                     File.WriteAllText(path, rjson);
-                return result;
+                return rdata;
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using TheArchive.Core.Attributes;
+﻿using System;
+using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
@@ -20,6 +21,8 @@ internal class ModLanguageLegacy : Feature
 
     public override bool InlineSettingsIntoParentMenu => true;
 
+    public override Type[] LocalizationExternalTypes => new Type[] { typeof(Language) };
+
     [FeatureConfig]
     public static ModLanguageLegacySettings Settings { get; set; }
 
@@ -29,11 +32,6 @@ internal class ModLanguageLegacy : Feature
         [FSDisplayName("Legacy Version Language")]
         [FSDescription("The Language used for ModSettings when playing Original Rundowns 1 to 5.\n\nUpdates automatically whenever you choose your Language on the latest game version!")]
         public Language Language { get; set; } = Language.English;
-    }
-
-    public override void Init()
-    {
-        Localization.RegisterExternType<Language>();
     }
 
     public static void StoreLanguage(Language language)

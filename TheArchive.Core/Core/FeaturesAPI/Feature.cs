@@ -31,6 +31,8 @@ namespace TheArchive.Core.FeaturesAPI
 
         public ILocalizationService Localization => FeatureInternal.Localization;
 
+        public virtual Type[] LocalizationExternalTypes => Array.Empty<Type>();
+
         /// <summary>
         /// True if this <see cref="Feature"/> is controled via code<br/>
         /// (button disabled in Mod Settings!)
