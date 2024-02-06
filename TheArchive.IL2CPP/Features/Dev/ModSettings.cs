@@ -367,6 +367,7 @@ namespace TheArchive.Features.Dev
 
                 if (FeatureGroups.ModuleGroups.Count > 1)
                 {
+                    CreateSpacer();
                     CreateHeader(LocalizationCoreService.Get(58, "Add-ons"));
                 }
 
@@ -435,8 +436,11 @@ namespace TheArchive.Features.Dev
 
             private static void BuildFeatureGroup(HashSet<FeatureGroup> groups, SubMenu parentMenu = null)
             {
-                foreach (var group in groups.OrderBy(kvp => kvp.Name))
+                var orderedGroups = groups.OrderBy(kvp => kvp.Name);
+                var count = 0;
+                foreach (var group in orderedGroups)
                 {
+                    count++;
                     var groupName = group.Name;
                     var featureSet = group.Features.OrderBy(fs => fs.Name);
 
@@ -454,7 +458,7 @@ namespace TheArchive.Features.Dev
                     SubMenu groupSubMenu = new SubMenu(group.DisplayName);
 
                     var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
-                    var subGroupsCount = group.SubGroups.Count();
+                    var subGroupsCount = group.SubGroups.Where(g => !g.IsHidden || DevMode).Count();
                     string featureText = LocalizationCoreService.Format(24, "{0} Feature{1}", featuresCount, featuresCount == 1 ? string.Empty : "s");
                     string subGroupText = LocalizationCoreService.Format(57, "{0} Subgroup{1}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
                     string menuEntryLabelText = string.Empty;
@@ -470,15 +474,17 @@ namespace TheArchive.Features.Dev
                     CreateHeader(group.DisplayName, subMenu: groupSubMenu);
 
                     foreach (var feature in featureSet)
-                    {
                         SetupEntriesForFeature(feature, groupSubMenu);
-                    }
+
+                    if (featuresCount > 0 && subGroupsCount > 0)
+                        CreateSpacer(groupSubMenu);
 
                     BuildFeatureGroup(group.SubGroups, groupSubMenu);
 
                     groupSubMenu?.Build();
 
-                    CreateSpacer(parentMenu);
+                    if (count != orderedGroups.Count())
+                        CreateSpacer(parentMenu);
                 }
             }
 
