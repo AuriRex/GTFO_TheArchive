@@ -486,6 +486,9 @@ namespace TheArchive.Features.Dev
                     if (count != orderedGroups.Count())
                         CreateSpacer(parentMenu);
                 }
+
+                if (parentMenu == null)
+                    CreateSpacer();
             }
 
             private static int _versionClickedCounter = 0;
