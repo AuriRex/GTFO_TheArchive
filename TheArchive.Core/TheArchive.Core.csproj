@@ -14,7 +14,7 @@
 		</NuGetPackageImportStamp>
 	</PropertyGroup>
 	
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)' == 'R_ML'">
 		<TargetFramework>net472</TargetFramework>
 		<DefineConstants>TRACE</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -23,7 +23,7 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<ErrorReport>prompt</ErrorReport>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_BIE|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)' == 'R_BIE'">
 		<TargetFramework>net6.0</TargetFramework>
 		<DefineConstants>TRACE</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -63,7 +63,7 @@
 		<None Include="packages.config" />
 	</ItemGroup>
 
-	<PropertyGroup>
+	<PropertyGroup Condition="!$([MSBuild]::IsOSUnixLike())">
 		<PreBuildEvent>
 			cd $(MSBuildProjectDirectory)\Resources\
 			if exist TheArchive.IL2CPP.dll (
@@ -78,6 +78,23 @@
 				ECHO Generating MONO dummy dll ...
 				ECHO DUMMY &gt; TheArchive.MONO.dll
 			)
+		</PreBuildEvent>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::IsOSUnixLike())">
+		<PreBuildEvent>
+			cd "$(MSBuildProjectDirectory)/Resources"
+			if [ -f "TheArchive.IL2CPP.dll" ]; then
+			    echo "Not generating IL2CPP dummy dll"
+			else
+			    echo "Generating IL2CPP dummy dll ..."
+			    echo "DUMMY" > TheArchive.IL2CPP.dll
+			fi
+			if [ -f "TheArchive.MONO.dll" ]; then
+			    echo "Not generating MONO dummy dll"
+			else
+			    echo "Generating MONO dummy dll ..."
+			    echo "DUMMY" > TheArchive.MONO.dll
+			fi
 		</PreBuildEvent>
 	</PropertyGroup>
 	<ItemGroup>

@@ -13,7 +13,7 @@
 		<Deterministic>true</Deterministic> 
 		<Configurations>R_ML;R_BIE</Configurations>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)' == 'R_ML'">
 		<TargetFramework>net472</TargetFramework>
 		<OutputPath>bin\R_ML\</OutputPath>
 		<DefineConstants>TRACE;MONO</DefineConstants>
@@ -22,7 +22,7 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<ErrorReport>prompt</ErrorReport>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='R_BIE|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)'=='R_BIE'">
 		<TargetFramework>net6.0</TargetFramework>
 		<OutputPath>bin\R_BIE\</OutputPath>
 		<DefineConstants>TRACE;MONO</DefineConstants>
@@ -311,10 +311,16 @@
 	  <Reference Include="System.Net.Http" />
 	</ItemGroup>
 	
-	<PropertyGroup>
+	<PropertyGroup Condition="!$([MSBuild]::IsOSUnixLike())">
 		<PostBuildEvent>
 			cd $(MSBuildProjectDirectory)
 			copy /y bin\$(Configuration)\TheArchive.MONO.dll ..\TheArchive.Core\Resources\TheArchive.MONO.dll
+		</PostBuildEvent>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::IsOSUnixLike())">
+		<PostBuildEvent>
+			cd $(MSBuildProjectDirectory)
+			cp bin/$(Configuration)/TheArchive.MONO.dll ../TheArchive.Core/Resources/TheArchive.MONO.dll
 		</PostBuildEvent>
 	</PropertyGroup>
 </Project>
