@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using TheArchive.Core;
+using TheArchive.Core.Discord;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
 using TheArchive.Loader;
@@ -460,7 +461,20 @@ namespace TheArchive.Utilities
             }
 
             fileExists = true;
-            return JsonConvert.DeserializeObject(File.ReadAllText(path), configType, ArchiveMod.JsonSerializerSettings);
+            try
+            {
+                return JsonConvert.DeserializeObject(File.ReadAllText(path), configType, ArchiveMod.JsonSerializerSettings);
+            }
+            catch
+            {
+                var newT = Activator.CreateInstance(configType);
+                if (saveIfNonExistent)
+                {
+                    SaveFeatureConfig(moduleIdentifier, featureIdentifier, configType, newT);
+                }
+                fileExists = false;
+                return newT;
+            }
         }
 
         internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature)
