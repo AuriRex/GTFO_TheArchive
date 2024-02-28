@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Cosmetic.EnableLegacyHammers.Name": {
+        "FName": {
+          "English": "Enable old Hammers",
+          "Chinese": "启用旧版大锤",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.EnableLegacyHammers.Description": {
+        "FDescription": {
+          "English": "Re-enable the pre-R6 Hammers:\n<color=orange>Maul</color>, <color=orange>Gavel</color>, <color=orange>Sledge</color> and <color=orange>Mallet</color>",
+          "Chinese": "重新启用 R6 之前的锤子:\n<color=orange>Maul</color>, <color=orange>Gavel</color>, <color=orange>Sledge</color> 和 <color=orange>Mallet</color>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

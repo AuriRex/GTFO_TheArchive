@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.QoL.L4DStylePacks.Name": {
+        "FName": {
+          "English": "L4D Style Resource Packs",
+          "Chinese": "求生之路方式使用资源包",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.QoL.L4DStylePacks.Description": {
+        "FDescription": {
+          "English": "Use left and right mouse buttons to apply resource packs instead of E.\n\nLeft mouse = yourself\nRight mouse = other players\n\n<color=orange>[R4+]</color> You're able to hold down M2 and it will start applying to a receiver under your croshair if in range automatically\n\n<#f00><u>/!\\</u> Make sure to <color=orange><u>disable</u></color> the vanilla game setting <color=orange>Gameplay > Separate Use Keybinds</color> for this Feature to work!</color>",
+          "Chinese": "使用鼠标左键和右键来使用资源包而不是e \n\n鼠标左键=你自己\n鼠标右键=其他玩家\n\n<color=orange>[R4+]</color>你可以按住M2，它将自动应用于你准星下的接收器，如果在范围内\n\n<#f00><u>/!\\</u>确保<color=orange><u>禁用</u></color>原版游戏设置<color=orange>Gameplay >单独使用keybind </color>此功能的工作!< /颜色>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

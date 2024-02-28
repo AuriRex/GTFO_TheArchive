@@ -1,0 +1,390 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Cosmetic.Glowsticks.Name": {
+        "FName": {
+          "English": "Glowsticks!",
+          "Chinese": "荧光棒！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.Glowsticks.Description": {
+        "FDescription": {
+          "English": "Costomize your glow-y little friends!\n\nAllows you to change the built in glowstick type and/or customize the color to your liking, or color it based on the player who threw the glowstick.",
+          "Chinese": "定制你的荧光小伙伴！\n\n允许你更改内置荧光棒的类型和/或根据自己的喜好自定义颜色，或者根据投掷荧光棒的玩家来着色。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.Glowsticks+GlowstickSettings.Override": {
+        "FSDisplayName": {
+          "English": "Override",
+          "Chinese": "覆盖",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Should any thrown glowsticks type be changed?",
+          "Chinese": "任何投掷荧光棒的类型应该被改变吗?",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": "://Synced to other players",
+          "Chinese": "://同步到其他玩家",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.Glowsticks+GlowstickSettings.OverrideType": {
+        "FSDisplayName": {
+          "English": "Override Color",
+          "Chinese": "覆盖颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "The color overriden glowsticks should be.\n(enable setting above!)\n(Orange is only available in R5 and later!)\n(Yellow is only available on ALT://R1 and later!)",
+          "Chinese": "荧光棒的颜色应该是。\n(启用上述设置!)\n(橙色 仅在R5和更高版本中可用!)\n(黄色 仅在ALT://R1和更高版本上可用!)",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.Glowsticks+GlowstickSettings.AutoFestiveGlowsticks": {
+        "FSDisplayName": {
+          "English": "Auto Festive Glowsticks",
+          "Chinese": "自动切换节日荧光棒",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Automatically switch to festive versions on holidays.\n(<#F00>XMas => Red</color>)\n(<color=orange>Halloween => Orange</color>)",
+          "Chinese": "在节假日自动切换到节日版本。\n(<#F00>XMas => Red</color>)\n(<color=orange>Halloween => Orange</color>)",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.Glowsticks+GlowstickSettings.Mode": {
+        "FSDisplayName": {
+          "English": "Local Color",
+          "Chinese": "本地颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Change colors for you only\n\n<#404>{nameof(LocalOverrideMode.Default)}</color>: Do whatever the game does\n<#404>{nameof(LocalOverrideMode.ForceColor)}</color>: Force Glowstick Colors\n<#404>{nameof(LocalOverrideMode.UsePlayerColor)}</color>: Player color determines Glowstick color\n\n<color=orange>(NOTICE: The first time per game start, after throwing the first glowstick, the game might stutter a little for a second to generate a texture)</color>",
+          "Chinese": "只改变你的颜色\n\n<#404>默认</color>: 跟随游戏设定\n<#404>强制</color>: 强制荧光棒的颜色\n<#404>使用玩家颜色</color>: 玩家的颜色决定荧光棒的颜色\n\n<color=orange>(注意:每次游戏开始时，在投掷第一支荧光棒后，游戏可能会在生成纹理时停顿一秒钟)</color>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": "://Locally visible only settings",
+          "Chinese": "://仅在本地可见的设置",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.Glowsticks+GlowstickSettings.ForcedColor": {
+        "FSDisplayName": {
+          "English": "Force Color",
+          "Chinese": "强制改变颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Sets the Glowstick color for every glowstick\nSet Mode above to ForceColor to use this!",
+          "Chinese": "设置每个荧光棒的颜色\n请先将上面的模式设置为 强制 !",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.Glowsticks+GlowstickSettings.ScaleUpColors": {
+        "FSDisplayName": {
+          "English": "Scale up dark colors",
+          "Chinese": "增强阴影效果",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Turns dark colors bright to actually make them glow",
+          "Chinese": "将暗色变亮使其发光",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.Glowsticks+GlowstickSettings.BlueIsBlue": {
+        "FSDisplayName": {
+          "English": "Blue is Blue",
+          "Chinese": "纯粹的蓝色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Adds a third of the blue component as green to the current color if the green component is below that amount.\n\nBasically makes blue look blue instead of purple.",
+          "Chinese": "如果绿色分量低于某个数值，则将当前颜色的蓝色分量的三分之一添加到绿色分量中。\n\n基本上使蓝色看起来是蓝色而不是紫色。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {
+      "TheArchive.Features.Cosmetic.Glowsticks+GlowstickSettings+LocalOverrideMode": {
+        "English": {
+          "Default": "Default",
+          "ForceColor": "Force Color",
+          "UsePlayerColor": "Use Player Color"
+        },
+        "Chinese": {
+          "Default": "默认",
+          "ForceColor": "强制",
+          "UsePlayerColor": "使用玩家颜色"
+        },
+        "French": {
+          "Default": null,
+          "ForceColor": null,
+          "UsePlayerColor": null
+        },
+        "Italian": {
+          "Default": null,
+          "ForceColor": null,
+          "UsePlayerColor": null
+        },
+        "German": {
+          "Default": null,
+          "ForceColor": null,
+          "UsePlayerColor": null
+        },
+        "Spanish": {
+          "Default": null,
+          "ForceColor": null,
+          "UsePlayerColor": null
+        },
+        "Russian": {
+          "Default": null,
+          "ForceColor": null,
+          "UsePlayerColor": null
+        },
+        "Portuguese_Brazil": {
+          "Default": null,
+          "ForceColor": null,
+          "UsePlayerColor": null
+        },
+        "Polish": {
+          "Default": null,
+          "ForceColor": null,
+          "UsePlayerColor": null
+        },
+        "Japanese": {
+          "Default": null,
+          "ForceColor": null,
+          "UsePlayerColor": null
+        },
+        "Korean": {
+          "Default": null,
+          "ForceColor": null,
+          "UsePlayerColor": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.Glowsticks+GlowstickSettings+GlowstickType": {
+        "English": {
+          "Green": "Green",
+          "Red": "Red",
+          "Orange": "Orange",
+          "Yellow": "Yellow"
+        },
+        "Chinese": {
+          "Green": "绿色",
+          "Red": "红色",
+          "Orange": "橙色",
+          "Yellow": "黄色"
+        },
+        "French": {
+          "Green": null,
+          "Red": null,
+          "Orange": null,
+          "Yellow": null
+        },
+        "Italian": {
+          "Green": null,
+          "Red": null,
+          "Orange": null,
+          "Yellow": null
+        },
+        "German": {
+          "Green": null,
+          "Red": null,
+          "Orange": null,
+          "Yellow": null
+        },
+        "Spanish": {
+          "Green": null,
+          "Red": null,
+          "Orange": null,
+          "Yellow": null
+        },
+        "Russian": {
+          "Green": null,
+          "Red": null,
+          "Orange": null,
+          "Yellow": null
+        },
+        "Portuguese_Brazil": {
+          "Green": null,
+          "Red": null,
+          "Orange": null,
+          "Yellow": null
+        },
+        "Polish": {
+          "Green": null,
+          "Red": null,
+          "Orange": null,
+          "Yellow": null
+        },
+        "Japanese": {
+          "Green": null,
+          "Red": null,
+          "Orange": null,
+          "Yellow": null
+        },
+        "Korean": {
+          "Green": null,
+          "Red": null,
+          "Orange": null,
+          "Yellow": null
+        }
+      }
+    },
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

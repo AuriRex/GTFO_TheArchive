@@ -52,6 +52,7 @@ namespace TheArchive.Features.Dev
             public FButton ShowUpdatesButton { get; set; } = new FButton("Check!", nameof(ShowUpdatesButton));
 
             [FSHide]
+            [FSDisplayName("First Ever Popup")]
             public bool FirstEverPopup { get; set; } = true;
         }
 

@@ -1,0 +1,72 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Hud.FlashlightIconColors.Name": {
+        "FName": {
+          "English": "Flashlight Icon Colors",
+          "Chinese": "手电筒图标颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.FlashlightIconColors.Description": {
+        "FDescription": {
+          "English": "Customize the flashlight on/off indicator colors.",
+          "Chinese": "定制手电筒开/关指示灯的颜色。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.FlashlightIconColors+FlashlightIconColorsSettings.ColorEnabled": {
+        "FSDisplayName": {
+          "English": "Color Flashlight On",
+          "Chinese": "手电筒开启颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.FlashlightIconColors+FlashlightIconColorsSettings.ColorDisabled": {
+        "FSDisplayName": {
+          "English": "Color Flashlight Off",
+          "Chinese": "手电筒关闭颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

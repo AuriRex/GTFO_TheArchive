@@ -1,0 +1,195 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Hud.InteractReviveFix.Name": {
+        "FName": {
+          "English": "Fix Multi-Revive UI",
+          "Chinese": "修复多次复活界面",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.InteractReviveFix.Description": {
+        "FDescription": {
+          "English": "Fix revive progress <i>visually</i> resetting whenever multiple revives are going on at the same time.",
+          "Chinese": "修复了当多个复活同时进行时，复活进度<i>在视觉上</i>重置的问题。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.InteractReviveFix+InteractReviveFixSettings.AddMultiResWarning": {
+        "FSDisplayName": {
+          "English": "Add Multi-Res Warning",
+          "Chinese": "添加多人复活警告",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Display a warning whenever multiple people are trying to revive the same person.",
+          "Chinese": "当多人尝试复活同一个人时显示警告。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.InteractReviveFix+InteractReviveFixSettings.MultiResWarning": {
+        "FSDisplayName": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.InteractReviveFix+InteractReviveFixSettings.ForceOverrideStringsUsage": {
+        "FSDisplayName": {
+          "English": "Ignore Localization",
+          "Chinese": "忽略本地化",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "If the revive text should not be translated using the game and instead be replaced completely by the settings below whenever multiple people are reviving the same person.\n\n(Enable this to use the settings below!)",
+          "Chinese": "如果复活文本不应使用游戏的翻译，而完全使用以下设置来替代，当有多人复活同一个人时。\n\n（启用此选项以使用以下设置！）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": "Advanced Multi-Res HUD Text",
+          "Chinese": "高级多人复活 HUD 文本",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.InteractReviveFix+InteractReviveFixSettings.MultiReviveOthersOverride": {
+        "FSDisplayName": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.InteractReviveFix+InteractReviveFixSettings.GettingMultiRevivedOverride": {
+        "FSDisplayName": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

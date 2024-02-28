@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Accessibility.DisableStaminaBreathing.Name": {
+        "FName": {
+          "English": "Disable Breathing (<#8ED7E4>Stamina</color>)",
+          "Chinese": "禁用呼吸 (<#8ED7E4>耐力</color>)",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.DisableStaminaBreathing.Description": {
+        "FDescription": {
+          "English": "Disables the player breathing and panting due to running around or enemy encounters in pre-R6 builds.",
+          "Chinese": "在 R6 之前的版本中禁用玩家因奔跑或遭遇敌人而出现的呼吸和喘气声。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

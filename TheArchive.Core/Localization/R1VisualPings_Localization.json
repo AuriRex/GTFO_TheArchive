@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Backport.R1VisualPings.Name": {
+        "FName": {
+          "English": "Visual Ping Indicators in R1",
+          "Chinese": "R1中的标记指示器",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Backport.R1VisualPings.Description": {
+        "FDescription": {
+          "English": "Visualize terminal pings in R1 by abusing the local players Middle-Mouse-Ping.\n(Only works as Host)",
+          "Chinese": "通过使用本地玩家的中键Ping，在 R1 中进行可视化标记。\n（仅在作为主机时有效）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

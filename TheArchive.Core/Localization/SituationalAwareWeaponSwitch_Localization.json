@@ -1,0 +1,222 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.QoL.SituationalAwareWeaponSwitch.Name": {
+        "FName": {
+          "English": "Situation Aware Weapon Switch",
+          "Chinese": "根据情况进行武器切换",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.QoL.SituationalAwareWeaponSwitch.Description": {
+        "FDescription": {
+          "English": "Switch to either your Melee weapon or Primary depending on if you're sneaking around or in combat after depleting all of your throwables, exit a ladder or place down a sentry gun etc.",
+          "Chinese": "根据你是在潜行还是在战斗中，耗尽所有弹药，切换近战武器或主要武器，退出梯子或放下哨戒炮等。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.QoL.SituationalAwareWeaponSwitch+SituationalAwareWeaponSwitchSettings.LogWeaponSwitchesToConsole": {
+        "FSDisplayName": {
+          "English": "Log Weapon Switches to Console",
+          "Chinese": "记录武器切换到控制台",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Used to see what this Feature is doing in real time (check console!)",
+          "Chinese": "用于实时查看此功能的操作（检查控制台！）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.QoL.SituationalAwareWeaponSwitch+SituationalAwareWeaponSwitchSettings.PreferMeleeStates": {
+        "FSDisplayName": {
+          "English": "Prefer Melee States",
+          "Chinese": "首选近战状态",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "The states in which the game should switch to Melee instead of your Primary weapon.",
+          "Chinese": "哪些状态应该切换到近战而不是主武器",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {
+      "TheArchive.Features.QoL.SituationalAwareWeaponSwitch+SituationalAwareWeaponSwitchSettings+DramaState": {
+        "English": {
+          "ElevatorIdle": "Elevator Idle",
+          "ElevatorGoingDown": "Elevator Going Down",
+          "Exploration": "Exploration",
+          "Alert": "Alert",
+          "Sneaking": "Sneaking",
+          "Encounter": "Encounter",
+          "Combat": "Combat",
+          "Survival": "Survival",
+          "IntentionalCombat": "Intentional Combat"
+        },
+        "Chinese": {
+          "ElevatorIdle": "电梯闲置",
+          "ElevatorGoingDown": "电梯下降中",
+          "Exploration": "探索",
+          "Alert": "警报",
+          "Sneaking": "潜行",
+          "Encounter": "交锋",
+          "Combat": "战斗",
+          "Survival": "存活",
+          "IntentionalCombat": "蓄意战斗"
+        },
+        "French": {
+          "ElevatorIdle": null,
+          "ElevatorGoingDown": null,
+          "Exploration": null,
+          "Alert": null,
+          "Sneaking": null,
+          "Encounter": null,
+          "Combat": null,
+          "Survival": null,
+          "IntentionalCombat": null
+        },
+        "Italian": {
+          "ElevatorIdle": null,
+          "ElevatorGoingDown": null,
+          "Exploration": null,
+          "Alert": null,
+          "Sneaking": null,
+          "Encounter": null,
+          "Combat": null,
+          "Survival": null,
+          "IntentionalCombat": null
+        },
+        "German": {
+          "ElevatorIdle": null,
+          "ElevatorGoingDown": null,
+          "Exploration": null,
+          "Alert": null,
+          "Sneaking": null,
+          "Encounter": null,
+          "Combat": null,
+          "Survival": null,
+          "IntentionalCombat": null
+        },
+        "Spanish": {
+          "ElevatorIdle": null,
+          "ElevatorGoingDown": null,
+          "Exploration": null,
+          "Alert": null,
+          "Sneaking": null,
+          "Encounter": null,
+          "Combat": null,
+          "Survival": null,
+          "IntentionalCombat": null
+        },
+        "Russian": {
+          "ElevatorIdle": null,
+          "ElevatorGoingDown": null,
+          "Exploration": null,
+          "Alert": null,
+          "Sneaking": null,
+          "Encounter": null,
+          "Combat": null,
+          "Survival": null,
+          "IntentionalCombat": null
+        },
+        "Portuguese_Brazil": {
+          "ElevatorIdle": null,
+          "ElevatorGoingDown": null,
+          "Exploration": null,
+          "Alert": null,
+          "Sneaking": null,
+          "Encounter": null,
+          "Combat": null,
+          "Survival": null,
+          "IntentionalCombat": null
+        },
+        "Polish": {
+          "ElevatorIdle": null,
+          "ElevatorGoingDown": null,
+          "Exploration": null,
+          "Alert": null,
+          "Sneaking": null,
+          "Encounter": null,
+          "Combat": null,
+          "Survival": null,
+          "IntentionalCombat": null
+        },
+        "Japanese": {
+          "ElevatorIdle": null,
+          "ElevatorGoingDown": null,
+          "Exploration": null,
+          "Alert": null,
+          "Sneaking": null,
+          "Encounter": null,
+          "Combat": null,
+          "Survival": null,
+          "IntentionalCombat": null
+        },
+        "Korean": {
+          "ElevatorIdle": null,
+          "ElevatorGoingDown": null,
+          "Exploration": null,
+          "Alert": null,
+          "Sneaking": null,
+          "Encounter": null,
+          "Combat": null,
+          "Survival": null,
+          "IntentionalCombat": null
+        }
+      }
+    },
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

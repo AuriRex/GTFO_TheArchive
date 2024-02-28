@@ -16,6 +16,7 @@ namespace TheArchive.Features.Dev
 
         public class SettingsDebugSettings
         {
+            [FSDisplayName("Slider Settings")]
             public Sliders SliderSettings { get; set; } = new Sliders();
 
             public class Sliders

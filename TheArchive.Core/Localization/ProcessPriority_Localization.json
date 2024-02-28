@@ -1,0 +1,111 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Special.ProcessPriority.Name": {
+        "FName": {
+          "English": "Process Priority",
+          "Chinese": "进程优先级",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Special.ProcessPriority.Description": {
+        "FDescription": {
+          "English": "Set the games process priority.\n\nThis does the same thing as opening up Taskmanager, going into the 'Details' tab and right clicking on GTFO.exe > [Set Priority]\n\nWarning! Your system might lag / stutter while the game is loading if set to {ProcessPrioritySettings.PriorityClass.AboveNormal} or higher!",
+          "Chinese": "设置游戏进程的优先级。\n\n这与打开任务管理器、进入“详细信息”选项卡，右键点击GTFO.exe > [设置优先级] 执行的操作相同。\n\n警告！如果设置为 {ProcessPrioritySettings.PriorityClass.AboveNormal} 或更高，游戏加载时可能导致系统卡顿/出现卡顿！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {
+      "TheArchive.Features.Special.ProcessPriority+ProcessPrioritySettings+PriorityClass": {
+        "English": {
+          "High": "High",
+          "AboveNormal": "Above Normal",
+          "Normal": "Normal",
+          "BelowNormal": "Below Normal"
+        },
+        "Chinese": {
+          "High": "高",
+          "AboveNormal": "高于正常",
+          "Normal": "正常",
+          "BelowNormal": "低于正常"
+        },
+        "French": {
+          "High": null,
+          "AboveNormal": null,
+          "Normal": null,
+          "BelowNormal": null
+        },
+        "Italian": {
+          "High": null,
+          "AboveNormal": null,
+          "Normal": null,
+          "BelowNormal": null
+        },
+        "German": {
+          "High": null,
+          "AboveNormal": null,
+          "Normal": null,
+          "BelowNormal": null
+        },
+        "Spanish": {
+          "High": null,
+          "AboveNormal": null,
+          "Normal": null,
+          "BelowNormal": null
+        },
+        "Russian": {
+          "High": null,
+          "AboveNormal": null,
+          "Normal": null,
+          "BelowNormal": null
+        },
+        "Portuguese_Brazil": {
+          "High": null,
+          "AboveNormal": null,
+          "Normal": null,
+          "BelowNormal": null
+        },
+        "Polish": {
+          "High": null,
+          "AboveNormal": null,
+          "Normal": null,
+          "BelowNormal": null
+        },
+        "Japanese": {
+          "High": null,
+          "AboveNormal": null,
+          "Normal": null,
+          "BelowNormal": null
+        },
+        "Korean": {
+          "High": null,
+          "AboveNormal": null,
+          "Normal": null,
+          "BelowNormal": null
+        }
+      }
+    },
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

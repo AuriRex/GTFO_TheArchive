@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Dev.DamageLog.Name": {
+        "FName": {
+          "English": "Damage Log",
+          "Chinese": "伤害记录",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.DamageLog.Description": {
+        "FDescription": {
+          "English": "Log what all hitboxes/enemies were hit by your shot to console.\n\n(Probably only works correctly as master)\n(Disable for normal gameplay)",
+          "Chinese": "将您的射击击中的所有命中盒/敌人记录到控制台。\n\n（可能只能在作为主机正确运行）\n（在正常游戏中禁用）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

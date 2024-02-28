@@ -1,0 +1,182 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Hud.ExpeditionResultsScreenTweaks.Name": {
+        "FName": {
+          "English": "Results Screen Tweaks",
+          "Chinese": "结算画面调整",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ExpeditionResultsScreenTweaks.Description": {
+        "FDescription": {
+          "English": "Tweak the Expedition Fail/Success screens!",
+          "Chinese": "调整关卡失败/成功画面显示!",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ExpeditionResultsScreenTweaks+ExpeditionResultsScreenTweaksSettings.ShowTimerOnFailScreen": {
+        "FSDisplayName": {
+          "English": "Add Failed Expedition Timer",
+          "Chinese": "添加失败关卡计时器",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Adds an expedition timer to the fail screen that displayes total time spent in the level.\n\n<color=orange>(Requires Enhanced Expedition Timer to be enabled!)</color>",
+          "Chinese": "在失败界面添加关卡计时器，显示在关卡中总共花费的时间。\n\n<color=orange>（需要启用增强关卡计时器！）</color>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ExpeditionResultsScreenTweaks+ExpeditionResultsScreenTweaksSettings.OverrideEnhancedTimerOnSuccessScreen": {
+        "FSDisplayName": {
+          "English": "Success Expedition Timer",
+          "Chinese": "成功关卡计时器",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Replaces the default timer with the enhanced version.\n(Adds a timer to R1-R3)\n\n<color=orange>(Requires Enhanced Expedition Timer to be enabled!)</color>",
+          "Chinese": "用增强版本替换默认计时器。\n（在 R1-R3 中添加计时器）\n\n<color=orange>（需要启用增强关卡计时器！）</color>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ExpeditionResultsScreenTweaks+ExpeditionResultsScreenTweaksSettings.ShowSessionSeed": {
+        "FSDisplayName": {
+          "English": "Show Level Seed",
+          "Chinese": "显示关卡种子",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Adds the 'session seed' to the fail and success screens.\n\n(This is the seed used for boxes, enemy count and alarm scan locations.",
+          "Chinese": "在失败和成功界面添加“关卡种子”。\n\n（这是用于资源箱、敌人数量和警报扫描位置的种子。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ExpeditionResultsScreenTweaks+ExpeditionResultsScreenTweaksSettings.DisableSuccessMask": {
+        "FSDisplayName": {
+          "English": "Disable Success Background",
+          "Chinese": "禁用成功背景",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Removes the background image on the <b>Expedition Success Screen</b>.\n(background turns black instead)",
+          "Chinese": "移除<b>关卡成功界面</b>的背景图像。\n（背景变为黑色）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ExpeditionResultsScreenTweaks+ExpeditionResultsScreenTweaksSettings.DisableFailSkull": {
+        "FSDisplayName": {
+          "English": "Disable Fail Background",
+          "Chinese": "禁用失败背景",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Removes the background image on the <b>Expedition Fail Screen</b>.\n(background turns black instead)",
+          "Chinese": "移除<b>关卡失败界面</b>的背景图像。\n（背景变为黑色）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

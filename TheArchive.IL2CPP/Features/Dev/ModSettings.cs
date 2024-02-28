@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
@@ -33,13 +34,18 @@ namespace TheArchive.Features.Dev
 
         public class ModSettingsSettings
         {
+            [FSDisplayName("Search Option")]
             public SearchOptions Search { get; set; } = new SearchOptions();
 
             public class SearchOptions
             {
+                [FSDisplayName("Search Titles")]
                 public bool SearchTitles { get; set; } = true;
+                [FSDisplayName("Search Descrption")]
                 public bool SearchDescriptions { get; set; } = false;
+                [FSDisplayName("Search Sub Setting Titles")]
                 public bool SearchSubSettingsTitles { get; set; } = true;
+                [FSDisplayName("Search Sub Settings Description")]
                 public bool SearchSubSettingsDescription { get; set; } = false;
             }
         }

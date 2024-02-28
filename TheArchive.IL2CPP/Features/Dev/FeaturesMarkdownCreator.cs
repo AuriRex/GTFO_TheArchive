@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
@@ -31,6 +32,7 @@ namespace TheArchive.Features.Dev
 
         public class ReadmeCreatorSettings
         {
+            [FSDisplayName("Create Markdown")]
             public FButton CreateMarkdownButton { get; set; } = new FButton("Create Markdown (Clipboard)", "create_markdown");
         }
 

@@ -1,0 +1,117 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Dev.ModSettings.Name": {
+        "FName": {
+          "English": "Mod Settings (this)",
+          "Chinese": "模组设置（此项）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ModSettings.Description": {
+        "FDescription": {
+          "English": "<color=red>WARNING!</color> Disabling this makes you unable to change settings in game via this very menu after a restart!",
+          "Chinese": "<color=red>警告！</color> 禁用此功能将使您无法在重新启动后通过此菜单在游戏中更改设置！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ModSettings+ModSettingsSettings.Search": {
+        "FSDisplayName": {
+          "English": "Search Option",
+          "Chinese": "搜索选项",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ModSettings+ModSettingsSettings+SearchOptions.SearchTitles": {
+        "FSDisplayName": {
+          "English": "Search Titles",
+          "Chinese": "搜索标题",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ModSettings+ModSettingsSettings+SearchOptions.SearchDescriptions": {
+        "FSDisplayName": {
+          "English": "Search Description",
+          "Chinese": "搜索描述",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ModSettings+ModSettingsSettings+SearchOptions.SearchSubSettingsTitles": {
+        "FSDisplayName": {
+          "English": "Search Sub Settings Titles",
+          "Chinese": "搜索子项设置标题",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ModSettings+ModSettingsSettings+SearchOptions.SearchSubSettingsDescription": {
+        "FSDisplayName": {
+          "English": "Search Sub Settings Description",
+          "Chinese": "搜索子项设置描述",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}
