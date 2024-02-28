@@ -86,8 +86,10 @@ namespace TheArchive.Features.Security
             {
                 [FSSeparator]
                 [FSReadOnly]
+                [FSDisplayName("Name")]
                 public string Name { get; set; }
                 [FSReadOnly]
+                [FSDisplayName("SteamID")]
                 public ulong SteamID { get; set; }
                 [FSReadOnly]
                 [FSTimestamp]
@@ -99,8 +101,10 @@ namespace TheArchive.Features.Security
             {
                 [FSSeparator]
                 [FSReadOnly]
+                [FSDisplayName("Name")]
                 public string Name { get; set; }
                 [FSReadOnly]
+                [FSDisplayName("SteamID")]
                 public ulong SteamID { get; set; }
                 [FSReadOnly]
                 [FSTimestamp]

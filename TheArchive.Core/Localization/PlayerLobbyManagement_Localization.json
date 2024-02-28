@@ -102,8 +102,8 @@
           "Korean": null
         },
         "FSHeader": {
-          "English": null,
-          "Chinese": null,
+          "English": "Lobby Color Settings",
+          "Chinese": "大厅颜色设置",
           "French": null,
           "Italian": null,
           "German": null,
@@ -159,7 +159,7 @@
         },
         "FSDescription": {
           "English": "Players who are on this list will not be able to join any games <b>you host</b>.",
-          "Chinese": null,
+          "Chinese": "这个列表上的玩家将无法参加<b>由您主持的</b>任何游戏。",
           "French": null,
           "Italian": null,
           "German": null,
@@ -259,10 +259,70 @@
           "Korean": null
         }
       },
+      "TheArchive.Features.Security.PlayerLobbyManagement+LobbyManagementSettings+BanListEntry.Name": {
+        "FSDisplayName": {
+          "English": "Name",
+          "Chinese": "昵称",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.PlayerLobbyManagement+LobbyManagementSettings+BanListEntry.SteamID": {
+        "FSDisplayName": {
+          "English": "SteamID",
+          "Chinese": "SteamID",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
       "TheArchive.Features.Security.PlayerLobbyManagement+LobbyManagementSettings+BanListEntry.Timestamp": {
         "FSDisplayName": {
           "English": "Banned on:",
           "Chinese": "封禁日期:",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.PlayerLobbyManagement+LobbyManagementSettings+RecentlyPlayedWithEntry.Name": {
+        "FSDisplayName": {
+          "English": "Name",
+          "Chinese": "昵称",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.PlayerLobbyManagement+LobbyManagementSettings+RecentlyPlayedWithEntry.SteamID": {
+        "FSDisplayName": {
+          "English": "SteamID",
+          "Chinese": "SteamID",
           "French": null,
           "Italian": null,
           "German": null,
@@ -308,18 +368,18 @@
     "FeatureSettingsEnumTexts": {
       "TheArchive.Features.Security.PlayerLobbyManagement+PlayerRelationShip": {
         "English": {
-          "None": null,
-          "Self": null,
-          "Friend": null,
-          "Banned": null,
-          "Bot": null
+          "None": "None",
+          "Self": "Self",
+          "Friend": "Friend",
+          "Banned": "Banned",
+          "Bot": "Bot"
         },
         "Chinese": {
-          "None": null,
-          "Self": null,
-          "Friend": null,
-          "Banned": null,
-          "Bot": null
+          "None": "无",
+          "Self": "自己",
+          "Friend": "朋友",
+          "Banned": "被封禁",
+          "Bot": "机器人"
         },
         "French": {
           "None": null,
