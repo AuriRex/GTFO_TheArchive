@@ -374,7 +374,7 @@ namespace TheArchive.Features.Dev
                 if (FeatureGroups.ModuleGroups.Count > 1)
                 {
                     CreateSpacer();
-                    CreateHeader(LocalizationCoreService.Get(58, "Add-ons"));
+                    CreateHeader(LocalizationCoreService.Get(58, "Add-ons"), GREEN);
                 }
 
                 BuildFeatureGroup(FeatureGroups.ModuleGroups);
