@@ -156,7 +156,7 @@ namespace TheArchive.Core.FeaturesAPI
                 ParentGroup = parentGroup;
                 ParentGroup.SubGroups.Add(this);
             }
-            FeatureGroups.AllGroups.Add(parentGroup);
+            FeatureGroups.AllGroups.Add(this);
         }
 
         private FeatureGroup() { }
