@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using TheArchive.Core;
-using TheArchive.Core.Discord;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
 using TheArchive.Loader;
