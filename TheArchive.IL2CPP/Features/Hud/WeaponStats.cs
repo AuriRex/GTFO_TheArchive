@@ -12,7 +12,6 @@ using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
 using TheArchive.Utilities;
 using UnityEngine;
-using static TenChambers.Backend;
 using static TheArchive.Features.Hud.WeaponStats.WeaponStatsSettings;
 
 namespace TheArchive.Features.Hud
@@ -413,12 +412,13 @@ namespace TheArchive.Features.Hud
                     builder.Append("<#C0FF00>");
                     builder.Append($"{Short_MeleeMaxDamageChargeTime} ");
                     builder.Append(Round(meleeAnimationSetDataBlock.MaxDamageChargeTime));
+                    builder.Append(" s");
                     builder.Append(CLOSE_COLOR_TAG);
                 }
 
                 var statsString = builder.ToString();
 
-                return string.IsNullOrWhiteSpace(statsString) ? "You disabled it all, congrats!" : statsString;
+                return string.IsNullOrWhiteSpace(statsString) ? Instance.Localization.Get(21) : statsString;
             }
 #endif
         }
@@ -562,6 +562,7 @@ namespace TheArchive.Features.Hud
                     builder.Append("<#CC9347>");
                     builder.Append($"{Short_SpecialChargeupTime} ");
                     builder.Append(Round(archeTypeDataBlock.SpecialChargetupTime));
+                    builder.Append(" s");
                     builder.Append(CLOSE_COLOR_TAG);
                 }
             }
@@ -572,7 +573,8 @@ namespace TheArchive.Features.Hud
 
                 builder.Append("<#18A4A9>");
                 builder.Append($"{Short_ShotDelay} ");
-                builder.Append(Round(Mathf.Max(archeTypeDataBlock.BurstDelay, archeTypeDataBlock.ShotDelay)));
+                builder.Append(Round(archeTypeDataBlock.FireMode == eWeaponFireMode.Burst ? Mathf.Max(archeTypeDataBlock.BurstDelay, archeTypeDataBlock.ShotDelay) : archeTypeDataBlock.ShotDelay));
+                builder.Append(" s");
                 builder.Append(CLOSE_COLOR_TAG);
             }
 
