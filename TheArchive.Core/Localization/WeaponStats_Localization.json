@@ -33,8 +33,8 @@
       },
       "TheArchive.Features.Hud.WeaponStats+WeaponStatsSettings.StatsToDisplay": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Weapon Stats To Display",
+          "Chinese": "启用的武器数据",
           "French": null,
           "Italian": null,
           "German": null,
@@ -46,8 +46,8 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": null,
-          "Chinese": null,
+          "English": "The stats to display for Bullet weapons.",
+          "Chinese": "要展示的枪械武器数据。",
           "French": null,
           "Italian": null,
           "German": null,
@@ -61,8 +61,8 @@
       },
       "TheArchive.Features.Hud.WeaponStats+WeaponStatsSettings.MeleeStatsToDisplay": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Melee Stats To Display",
+          "Chinese": "启用的近战武器数据",
           "French": null,
           "Italian": null,
           "German": null,
@@ -74,8 +74,8 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": null,
-          "Chinese": null,
+          "English": "The stats to display for Melee weapons.",
+          "Chinese": "要展示的近战武器数据。",
           "French": null,
           "Italian": null,
           "German": null,
@@ -159,7 +159,7 @@
       "TheArchive.Features.Hud.WeaponStats+WeaponStatsSettings.StrikethroughPierce": {
         "FSDisplayName": {
           "English": "Strikethrough Pierce Stat",
-          "Chinese": "删除 Pierce 统计信息",
+          "Chinese": "穿透数值使用下滑删除线",
           "French": null,
           "Italian": null,
           "German": null,
@@ -172,7 +172,7 @@
         },
         "FSDescription": {
           "English": "If the Prc stat should be shown with <s>strikethrough</s> text",
-          "Chinese": "是否以<s>删除线</s>显示 Prc 统计信息。",
+          "Chinese": "是否以<s>删除线</s>显示穿透数值。",
           "French": null,
           "Italian": null,
           "German": null,
@@ -190,17 +190,18 @@
         "English": {
           "Damage": "Damage",
           "Clip": "Clip",
-          "MaxAmmo": "MaxAmmo",
+          "MaxAmmo": "Max Ammo",
           "Reload": "Reload",
           "Stagger": "Stagger",
           "Precision": "Precision",
           "Pierce": "Pierce",
           "Burst": "Burst",
-          "BurstDelay": "BurstDelay",
-          "ShotgunPellets": "ShotgunPellets",
-          "ShotgunSpread": "ShotgunSpread",
-          "FalloffStart": "FalloffStart",
-          "FalloffEnd": "FalloffEnd"
+          "ShotgunPellets": "Shotgun Pellets",
+          "ShotgunSpread": "Shotgun Spread",
+          "FalloffStart": "Falloff Start",
+          "FalloffEnd": "Falloff End",
+          "ChargeupTime": "Chargeup Time",
+          "ShotDelay": "Shot Delay"
         },
         "Chinese": {
           "Damage": "伤害",
@@ -211,11 +212,12 @@
           "Precision": "精准",
           "Pierce": "穿透",
           "Burst": "连发",
-          "BurstDelay": "蓄力",
           "ShotgunPellets": "霰弹弹丸",
           "ShotgunSpread": "霰弹扩散",
           "FalloffStart": "衰减始",
-          "FalloffEnd": "衰减末"
+          "FalloffEnd": "衰减末",
+          "ChargeupTime": "蓄力时间",
+          "ShotDelay": "射击间隔"
         },
         "French": {
           "Damage": null,
@@ -226,11 +228,12 @@
           "Precision": null,
           "Pierce": null,
           "Burst": null,
-          "BurstDelay": null,
           "ShotgunPellets": null,
           "ShotgunSpread": null,
           "FalloffStart": null,
-          "FalloffEnd": null
+          "FalloffEnd": null,
+          "ChargeupTime": null,
+          "ShotDelay": null
         },
         "Italian": {
           "Damage": null,
@@ -241,11 +244,12 @@
           "Precision": null,
           "Pierce": null,
           "Burst": null,
-          "BurstDelay": null,
           "ShotgunPellets": null,
           "ShotgunSpread": null,
           "FalloffStart": null,
-          "FalloffEnd": null
+          "FalloffEnd": null,
+          "ChargeupTime": null,
+          "ShotDelay": null
         },
         "German": {
           "Damage": null,
@@ -256,11 +260,12 @@
           "Precision": null,
           "Pierce": null,
           "Burst": null,
-          "BurstDelay": null,
           "ShotgunPellets": null,
           "ShotgunSpread": null,
           "FalloffStart": null,
-          "FalloffEnd": null
+          "FalloffEnd": null,
+          "ChargeupTime": null,
+          "ShotDelay": null
         },
         "Spanish": {
           "Damage": null,
@@ -271,11 +276,12 @@
           "Precision": null,
           "Pierce": null,
           "Burst": null,
-          "BurstDelay": null,
           "ShotgunPellets": null,
           "ShotgunSpread": null,
           "FalloffStart": null,
-          "FalloffEnd": null
+          "FalloffEnd": null,
+          "ChargeupTime": null,
+          "ShotDelay": null
         },
         "Russian": {
           "Damage": null,
@@ -286,11 +292,12 @@
           "Precision": null,
           "Pierce": null,
           "Burst": null,
-          "BurstDelay": null,
           "ShotgunPellets": null,
           "ShotgunSpread": null,
           "FalloffStart": null,
-          "FalloffEnd": null
+          "FalloffEnd": null,
+          "ChargeupTime": null,
+          "ShotDelay": null
         },
         "Portuguese_Brazil": {
           "Damage": null,
@@ -301,11 +308,12 @@
           "Precision": null,
           "Pierce": null,
           "Burst": null,
-          "BurstDelay": null,
           "ShotgunPellets": null,
           "ShotgunSpread": null,
           "FalloffStart": null,
-          "FalloffEnd": null
+          "FalloffEnd": null,
+          "ChargeupTime": null,
+          "ShotDelay": null
         },
         "Polish": {
           "Damage": null,
@@ -316,11 +324,12 @@
           "Precision": null,
           "Pierce": null,
           "Burst": null,
-          "BurstDelay": null,
           "ShotgunPellets": null,
           "ShotgunSpread": null,
           "FalloffStart": null,
-          "FalloffEnd": null
+          "FalloffEnd": null,
+          "ChargeupTime": null,
+          "ShotDelay": null
         },
         "Japanese": {
           "Damage": null,
@@ -331,11 +340,12 @@
           "Precision": null,
           "Pierce": null,
           "Burst": null,
-          "BurstDelay": null,
           "ShotgunPellets": null,
           "ShotgunSpread": null,
           "FalloffStart": null,
-          "FalloffEnd": null
+          "FalloffEnd": null,
+          "ChargeupTime": null,
+          "ShotDelay": null
         },
         "Korean": {
           "Damage": null,
@@ -346,26 +356,28 @@
           "Precision": null,
           "Pierce": null,
           "Burst": null,
-          "BurstDelay": null,
           "ShotgunPellets": null,
           "ShotgunSpread": null,
           "FalloffStart": null,
-          "FalloffEnd": null
+          "FalloffEnd": null,
+          "ChargeupTime": null,
+          "ShotDelay": null
         }
       },
       "TheArchive.Features.Hud.WeaponStats+WeaponStatsSettings+MeleeStats": {
         "English": {
           "Damage": "Damage",
-          "DamageCharged": "DamageCharged",
+          "DamageCharged": "Damage Charged",
           "Stagger": "Stagger",
-          "StaggerCharged": "StaggerCharged",
+          "StaggerCharged": "Stagger Charged",
           "Precision": "Precision",
-          "PrecisionCharged": "PrecisionCharged",
-          "SleepingBonus": "SleepingBonus",
-          "SleepingBonusCharged": "SleepingBonusCharged",
+          "PrecisionCharged": "Precision Charged",
+          "SleepingBonus": "Sleeping Bonus",
+          "SleepingBonusCharged": "Sleeping Bonus Charged",
           "Environment": "Environment",
-          "EnvironmentCharged": "EnvironmentCharged",
-          "CanRun": "CanRun"
+          "EnvironmentCharged": "Environment Charged",
+          "CanRun": "Can Run",
+          "MaxDamageChargeTime": "Charge Time"
         },
         "Chinese": {
           "Damage": "伤害",
@@ -378,7 +390,8 @@
           "SleepingBonusCharged": "满蓄沉睡",
           "Environment": "环境",
           "EnvironmentCharged": "满蓄环境",
-          "CanRun": "奔跑"
+          "CanRun": "奔跑",
+          "MaxDamageChargeTime": "满蓄时间"
         },
         "French": {
           "Damage": null,
@@ -391,7 +404,8 @@
           "SleepingBonusCharged": null,
           "Environment": null,
           "EnvironmentCharged": null,
-          "CanRun": null
+          "CanRun": null,
+          "MaxDamageChargeTime": null
         },
         "Italian": {
           "Damage": null,
@@ -404,7 +418,8 @@
           "SleepingBonusCharged": null,
           "Environment": null,
           "EnvironmentCharged": null,
-          "CanRun": null
+          "CanRun": null,
+          "MaxDamageChargeTime": null
         },
         "German": {
           "Damage": null,
@@ -417,7 +432,8 @@
           "SleepingBonusCharged": null,
           "Environment": null,
           "EnvironmentCharged": null,
-          "CanRun": null
+          "CanRun": null,
+          "MaxDamageChargeTime": null
         },
         "Spanish": {
           "Damage": null,
@@ -430,7 +446,8 @@
           "SleepingBonusCharged": null,
           "Environment": null,
           "EnvironmentCharged": null,
-          "CanRun": null
+          "CanRun": null,
+          "MaxDamageChargeTime": null
         },
         "Russian": {
           "Damage": null,
@@ -443,7 +460,8 @@
           "SleepingBonusCharged": null,
           "Environment": null,
           "EnvironmentCharged": null,
-          "CanRun": null
+          "CanRun": null,
+          "MaxDamageChargeTime": null
         },
         "Portuguese_Brazil": {
           "Damage": null,
@@ -456,7 +474,8 @@
           "SleepingBonusCharged": null,
           "Environment": null,
           "EnvironmentCharged": null,
-          "CanRun": null
+          "CanRun": null,
+          "MaxDamageChargeTime": null
         },
         "Polish": {
           "Damage": null,
@@ -469,7 +488,8 @@
           "SleepingBonusCharged": null,
           "Environment": null,
           "EnvironmentCharged": null,
-          "CanRun": null
+          "CanRun": null,
+          "MaxDamageChargeTime": null
         },
         "Japanese": {
           "Damage": null,
@@ -482,7 +502,8 @@
           "SleepingBonusCharged": null,
           "Environment": null,
           "EnvironmentCharged": null,
-          "CanRun": null
+          "CanRun": null,
+          "MaxDamageChargeTime": null
         },
         "Korean": {
           "Damage": null,
@@ -495,7 +516,8 @@
           "SleepingBonusCharged": null,
           "Environment": null,
           "EnvironmentCharged": null,
-          "CanRun": null
+          "CanRun": null,
+          "MaxDamageChargeTime": null
         }
       }
     },
@@ -636,12 +658,12 @@
         }
       },
       {
-        "UntranslatedText": "Brst.Dly",
-        "Description": "Short_BurstDelay",
+        "UntranslatedText": "Shot.Dly",
+        "Description": "Short_ShotDelay",
         "ID": 16,
         "Languages": {
-          "English": "Brst.Dly",
-          "Chinese": "蓄力"
+          "English": "Shot.Dly",
+          "Chinese": "射击间隔"
         }
       },
       {
@@ -661,6 +683,33 @@
           "English": "Dst.F",
           "Chinese": "衰减末"
         }
+      },
+      {
+        "UntranslatedText": "Chrg.M",
+        "Description": "Short_MeleeMaxDamageChargeTime",
+        "ID": 19,
+        "Languages": {
+          "English": "Chrg.M",
+          "Chinese": "满蓄时间"
+        }
+      },
+      {
+        "UntranslatedText": "Chrg",
+        "Description": "Short_MeleeMaxDamageChargeTime",
+        "ID": 20,
+        "Languages": {
+          "English": "Chrg",
+          "Chinese": "蓄力时间"
+        }
+      },
+      {
+        "UntranslatedText": "You disabled it all, congrats!",
+        "Description": "",
+        "ID": 21,
+        "Languages": {
+          "English": "You disabled it all, congrats!",
+          "Chinese": "所有数值均已禁用！"
+        }
       }
     ]
   },
@@ -669,18 +718,18 @@
     "ExternalEnumTexts": {
       "TheArchive.Core.Attributes.Feature.Settings.FSSlider+RoundTo": {
         "English": {
-          "NoDecimal": null,
-          "OneDecimal": null,
-          "TwoDecimal": null,
-          "ThreeDecimal": null,
-          "NoRounding": null
+          "NoDecimal": "No Decimal",
+          "OneDecimal": "One Decimal",
+          "TwoDecimal": "Two Decimal",
+          "ThreeDecimal": "Three Decimal",
+          "NoRounding": "No Rounding"
         },
         "Chinese": {
-          "NoDecimal": null,
-          "OneDecimal": null,
-          "TwoDecimal": null,
-          "ThreeDecimal": null,
-          "NoRounding": null
+          "NoDecimal": "无小数",
+          "OneDecimal": "一位小数",
+          "TwoDecimal": "两位小数",
+          "ThreeDecimal": "三位小数",
+          "NoRounding": "不近似"
         },
         "French": {
           "NoDecimal": null,
