@@ -33,8 +33,8 @@
       },
       "TheArchive.Features.Special.AltTabCounter+AltTabCounterSettings.AltTabCounts": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Alt + Tab Counts",
+          "Chinese": "Alt + Tab 计数",
           "French": null,
           "Italian": null,
           "German": null,
