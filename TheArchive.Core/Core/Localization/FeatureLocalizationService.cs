@@ -22,8 +22,30 @@ namespace TheArchive.Core.Localization
             Feature = feature;
             _localizationData = data;
             LocalizationCoreService.RegisterLocalizationService(this);
+
+            _featureSettingsTexts.Clear();
             _extraTexts.Clear();
+
             foreach (var property in data.Internal.FeatureSettingsTexts)
+            {
+                Dictionary<FSType, Dictionary<Language, string>> typedic = new();
+                foreach (var type in property.Value)
+                {
+                    Dictionary<Language, string> dic = new();
+                    foreach (Language lang in Enum.GetValues(typeof(Language)))
+                    {
+                        if (!type.Value.TryGetValue(lang, out var text))
+                        {
+                            text = type.Value.FirstOrDefault().Value;
+                        }
+                        dic[lang] = text;
+                    }
+                    typedic[type.Key] = dic;
+                }
+                _featureSettingsTexts[property.Key] = typedic;
+            }
+
+            foreach (var property in data.External.ExternalFeatureSettingsTexts)
             {
                 Dictionary<FSType, Dictionary<Language, string>> typedic = new();
                 foreach (var type in property.Value)
