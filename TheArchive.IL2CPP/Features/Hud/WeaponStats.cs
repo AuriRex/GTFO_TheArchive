@@ -73,7 +73,7 @@ namespace TheArchive.Features.Hud
                 FalloffStart,
                 FalloffEnd,
                 ChargeupTime,
-                ShotDelay
+                FiringRate
             }
 
             [Localized]
@@ -132,7 +132,7 @@ namespace TheArchive.Features.Hud
                     Stats.Burst,
                     Stats.ShotgunPellets,
                     Stats.FalloffStart,
-                    Stats.ShotDelay
+                    Stats.FiringRate
                 };
 
                 Settings.MeleeStatsToDisplay = new List<MeleeStats>()
@@ -219,7 +219,7 @@ namespace TheArchive.Features.Hud
         public static string Short_ShotgunPelletCount => Instance.Localization.Get(13);
         public static string Short_ShotgunSpread => Instance.Localization.Get(14);
         public static string Short_BurstShotCount => Instance.Localization.Get(15);
-        public static string Short_ShotDelay => Instance.Localization.Get(16);
+        public static string Short_FiringRate => Instance.Localization.Get(16);
         public static string Short_FalloffDistanceClose => Instance.Localization.Get(17);
         public static string Short_FalloffDistanceFar => Instance.Localization.Get(18);
         public static string Short_SpecialChargeupTime => Instance.Localization.Get(20);
@@ -534,7 +534,7 @@ namespace TheArchive.Features.Hud
             {
                 if (Settings.IsStatEnabled(Stats.ShotgunPellets))
                 {
-                    Divider(ref count, builder, 4);
+                    Divider(ref count, builder, 3);
 
                     builder.Append("<#55022B>");
                     builder.Append($"{Short_ShotgunPelletCount} ");
@@ -544,7 +544,7 @@ namespace TheArchive.Features.Hud
 
                 if (Settings.IsStatEnabled(Stats.ShotgunSpread))
                 {
-                    Divider(ref count, builder, 4);
+                    Divider(ref count, builder, 3);
 
                     builder.Append("<#A918A7>");
                     builder.Append($"{Short_ShotgunSpread} ");
@@ -567,14 +567,14 @@ namespace TheArchive.Features.Hud
                 }
             }
 
-            if (Settings.IsStatEnabled(Stats.ShotDelay))
+            if (Settings.IsStatEnabled(Stats.FiringRate))
             {
                 Divider(ref count, builder, 3);
 
                 builder.Append("<#18A4A9>");
-                builder.Append($"{Short_ShotDelay} ");
-                builder.Append(Round(archeTypeDataBlock.FireMode == eWeaponFireMode.Burst ? Mathf.Max(archeTypeDataBlock.BurstDelay, archeTypeDataBlock.ShotDelay) : archeTypeDataBlock.ShotDelay));
-                builder.Append(" s");
+                builder.Append($"{Short_FiringRate} ");
+                builder.Append(Round(60f / (float)(archeTypeDataBlock.FireMode == eWeaponFireMode.Burst ? Mathf.Max(archeTypeDataBlock.BurstDelay, archeTypeDataBlock.ShotDelay) : archeTypeDataBlock.ShotDelay)));
+                builder.Append(" RPM");
                 builder.Append(CLOSE_COLOR_TAG);
             }
 

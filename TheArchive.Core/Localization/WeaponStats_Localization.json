@@ -201,7 +201,7 @@
           "FalloffStart": "Falloff Start",
           "FalloffEnd": "Falloff End",
           "ChargeupTime": "Chargeup Time",
-          "ShotDelay": "Shot Delay"
+          "FiringRate": "Firing Rate"
         },
         "Chinese": {
           "Damage": "伤害",
@@ -217,7 +217,7 @@
           "FalloffStart": "衰减始",
           "FalloffEnd": "衰减末",
           "ChargeupTime": "蓄力时间",
-          "ShotDelay": "射击间隔"
+          "FiringRate": "射速"
         },
         "French": {
           "Damage": null,
@@ -233,7 +233,7 @@
           "FalloffStart": null,
           "FalloffEnd": null,
           "ChargeupTime": null,
-          "ShotDelay": null
+          "FiringRate": null
         },
         "Italian": {
           "Damage": null,
@@ -249,7 +249,7 @@
           "FalloffStart": null,
           "FalloffEnd": null,
           "ChargeupTime": null,
-          "ShotDelay": null
+          "FiringRate": null
         },
         "German": {
           "Damage": null,
@@ -265,7 +265,7 @@
           "FalloffStart": null,
           "FalloffEnd": null,
           "ChargeupTime": null,
-          "ShotDelay": null
+          "FiringRate": null
         },
         "Spanish": {
           "Damage": null,
@@ -281,7 +281,7 @@
           "FalloffStart": null,
           "FalloffEnd": null,
           "ChargeupTime": null,
-          "ShotDelay": null
+          "FiringRate": null
         },
         "Russian": {
           "Damage": null,
@@ -297,7 +297,7 @@
           "FalloffStart": null,
           "FalloffEnd": null,
           "ChargeupTime": null,
-          "ShotDelay": null
+          "FiringRate": null
         },
         "Portuguese_Brazil": {
           "Damage": null,
@@ -313,7 +313,7 @@
           "FalloffStart": null,
           "FalloffEnd": null,
           "ChargeupTime": null,
-          "ShotDelay": null
+          "FiringRate": null
         },
         "Polish": {
           "Damage": null,
@@ -329,7 +329,7 @@
           "FalloffStart": null,
           "FalloffEnd": null,
           "ChargeupTime": null,
-          "ShotDelay": null
+          "FiringRate": null
         },
         "Japanese": {
           "Damage": null,
@@ -345,7 +345,7 @@
           "FalloffStart": null,
           "FalloffEnd": null,
           "ChargeupTime": null,
-          "ShotDelay": null
+          "FiringRate": null
         },
         "Korean": {
           "Damage": null,
@@ -361,7 +361,7 @@
           "FalloffStart": null,
           "FalloffEnd": null,
           "ChargeupTime": null,
-          "ShotDelay": null
+          "FiringRate": null
         }
       },
       "TheArchive.Features.Hud.WeaponStats+WeaponStatsSettings+MeleeStats": {
@@ -658,12 +658,12 @@
         }
       },
       {
-        "UntranslatedText": "Shot.Dly",
-        "Description": "Short_ShotDelay",
+        "UntranslatedText": "PRM",
+        "Description": "PRM",
         "ID": 16,
         "Languages": {
-          "English": "Shot.Dly",
-          "Chinese": "射击间隔"
+          "English": "PRM",
+          "Chinese": "射速"
         }
       },
       {
