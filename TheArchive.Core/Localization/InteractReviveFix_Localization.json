@@ -61,8 +61,8 @@
       },
       "TheArchive.Features.Hud.InteractReviveFix+InteractReviveFixSettings.MultiResWarning": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Multi-Res Warning Text",
+          "Chinese": "多人复活警告文本",
           "French": null,
           "Italian": null,
           "German": null,
@@ -74,8 +74,8 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": null,
-          "Chinese": null,
+          "English": "The warning text to display.\nDefault is: <#F00><u>/!\\</u></color> <u>Double</u>",
+          "Chinese": "要显示的警告提示.\n默认：<#F00><u>/!\\</u></color> <u>Double</u>",
           "French": null,
           "Italian": null,
           "German": null,
@@ -116,7 +116,7 @@
         },
         "FSHeader": {
           "English": "Advanced Multi-Res HUD Text",
-          "Chinese": "高级多人复活 HUD 文本",
+          "Chinese": "高级多人复活 HUD 提示",
           "French": null,
           "Italian": null,
           "German": null,
@@ -130,8 +130,8 @@
       },
       "TheArchive.Features.Hud.InteractReviveFix+InteractReviveFixSettings.MultiReviveOthersOverride": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Multi-Res Others Text",
+          "Chinese": "多人复活他人提示",
           "French": null,
           "Italian": null,
           "German": null,
@@ -143,8 +143,8 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": null,
-          "Chinese": null,
+          "English": "Displayed whenever you're reviving with multiple people.\n\nUse \"{0}\" to insert the name of the person you're reviving.\nUse \"{1}\" to insert the names of all the people reviving (excluding you)",
+          "Chinese": "每当你与多人一起复活时显示。\n\n使用“{0}”插入你正在复活的人的名字。\n使用“{1}”插入所有正在复活的人的名字（不包括你）。",
           "French": null,
           "Italian": null,
           "German": null,
@@ -158,8 +158,8 @@
       },
       "TheArchive.Features.Hud.InteractReviveFix+InteractReviveFixSettings.GettingMultiRevivedOverride": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Multi-Res Yourself Text",
+          "Chinese": "多人复活自己提示",
           "French": null,
           "Italian": null,
           "German": null,
@@ -171,8 +171,8 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": null,
-          "Chinese": null,
+          "English": "Displayed whenever you're getting revived by multiple people.\n\nUse \"{0}\" to insert the name of all the people reviving you.\nUse \"{1}\" to insert your name.",
+          "Chinese": "每当你被多人复活时显示。\n\n使用“{0}”插入所有复活你的人的名字。\n使用“{1}”插入你的名字。",
           "French": null,
           "Italian": null,
           "German": null,

@@ -59,6 +59,7 @@ namespace TheArchive.Features.Hud
             public KeyCode HideToggleKey { get; set; } = KeyCode.RightControl;
 
             [FSHeader(":// Other")]
+            [FSDisplayName("Colors")]
             public ItemColors Colors { get; set; } = new ItemColors();
 
             [FSDisplayName("Sort Gear by ...")]

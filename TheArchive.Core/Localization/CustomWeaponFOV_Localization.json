@@ -64,7 +64,7 @@
       "TheArchive.Features.Cosmetic.CustomWeaponFOV+WeaponFOVSettings.IGNORE_EMPTY": {
         "FSHeader": {
           "English": "Add to all",
-          "Chinese": "Add to all",
+          "Chinese": "应用到所有",
           "French": null,
           "Italian": null,
           "German": null,

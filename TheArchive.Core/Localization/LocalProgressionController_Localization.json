@@ -118,7 +118,7 @@
         },
         "FSDescription": {
           "English": "Only works with LocalProgression enabled!",
-          "Chinese": "只有启用了 本地关卡 才能工作!!",
+          "Chinese": "只有启用了 本地关卡进度 才能工作!!",
           "French": null,
           "Italian": null,
           "German": null,

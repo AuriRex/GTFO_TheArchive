@@ -27,6 +27,7 @@ namespace TheArchive.Features.Special
         public class CustomLobbyCodeStringConfig
         {
             [FSMaxLength(120)]
+            [FSDisplayName("Format")]
             public string Format { get; set; } = DefaultFormat;
         }
 

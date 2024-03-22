@@ -30,6 +30,21 @@
           "Japanese": null,
           "Korean": null
         }
+      },
+      "TheArchive.Features.Special.CustomLobbyCodeString+CustomLobbyCodeStringConfig.Format": {
+        "FSDisplayName": {
+          "English": "Format",
+          "Chinese": "格式",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
       }
     },
     "FeatureSettingsEnumTexts": {},

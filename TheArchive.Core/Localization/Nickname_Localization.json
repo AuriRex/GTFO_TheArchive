@@ -401,7 +401,53 @@
         }
       }
     },
-    "ExtraTexts": []
+    "ExtraTexts": [
+      {
+        "UntranslatedText": "Nickname budget: {0} / 25  =>  {1}",
+        "Description": "",
+        "ID": 1,
+        "Languages": {
+          "English": "Nickname budget: {0} / 25  =>  {1}",
+          "Chinese": "昵称预览: {0} / 25  =>  {1}"
+        }
+      },
+      {
+        "UntranslatedText": "<color=orange><u>/!\\</u></color> Your Player color is going to escape! (Max 11 characters)",
+        "Description": "",
+        "ID": 2,
+        "Languages": {
+          "English": "<color=orange><u>/!\\</u></color> Your Player color is going to escape! (Max 11 characters)",
+          "Chinese": "<color=orange><u>/!\\</u></color> 你的玩家颜色太长了！（最长11个字符）"
+        }
+      },
+      {
+        "UntranslatedText": "Colored name applied!",
+        "Description": "",
+        "ID": 3,
+        "Languages": {
+          "English": "Colored name applied!",
+          "Chinese": "彩色昵称已应用！"
+        }
+      },
+      {
+        "UntranslatedText": "<color=red><u>/!\\</u></color> Name too long, can't apply color! (Max 19 characters)",
+        "Description": "",
+        "ID": 4,
+        "Languages": {
+          "English": "<color=red><u>/!\\</u></color> Name too long, can't apply color! (Max 19 characters)",
+          "Chinese": "<color=red><u>/!\\</u></color> 昵称太长了，无法应用颜色！（最长19个字符）"
+        }
+      },
+      {
+        "UntranslatedText": "<#440144><u>/!\\</u></color> Custom Color Tags detected! => <noparse>{0}</noparse>",
+        "Description": "",
+        "ID": 5,
+        "Languages": {
+          "English": "<#440144><u>/!\\</u></color> Custom Color Tags detected! => <noparse>{0}</noparse>",
+          "Chinese": "<#440144><u>/!\\</u></color> 检测到自定义颜色标记！ => <noparse>{0}</noparse>"
+        }
+      }
+    ]
   },
   "External": {
     "ExternalFeatureSettingsTexts": {},

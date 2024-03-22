@@ -43,10 +43,13 @@ namespace TheArchive.Core.FeaturesAPI
         {
             get
             {
-                string propID = $"{_feature.GetType().FullName}.{nameof(Feature.Name)}";
-                if (Localization.TryGetFSText(propID, FSType.FName, out var text))
+                if (_feature.GetType().GetProperty(nameof(Feature.Name)).GetCustomAttribute<IgnoreLocalization>() == null)
                 {
-                    return text;
+                    string propID = $"{_feature.GetType().FullName}.{nameof(Feature.Name)}";
+                    if (Localization.TryGetFSText(propID, FSType.FName, out var text))
+                    {
+                        return text;
+                    }
                 }
                 return _feature.Name;
             }
@@ -55,10 +58,13 @@ namespace TheArchive.Core.FeaturesAPI
         {
             get
             {
-                string propID = $"{_feature.GetType().FullName}.{nameof(Feature.Description)}";
-                if (Localization.TryGetFSText(propID, FSType.FDescription, out var text))
+                if (_feature.GetType().GetProperty(nameof(Feature.Description)).GetCustomAttribute<IgnoreLocalization>() == null)
                 {
-                    return text;
+                    string propID = $"{_feature.GetType().FullName}.{nameof(Feature.Description)}";
+                    if (Localization.TryGetFSText(propID, FSType.FDescription, out var text))
+                    {
+                        return text;
+                    }
                 }
                 return _feature.Description;
             }

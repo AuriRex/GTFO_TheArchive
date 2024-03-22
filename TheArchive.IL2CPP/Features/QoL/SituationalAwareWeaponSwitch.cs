@@ -37,6 +37,7 @@ namespace TheArchive.Features.QoL
             };
 
             [FSHide]
+            [FSDisplayName("Is First Time")]
             public bool IsFirstTime { get; set; } = true;
 
             [FSDisplayName("Log Weapon Switches to Console")]

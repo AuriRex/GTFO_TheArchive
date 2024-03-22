@@ -46,8 +46,8 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": "Hold this key and select the Gear in the weapon picker to mark is as <color=orange>{nameof(ItemFavState.Favorite)}</color>.",
-          "Chinese": "按住此键并在武器选择器中选择装备，标记为<color=orange>{nameof(ItemFavState.Favorite)}</color>。",
+          "English": "Hold this key and select the Gear in the weapon picker to mark is as <color=orange>Favorite</color>.",
+          "Chinese": "按住此键并在武器选择器中选择装备，标记为<color=orange>喜好</color>。",
           "French": null,
           "Italian": null,
           "German": null,
@@ -104,8 +104,8 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": "Hold this key and select the Gear in the weapon picker to mark is as <color=orange>{nameof(ItemFavState.Hidden)}</color>.",
-          "Chinese": "按住此键并在武器选择器中选择装备，将其标记为 <color=orange>{nameof(ItemFavState.Hidden)}</color>。",
+          "English": "Hold this key and select the Gear in the weapon picker to mark is as <color=orange>Hidden</color>.",
+          "Chinese": "按住此键并在武器选择器中选择装备，将其标记为 <color=orange>隐藏</color>。",
           "French": null,
           "Italian": null,
           "German": null,
@@ -118,9 +118,22 @@
         }
       },
       "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.Colors": {
+        "FSDisplayName": {
+          "English": "Colors",
+          "Chinese": "颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
         "FSHeader": {
-          "English": null,
-          "Chinese": null,
+          "English": ":// Other",
+          "Chinese": ":// 其他",
           "French": null,
           "Italian": null,
           "German": null,
@@ -175,8 +188,8 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": "Gear marked as <color=orange>{nameof(ItemFavState.Hidden)}</color> will be removed from the weapon picker.",
-          "Chinese": "标记为 <color=orange>{nameof(ItemFavState.Hidden)}</color> 的装备将从武器选择器中移除。",
+          "English": "Gear marked as <color=orange>Hidden</color> will be removed from the weapon picker.",
+          "Chinese": "标记为 <color=orange>隐藏</color> 的装备将从武器选择器中移除。",
           "French": null,
           "Italian": null,
           "German": null,
@@ -218,8 +231,8 @@
       },
       "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.Entries": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Favorites (Vanilla)",
+          "Chinese": "喜好（原版）",
           "French": null,
           "Italian": null,
           "German": null,
@@ -233,8 +246,8 @@
       },
       "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.EntriesModded": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Favorites (Modded)",
+          "Chinese": "喜好（修改的）",
           "French": null,
           "Italian": null,
           "German": null,
@@ -319,8 +332,8 @@
       },
       "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings+WeaponPickerEntry.Name": {
         "FSHeader": {
-          "English": null,
-          "Chinese": null,
+          "English": "--------------------------------",
+          "Chinese": "--------------------------------",
           "French": null,
           "Italian": null,
           "German": null,
@@ -334,8 +347,8 @@
       },
       "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings+WeaponPickerEntry.Checksum": {
         "FSDescription": {
-          "English": null,
-          "Chinese": null,
+          "English": "The items unique identifier*\n\n<size=50%>*usually unique</size>",
+          "Chinese": "物品的唯一标识符*\n\n<size=50%>*通常是唯一的</size>",
           "French": null,
           "Italian": null,
           "German": null,
@@ -408,14 +421,14 @@
       },
       "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings+ItemFavState": {
         "English": {
-          "Favorite": null,
-          "Normal": null,
-          "Hidden": null
+          "Favorite": "Favorite",
+          "Normal": "Normal",
+          "Hidden": "Hidden"
         },
         "Chinese": {
-          "Favorite": null,
-          "Normal": null,
-          "Hidden": null
+          "Favorite": "喜好",
+          "Normal": "正常",
+          "Hidden": "隐藏"
         },
         "French": {
           "Favorite": null,

@@ -61,8 +61,8 @@
       },
       "TheArchive.Features.QoL.LastUsedGearSwitcher+LastUsedGearSwitcherSettings.DebugLog": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Prints Debug Info",
+          "Chinese": "输出调试信息",
           "French": null,
           "Italian": null,
           "German": null,

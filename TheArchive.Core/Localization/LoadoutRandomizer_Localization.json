@@ -33,8 +33,8 @@
       },
       "TheArchive.Features.QoL.LoadoutRandomizer+LoadoutRandomizerSettings.ExcludedSlots": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Do not randomize",
+          "Chinese": "忽略槽位",
           "French": null,
           "Italian": null,
           "German": null,
@@ -48,8 +48,8 @@
       },
       "TheArchive.Features.QoL.LoadoutRandomizer+LoadoutRandomizerSettings.Mode": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Mode",
+          "Chinese": "模式",
           "French": null,
           "Italian": null,
           "German": null,
@@ -65,16 +65,16 @@
     "FeatureSettingsEnumTexts": {
       "TheArchive.Features.QoL.LoadoutRandomizer+LoadoutRandomizerSettings+InventorySlots": {
         "English": {
-          "Primary": null,
-          "Special": null,
-          "Tool": null,
-          "Melee": null
+          "Primary": "Primary",
+          "Special": "Special",
+          "Tool": "Tool",
+          "Melee": "Melee"
         },
         "Chinese": {
-          "Primary": null,
-          "Special": null,
-          "Tool": null,
-          "Melee": null
+          "Primary": "主",
+          "Special": "副",
+          "Tool": "工具",
+          "Melee": "近战"
         },
         "French": {
           "Primary": null,
@@ -133,12 +133,12 @@
       },
       "TheArchive.Features.QoL.LoadoutRandomizer+LoadoutRandomizerSettings+RandomizerMode": {
         "English": {
-          "True": null,
-          "NoDuplicate": null
+          "True": "True",
+          "NoDuplicate": "No Duplicate"
         },
         "Chinese": {
-          "True": null,
-          "NoDuplicate": null
+          "True": "完全",
+          "NoDuplicate": "不重复"
         },
         "French": {
           "True": null,

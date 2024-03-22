@@ -255,24 +255,24 @@ namespace TheArchive.Features.Accessibility
                 }
             }
 
-            var text = $"Nickname budget: {nickLength} / 25  =>  {colPrefix}{Settings.Nickname}";
+            var text = Localization.Format(1, nickLength, $"{colPrefix}{Settings.Nickname}");
             if (Settings.InfoLabelTop.HasPrimaryText)
                 Settings.InfoLabelTop.PrimaryText.TryCastTo<TextMeshPro>().text = text;
             Settings.InfoLabelTop.LabelText = text;
 
             var textBottom = Settings.Mode switch
             {
-                NicknameMode.Color => "<color=orange><u>/!\\</u></color> Your Player color is going to escape! (Max 11 characters)",
-                NicknameMode.TerminatedColor => "Colored name applied!",
+                NicknameMode.Color => Localization.Get(2),
+                NicknameMode.TerminatedColor => Localization.Get(3),
                 _ => ""
             };
 
             if (nickLength > 19 && Settings.UseColor)
-                textBottom = "<color=red><u>/!\\</u></color> Name too long, can't apply color! (Max 19 characters)";
+                textBottom = Localization.Get(4);
 
             if (advancedMode)
             {
-                textBottom = $"<#440144><u>/!\\</u></color> Custom Color Tags detected! => <noparse>{Settings.Nickname}</noparse>";
+                textBottom = Localization.Format(5, Settings.Nickname);
             }
 
             if (Settings.InfoLabelBottom.HasPrimaryText)

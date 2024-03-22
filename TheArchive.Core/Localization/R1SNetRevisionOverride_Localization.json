@@ -18,8 +18,8 @@
       },
       "TheArchive.Features.Special.R1SNetRevisionOverride.Description": {
         "FDescription": {
-          "English": "Makes you able to join players who are playing on R1 build <color=orange>{RevisionOverride}</color> even though you're on <color=orange>{kOriginalRevision}</color>.",
-          "Chinese": "使您能够加入使用R1版本<color=orange>{RevisionOverride}</color>进行游戏的玩家，即使您的版本是<color=orange>{kOriginalRevision}</color>。",
+          "English": "Makes you able to join players who are playing on R1 build <color=orange>{0}</color> even though you're on <color=orange>{1}</color>.",
+          "Chinese": "使您能够加入使用R1版本<color=orange>{0}</color>进行游戏的玩家，即使您的版本是<color=orange>{1}</color>。",
           "French": null,
           "Italian": null,
           "German": null,
@@ -33,7 +33,17 @@
       }
     },
     "FeatureSettingsEnumTexts": {},
-    "ExtraTexts": []
+    "ExtraTexts": [
+      {
+        "UntranslatedText": "Makes you able to join players who are playing on R1 build <color=orange>{0}</color> even though you're on <color=orange>{1}</color>.",
+        "Description": "",
+        "ID": 1,
+        "Languages": {
+          "English": "Makes you able to join players who are playing on R1 build <color=orange>{0}</color> even though you're on <color=orange>{1}</color>.",
+          "Chinese": "使你能够加入正在使用R1版本<color=orange>{0}</color>玩游戏的玩家，即使你使用的是<color=orange>{1}</color>版本。"
+        }
+      }
+    ]
   },
   "External": {
     "ExternalFeatureSettingsTexts": {},

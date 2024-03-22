@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
@@ -18,6 +19,7 @@ namespace TheArchive.Features.Special
 
         public class ProcessPrioritySettings
         {
+            [FSDisplayName("Priority")]
             public PriorityClass Priority { get; set; } = PriorityClass.AboveNormal;
 
             [Localized]

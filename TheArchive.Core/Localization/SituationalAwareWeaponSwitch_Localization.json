@@ -31,6 +31,21 @@
           "Korean": null
         }
       },
+      "TheArchive.Features.QoL.SituationalAwareWeaponSwitch+SituationalAwareWeaponSwitchSettings.IsFirstTime": {
+        "FSDisplayName": {
+          "English": "Is First Time",
+          "Chinese": "是否是第一次",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
       "TheArchive.Features.QoL.SituationalAwareWeaponSwitch+SituationalAwareWeaponSwitchSettings.LogWeaponSwitchesToConsole": {
         "FSDisplayName": {
           "English": "Log Weapon Switches to Console",

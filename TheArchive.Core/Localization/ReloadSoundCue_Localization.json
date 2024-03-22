@@ -74,8 +74,8 @@
       },
       "TheArchive.Features.QoL.ReloadSoundCue+ReloadSoundCueSettings.SoundEvent": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Sound Event",
+          "Chinese": "音效",
           "French": null,
           "Italian": null,
           "German": null,

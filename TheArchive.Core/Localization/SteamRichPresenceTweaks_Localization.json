@@ -4,7 +4,7 @@
       "TheArchive.Features.Presence.SteamRichPresenceTweaks.Name": {
         "FName": {
           "English": "Steam Rich Presence Tweaks",
-          "Chinese": "Steam的状态调整",
+          "Chinese": "Steam 的状态调整",
           "French": null,
           "Italian": null,
           "German": null,
@@ -19,7 +19,7 @@
       "TheArchive.Features.Presence.SteamRichPresenceTweaks.Description": {
         "FDescription": {
           "English": "Set a custom text for Steams' presence system.",
-          "Chinese": "为steam的状态设置自定义文本。",
+          "Chinese": "为 steam 的状态设置自定义文本。",
           "French": null,
           "Italian": null,
           "German": null,
@@ -61,8 +61,8 @@
       },
       "TheArchive.Features.Presence.SteamRichPresenceTweaks+SteamRPCSettings.CustomSteamRPCFormat": {
         "FSDisplayName": {
-          "English": null,
-          "Chinese": null,
+          "English": "Custom Steam RPC Format",
+          "Chinese": "自定义 Steam RPC 格式",
           "French": null,
           "Italian": null,
           "German": null,
