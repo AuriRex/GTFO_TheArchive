@@ -573,7 +573,8 @@ namespace TheArchive.Features.Hud
 
                 builder.Append("<#18A4A9>");
                 builder.Append($"{Short_FiringRate} ");
-                builder.Append(Round(60f / (float)(archeTypeDataBlock.FireMode == eWeaponFireMode.Burst ? Mathf.Max(archeTypeDataBlock.BurstDelay, archeTypeDataBlock.ShotDelay) : archeTypeDataBlock.ShotDelay)));
+                float dly = (float)(archeTypeDataBlock.FireMode == eWeaponFireMode.Burst ? Mathf.Max(archeTypeDataBlock.BurstDelay, archeTypeDataBlock.ShotDelay) : archeTypeDataBlock.ShotDelay);
+                builder.Append(dly <= 0 ? "∞" : Round(60f / dly));
                 builder.Append(" RPM");
                 builder.Append(CLOSE_COLOR_TAG);
             }

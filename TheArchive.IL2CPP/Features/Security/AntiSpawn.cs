@@ -14,7 +14,8 @@ using TheArchive.Utilities;
 namespace TheArchive.Features.Security
 {
 #if BepInEx
-    [ForceDisable] // LoaderWrapper.NativeHookAttach isn't implemented for BIE yet
+    [DisallowInGameToggle]
+    [DoNotSaveToConfig]
 #endif
     [EnableFeatureByDefault]
     [RundownConstraint(Utils.RundownFlags.RundownSix, Utils.RundownFlags.Latest)]
@@ -52,10 +53,12 @@ namespace TheArchive.Features.Security
             }
         }
 
+#if !BepInEx
         public override void OnEnable()
         {
             OneTimePatch();
         }
+#endif
 
 #warning TODO: Refactor after ML upgrade to Il2CppInterop
         private static unsafe TDelegate ApplyNativePatch<TToPatch, TDelegate>(MethodInfo patchMethod, string originalMethodName, Type[] parameterTypes = null) where TDelegate : Delegate
@@ -203,5 +206,56 @@ namespace TheArchive.Features.Security
                     return true;
             }
         }
+
+#if BepInEx
+        [ArchivePatch(typeof(SNet_Replication), nameof(SNet_Replication.RegisterReplicationManager))]
+        private class SNet_Replication__RegisterReplicationManager__Patch
+        {
+            static void Postfix(ref SNet_ReplicationManager manager)
+            {
+                var manager1 = manager.TryCast<SNet_ReplicationManager<pEnemyGroupSpawnData, SNet_DynamicReplicator<pEnemyGroupSpawnData>>>();
+                if (manager1 != null)
+                {
+                    Il2CppSystem.Action<pEnemyGroupSpawnData> _original1 = manager1.m_spawnRequestPacket.ReceiveAction;
+                    Action<pEnemyGroupSpawnData> detour1 = delegate (pEnemyGroupSpawnData data)
+                    {
+                        if (SNet.IsMaster && !SNet.Capture.IsCheckpointRecall)
+                        {
+                            bool cancelSpawn = true;
+
+                            if (SNet.Replication.TryGetLastSender(out var sender))
+                                cancelSpawn = PunishPlayer(sender);
+
+                            if (cancelSpawn) return;
+                        }
+                        _original1?.Invoke(data);
+                    };
+                    manager1.m_spawnRequestPacket.ReceiveAction = detour1;
+                    return;
+                }
+
+                var manager2 = manager.TryCast<EnemyAllocator.EnemyReplicationManager>();
+                if (manager2 != null)
+                {
+                    Il2CppSystem.Action<pEnemySpawnData> _original2 = manager2.m_spawnRequestPacket.ReceiveAction;
+                    Action<pEnemySpawnData> detour2 = delegate (pEnemySpawnData data)
+                    {
+                        if (SNet.IsMaster && !SNet.Capture.IsCheckpointRecall)
+                        {
+                            bool cancelSpawn = true;
+
+                            if (SNet.Replication.TryGetLastSender(out var sender))
+                                cancelSpawn = PunishPlayer(sender);
+
+                            if (cancelSpawn) return;
+                        }
+                        _original2?.Invoke(data);
+                    };
+                    manager2.m_spawnRequestPacket.ReceiveAction = detour2;
+                    return;
+                }
+            }
+        }
+#endif
     }
 }
