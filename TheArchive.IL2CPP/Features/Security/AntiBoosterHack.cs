@@ -114,7 +114,8 @@ namespace TheArchive.Features.Security
             {
                 OldBoosterImplantTemplateDataBlocks.Clear();
                 OldBoosterImplantTemplateDataBlocks.AddRange(JsonConvert.DeserializeObject<List<BoosterImplantTemplateDataBlock>>(R5BoosterTemplatesJson, new JsonConverter[]
-                { new LocalizedTextJsonConverter(), 
+                {
+                    new LocalizedTextJsonConverter(), 
                     new ListOfTConverter<uint>(), 
                     new ListOfTConverter<BoosterImplantEffectInstance>(),
                     new ListOfListOfTConverter<BoosterImplantEffectInstance>()
@@ -133,6 +134,8 @@ namespace TheArchive.Features.Security
 
             public static bool TryGetBoosterImplantTemplate(pBoosterImplantData boosterImplant, BoosterImplantCategory category)
             {
+                if (boosterImplant == null) return false;
+
                 uint persistenID = boosterImplant.BoosterImplantID;
                 var templates = BoosterImplantTemplates.FindAll(p => p.BoosterImplantID == persistenID && p.ImplantCategory == category);
                 for (int k = 0; k < templates.Count; k++)
@@ -162,36 +165,34 @@ namespace TheArchive.Features.Security
                             break;
                         }
                     }
-                    if (!ConditionMatch)
-                    {
-                        continue;
-                    }
+                    if (!ConditionMatch) continue;
+
                     int effectCount = boosterImplant.BoosterEffectCount;
                     bool EffectMatch = false;
                     var effectGroups = template.EffectGroups;
                     var effects = boosterImplant.BoosterEffectDatas.Take(effectCount);
                     for (int i = 0; i < effectGroups.Count; i++)
                     {
-                        if (effectGroups[i].Count != effectCount)
-                        {
-                            continue;
-                        }
+                        if (effectGroups[i].Count != effectCount) continue;
+
                         for (int j = 0; j < effectGroups[i].Count; j++)
                         {
-                            bool flag1 = effects.All(p => effectGroups[i].Any(q => q.BoosterImplantEffect == p.BoosterEffectID && p.EffectValue >= q.EffectMinValue && p.EffectValue <= q.EffectMaxValue));
-                            bool flag2 = effectGroups[i].All(p => effects.Any(q => q.BoosterEffectID == p.BoosterImplantEffect && q.EffectValue >= p.EffectMinValue && q.EffectValue <= p.EffectMaxValue));
+                            bool flag1 = effects.All(p => effectGroups[i].Any(q => q.BoosterImplantEffect == p.BoosterEffectID
+                            && p.EffectValue >= q.EffectMinValue && p.EffectValue <= q.EffectMaxValue));
+                            bool flag2 = effectGroups[i].All(p => effects.Any(q => q.BoosterEffectID == p.BoosterImplantEffect
+                            && q.EffectValue >= p.EffectMinValue && q.EffectValue <= p.EffectMaxValue));
                             if (flag1 && flag2)
                             {
                                 EffectMatch = true;
                                 break;
                             }
                         }
+
+                        if (EffectMatch) break;
                     }
-                    if (!EffectMatch)
-                    {
-                        continue;
-                    }
-                    var UsageMatch = boosterImplant.UseCount <= (int)template.TemplateDataBlock.DurationRange.y;
+                    if (!EffectMatch) continue;
+
+                    var UsageMatch = boosterImplant.UseCount >= (int)template.TemplateDataBlock.DurationRange.x && boosterImplant.UseCount <= (int)template.TemplateDataBlock.DurationRange.y;
                     if (ConditionMatch && EffectMatch && UsageMatch)
                     {
                         return true;
