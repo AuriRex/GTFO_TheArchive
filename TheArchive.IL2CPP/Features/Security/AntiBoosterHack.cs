@@ -178,8 +178,8 @@ namespace TheArchive.Features.Security
                         }
                         for (int j = 0; j < effectGroups[i].Count; j++)
                         {
-                            bool flag1 = effects.All(p => effectGroups[i].Any(q => q.BoosterImplantEffect == p.BoosterEffectID));
-                            bool flag2 = effectGroups[i].All(p => effects.Any(q => q.BoosterEffectID == p.BoosterImplantEffect));
+                            bool flag1 = effects.All(p => effectGroups[i].Any(q => q.BoosterImplantEffect == p.BoosterEffectID && p.EffectValue >= q.EffectMinValue && p.EffectValue <= q.EffectMaxValue));
+                            bool flag2 = effectGroups[i].All(p => effects.Any(q => q.BoosterEffectID == p.BoosterImplantEffect && q.EffectValue >= p.EffectMinValue && q.EffectValue <= p.EffectMaxValue));
                             if (flag1 && flag2)
                             {
                                 EffectMatch = true;
