@@ -81,6 +81,6 @@
 		</PreBuildEvent>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="GitInfo" Version="2.2.0" />
+		<PackageReference Include="GitInfo" Version="2.3.0" />
 	</ItemGroup>
 </Project>
