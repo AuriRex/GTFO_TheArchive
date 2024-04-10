@@ -5,6 +5,7 @@ using SNetwork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
@@ -192,7 +193,7 @@ namespace TheArchive.Features.Security
                     }
                     if (!EffectMatch) continue;
 
-                    var UsageMatch = boosterImplant.UseCount >= (int)template.TemplateDataBlock.DurationRange.x && boosterImplant.UseCount <= (int)template.TemplateDataBlock.DurationRange.y;
+                    var UsageMatch = boosterImplant.UseCount <= (int)template.TemplateDataBlock.DurationRange.y;
                     if (ConditionMatch && EffectMatch && UsageMatch)
                     {
                         return true;
