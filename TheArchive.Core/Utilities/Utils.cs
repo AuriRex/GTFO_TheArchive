@@ -732,39 +732,50 @@ namespace TheArchive.Utilities
 
         public static IEnumerable<TNode> TopologicalSort<TNode>(IEnumerable<TNode> nodes, Func<TNode, IEnumerable<TNode>> dependencySelector)
         {
+            var sortedList = new List<TNode>();
             var visited = new HashSet<TNode>();
-            var result = new List<TNode>();
-            var stack = new Stack<TNode>();
+            var sorted = new HashSet<TNode>();
+
+            bool Visit(TNode node, Stack<TNode> stack)
+            {
+                if (visited.Contains(node))
+                {
+                    if (!sorted.Contains(node))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    visited.Add(node);
+                    stack.Push(node);
+
+                    foreach (var dep in dependencySelector(node))
+                    {
+                        if (!Visit(dep, stack))
+                        {
+                            return false;
+                        }
+                    }
+
+                    sorted.Add(node);
+                    sortedList.Add(node);
+                    stack.Pop();
+                }
+
+                return true;
+            }
 
             foreach (var node in nodes)
             {
-                if (!visited.Contains(node))
+                var currentStack = new Stack<TNode>();
+                if (!Visit(node, currentStack))
                 {
-                    Visit(node, visited, stack, dependencySelector);
+                    throw new Exception("Cyclic Dependency:\r\n" + string.Join("\r\n", currentStack.Select(x => $" - {x}")));
                 }
             }
 
-            while (stack.Count > 0)
-            {
-                result.Add(stack.Pop());
-            }
-
-            return result;
-        }
-
-        private static void Visit<TNode>(TNode node, HashSet<TNode> visited, Stack<TNode> stack, Func<TNode, IEnumerable<TNode>> dependencySelector)
-        {
-            visited.Add(node);
-
-            foreach (var dependency in dependencySelector(node))
-            {
-                if (!visited.Contains(dependency))
-                {
-                    Visit(dependency, visited, stack, dependencySelector);
-                }
-            }
-
-            stack.Push(node);
+            return sortedList;
         }
     }
 }

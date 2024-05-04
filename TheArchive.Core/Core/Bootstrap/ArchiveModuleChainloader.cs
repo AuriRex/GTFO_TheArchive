@@ -200,8 +200,7 @@ public class ArchiveModuleChainloader
         var emptyDependencies = Array.Empty<string>();
         return (from x in Utils.TopologicalSort(dependencyDict.Keys, delegate (string x)
         {
-            IEnumerable<string> deps;
-            if (!dependencyDict.TryGetValue(x, out deps))
+            if (!dependencyDict.TryGetValue(x, out var deps))
             {
                 return emptyDependencies;
             }
