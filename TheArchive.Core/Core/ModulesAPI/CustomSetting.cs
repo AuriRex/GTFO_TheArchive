@@ -52,7 +52,7 @@ public class CustomSetting<T> : ICustomSetting where T : new()
         if (File.Exists(FullPath))
             json = File.ReadAllText(FullPath);
         var rjson = JsonConvert.SerializeObject(Value, ArchiveMod.JsonSerializerSettings);
-        if (json.ComputeSHA256() != rjson.ComputeSHA256())
+        if (json.HashString() != rjson.HashString())
             File.WriteAllText(FullPath, rjson);
     }
 }

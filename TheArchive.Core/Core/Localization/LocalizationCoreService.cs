@@ -194,7 +194,7 @@ namespace TheArchive.Core.Localization
             {
                 var data = JsonConvert.DeserializeObject<ArchiveCoreLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
                 var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
-                if (rjson.ComputeSHA256() != json.ComputeSHA256())
+                if (rjson.HashString() != json.HashString())
                 {
                     File.WriteAllText(path, JsonConvert.SerializeObject(LocalizationData, ArchiveMod.JsonSerializerSettings));
                 }

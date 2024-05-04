@@ -496,7 +496,7 @@ namespace TheArchive.Utilities
                 var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
                 var rdata = FeatureInternal.GenerateFeatureLocalization(feature, data);
                 var rjson = JsonConvert.SerializeObject(rdata, ArchiveMod.JsonSerializerSettings);
-                if (rjson.ComputeSHA256() != json.ComputeSHA256())
+                if (rjson.HashString() != json.HashString())
                     File.WriteAllText(path, rjson);
                 return rdata;
             }

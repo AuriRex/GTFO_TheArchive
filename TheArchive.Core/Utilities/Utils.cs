@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mono.Cecil;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -605,7 +606,17 @@ namespace TheArchive.Utilities
             return types.ToHashSet();
         }
 
-        public static string ComputeSHA256(this string input)
+        public static string ByteArrayToString(byte[] data)
+        {
+            StringBuilder builder = new StringBuilder(data.Length * 2);
+            foreach (byte b in data)
+            {
+                builder.AppendFormat("{0:x2}", b);
+            }
+            return builder.ToString();
+        }
+
+        public static string HashString(this string input)
         {
             using (SHA256 sha256 = SHA256.Create())
             {
@@ -613,6 +624,147 @@ namespace TheArchive.Utilities
                 byte[] hashBytes = sha256.ComputeHash(inputBytes);
                 return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
             }
+        }
+
+        public static string HashStream(Stream stream)
+        {
+            string text;
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] buf = new byte[4096];
+                int read;
+                while ((read = stream.Read(buf, 0, buf.Length)) > 0)
+                {
+                    sha256.TransformBlock(buf, 0, read, buf, 0);
+                }
+                sha256.TransformFinalBlock(new byte[0], 0, 0);
+                text = ByteArrayToString(sha256.Hash);
+            }
+            return text;
+        }
+
+        public static bool TryResolveDllAssembly<T>(AssemblyName assemblyName, string directory, Func<string, T> loader, out T assembly) where T : class
+        {
+            assembly = default(T);
+            List<string> potentialDirectories = new List<string> { directory };
+            if (!Directory.Exists(directory))
+            {
+                return false;
+            }
+            potentialDirectories.AddRange(Directory.GetDirectories(directory, "*", SearchOption.AllDirectories));
+            foreach (string subDirectory in potentialDirectories)
+            {
+                foreach (string potentialPath in new string[]
+                {
+                    assemblyName.Name + ".dll",
+                    assemblyName.Name + ".exe"
+                })
+                {
+                    string path = Path.Combine(subDirectory, potentialPath);
+                    if (File.Exists(path))
+                    {
+                        try
+                        {
+                            assembly = loader(path);
+                        }
+                        catch (Exception)
+                        {
+                            goto IL_A5;
+                        }
+                        return true;
+                    }
+                IL_A5:;
+                }
+            }
+            return false;
+        }
+
+        public static bool IsSubtypeOf(this TypeDefinition self, Type td)
+        {
+            if (self.FullName == td.FullName)
+            {
+                return true;
+            }
+            if (self.FullName != typeof(object).FullName)
+            {
+                TypeReference baseType = self.BaseType;
+                bool? flag;
+                if (baseType == null)
+                {
+                    flag = null;
+                }
+                else
+                {
+                    TypeDefinition typeDefinition = baseType.Resolve();
+                    flag = ((typeDefinition != null) ? new bool?(typeDefinition.IsSubtypeOf(td)) : null);
+                }
+                bool? flag2 = flag;
+                return flag2.GetValueOrDefault();
+            }
+            return false;
+        }
+
+        public static bool TryResolveDllAssembly(AssemblyName assemblyName, string directory, out Assembly assembly)
+        {
+            return TryResolveDllAssembly<Assembly>(assemblyName, directory, new Func<string, Assembly>(Assembly.LoadFrom), out assembly);
+        }
+
+        public static bool TryResolveDllAssembly(AssemblyName assemblyName, string directory, ReaderParameters readerParameters, out AssemblyDefinition assembly)
+        {
+            return TryResolveDllAssembly<AssemblyDefinition>(assemblyName, directory, (string s) => AssemblyDefinition.ReadAssembly(s, readerParameters), out assembly);
+        }
+
+        public static bool TryParseAssemblyName(string fullName, out AssemblyName assemblyName)
+        {
+            bool flag;
+            try
+            {
+                assemblyName = new AssemblyName(fullName);
+                flag = true;
+            }
+            catch (Exception)
+            {
+                assemblyName = null;
+                flag = false;
+            }
+            return flag;
+        }
+
+        public static IEnumerable<TNode> TopologicalSort<TNode>(IEnumerable<TNode> nodes, Func<TNode, IEnumerable<TNode>> dependencySelector)
+        {
+            var visited = new HashSet<TNode>();
+            var result = new List<TNode>();
+            var stack = new Stack<TNode>();
+
+            foreach (var node in nodes)
+            {
+                if (!visited.Contains(node))
+                {
+                    Visit(node, visited, stack, dependencySelector);
+                }
+            }
+
+            while (stack.Count > 0)
+            {
+                result.Add(stack.Pop());
+            }
+
+            return result;
+        }
+
+        private static void Visit<TNode>(TNode node, HashSet<TNode> visited, Stack<TNode> stack, Func<TNode, IEnumerable<TNode>> dependencySelector)
+        {
+            visited.Add(node);
+
+            foreach (var dependency in dependencySelector(node))
+            {
+                if (!visited.Contains(dependency))
+                {
+                    Visit(dependency, visited, stack, dependencySelector);
+                }
+            }
+
+            stack.Push(node);
         }
     }
 }

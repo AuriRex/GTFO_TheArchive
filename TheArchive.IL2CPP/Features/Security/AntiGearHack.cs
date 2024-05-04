@@ -128,7 +128,7 @@ namespace TheArchive.Features.Security
             //Regex.Match(text, text3);
             //string text4 = "(?<=data\":\")(.*?)(?=\"})";
             //Regex.Match(text, text4);
-            string hashString = match.Value.ComputeSHA256();
+            string hashString = match.Value.HashString();
             return CompsHashLookup.ContainsKey(hashString);
         }
 
@@ -144,7 +144,7 @@ namespace TheArchive.Features.Security
                 //Regex.Match(gearJSON, text2);
                 //string text3 = "(?<=data\":\")(.*?)(?=\"})";
                 //Regex.Match(gearJSON, text3);
-                string hashString = capture.Value.ComputeSHA256();
+                string hashString = capture.Value.HashString();
                 CompsHashLookup[hashString] = gearJSON;
             }
         }

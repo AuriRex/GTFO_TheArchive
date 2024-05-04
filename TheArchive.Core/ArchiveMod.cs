@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using TheArchive.Core;
+using TheArchive.Core.Bootstrap;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
@@ -121,7 +122,7 @@ namespace TheArchive
         private static readonly HashSet<Assembly> _moduleAssemblies = new HashSet<Assembly>();
         private static readonly List<Type> _moduleTypes = new List<Type>();
 
-        public static List<IArchiveModule> Modules { get; private set; } = new List<IArchiveModule>();
+        public static HashSet<IArchiveModule> Modules { get; private set; } = new HashSet<IArchiveModule>();
         public static Type IL2CPP_BaseType { get; private set; } = null;
 
         private const string kArchiveSettingsFile = "TheArchive_Settings.json";
@@ -211,7 +212,8 @@ namespace TheArchive
                 }
                 ArchiveLogger.Info("-------------");
             }
-            
+
+            InitializeArchiveModuleChainloader();
 
             try
             {
@@ -260,12 +262,14 @@ namespace TheArchive
             File.WriteAllText(path, JsonConvert.SerializeObject(Settings, JsonSerializerSettings));
         }
 
-        public static void RegisterArchiveModule(Assembly asm)
+        public static bool RegisterArchiveModule(Assembly asm)
         {
-            foreach(var type in asm.GetTypes().Where(t => typeof(IArchiveModule).IsAssignableFrom(t)))
+            foreach (var type in asm.GetTypes().Where(t => typeof(IArchiveModule).IsAssignableFrom(t)))
             {
-                RegisterArchiveModule(type);
+                if (RegisterArchiveModule(type))
+                    return true;
             }
+            return false;
         }
 
         public static bool RegisterArchiveModule(Type moduleType)
@@ -285,6 +289,16 @@ namespace TheArchive
             }
 
             return false;
+        }
+
+        internal static void InitializeArchiveModuleChainloader()
+        {
+#if BepInEx
+            BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Finished += () =>
+            {
+                ArchiveModuleChainloader.Initialize();
+            };
+#endif
         }
 
         internal static void InvokeGameDataInitialized()
@@ -517,7 +531,7 @@ namespace TheArchive
             }
         }
 
-        private static IArchiveModule CreateAndInitModule(Type moduleType)
+        internal static IArchiveModule CreateAndInitModule(Type moduleType)
         {
             if (moduleType == null) throw new ArgumentException($"Parameter {nameof(moduleType)} can not be null!");
 

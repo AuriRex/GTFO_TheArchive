@@ -464,7 +464,7 @@ namespace TheArchive.Features.Dev
                     SubMenu groupSubMenu = new SubMenu(group.DisplayName);
 
                     var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
-                    var subGroupsCount = group.SubGroups.Where(g => !g.IsHidden || DevMode).Count();
+                    var subGroupsCount = group.SubGroups.Where(g => (!g.IsHidden || DevMode) && g.Features.Any(f => !f.IsHidden || DevMode)).Count();
                     string featureText = LocalizationCoreService.Format(24, "{0} Feature{1}", featuresCount, featuresCount == 1 ? string.Empty : "s");
                     string subGroupText = LocalizationCoreService.Format(57, "{0} Subgroup{1}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
                     string menuEntryLabelText = string.Empty;
