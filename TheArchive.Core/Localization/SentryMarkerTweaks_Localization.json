@@ -118,7 +118,7 @@
       "TheArchive.Features.Accessibility.SentryMarkerTweaks+SentryMarkersSettings.ShowSentryArchetype": {
         "FSDisplayName": {
           "English": "Show Sentry Type",
-          "Chinese": "显示炮台类型",
+          "Chinese": "显示哨戒炮类型",
           "French": null,
           "Italian": null,
           "German": null,
@@ -132,6 +132,34 @@
         "FSDescription": {
           "English": "Displayes the sentries type below the players name.",
           "Chinese": "在玩家名称下方显示哨戒炮类型。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.SentryMarkerTweaks+SentryMarkersSettings.ShowSentryAmmoPercentage": {
+        "FSDisplayName": {
+          "English": "Show Sentry Ammo Percentage",
+          "Chinese": "显示哨戒炮弹药量百分比",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Displayes the sentries ammo percentage below the players name.",
+          "Chinese": "在玩家名称下方显示哨戒炮弹药量百分比。",
           "French": null,
           "Italian": null,
           "German": null,

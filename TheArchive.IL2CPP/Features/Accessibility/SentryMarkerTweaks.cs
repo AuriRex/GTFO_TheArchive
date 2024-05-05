@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿#if R_BIE && IL2CPP
+using BepInEx.Unity.IL2CPP.Utils.Collections;
+#endif
+using Player;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
@@ -41,6 +46,10 @@ namespace TheArchive.Features.Accessibility
             [FSDescription("Displayes the sentries type below the players name.")]
             public bool ShowSentryArchetype { get; set; } = true;
 
+            [FSDisplayName("Show Sentry Ammo Percantage")]
+            [FSDescription("Displayes the sentries ammo percentage below the players name.")]
+            public bool ShowSentryAmmoPercentage { get; set; } = true;
+
             [FSHeader("Marker Toggles")]
             [FSDisplayName("Show your own marker")]
             [FSDescription("Don't forget where you placed it down!")]
@@ -61,7 +70,7 @@ namespace TheArchive.Features.Accessibility
 
         public override void OnEnable()
         {
-            if(((eGameStateName)CurrentGameState) == _eGameStateName_InLevel)
+            if (((eGameStateName)CurrentGameState) == _eGameStateName_InLevel)
             {
                 _sentryGunInstances = GameObject.FindObjectsOfType<SentryGunInstance>().ToArray().Where(sgi => sgi.gameObject.name != "SentryGunInstance").ToList();
             }
@@ -79,7 +88,7 @@ namespace TheArchive.Features.Accessibility
                 if (sgi == null)
                     continue;
 
-                if(sgi.IsLocallyOwned && !SharedUtils.SafeIsBot(sgi.Owner.Owner))
+                if (sgi.IsLocallyOwned && !SharedUtils.SafeIsBot(sgi.Owner.Owner))
                 {
                     SentryGunInstance_CheckIsSetup_Patch.ExtResetMarker(sgi);
                     continue;
@@ -109,16 +118,18 @@ namespace TheArchive.Features.Accessibility
         internal static class SentryGunInstance_CheckIsSetup_Patch
         {
             private static IValueAccessor<SentryGunInstance, PlaceNavMarkerOnGO> A_PlaceNavMarkerOnGO;
-            
+
             public static void Init()
             {
                 A_PlaceNavMarkerOnGO = AccessorBase.GetValueAccessor<SentryGunInstance, PlaceNavMarkerOnGO>("m_navMarkerPlacer");
             }
-
             public static void Postfix(SentryGunInstance __instance)
             {
                 if(!_sentryGunInstances.SafeContains(__instance))
+                {
                     _sentryGunInstances.Add(__instance);
+                    __instance.StartCoroutine(UpdateMarkerInfo(__instance).WrapToIl2Cpp());
+                }
 
                 var navMarkerPlacer = A_PlaceNavMarkerOnGO.Get(__instance);
 
@@ -172,10 +183,25 @@ namespace TheArchive.Features.Accessibility
                 }
 
                 var sentryArch = string.Empty;
+                var canShowPercentage = PlayerBackpackManager.TryGetBackpack(snetPlayer, out var backpack);
+                var ammo = backpack.AmmoStorage.GetInventorySlotAmmo(AmmoType.Class);
 
                 if (Settings.ShowSentryArchetype)
                 {
-                    sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%>{__instance.ArchetypeName}</size></color>";
+                    if (canShowPercentage && Settings.ShowSentryAmmoPercentage)
+                    {
+                        float percentage = __instance.m_ammo / ammo.CostOfBullet * ammo.BulletsToRelConv * 100f;
+                        sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%>{__instance.ArchetypeName} <color={GetColorHexString(0, 100, percentage)}>{percentage:N0}%</color></size></color>";
+                    }
+                    else
+                    {
+                        sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%>{__instance.ArchetypeName}</size></color>";
+                    }
+                }
+                else if (canShowPercentage && Settings.ShowSentryAmmoPercentage)
+                {
+                    float percentage = __instance.m_ammo / ammo.CostOfBullet * ammo.BulletsToRelConv * 100f;
+                    sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%><color={GetColorHexString(0, 100, percentage)}>{percentage:N0}%</color></size></color>";
                 }
 
                 navMarkerPlacer.PlaceMarker(null);
@@ -183,6 +209,115 @@ namespace TheArchive.Features.Accessibility
 
                 navMarkerPlacer.UpdateName(name, sentryArch);
                 navMarkerPlacer.UpdatePlayerColor(col);
+            }
+
+            private static IEnumerator UpdateMarkerInfo(SentryGunInstance __instance)
+            {
+                var navMarkerPlacer = A_PlaceNavMarkerOnGO.Get(__instance);
+
+                var snetPlayer = __instance?.Owner?.Owner;
+
+                if (snetPlayer == null)
+                    yield break;
+
+                bool isBot = SharedUtils.SafeIsBot(snetPlayer);
+
+                yield return null;
+
+                var yielder = new WaitForSecondsRealtime(0.2f);
+
+                while (true)
+                {
+                    if (!Settings.ShowBotMarkers && isBot)
+                    {
+                        HideMarker(navMarkerPlacer);
+                        yield return yielder;
+                        continue;
+                    }
+
+                    if (!Settings.ShowRemoteMarkers && !snetPlayer.IsLocal && !isBot)
+                    {
+                        HideMarker(navMarkerPlacer);
+                        yield return yielder;
+                        continue;
+                    }
+
+                    if (!Settings.ShowBotMarkers && isBot)
+                    {
+                        HideMarker(navMarkerPlacer);
+                        yield return yielder;
+                        continue;
+                    }
+
+                    if (!Settings.ShowOwnMarker && !isBot && snetPlayer.IsLocal)
+                    {
+                        HideMarker(navMarkerPlacer);
+                        yield return yielder;
+                        continue;
+                    }
+
+                    var col = MARKER_GREEN;
+                    var name = string.Empty;
+
+                    if (Settings.DisplayPlayerNameAboveMarker)
+                    {
+                        name = $"<size={Settings.PlayerNameSize * 100f}%>{snetPlayer.NickName}</size>";
+                    }
+
+                    if (Settings.UsePlayerColorForMarkers)
+                    {
+                        col = snetPlayer.PlayerColor;
+                        name = $"<#{ColorUtility.ToHtmlStringRGB(snetPlayer.PlayerColor)}>{name}</color>";
+                    }
+                    else
+                    {
+                        name = $"<color=white>{name}</color>";
+                    }
+
+                    var sentryArch = string.Empty;
+                    var canShowPercentage = PlayerBackpackManager.TryGetBackpack(snetPlayer, out var backpack);
+                    var ammo = backpack.AmmoStorage.GetInventorySlotAmmo(AmmoType.Class);
+
+                    if (Settings.ShowSentryArchetype)
+                    {
+                        if (canShowPercentage && Settings.ShowSentryAmmoPercentage)
+                        {
+                            float percentage = __instance.m_ammo / ammo.CostOfBullet * ammo.BulletsToRelConv * 100f;
+                            sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%>{__instance.ArchetypeName} <color={GetColorHexString(0, 100, percentage)}>{percentage:N0}%</color></size></color>";
+                        }
+                        else
+                        {
+                            sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%>{__instance.ArchetypeName}</size></color>";
+                        }
+                    }
+                    else if (canShowPercentage && Settings.ShowSentryAmmoPercentage)
+                    {
+                        float percentage = __instance.m_ammo / ammo.CostOfBullet * ammo.BulletsToRelConv * 100f;
+                        sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%><color={GetColorHexString(0, 100, percentage)}>{percentage:N0}%</color></size></color>";
+                    }
+
+                    navMarkerPlacer.UpdateName(name, sentryArch);
+                    navMarkerPlacer.UpdatePlayerColor(col);
+
+                    yield return yielder;
+                }
+            }
+
+            private static string GetColorHexString(float min, float max, float value)
+            {
+                float t = Mathf.Clamp01((value - min) / (max - min));
+
+                Color.RGBToHSV(Color.red, out var h1, out var s1, out var v1);
+
+                Color.RGBToHSV(Color.green, out var h2, out var s2, out var v2);
+
+                float h = Mathf.Lerp(h1, h2, t);
+                float s = Mathf.Lerp(s1, s2, t);
+                float v = Mathf.Lerp(v1, v2, t);
+
+                Color interpolatedColor = Color.HSVToRGB(h, s, v);
+
+                return interpolatedColor.ToHexString();
             }
 
             public static void ExtResetMarker(SentryGunInstance sentryGunInstance)
