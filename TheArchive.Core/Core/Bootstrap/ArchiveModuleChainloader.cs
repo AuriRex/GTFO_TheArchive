@@ -246,12 +246,15 @@ public class ArchiveModuleChainloader
                 bool dependencyExists = processedModules.TryGetValue(dependency.DependencyGUID, out var moduleVersion);
                 if (!dependencyExists)
                 {
-                    dependencyExists = Modules.TryGetValue(dependency.DependencyGUID, out var ModuleInfo)
-#if R_BIE
-                        || BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Plugins.TryGetValue(dependency.DependencyGUID, out var pluginInfo)
-#endif
-                    ;
+                    dependencyExists = Modules.TryGetValue(dependency.DependencyGUID, out var ModuleInfo);
                     moduleVersion = ModuleInfo != null ? ModuleInfo.Metadata.Version : null;
+                    if (!dependencyExists || moduleVersion == null)
+                    {
+#if R_BIE
+                        dependencyExists = BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Plugins.TryGetValue(dependency.DependencyGUID, out var pluginInfo);
+                        moduleVersion = pluginInfo != null ? pluginInfo.Metadata.Version : null;
+#endif
+                    }
                 }
                 if (!dependencyExists || dependency.VersionRange != null && !dependency.VersionRange.IsSatisfied(moduleVersion, false))
                 {

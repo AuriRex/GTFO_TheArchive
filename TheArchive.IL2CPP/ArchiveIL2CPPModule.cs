@@ -11,6 +11,7 @@ using UnityEngine.CrashReportHandler;
 [assembly: ModDefaultFeatureGroupName("TheArchive")]
 namespace TheArchive
 {
+    [ArchiveModule(ArchiveMod.GUID, ArchiveMod.MOD_NAME, ArchiveMod.VERSION_STRING)]
     public class ArchiveIL2CPPModule : IArchiveModule
     {
         internal static ArchiveIL2CPPModule instance;
