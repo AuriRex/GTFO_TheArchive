@@ -9,7 +9,7 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Cosmetic
 {
-    [RundownConstraint(RundownFlags.RundownSix, RundownFlags.Latest)]
+    [RundownConstraint(RundownFlags.RundownSix, RundownFlags.RundownAltSix)]
     public class EnableLegacyHammers : Feature
     {
         public override string Name => "Enable old Hammers";
