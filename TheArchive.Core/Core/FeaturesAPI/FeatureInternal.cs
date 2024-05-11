@@ -278,6 +278,19 @@ namespace TheArchive.Core.FeaturesAPI
                 staticLoggerInstancePropertyInfo.SetValue(null, FeatureLoggerInstance);
             }
 
+            var staticLocalizationServicePropertyInfo = featureProperties
+            .FirstOrDefault(pi => (pi.Name == "Localization" || pi.GetCustomAttribute<SetStaticLocalizationService>() != null)
+                && pi.SetMethod != null
+                && pi.GetMethod != null
+                && pi.GetMethod.IsStatic
+                && pi.GetMethod.ReturnType == typeof(ILocalizationService));
+
+            if (staticLocalizationServicePropertyInfo != null)
+            {
+                _FILogger.Debug($"Found Localization property \"{staticLocalizationServicePropertyInfo.Name}\" on Feature {_feature.Identifier}. Populating ...");
+                staticLocalizationServicePropertyInfo.SetValue(null, _feature.Localization);
+            }
+
             _onGameStateChangedMethodInfo = featureMethods
                 .FirstOrDefault(mi => (mi.Name == nameof(Feature.OnGameStateChanged) || mi.GetCustomAttribute<IsGameStateChangedMethod>() != null)
                     && !mi.IsStatic
