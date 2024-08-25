@@ -171,7 +171,7 @@ namespace TheArchive.Features.Presence
 
         private static int GetPlayerCount()
         {
-            if (BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownSix.ToLatest()))
+            if (Is.R6OrLater)
                 return GetPlayerCountR6Plus();
 
             return SNet.Lobby?.Players?.Count ?? 1;
@@ -193,7 +193,15 @@ namespace TheArchive.Features.Presence
         [PresenceFormatProvider("MaxPlayerSlots")]
         public static int MaxPlayerSlots => GetMaxPlayers();
 
-        public static int GetMaxPlayers()
+        private static int GetMaxPlayers()
+        {
+            if (Is.R6OrLater)
+                return GetMaxPlayersR6Plus();
+
+            return SNet.LobbyPlayers.Capacity;
+        }
+
+        private static int GetMaxPlayersR6Plus()
         {
             int slotCount = 0;
             int capacity = SNet.LobbyPlayers.Capacity;
