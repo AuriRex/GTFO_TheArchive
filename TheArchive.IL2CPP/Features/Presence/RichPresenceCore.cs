@@ -165,7 +165,7 @@ namespace TheArchive.Features.Presence
         {
             get
             {
-                return PresenceManager.MaxPlayerSlots - GetPlayerCount();
+                return MaxPlayerSlots - GetPlayerCount();
             }
         }
 
@@ -189,6 +189,26 @@ namespace TheArchive.Features.Presence
             return 1;
 #endif
         }
+
+        [PresenceFormatProvider("MaxPlayerSlots")]
+        public static int MaxPlayerSlots => GetMaxPlayers();
+
+        public static int GetMaxPlayers()
+        {
+            int slotCount = 0;
+            int capacity = SNet.LobbyPlayers.Capacity;
+            for (int i = 0; i < capacity; i++)
+            {
+                if (SNet.Slots.IsBotPermittedInSlot(i) || SNet.Slots.IsHumanPermittedInSlot(i))
+                {
+                    slotCount += 1;
+                }
+
+            }
+            ArchiveLogger.Info(slotCount.ToString());
+            return slotCount == 0 ? capacity : slotCount;
+        }
+
         #endregion lobby
 
         #region expedition
