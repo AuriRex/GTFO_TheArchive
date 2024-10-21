@@ -33,7 +33,71 @@
       }
     },
     "FeatureSettingsEnumTexts": {},
-    "ExtraTexts": []
+    "ExtraTexts": [
+      {
+        "UntranslatedText": "YOU DO",
+        "Description": "",
+        "ID": 1,
+        "Languages": {
+          "English": "YOU DO",
+          "Chinese": "你"
+        }
+      },
+      {
+        "UntranslatedText": "{0} DOES",
+        "Description": "",
+        "ID": 2,
+        "Languages": {
+          "English": "{0} DOES",
+          "Chinese": "{0}"
+        }
+      },
+      {
+        "UntranslatedText": " NOT NEED WEAPON AMMUNITION",
+        "Description": "",
+        "ID": 3,
+        "Languages": {
+          "English": " NOT NEED WEAPON AMMUNITION",
+          "Chinese": "不需要武器弹药"
+        }
+      },
+      {
+        "UntranslatedText": " NOT NEED TOOL AMMUNITION",
+        "Description": "",
+        "ID": 4,
+        "Languages": {
+          "English": " NOT NEED TOOL AMMUNITION",
+          "Chinese": "不需要工具弹药"
+        }
+      },
+      {
+        "UntranslatedText": " NOT NEED MEDICAL RESOURCES",
+        "Description": "",
+        "ID": 5,
+        "Languages": {
+          "English": " NOT NEED MEDICAL RESOURCES",
+          "Chinese": "不需要治疗"
+        }
+      },
+      {
+        "UntranslatedText": " NOT NEED DISINFECTION",
+        "Description": "",
+        "ID": 6,
+        "Languages": {
+          "English": " NOT NEED DISINFECTION",
+          "Chinese": "不需要消毒"
+        }
+      },
+      {
+        "UntranslatedText": "YOURSELF",
+        "Description": "",
+        "ID": 7,
+        "Languages": {
+          "English": "YOURSELF",
+          "Chinese": "你自己"
+        }
+      }
+    ]
   },
   "External": {
     "ExternalFeatureSettingsTexts": {},

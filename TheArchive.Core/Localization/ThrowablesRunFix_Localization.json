@@ -19,7 +19,7 @@
       "TheArchive.Features.Backport.ThrowablesRunFix.Description": {
         "FDescription": {
           "English": "Prevents you from accidentally throwing your C-Foam nade / Glowsticks whenever you start running / jumping",
-          "Chinese": "防止您在开始奔跑 / 跳跃时意外投掷 C-Foam 雷 / 萤光棒。",
+          "Chinese": "防止您在开始奔跑 / 跳跃时意外投掷 胶雷 / 荧光棒。",
           "French": null,
           "Italian": null,
           "German": null,

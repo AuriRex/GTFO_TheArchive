@@ -545,7 +545,7 @@ namespace TheArchive
             if (string.IsNullOrWhiteSpace(module.ModuleGroup))
                 throw new Exception($"ArchiveModule: {module.GetType().FullName}, {nameof(IArchiveModule.ModuleGroup)} can not be null!");
 
-            FeatureGroups.GetOrCreateModuleGroup(module.ModuleGroup, module.ModuleGroupLanguages);
+            FeatureGroups.GetOrCreateModuleGroup(module.ModuleGroup);
 
             foreach(var type in moduleType.Assembly.GetTypes())
             {
