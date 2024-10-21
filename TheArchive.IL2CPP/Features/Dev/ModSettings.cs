@@ -20,7 +20,7 @@ namespace TheArchive.Features.Dev
     public partial class ModSettings : Feature
     {
         public override string Name => "Mod Settings (this)";
-        
+
         public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "<color=red>WARNING!</color> Disabling this makes you unable to change settings in game via this very menu after a restart!";
@@ -122,6 +122,7 @@ namespace TheArchive.Features.Dev
 #else
             A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Add(scrollWindow);
 #endif
+            AddToClickAnywhereListeners(scrollWindow.Cast<iCellMenuCursorInputAnywhereItem>());
         }
 
         public static void RemoveFromAllSettingsWindows(CM_ScrollWindow scrollWindow)
@@ -130,6 +131,24 @@ namespace TheArchive.Features.Dev
             SettingsPageInstance.m_allSettingsWindows.Remove(scrollWindow);
 #else
             A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Remove(scrollWindow);
+#endif
+            RemoveFromClickAnywhereListeners(scrollWindow.Cast<iCellMenuCursorInputAnywhereItem>());
+        }
+
+        public static void AddToClickAnywhereListeners(iCellMenuCursorInputAnywhereItem item)
+        {
+#if IL2CPP
+            if (!SettingsPageInstance.m_clickAnywhereListeners.Contains(item))
+            {
+                SettingsPageInstance.m_clickAnywhereListeners.Add(item);
+            }
+#endif
+        }
+
+        public static void RemoveFromClickAnywhereListeners(iCellMenuCursorInputAnywhereItem item)
+        {
+#if IL2CPP
+            SettingsPageInstance.m_clickAnywhereListeners.Remove(item);
 #endif
         }
 
@@ -141,11 +160,12 @@ namespace TheArchive.Features.Dev
             }
             CM_PageSettings_Setup_Patch.DestroyModSettingsPage();
             CM_PageSettings_Setup_Patch.SetupMainModSettingsPage();
+            SettingsPageInstance.UpdateCellMenuCursorItems();
         }
 
         public static void ShowScrollWindow(CM_ScrollWindow window)
         {
-            if(window == MainModSettingsScrollWindow)
+            if (window == MainModSettingsScrollWindow)
             {
                 SubMenu.openMenus.Clear();
             }
@@ -174,7 +194,7 @@ namespace TheArchive.Features.Dev
             public static float Value { get; set; } = 0f;
             public static void Prefix(ref float val)
             {
-                if(OverrideDisplayValue)
+                if (OverrideDisplayValue)
                 {
                     val = Value;
                     OverrideDisplayValue = false;
@@ -182,6 +202,7 @@ namespace TheArchive.Features.Dev
             }
         }
 
+        /*
         // Disable all other active TextFields
         [ArchivePatch(typeof(CM_SettingsInputField), "OnBtnPress")]
         internal static class CM_SettingsInputField_OnBtnPress_Patch
@@ -213,6 +234,104 @@ namespace TheArchive.Features.Dev
                 _alreadyInMethod = false;
             }
         }
+        */
+
+        [ArchivePatch(typeof(CM_SettingsInputField), nameof(CM_SettingsInputField.OnBtnPressAnywhere))]
+        private class CM_SettingsInputField__OnBtnPressAnywhere__Patch
+        {
+            private static void Postfix(CM_SettingsInputField __instance, iCellMenuInputHandler inputHandler, Il2CppSystem.Collections.Generic.List<iCellMenuCursorItem> hoverItems)
+            {
+                if (SubMenu.ScrollWindowClickAnyWhereListeners.TryGetValue(__instance.GetInstanceID(), out var items))
+                {
+                    foreach (var item in items)
+                    {
+                        if (item != null)
+                        {
+                            item.OnBtnPressAnywhere(inputHandler, hoverItems);
+                        }
+                    }
+                }
+            }
+        }
+
+        [ArchivePatch(typeof(CM_PopupOverlay), nameof(CM_PopupOverlay.OnBtnPressAnywhere))]
+        private class CM_PopupOverlay__OnBtnPressAnywhere__Patch
+        {
+            private static void Postfix(CM_PopupOverlay __instance, iCellMenuInputHandler inputHandler, Il2CppSystem.Collections.Generic.List<iCellMenuCursorItem> hoverItems)
+            {
+                if (SubMenu.ScrollWindowClickAnyWhereListeners.TryGetValue(__instance.GetInstanceID(), out var items))
+                {
+                    foreach (var item in items)
+                    {
+                        if (item != null)
+                        {
+                            item.OnBtnPressAnywhere(inputHandler, hoverItems);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Fix IMECompositionMode
+        [ArchivePatch(typeof(PlayerChatManager), nameof(PlayerChatManager.ExitChatMode))]
+        private class PlayerChatManager__ExitChatMode__Patch
+        {
+            private static void Postfix()
+            {
+                Input.imeCompositionMode = IMECompositionMode.Off;
+            }
+        }
+
+        [ArchivePatch(typeof(CM_SettingsInputField), nameof(CM_SettingsInputField.OnBtnPress))]
+        private class CM_SettingsInputField__OnBtnPress__Patch
+        {
+            private static void Postfix()
+            {
+                Input.imeCompositionMode = IMECompositionMode.On;
+            }
+        }
+
+        // Disable TextChatInput
+        [ArchivePatch(typeof(CM_PageSettings), nameof(CM_PageSettings.OnEnable))]
+        private class CM_PageSettings__OnEnable__Patch
+        {
+            private static void Postfix()
+            {
+                PlayerChatManager.TextChatInputEnabled = false;
+            }
+        }
+
+        // Restore TextChatInput
+        [ArchivePatch(typeof(CM_PageSettings), nameof(CM_PageSettings.OnDisable))]
+        private class CM_PageSettings__OnDisable__Patch
+        {
+            private static void Postfix()
+            {
+                PlayerChatManager.OnFocusStateChanged(FocusStateManager.CurrentState);
+            }
+        }
+
+        // Fix text blink update
+        [ArchivePatch(typeof(CM_SettingsInputField), nameof(CM_SettingsInputField.Update))]
+        private class CM_SettingsInputField__Update__Patch
+        {
+            private static void Postfix(CM_SettingsInputField __instance)
+            {
+                if (__instance.m_readingActive)
+                {
+                    __instance.m_text.text = $"{__instance.m_currentValue}{((__instance.m_readingActive && __instance.m_blink) ? '_' : string.Empty)}";
+                }
+            }
+        }
+
+        [ArchivePatch(typeof(CM_SettingsInputField), nameof(CM_SettingsInputField.SetReadingActive))]
+        private class CM_SettingsInputField__SetReadingActive__Patch
+        {
+            private static void Postfix(CM_SettingsInputField __instance, bool active)
+            {
+                __instance.ResetValue();
+            }
+        }
 
         //Setup(MainMenuGuiLayer guiLayer)
         [ArchivePatch(typeof(CM_PageSettings), "Setup")]
@@ -224,7 +343,7 @@ namespace TheArchive.Features.Dev
 
             public static void SetRestartInfoText(bool value)
             {
-                if(value)
+                if (value)
                 {
                     SetRestartInfoText(LocalizationCoreService.Get(59, "<color=red><b>Restart required for some settings to apply!</b></color>"));
                 }
@@ -283,7 +402,7 @@ namespace TheArchive.Features.Dev
                 {
                     UIHelper.Setup();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     FeatureLogger.Exception(ex);
                 }
@@ -503,7 +622,7 @@ namespace TheArchive.Features.Dev
             private const float VERSION_CLICK_TIME = 1.5f;
             private static void VersionClicked(int _)
             {
-                if(_versionClickedCounter >= VERSION_CLICK_MIN)
+                if (_versionClickedCounter >= VERSION_CLICK_MIN)
                 {
                     ArchiveMod.Settings.FeatureDevMode = !ArchiveMod.Settings.FeatureDevMode;
 
@@ -521,7 +640,7 @@ namespace TheArchive.Features.Dev
 
                 var currentTime = Time.time;
 
-                if(currentTime - _lastVersionClickedTime >= VERSION_CLICK_TIME)
+                if (currentTime - _lastVersionClickedTime >= VERSION_CLICK_TIME)
                 {
                     _lastVersionClickedTime = currentTime;
                     _versionClickedCounter = 0;
@@ -556,14 +675,14 @@ namespace TheArchive.Features.Dev
                     }
 
                     SubMenu subMenu = null;
-                    if(!feature.InlineSettingsIntoParentMenu && feature.HasAdditionalSettings && !feature.AllAdditionalSettingsAreHidden)
+                    if (!feature.InlineSettingsIntoParentMenu && feature.HasAdditionalSettings && !feature.AllAdditionalSettingsAreHidden)
                     {
                         subMenu = new SubMenu(featureName);
                         featureName = $"<u>{featureName}</u>";
                     }
 
                     CreateSettingsItem(featureName, out var cm_settingsItem, col, groupSubMenu);
-                    
+
                     SetupToggleButton(cm_settingsItem, out CM_Item toggleButton_cm_item, out var toggleButtonText);
 
 
@@ -600,7 +719,7 @@ namespace TheArchive.Features.Dev
                             FeatureManager.ToggleFeature(feature);
 
                             SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
-                            if(sub_toggleButton_cm_item != null)
+                            if (sub_toggleButton_cm_item != null)
                                 SetFeatureItemTextAndColor(feature, sub_toggleButton_cm_item, sub_toggleButtonText);
                         };
 
@@ -614,7 +733,7 @@ namespace TheArchive.Features.Dev
 
                         var delHover = delegate (int id, bool hovering)
                         {
-                            if(hovering)
+                            if (hovering)
                             {
                                 TheDescriptionPanel.Show(descriptionData);
                             }
@@ -631,11 +750,11 @@ namespace TheArchive.Features.Dev
                     }
 
                     SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
-                    if(sub_toggleButton_cm_item != null)
+                    if (sub_toggleButton_cm_item != null)
                         SetFeatureItemTextAndColor(feature, sub_toggleButton_cm_item, sub_toggleButtonText);
 
                     CreateRundownInfoTextForItem(cm_settingsItem, feature.AppliesToRundowns);
-                    if(sub_cm_settingsItem != null)
+                    if (sub_cm_settingsItem != null)
                         CreateRundownInfoTextForItem(sub_cm_settingsItem, feature.AppliesToRundowns);
 
                     cm_settingsItem.ForcePopupLayer(true);

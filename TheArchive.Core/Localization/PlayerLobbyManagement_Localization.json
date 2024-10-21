@@ -245,9 +245,82 @@
         }
       },
       "TheArchive.Features.Security.PlayerLobbyManagement+LobbyManagementSettings+LobbyColorSettings.Default": {
+        "FSDisplayName": {
+          "English": "Default",
+          "Chinese": "默认",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
         "FSHeader": {
           "English": "Colors",
           "Chinese": "颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.PlayerLobbyManagement+LobbyManagementSettings+LobbyColorSettings.Friends": {
+        "FSDisplayName": {
+          "English": "Friends",
+          "Chinese": "好友",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.PlayerLobbyManagement+LobbyManagementSettings+LobbyColorSettings.Bots": {
+        "FSDisplayName": {
+          "English": "Bots",
+          "Chinese": "机器人",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.PlayerLobbyManagement+LobbyManagementSettings+LobbyColorSettings.Banned": {
+        "FSDisplayName": {
+          "English": "Banned",
+          "Chinese": "被封禁",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.PlayerLobbyManagement+LobbyManagementSettings+LobbyColorSettings.Self": {
+        "FSDisplayName": {
+          "English": "Self",
+          "Chinese": "自己",
           "French": null,
           "Italian": null,
           "German": null,
@@ -446,7 +519,98 @@
         }
       }
     },
-    "ExtraTexts": []
+    "ExtraTexts": [
+      {
+        "UntranslatedText": " Open Steam Profile",
+        "Description": "",
+        "ID": 1,
+        "Languages": {
+          "English": " Open Steam Profile",
+          "Chinese": " 打开 Steam 个人资料"
+        }
+      },
+      {
+        "UntranslatedText": " Friends on Steam",
+        "Description": "",
+        "ID": 2,
+        "Languages": {
+          "English": " Friends on Steam",
+          "Chinese": " Steam 好友"
+        }
+      },
+      {
+        "UntranslatedText": " Kick player",
+        "Description": "",
+        "ID": 3,
+        "Languages": {
+          "English": " Kick player",
+          "Chinese": " 踢出玩家"
+        }
+      },
+      {
+        "UntranslatedText": " Ban player",
+        "Description": "",
+        "ID": 4,
+        "Languages": {
+          "English": " Ban player",
+          "Chinese": " 封禁玩家"
+        }
+      },
+      {
+        "UntranslatedText": " On Banned Players List",
+        "Description": "",
+        "ID": 5,
+        "Languages": {
+          "English": " On Banned Players List",
+          "Chinese": " 已封禁的玩家"
+        }
+      },
+      {
+        "UntranslatedText": " I am a robot, beep boop!",
+        "Description": "",
+        "ID": 6,
+        "Languages": {
+          "English": " I am a robot, beep boop!",
+          "Chinese": " 我是一个机器人"
+        }
+      },
+      {
+        "UntranslatedText": " Kick {0}",
+        "Description": "",
+        "ID": 7,
+        "Languages": {
+          "English": " Kick {0}",
+          "Chinese": " 踢出 {0}"
+        }
+      },
+      {
+        "UntranslatedText": " Ban {0}",
+        "Description": "",
+        "ID": 8,
+        "Languages": {
+          "English": " Ban {0}",
+          "Chinese": " 封禁 {0}"
+        }
+      },
+      {
+        "UntranslatedText": " Ban and kick {0}",
+        "Description": "",
+        "ID": 9,
+        "Languages": {
+          "English": " Ban and kick {0}",
+          "Chinese": " 踢出并封禁 {0}"
+        }
+      },
+      {
+        "UntranslatedText": " Unban {0}",
+        "Description": "",
+        "ID": 10,
+        "Languages": {
+          "English": " Unban {0}",
+          "Chinese": " 解除封禁 {0}"
+        }
+      }
+    ]
   },
   "External": {
     "ExternalFeatureSettingsTexts": {},

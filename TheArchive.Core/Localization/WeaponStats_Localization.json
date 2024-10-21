@@ -710,6 +710,15 @@
           "English": "You disabled it all, congrats!",
           "Chinese": "所有数值均已禁用！"
         }
+      },
+      {
+        "UntranslatedText": "Unlimited",
+        "Description": "",
+        "ID": 22,
+        "Languages": {
+          "English": "Unlimited",
+          "Chinese": "无限制"
+        }
       }
     ]
   },

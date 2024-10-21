@@ -46,6 +46,14 @@ namespace TheArchive.Features.Security
             }
         }
 
+        public override void Init()
+        {
+            if (ArchiveMod.IsPlayingModded)
+            {
+                RequestDisable("Playing Modded");
+            }
+        }
+
         public override void OnGameDataInitialized()
         {
             LoadData();
@@ -56,7 +64,8 @@ namespace TheArchive.Features.Security
         {
             private static void Prefix(pInventorySync data)
             {
-                if (!SNet.IsMaster || !data.sourcePlayer.TryGetPlayer(out var player) || player.IsLocal || !SNet.Replication.TryGetLastSender(out var sender) || sender.IsLocal || sender.IsBot)
+                if (!SNet.IsMaster || !data.sourcePlayer.TryGetPlayer(out var player) || player.IsLocal || player.IsBot
+                    || !SNet.Replication.TryGetLastSender(out var sender) || sender.IsLocal || sender.IsBot)
                 {
                     return;
                 }
@@ -129,12 +138,12 @@ namespace TheArchive.Features.Security
             //string text4 = "(?<=data\":\")(.*?)(?=\"})";
             //Regex.Match(text, text4);
             string hashString = match.Value.HashString();
-            return CompsHashLookup.ContainsKey(hashString);
+            return GearCompsHashLookup.ContainsKey(hashString);
         }
 
         public static void LoadData()
         {
-            CompsHashLookup.Clear();
+            GearCompsHashLookup.Clear();
             foreach (PlayerOfflineGearDataBlock playerOfflineGearDataBlock in GameDataBlockBase<PlayerOfflineGearDataBlock>.GetAllBlocks())
             {
                 string gearJSON = playerOfflineGearDataBlock.GearJSON;
@@ -145,10 +154,10 @@ namespace TheArchive.Features.Security
                 //string text3 = "(?<=data\":\")(.*?)(?=\"})";
                 //Regex.Match(gearJSON, text3);
                 string hashString = capture.Value.HashString();
-                CompsHashLookup[hashString] = gearJSON;
+                GearCompsHashLookup[hashString] = gearJSON;
             }
         }
 
-        private static Dictionary<string, string> CompsHashLookup = new Dictionary<string, string>();
+        private static Dictionary<string, string> GearCompsHashLookup = new Dictionary<string, string>();
     }
 }

@@ -60,11 +60,8 @@ public class CustomSetting<T> : ICustomSetting where T : new()
 public interface ICustomSetting
 {
     void Load();
-
     void Save();
-
     LoadingTime LoadingTime { get; }
-
     bool SaveOnQuit { get; }
 }
 

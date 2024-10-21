@@ -118,7 +118,7 @@ public class ArchiveModuleChainloader
 
     protected IList<ModuleInfo> DiscoverModules()
     {
-#if R_BIE
+#if BepInEx
         return DiscoverModulesFrom(BepInEx.Paths.PluginPath, "TheArchive_ModuleChainloader");
 #endif
     }
@@ -162,7 +162,7 @@ public class ArchiveModuleChainloader
             if ((func = funcE) == null)
             {
                 func = (incompatibility) => modulesByGuid.ContainsKey(incompatibility.IncompatibilityGUID) || Modules.ContainsKey(incompatibility.IncompatibilityGUID)
-#if R_BIE
+#if BepInEx
                  || BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Plugins.ContainsKey(incompatibility.IncompatibilityGUID)
 #endif
                 ;
@@ -250,7 +250,7 @@ public class ArchiveModuleChainloader
                     moduleVersion = ModuleInfo != null ? ModuleInfo.Metadata.Version : null;
                     if (!dependencyExists || moduleVersion == null)
                     {
-#if R_BIE
+#if BepInEx
                         dependencyExists = BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Plugins.TryGetValue(dependency.DependencyGUID, out var pluginInfo);
                         moduleVersion = pluginInfo != null ? pluginInfo.Metadata.Version : null;
 #endif

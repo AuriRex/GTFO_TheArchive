@@ -28,7 +28,9 @@ namespace TheArchive.Features.Security
 
         public override string Description => "Allows you to open a players steam profile by clicking on their name as well as kick and ban players as host.";
 
-        public new static IArchiveLogger FeatureLogger { get; set; }
+        public static new ILocalizationService Localization { get; set; }
+
+        public static new IArchiveLogger FeatureLogger { get; set; }
 
         [FeatureConfig]
         public static LobbyManagementSettings Settings { get; set; }
@@ -74,10 +76,15 @@ namespace TheArchive.Features.Security
                 public bool RainbowPukeFriends { get; set; } = false;
 
                 [FSHeader("Colors")]
+                [FSDisplayName("Default")]
                 public SColor Default { get; set; } = new SColor(1, 1, 1);
+                [FSDisplayName("Friends")]
                 public SColor Friends { get; set; } = new SColor(0.964f, 0.921f, 0.227f);
+                [FSDisplayName("Bots")]
                 public SColor Bots { get; set; } = new SColor(0.949f, 0.58f, 0f);
+                [FSDisplayName("Banned")]
                 public SColor Banned { get; set; } = new SColor(0.545f, 0f, 0f);
+                [FSDisplayName("Self")]
                 public SColor Self { get; set; } = new SColor(1, 1, 1);
 
             }
@@ -241,20 +248,20 @@ namespace TheArchive.Features.Security
 
                     PopupWindow.Setup();
 
-                    OpenSteamItem = CreatePopupItem(" Open Steam Profile", OnNameButtonPressed);
+                    OpenSteamItem = CreatePopupItem(Localization.Get(1), OnNameButtonPressed);
                     SharedUtils.ChangeColorCMItem(OpenSteamItem, ModSettings.GREEN);
                     OpenSteamItem.TryCastTo<CM_TimedButton>().SetHoldDuration(.5f);
 
-                    IsFriendItem = CreatePopupItem(" Friends on Steam", (_) => { });
+                    IsFriendItem = CreatePopupItem(Localization.Get(2), (_) => { });
                     SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Friend));
                     IsFriendItem.TryCastTo<CM_TimedButton>().SetHoldDuration(100f);
                     IsFriendItem.GetComponent<Collider2D>().enabled = false;
 
-                    KickPlayerItem = CreatePopupItem(" Kick player", KickPlayerButtonPressed);
+                    KickPlayerItem = CreatePopupItem(Localization.Get(3), KickPlayerButtonPressed);
                     SharedUtils.ChangeColorCMItem(KickPlayerItem, ModSettings.ORANGE);
                     KickPlayerItem.TryCastTo<CM_TimedButton>().SetHoldDuration(2);
 
-                    BanPlayerItem = CreatePopupItem(" Ban player", BanPlayerButtonPressed);
+                    BanPlayerItem = CreatePopupItem(Localization.Get(4), BanPlayerButtonPressed);
                     SharedUtils.ChangeColorCMItem(BanPlayerItem, ModSettings.RED);
                     BanPlayerItem.TryCastTo<CM_TimedButton>().SetHoldDuration(4);
 
@@ -485,7 +492,7 @@ namespace TheArchive.Features.Security
             if (isBot)
             {
                 IsFriendItem.gameObject.SetActive(true);
-                IsFriendItem.SetText(" I am a robot, beep boop!");
+                IsFriendItem.SetText(Localization.Get(6));
                 SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Bot));
 
                 ShowWindow(name, pos, playerID);
@@ -505,17 +512,17 @@ namespace TheArchive.Features.Security
 
             if (isBanned)
             {
-                IsFriendItem.SetText(" On Banned Players List");
+                IsFriendItem.SetText(Localization.Get(5));
                 SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Banned));
             }
             else if (isFriend)
             {
-                IsFriendItem.SetText(" Friends on Steam");
+                IsFriendItem.SetText(Localization.Get(2));
                 SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Friend));
             }
 
 
-            KickPlayerItem.SetText($" Kick {name}");
+            KickPlayerItem.SetText(Localization.Format(7, name));
 
 
 
@@ -524,14 +531,14 @@ namespace TheArchive.Features.Security
                 KickPlayerItem.GetComponent<Collider2D>().enabled = false;
                 SharedUtils.ChangeColorCMItem(KickPlayerItem, ModSettings.DISABLED);
 
-                BanPlayerItem.SetText($" Ban {name}");
+                BanPlayerItem.SetText(Localization.Format(8, name));
             }
             else
             {
                 KickPlayerItem.GetComponent<Collider2D>().enabled = true;
                 SharedUtils.ChangeColorCMItem(KickPlayerItem, ModSettings.ORANGE);
 
-                BanPlayerItem.SetText($" Ban and kick {name}");
+                BanPlayerItem.SetText(Localization.Format(9, name));
             }
 
             if (player.IsLocal)
@@ -542,7 +549,7 @@ namespace TheArchive.Features.Security
             {
                 if (isBanned)
                 {
-                    BanPlayerItem.SetText($" Unban {name}");
+                    BanPlayerItem.SetText(Localization.Format(10, name));
                     SharedUtils.ChangeColorCMItem(BanPlayerItem, ModSettings.GREEN);
                 }
                 else

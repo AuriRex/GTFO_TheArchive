@@ -232,7 +232,17 @@
         }
       }
     },
-    "ExtraTexts": []
+    "ExtraTexts": [
+      {
+        "UntranslatedText": "Configurable to either show your current position, a timer or the mod version in the bottom right:\n - <color=red>X:24</color> <color=green>Y:2</color> <color=blue>Z:-46</color>\n - Timer showing elapsed mission time\n - <#{0}>{1} v{2}</color>",
+        "Description": "",
+        "ID": 1,
+        "Languages": {
+          "English": "Configurable to either show your current position, a timer or the mod version in the bottom right:\n - <color=red>X:24</color> <color=green>Y:2</color> <color=blue>Z:-46</color>\n - Timer showing elapsed mission time\n - <#{0}>{1} v{2}</color>",
+          "Chinese": "可配置显示您的当前位置，计时器或mod版本在右下角:\n - <color=red>X:24</color> <color=green>Y:2</color> <color=blue>Z:-46</color>\n - 任务计时器\n - <#{0}>{1} v{2}</color>"
+        }
+      }
+    ]
   },
   "External": {
     "ExternalFeatureSettingsTexts": {},
