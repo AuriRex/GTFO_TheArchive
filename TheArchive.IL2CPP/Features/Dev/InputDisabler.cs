@@ -9,7 +9,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => nameof(InputDisabler);
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "Used to disable input programatically.";
 

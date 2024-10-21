@@ -16,7 +16,7 @@ namespace TheArchive.Features.Fixes
     {
         public override string Name => "Map Pan Unclamp";
 
-        public override string Group => FeatureGroups.Fixes;
+        public override FeatureGroup Group => FeatureGroups.Fixes;
 
         public override string Description => "Remove the MMB Map panning restrictions.\nMakes you able to zoom in on far out zones.";
 

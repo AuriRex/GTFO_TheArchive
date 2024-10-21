@@ -1,0 +1,86 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Presence.DiscordRichPresence.Name": {
+        "FName": {
+          "English": "Archive Discord Rich Presence",
+          "Chinese": "Archive Discord 详细状态",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Presence.DiscordRichPresence.Description": {
+        "FDescription": {
+          "English": "Show the current game state in detail on discord.",
+          "Chinese": "在 Discord 上详细显示当前游戏状态。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {
+      "TheArchive.Core.Settings.RichPresenceSettings.DisableOnRundownEight": {
+        "FSDisplayName": {
+          "English": "Disable on R8",
+          "Chinese": "在 R8 禁用",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Only disables Custom Discord Rich Presence on the Rundown 8 game version.\n\nIt will still be enabled if playing on older game versions.",
+          "Chinese": "仅在 Rundown 8 游戏版本中禁用自定义 Discord 状态。如果在较旧的游戏版本上进行游戏，仍将保持启用状态。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Core.Settings.RichPresenceSettings.DEBUG_UseDefaultSettings": {
+        "FSDisplayName": {
+          "English": "DEBUG Use Default Settings",
+          "Chinese": "调试 使用默认设置",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "ExternalEnumTexts": {}
+  }
+}

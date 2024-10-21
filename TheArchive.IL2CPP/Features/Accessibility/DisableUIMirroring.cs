@@ -10,7 +10,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Disable UI Mirroring";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override FeatureGroup Group => FeatureGroups.Accessibility;
 
         public override string Description => "Removes the mirroring effect of UI elements.";
 

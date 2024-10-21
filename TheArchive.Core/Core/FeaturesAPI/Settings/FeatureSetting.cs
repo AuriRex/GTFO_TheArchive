@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
+using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Settings;
+using TheArchive.Core.Localization;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core.FeaturesAPI.Settings
@@ -24,6 +26,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         public bool SpacerAbove { get; private set; }
         public FSHeader HeaderAbove { get; private set; }
         public bool HideInModSettings { get; private set; }
+        public bool RequiresRestart { get; private set; }
 
         public object WrappedInstance { get; set; }
 
@@ -32,14 +35,25 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             Helper = featureSettingsHelper;
             Prop = prop;
             Type = prop?.GetMethod?.ReturnType;
-            DisplayName = $"> {prop?.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
+            RequiresRestart = prop?.GetCustomAttribute<RequiresRestart>() != null;
+
+            if (featureSettingsHelper.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSDisplayName, out var displayName))
+                DisplayName = $">{(RequiresRestart ? " <color=red>[!]</color>" : "")} {displayName}";
+            else
+                DisplayName = $">{(RequiresRestart ? " <color=red>[!]</color>" : "")} {prop?.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
+            if (featureSettingsHelper.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSDescription, out var description))
+                Description = description;
+            else
+                Description = prop?.GetCustomAttribute<FSDescription>()?.Description;
+            HeaderAbove = prop?.GetCustomAttribute<FSHeader>();
+            if (HeaderAbove != null && featureSettingsHelper.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSHeader, out var headerText))
+                HeaderAbove = new(headerText, HeaderAbove.Color, HeaderAbove.Bold);
+
             Identifier = prop?.GetCustomAttribute<FSIdentifier>()?.Identifier ?? ($"{prop.PropertyType.FullName}_{prop.Name}");
             RundownHint = prop?.GetCustomAttribute<FSRundownHint>()?.Rundowns ?? RundownFlags.None;
-            Description = prop?.GetCustomAttribute<FSDescription>()?.Description;
 
             SeparatorAbove = prop?.GetCustomAttribute<FSSeparator>() != null;
             SpacerAbove = prop?.GetCustomAttribute<FSSpacer>() != null;
-            HeaderAbove = prop?.GetCustomAttribute<FSHeader>();
 
             HideInModSettings = prop?.GetCustomAttribute<FSHide>() != null;
             Readonly = prop?.GetCustomAttribute<FSReadOnly>()?.RecursiveReadOnly ?? false;

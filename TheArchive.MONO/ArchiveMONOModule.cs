@@ -10,6 +10,7 @@ using UnityEngine.CrashReportHandler;
 [assembly: ModInlineUncategorizedSettingsIntoMainMenu]
 namespace TheArchive
 {
+    [ArchiveModule(ArchiveMod.GUID, ArchiveMod.MOD_NAME, ArchiveMod.VERSION_STRING)]
     public class ArchiveMONOModule : IArchiveModule
     {
         internal static ArchiveMONOModule instance;

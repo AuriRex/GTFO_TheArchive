@@ -13,7 +13,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Disable Ambient Particles";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override FeatureGroup Group => FeatureGroups.Accessibility;
 
         public override string Description => "Disable the little floating dust particles in the air.";
 

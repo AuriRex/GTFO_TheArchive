@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.QoL.ResourcePrioritizationPings.Name": {
+        "FName": {
+          "English": "Prioritize Resource Pings",
+          "Chinese": "优先标记资源",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.QoL.ResourcePrioritizationPings.Description": {
+        "FDescription": {
+          "English": "Resource Packs will be prioritized and show up with special icons and trigger voice lines when pinged by Middle-Mouse-Pings.\n(Yes, disinfect is ammo apparently)",
+          "Chinese": "资源包将被优先显示，并使用特殊图标显示，并在通过中键标记时触发语音线。\n（是的，消毒剂显然是弹药）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

@@ -20,7 +20,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Results Screen Tweaks";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Tweak the Expedition Fail/Success screens!";
 

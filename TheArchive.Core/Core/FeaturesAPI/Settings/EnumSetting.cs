@@ -13,9 +13,12 @@ namespace TheArchive.Core.FeaturesAPI.Settings
         {
             Options = Enum.GetNames(Type);
 
-            foreach(var option in Options)
+            foreach (var option in Options)
             {
-                Map.Add(option, Enum.Parse(Type, option));
+                if (featureSettingsHelper.Localization.TryGetFSEnumText(Type, out var dic) && dic.TryGetValue(option, out var text))
+                    Map.Add(text, Enum.Parse(Type, option));
+                else
+                    Map.Add(option, Enum.Parse(Type, option));
             }
         }
 

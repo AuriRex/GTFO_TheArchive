@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Dev.MaulGavelChecksumPatch.Name": {
+        "FName": {
+          "English": "Maul/Gavel Checksum Patch",
+          "Chinese": "Maul/Gavel校验补丁",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.MaulGavelChecksumPatch.Description": {
+        "FDescription": {
+          "English": "Fixes the Maul and Gavel hammers having the same icon.",
+          "Chinese": "修复了 Maul 和 Gavel 锤子具有相同图标的问题。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

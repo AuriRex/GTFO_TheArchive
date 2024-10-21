@@ -15,7 +15,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Bio Ping Colors";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Customize the color of Bio Tracker Pings as well as the blobs on its display.\n\nSingle color, does not differentiate between enemies.";
 

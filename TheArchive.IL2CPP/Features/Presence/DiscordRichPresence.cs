@@ -14,13 +14,15 @@ namespace TheArchive.Features.Presence
     {
         public override string Name => "Archive Discord Rich Presence";
 
-        public override string Group => FeatureGroups.Presence;
+        public override FeatureGroup Group => FeatureGroups.Presence;
 
         public override string Description => "Show the current game state in detail on discord.";
 
         public override bool InlineSettingsIntoParentMenu => true;
 
         public override bool SkipInitialOnEnable => true;
+
+        public override Type[] LocalizationExternalTypes => new Type[] { typeof(RichPresenceSettings) };
 
         [FeatureConfig]
         public static RichPresenceSettings DiscordRPCSettings { get; set; }

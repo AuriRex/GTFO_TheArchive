@@ -8,7 +8,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "See NavMarkers in Chat";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Prevent enemy pings from hiding whenever the chat is open.";
 

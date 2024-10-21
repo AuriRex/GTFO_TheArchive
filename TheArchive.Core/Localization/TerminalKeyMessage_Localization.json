@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Backport.TerminalKeyMessage.Name": {
+        "FName": {
+          "English": "R6+ Terminal Key / Zone Info",
+          "Chinese": "R6+ 终端键 / 区域信息",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Backport.TerminalKeyMessage.Description": {
+        "FDescription": {
+          "English": "Adds the following text at the start of every terminal:\n\"Welcome to <b>TERMINAL_XYZ</b>, located in <b>ZONE_XY</b>\"\n<size=75%>(except for reactor terminals ...)</size>",
+          "Chinese": "在每个终端开头添加以下文本：\n\"欢迎来到 <b>TERMINAL_XYZ</b>，位于 <b>ZONE_XY</b>\"\n<size=75%>（反应堆终端除外...）</size>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Dev.SmartFavoritesSaving.Name": {
+        "FName": {
+          "English": "Smart Favorites Saving",
+          "Chinese": "喜好保存",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.SmartFavoritesSaving.Description": {
+        "FDescription": {
+          "English": "Only save selected weapons/vanity on drop or game quit.",
+          "Chinese": "仅在放置武器/饰品或退出游戏时保存所选项。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

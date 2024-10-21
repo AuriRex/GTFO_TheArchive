@@ -12,7 +12,7 @@ namespace TheArchive.Features.Backport
     {
         public override string Name => "Center Map on Player";
 
-        public override string Group => FeatureGroups.Backport;
+        public override FeatureGroup Group => FeatureGroups.Backport;
 
         public override string Description => "Center the map on yourself upon opening.";
 

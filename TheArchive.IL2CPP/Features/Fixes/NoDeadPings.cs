@@ -10,7 +10,7 @@ namespace TheArchive.Features.Fixes
     {
         public override string Name => "No Dead Pings";
 
-        public override string Group => FeatureGroups.Fixes;
+        public override FeatureGroup Group => FeatureGroups.Fixes;
 
         public override string Description => "Prevents bio pings (<#F00><u>/\\</u></color>) on dead enemies.";
 

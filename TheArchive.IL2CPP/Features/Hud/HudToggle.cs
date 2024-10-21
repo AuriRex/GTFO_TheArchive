@@ -9,7 +9,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Hud Toggle (F1)";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Keybind to toggle parts of the HUD";
 

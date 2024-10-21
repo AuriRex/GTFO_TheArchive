@@ -10,7 +10,7 @@ namespace TheArchive.Features.Fixes
     {
         public override string Name => "Bio Stuck Sound Fix";
 
-        public override string Group => FeatureGroups.Fixes;
+        public override FeatureGroup Group => FeatureGroups.Fixes;
 
         public override string Description => "Stops the tagging progress sound <u>after unwielding the tracker</u>, just in case the sound gets stuck.";
 

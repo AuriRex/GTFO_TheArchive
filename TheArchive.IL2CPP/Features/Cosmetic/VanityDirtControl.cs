@@ -13,7 +13,7 @@ namespace TheArchive.Features.Cosmetic
     {
         public override string Name => "Vanity Dirt Control";
 
-        public override string Group => FeatureGroups.Cosmetic;
+        public override FeatureGroup Group => FeatureGroups.Cosmetic;
 
         public override string Description => "Set all vanity items (clothes) dirt amount.";
 

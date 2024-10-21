@@ -17,7 +17,7 @@ namespace TheArchive.Features.Fixes
     {
         public override string Name => "Pouncer ScreenFX Stuck Fix";
 
-        public override string Group => FeatureGroups.Fixes;
+        public override FeatureGroup Group => FeatureGroups.Fixes;
 
         public override string Description => "(WIP) Prevents the pouncer tentacles from getting stuck on screen.";
 

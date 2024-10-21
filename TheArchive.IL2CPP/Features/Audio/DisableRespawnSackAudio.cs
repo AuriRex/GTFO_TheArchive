@@ -10,7 +10,7 @@ namespace TheArchive.Features.Audio
     {
         public override string Name => "Disable Respawn Sack Audio";
 
-        public override string Group => FeatureGroups.Audio;
+        public override FeatureGroup Group => FeatureGroups.Audio;
 
         public override string Description => "Prevents Respawn Sacks from emitting audio.";
 

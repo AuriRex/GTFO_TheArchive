@@ -18,7 +18,7 @@ namespace TheArchive.Features.Backport
     {
         public override string Name => "R6+ Terminal Key / Zone Info";
 
-        public override string Group => FeatureGroups.Backport;
+        public override FeatureGroup Group => FeatureGroups.Backport;
 
         public override string Description => "Adds the following text at the start of every terminal:\n\"Welcome to <b>TERMINAL_XYZ</b>, located in <b>ZONE_XY</b>\"\n<size=75%>(except for reactor terminals ...)</size>";
 

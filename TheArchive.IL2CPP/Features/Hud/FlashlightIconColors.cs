@@ -15,7 +15,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Flashlight Icon Colors";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Customize the flashlight on/off indicator colors.";
 

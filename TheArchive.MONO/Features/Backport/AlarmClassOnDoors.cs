@@ -14,7 +14,7 @@ namespace TheArchive.Features.Backport
     {
         public override string Name => "Alarm Class on Security Doors";
 
-        public override string Group => FeatureGroups.Backport;
+        public override FeatureGroup Group => FeatureGroups.Backport;
 
         public override string Description => "Add alarm classes to security door interaction texts";
 

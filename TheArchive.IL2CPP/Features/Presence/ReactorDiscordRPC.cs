@@ -18,7 +18,7 @@ namespace TheArchive.Features.Presence
     {
         public override string Name => nameof(ReactorDiscordRPC);
 
-        public override string Group => FeatureGroups.Presence;
+        public override FeatureGroup Group => FeatureGroups.Presence;
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 

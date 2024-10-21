@@ -22,6 +22,7 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 using static TheArchive.Utilities.Utils;
 using static TheArchive.Features.Hud.WeaponPickerTweaks.WeaponPickerTweaksSettings;
+using TheArchive.Core.Localization;
 
 namespace TheArchive.Features.Hud
 {
@@ -30,7 +31,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Weapon Picker Tweaks";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Allows you to Favorite and Hide Gear in the weapon picker.";
 
@@ -58,6 +59,7 @@ namespace TheArchive.Features.Hud
             public KeyCode HideToggleKey { get; set; } = KeyCode.RightControl;
 
             [FSHeader(":// Other")]
+            [FSDisplayName("Colors")]
             public ItemColors Colors { get; set; } = new ItemColors();
 
             [FSDisplayName("Sort Gear by ...")]
@@ -116,6 +118,7 @@ namespace TheArchive.Features.Hud
                 return entry;
             }
 
+            [Localized]
             public enum SortMode
             {
                 Default,
@@ -161,6 +164,7 @@ namespace TheArchive.Features.Hud
                 public uint Index { get; set; } = 0;
             }
 
+            [Localized]
             public enum ItemFavState
             {
                 Favorite,

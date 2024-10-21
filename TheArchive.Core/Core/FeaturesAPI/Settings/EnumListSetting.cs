@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine.Events;
 
 namespace TheArchive.Core.FeaturesAPI.Settings
 {
@@ -10,6 +11,7 @@ namespace TheArchive.Core.FeaturesAPI.Settings
     {
         public string[] Options { get; }
         public Dictionary<string, object> Map { get; private set; } = new Dictionary<string, object>();
+        public Dictionary<object, string> ReversedMap { get; private set; } = new Dictionary<object, string>();
         public Type EnumType { get; }
         public EnumListSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
         {
@@ -18,7 +20,16 @@ namespace TheArchive.Core.FeaturesAPI.Settings
 
             foreach (var option in Options)
             {
-                Map.Add(option, Enum.Parse(EnumType, option));
+                if (featureSettingsHelper.Localization.TryGetFSEnumText(EnumType, out var dic) && dic.TryGetValue(option, out var text))
+                {
+                    Map.Add(text, Enum.Parse(EnumType, option));
+                    ReversedMap.Add(Enum.Parse(EnumType, option), text);
+                }
+                else
+                {
+                    Map.Add(option, Enum.Parse(EnumType, option));
+                    ReversedMap.Add(Enum.Parse(EnumType, option), option);
+                }
             }
         }
 
@@ -76,6 +87,17 @@ namespace TheArchive.Core.FeaturesAPI.Settings
             var array = new object[list.Count];
             list.CopyTo(array, 0);
             return array;
+        }
+
+        public string[] CurrentSelectedValuesName()
+        {
+            var list = GetList();
+            var resultList = new List<string>(list.Count);
+            foreach (var item in list)
+            {
+                resultList.Add(ReversedMap[item]);
+            }
+            return resultList.ToArray();
         }
     }
 }

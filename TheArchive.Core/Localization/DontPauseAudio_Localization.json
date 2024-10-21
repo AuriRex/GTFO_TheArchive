@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Backport.DontPauseAudio.Name": {
+        "FName": {
+          "English": "Don't Pause Audio On Unfocus",
+          "Chinese": "不在失去焦点时暂停音频",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Backport.DontPauseAudio.Description": {
+        "FDescription": {
+          "English": "Audio in R1 was completely paused whenever the game lost focus resulting in sounds piling up and playing on re-focus.",
+          "Chinese": "R1中在游戏失去焦点时会完全暂停音频，导致重新聚焦时声音堆积并播放。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

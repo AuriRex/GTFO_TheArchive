@@ -1,0 +1,456 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Accessibility.Nickname.Name": {
+        "FName": {
+          "English": "NickName",
+          "Chinese": "昵称",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname.Description": {
+        "FDescription": {
+          "English": "Nickname related settings.\n\nChange your in game nickname, handy color picker included!",
+          "Chinese": "昵称相关设置。\n\n更改你在游戏中的昵称，包括方便的颜色选择器！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.Nickname": {
+        "FSDisplayName": {
+          "English": "Nickname",
+          "Chinese": "昵称",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "A custom Nickname.\nOverrides your steam name in game.\nLimited to 25 characters maximum\n\n<color=green>If 11 or less characters: Full color support</color>\n<color=orange>If 19 or less characters: Partial color support, colors are gonna escape!</color>\n<color=red>If 20 or more characters: No color support</color>",
+          "Chinese": "自定义昵称。\n在游戏中覆盖你的Steam名字。\n最多限制为25个字符\n\n<color=green>如果字符数少于或等于11个：完全支持颜色</color>\n<color=orange>如果字符数少于或等于19个：部分支持颜色，颜色会被转义！</color>\n<color=red>如果字符数大于等于20个：不支持颜色</color>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.UseColor": {
+        "FSDisplayName": {
+          "English": "Use Color",
+          "Chinese": "使用颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "If the color below should be used as nickname color\nUsing a color removes 6 characters from your nickname budget minimum!",
+          "Chinese": "如果应该使用下面的颜色作为昵称颜色\n使用颜色会从昵称预算中最少减去6个字符！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.Color": {
+        "FSDisplayName": {
+          "English": "Color",
+          "Chinese": "颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "The color used to tint your name.",
+          "Chinese": "用于给您的昵称上色的颜色。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.InfoLabelTop": {
+        "FSLabelText": {
+          "English": "///",
+          "Chinese": "///",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.InfoLabelBottom": {
+        "FSLabelText": {
+          "English": "///",
+          "Chinese": "///",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.AllowRemotePlayerNicknames": {
+        "FSDisplayName": {
+          "English": "Allow Other Player Nicknames",
+          "Chinese": "允许其他玩家昵称",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": "Nickname :// Others",
+          "Chinese": "昵称 :// 其他",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.AllowRemoteTMPTags": {
+        "FSDisplayName": {
+          "English": "See Other Players Colors",
+          "Chinese": "查看其他玩家颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.HasMigrated": {
+        "FSDisplayName": {
+          "English": "Has Migrated",
+          "Chinese": "已经迁移",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.HiddenSettingsWarningLabel": {
+        "FSLabelText": {
+          "English": "<color=red>Old settings below, do not use!</color>",
+          "Chinese": "<color=red>下面是旧设置，不要使用！</color>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.Mode": {
+        "FSDisplayName": {
+          "English": "Mode",
+          "Chinese": "模式",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Modes explained using <#C21F4E>this</color> as the character color and <#404>this</color> as the custom color:\n\n<#E4A818>NicknameMode.Normal</color>:\n <#C21F4E>> > Nickname</color>: Some chat message here.\n<#E4A818>Color</color>:\n <#C21F4E>> > <#404>Nickname</color>: Some chat message here.\n</color><#E4A818>TerminatedColor</color>:\n <#C21F4E>> > <#404>Nickname</color></color>: Some chat message here.",
+          "Chinese": "使用<#C21F4E>this</color>作为字符颜色和<#404>this</color>作为自定义颜色解释的模式：\n\n<#E4A818>正常</color>:\n <#C21F4E>> > 昵称</color>: 这里是一些聊天消息。\n<#E4A818>颜色</color>:\n <#C21F4E>> > <#404>昵称</color>: 这里是一些聊天消息。\n</color><#E4A818>远端颜色</color>:\n <#C21F4E>> > <#404>昵称</color>: 这里是一些聊天消息。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.Nick25": {
+        "FSDisplayName": {
+          "English": "Nick (25) (No Color)",
+          "Chinese": "昵称 (25) (无颜色)",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Un-colored nickname (use character color), max length of 25 characters.\n\nOnly used if Mode is set to <#E4A818>Normal</color>!",
+          "Chinese": "非彩色昵称（使用角色颜色），最长长度为25个字符。\n\n仅在模式设置为<#E4A818>正常</color>时使用！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.Nick19": {
+        "FSDisplayName": {
+          "English": "Nick (19) <#E4A818>(Colored)</color>",
+          "Chinese": "昵称 (19) <#E4A818>(着色的)",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Colored nickname, max length of 19 characters.\n\nOnly used if Mode is set to <#E4A818>Color</color>!",
+          "Chinese": "带有颜色的昵称，最大长度为19个字符。\n\n只有当模式设置为<#E4A818>着色</color>时才使用！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.Nickname+NicknameSettings.Nick11": {
+        "FSDisplayName": {
+          "English": "Nick (11) <#E4A818>(C + Terminated)</color>",
+          "Chinese": "昵称 (11) <#E4A818>(本地 + 远端)",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Terminated colored nickname, max length of 11 characters.\n\nOnly used if Mode is set to <#E4A818>TerminatedColor</color>!",
+          "Chinese": "终止的彩色昵称，最大长度为11个字符。\n\n仅在模式设置为<#E4A818>远端着色</color>时使用！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {
+      "TheArchive.Features.Accessibility.Nickname+NicknameMode": {
+        "English": {
+          "Normal": "Normal",
+          "Color": "Color",
+          "TerminatedColor": "Terminated Color",
+          "Advanced": "Advanced"
+        },
+        "Chinese": {
+          "Normal": "正常",
+          "Color": "着色",
+          "TerminatedColor": "远端着色",
+          "Advanced": "增强"
+        },
+        "French": {
+          "Normal": null,
+          "Color": null,
+          "TerminatedColor": null,
+          "Advanced": null
+        },
+        "Italian": {
+          "Normal": null,
+          "Color": null,
+          "TerminatedColor": null,
+          "Advanced": null
+        },
+        "German": {
+          "Normal": null,
+          "Color": null,
+          "TerminatedColor": null,
+          "Advanced": null
+        },
+        "Spanish": {
+          "Normal": null,
+          "Color": null,
+          "TerminatedColor": null,
+          "Advanced": null
+        },
+        "Russian": {
+          "Normal": null,
+          "Color": null,
+          "TerminatedColor": null,
+          "Advanced": null
+        },
+        "Portuguese_Brazil": {
+          "Normal": null,
+          "Color": null,
+          "TerminatedColor": null,
+          "Advanced": null
+        },
+        "Polish": {
+          "Normal": null,
+          "Color": null,
+          "TerminatedColor": null,
+          "Advanced": null
+        },
+        "Japanese": {
+          "Normal": null,
+          "Color": null,
+          "TerminatedColor": null,
+          "Advanced": null
+        },
+        "Korean": {
+          "Normal": null,
+          "Color": null,
+          "TerminatedColor": null,
+          "Advanced": null
+        }
+      }
+    },
+    "ExtraTexts": [
+      {
+        "UntranslatedText": "Nickname budget: {0} / 25  =>  {1}",
+        "Description": "",
+        "ID": 1,
+        "Languages": {
+          "English": "Nickname budget: {0} / 25  =>  {1}",
+          "Chinese": "昵称预览: {0} / 25  =>  {1}"
+        }
+      },
+      {
+        "UntranslatedText": "<color=orange><u>/!\\</u></color> Your Player color is going to escape! (Max 11 characters)",
+        "Description": "",
+        "ID": 2,
+        "Languages": {
+          "English": "<color=orange><u>/!\\</u></color> Your Player color is going to escape! (Max 11 characters)",
+          "Chinese": "<color=orange><u>/!\\</u></color> 你的玩家颜色太长了！（最长11个字符）"
+        }
+      },
+      {
+        "UntranslatedText": "Colored name applied!",
+        "Description": "",
+        "ID": 3,
+        "Languages": {
+          "English": "Colored name applied!",
+          "Chinese": "彩色昵称已应用！"
+        }
+      },
+      {
+        "UntranslatedText": "<color=red><u>/!\\</u></color> Name too long, can't apply color! (Max 19 characters)",
+        "Description": "",
+        "ID": 4,
+        "Languages": {
+          "English": "<color=red><u>/!\\</u></color> Name too long, can't apply color! (Max 19 characters)",
+          "Chinese": "<color=red><u>/!\\</u></color> 昵称太长了，无法应用颜色！（最长19个字符）"
+        }
+      },
+      {
+        "UntranslatedText": "<#440144><u>/!\\</u></color> Custom Color Tags detected! => <noparse>{0}</noparse>",
+        "Description": "",
+        "ID": 5,
+        "Languages": {
+          "English": "<#440144><u>/!\\</u></color> Custom Color Tags detected! => <noparse>{0}</noparse>",
+          "Chinese": "<#440144><u>/!\\</u></color> 检测到自定义颜色标记！ => <noparse>{0}</noparse>"
+        }
+      }
+    ]
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

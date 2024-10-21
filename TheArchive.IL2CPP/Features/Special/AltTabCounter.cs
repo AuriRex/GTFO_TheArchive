@@ -9,7 +9,7 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "Alt Tab Counter";
 
-        public override string Group => FeatureGroups.Special;
+        public override FeatureGroup Group => FeatureGroups.Special;
 
         public override string Description => "Counts the ammount of times that the game went out of focus. (ALT + TAB)";
 

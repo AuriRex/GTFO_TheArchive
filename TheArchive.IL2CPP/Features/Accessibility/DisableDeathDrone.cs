@@ -11,7 +11,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Disable Downed Sound";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override FeatureGroup Group => FeatureGroups.Accessibility;
 
         public override string Description => "Removes the droning sound that playes whenever you're downed.";
 

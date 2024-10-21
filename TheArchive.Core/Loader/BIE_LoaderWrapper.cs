@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using TheArchive.Interfaces;
-using TheArchive.Utilities;
 
 namespace TheArchive.Loader
 {
@@ -36,9 +36,53 @@ namespace TheArchive.Loader
             BIE_ArchiveMod.MainComponent.StopCoroutine((UnityEngine.Coroutine)coroutineToken);
         }
 
-        public static void NativeHookAttach(IntPtr target, IntPtr detour)
+        public static unsafe void* GetIl2CppMethod<T>(string methodName, string returnTypeName, bool isGeneric, params string[] argTypes) where T : Il2CppInterop.Runtime.InteropTypes.Il2CppObjectBase
         {
-            ArchiveLogger.Warning("NativeHookAttach not implemented");
+            void** ppMethod = (void**)Il2CppInterop.Runtime.IL2CPP.GetIl2CppMethod(Il2CppInterop.Runtime.Il2CppClassPointerStore<T>.NativeClassPtr, isGeneric, methodName, returnTypeName, argTypes).ToPointer();
+            if ((long)ppMethod == 0) return ppMethod;
+
+            return *ppMethod;
+        }
+
+        public static unsafe TDelegate GetIl2CppMethod<T, TDelegate>(string methodName, string returnTypeName, bool isGeneric, params string[] argTypes)
+            where T : Il2CppInterop.Runtime.InteropTypes.Il2CppObjectBase
+            where TDelegate : Delegate
+        {
+            void* pMethod = GetIl2CppMethod<T>(methodName, returnTypeName, isGeneric, argTypes);
+            if ((long)pMethod == 0) return null;
+
+            return Marshal.GetDelegateForFunctionPointer<TDelegate>((IntPtr)pMethod);
+        }
+
+        public static unsafe BepInEx.Unity.IL2CPP.Hook.INativeDetour ApplyNativeHook<TClass, TDelegate>(string methodName, string returnType, string[] paramTypes, TDelegate to, out TDelegate original)
+            where TClass : Il2CppSystem.Object
+            where TDelegate : Delegate
+        {
+            IntPtr classPtr = Il2CppInterop.Runtime.Il2CppClassPointerStore<TClass>.NativeClassPtr;
+            if (classPtr == IntPtr.Zero) throw new ArgumentException($"{typeof(TClass).Name} does not exist in il2cpp domain");
+            IntPtr methodPtr = Il2CppInterop.Runtime.IL2CPP.GetIl2CppMethod(classPtr, false, methodName, returnType, paramTypes);
+
+            Il2CppSystem.Reflection.MethodInfo methodInfo = new(Il2CppInterop.Runtime.IL2CPP.il2cpp_method_get_object(methodPtr, classPtr));
+
+            Il2CppInterop.Runtime.Runtime.VersionSpecific.MethodInfo.INativeMethodInfoStruct il2cppMethodInfo = Il2CppInterop.Runtime.Runtime.UnityVersionHandler.Wrap((Il2CppInterop.Runtime.Runtime.Il2CppMethodInfo*)Il2CppInterop.Runtime.IL2CPP.il2cpp_method_get_from_reflection(methodInfo.Pointer));
+
+            return BepInEx.Unity.IL2CPP.Hook.INativeDetour.CreateAndApply(il2cppMethodInfo.MethodPointer, to, out original);
+        }
+
+        public static unsafe BepInEx.Unity.IL2CPP.Hook.INativeDetour ApplyNativeHook<TClass, TDelegate>(string methodName, string returnType, string[] paramTypes, Type[] genericArguments, TDelegate to, out TDelegate original)
+            where TClass : Il2CppSystem.Object
+            where TDelegate : Delegate
+        {
+            IntPtr classPtr = Il2CppInterop.Runtime.Il2CppClassPointerStore<TClass>.NativeClassPtr;
+            if (classPtr == IntPtr.Zero) throw new ArgumentException($"{typeof(TClass).Name} does not exist in il2cpp domain");
+            IntPtr methodPtr = Il2CppInterop.Runtime.IL2CPP.GetIl2CppMethod(classPtr, true, methodName, returnType, paramTypes);
+
+            Il2CppSystem.Reflection.MethodInfo methodInfo = new(Il2CppInterop.Runtime.IL2CPP.il2cpp_method_get_object(methodPtr, classPtr));
+            Il2CppSystem.Reflection.MethodInfo genericMethodInfo = methodInfo.MakeGenericMethod(genericArguments.Select(Il2CppInterop.Runtime.Il2CppType.From).ToArray());
+
+            Il2CppInterop.Runtime.Runtime.VersionSpecific.MethodInfo.INativeMethodInfoStruct il2cppMethodInfo = Il2CppInterop.Runtime.Runtime.UnityVersionHandler.Wrap((Il2CppInterop.Runtime.Runtime.Il2CppMethodInfo*)Il2CppInterop.Runtime.IL2CPP.il2cpp_method_get_from_reflection(methodInfo.Pointer));
+
+            return BepInEx.Unity.IL2CPP.Hook.INativeDetour.CreateAndApply(il2cppMethodInfo.MethodPointer, to, out original);
         }
 
         public static bool IsModInstalled(string guid)

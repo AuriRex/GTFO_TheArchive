@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Utilities;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
 
@@ -30,38 +31,38 @@ namespace TheArchive.Features.Dev
 
             internal SearchMainPage()
             {
-                _searchMainSubmenu = new SubMenu("Search");
+                _searchMainSubmenu = new SubMenu(LocalizationCoreService.Get(9, "Search"));
 
                 Query.TitleContains = Settings.Search.SearchTitles;
                 Query.DesciptionContains = Settings.Search.SearchDescriptions;
                 Query.SubSettingsTitleContains = Settings.Search.SearchSubSettingsTitles;
                 Query.SubSettingsDesciptionContains = Settings.Search.SearchSubSettingsDescription;
 
-                CreateHeader("Search All Features", UnityEngine.Color.magenta, subMenu: null);
+                CreateHeader(LocalizationCoreService.Get(11, "Search All Features:"), UnityEngine.Color.magenta, subMenu: null);
 
-                CreateSubMenuControls(_searchMainSubmenu, null, "Search", null, "Search");
+                CreateSubMenuControls(_searchMainSubmenu, null, LocalizationCoreService.Get(9, "Search"), null, LocalizationCoreService.Get(9, "Search"));
 
                 CreateSpacer(null);
 
-                CreateSimpleTextField("Query:", Query.QueryString, OnSearchValueUpdate, placeIntoMenu: _searchMainSubmenu);
+                CreateSimpleTextField($"{LocalizationCoreService.Get(12, "Query")}:", Query.QueryString, OnSearchValueUpdate, placeIntoMenu: _searchMainSubmenu);
 
-                CreateHeader("Search Options:", DISABLED, subMenu: _searchMainSubmenu);
-                CreateSimpleToggle("Title", initialState: Query.TitleContains, TitleContainsToggled, _searchMainSubmenu);
-                CreateSimpleToggle("Description", initialState: Query.DesciptionContains, DescriptionContainsToggled, _searchMainSubmenu);
-                CreateSimpleToggle("SubSettings Title", initialState: Query.SubSettingsTitleContains, SubTitleContainsToggled, _searchMainSubmenu);
-                CreateSimpleToggle("SubSettings Description", initialState: Query.SubSettingsDesciptionContains, SubDescriptionContainsToggled, _searchMainSubmenu);
+                CreateHeader($"{LocalizationCoreService.Get(10, "Search Options")}:", DISABLED, subMenu: _searchMainSubmenu);
+                CreateSimpleToggle(LocalizationCoreService.Get(16, "Title"), initialState: Query.TitleContains, TitleContainsToggled, _searchMainSubmenu);
+                CreateSimpleToggle(LocalizationCoreService.Get(17, "Description"), initialState: Query.DesciptionContains, DescriptionContainsToggled, _searchMainSubmenu);
+                CreateSimpleToggle(LocalizationCoreService.Get(18, "SubSettings Title"), initialState: Query.SubSettingsTitleContains, SubTitleContainsToggled, _searchMainSubmenu);
+                CreateSimpleToggle(LocalizationCoreService.Get(19, "SubSettings Description"), initialState: Query.SubSettingsDesciptionContains, SubDescriptionContainsToggled, _searchMainSubmenu);
 
                 CreateSpacer(_searchMainSubmenu);
 
-                _resultsMenu = new DynamicSubMenu("Search Results", BuildSearchResultsMenu);
+                _resultsMenu = new DynamicSubMenu(LocalizationCoreService.Get(13, "Search Results"), BuildSearchResultsMenu);
 
-                CreateSubMenuControls(_resultsMenu, null, menuEntryLabelText: "Start Search", placeIntoMenu: _searchMainSubmenu, headerText: "Search Results", enterButtonText: "> Search! <");
+                CreateSubMenuControls(_resultsMenu, null, menuEntryLabelText: LocalizationCoreService.Get(14, "Start Search"), placeIntoMenu: _searchMainSubmenu, headerText: LocalizationCoreService.Get(13, "Search Results"), enterButtonText: LocalizationCoreService.Get(36, "> Search! <"));
 
-                CreateHeader("Search is WIP, Toggling settings here does not visually update the normal buttons currently!", DISABLED, subMenu: _searchMainSubmenu);
+                CreateHeader(LocalizationCoreService.Get(15, "Search is WIP, Toggling settings here does not visually update the normal buttons currently!"), DISABLED, subMenu: _searchMainSubmenu);
 
                 using(_resultsMenu.GetPersistentContenAdditionToken())
                 {
-                    CreateHeader("Search is WIP, Toggling settings here does not visually update the normal buttons currently!", DISABLED, subMenu: _resultsMenu);
+                    CreateHeader(LocalizationCoreService.Get(15, "Search is WIP, Toggling settings here does not visually update the normal buttons currently!"), DISABLED, subMenu: _resultsMenu);
                 }
 
                 _searchMainSubmenu.Build();
@@ -113,14 +114,14 @@ namespace TheArchive.Features.Dev
                 string numFoundText;
                 if (count == 0)
                 {
-                    numFoundText = "Nothing found! :(";
+                    numFoundText = LocalizationCoreService.Get(20, "Nothing found! :(");
                 }
                 else
                 {
-                    numFoundText = $"Found {count} Feature{(count > 1 ? "s" : string.Empty)}!";
+                    numFoundText = LocalizationCoreService.Format(21, "Found {0} Feature{1}!", count, count > 1 ? "s" : string.Empty);
                 }
 
-                CreateHeader($"Query: \"<color=orange>{Query.QueryString}</color>\"", WHITE_GRAY, subMenu: menu);
+                CreateHeader(LocalizationCoreService.Format(22, "Query: <color=orange>{0}</color>", Query.QueryString), WHITE_GRAY, subMenu: menu);
                 CreateHeader(numFoundText, count == 0 ? RED : GREEN, subMenu: menu);
                 CreateSpacer();
 

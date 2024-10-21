@@ -9,7 +9,7 @@ namespace TheArchive.Features.Presence
     {
         public override string Name => "Disable Built-in Rich Presence";
 
-        public override string Group => FeatureGroups.Presence;
+        public override FeatureGroup Group => FeatureGroups.Presence;
 
         public override string Description => "Disables the Discord Rich Presence added to the game in Rundown 8.";
 

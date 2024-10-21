@@ -12,7 +12,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Player Dialog Filter";
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "Remove unwanted player sound events.";
 

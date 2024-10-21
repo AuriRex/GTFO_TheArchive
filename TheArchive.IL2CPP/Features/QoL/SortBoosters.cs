@@ -13,7 +13,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Sort Boosters";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Sorts your booster inventory by type and alphabetically";
 

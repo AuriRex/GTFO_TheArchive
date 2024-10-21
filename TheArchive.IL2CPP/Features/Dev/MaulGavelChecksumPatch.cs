@@ -2,15 +2,17 @@
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
+using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Dev
 {
     [EnableFeatureByDefault, HideInModSettings]
+    [RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownAltSix)]
     public class MaulGavelChecksumPatch : Feature
     {
         public override string Name => "Maul/Gavel Checksum Patch";
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "Fixes the Maul and Gavel hammers having the same icon.";
 

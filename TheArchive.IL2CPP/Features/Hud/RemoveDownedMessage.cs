@@ -8,7 +8,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Remove Downed Message";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Completely removes the 'You are dead, use TAB to check map' message.";
 

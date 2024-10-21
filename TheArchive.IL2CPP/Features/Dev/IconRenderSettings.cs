@@ -1,4 +1,5 @@
 ﻿using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using static GearIconRendering;
 
@@ -9,13 +10,14 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => nameof(IconRenderSettings);
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         [FeatureConfig]
         public static IconRenderSettingsSettings Settings { get; set; }
 
         public class IconRenderSettingsSettings
         {
+            [FSDisplayName("Resolution Multiplier")]
             public int ResolutionMultiplier { get; set; } = 5;
         }
 

@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Accessibility.DisableUIParalax.Name": {
+        "FName": {
+          "English": "Disable UI Paralax",
+          "Chinese": "禁用UI视差效果",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.DisableUIParalax.Description": {
+        "FDescription": {
+          "English": "Disables the Paralax/Moving of UI elements in menu screens.\n(Some elements might get partially or fully cut off-screen!)\n\n<size=80%>(Only partially works on R4://EXT builds, might fix later.)</size>",
+          "Chinese": "禁用菜单界面中UI元素的视差/移动效果。\n(部分元素可能会部分或完全被显示到屏幕外!)\n\n<size=80%>(仅在R4://EXT版本上部分生效，可能会在以后修复。)</size>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

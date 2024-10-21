@@ -1,0 +1,216 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Dev.ModLanguageLegacy.Name": {
+        "FName": {
+          "English": "Mod Language Legacy",
+          "Chinese": "插件语言",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ModLanguageLegacy.Description": {
+        "FDescription": {
+          "English": "Change Language of ModSettings for OG Rundowns 1 to 5",
+          "Chinese": "在 Rundown 1-5 中切换插件设置语言",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ModLanguageLegacy+ModLanguageLegacySettings.Language": {
+        "FSDisplayName": {
+          "English": "Language",
+          "Chinese": "语言",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "The Language used for ModSettings when playing Original Rundowns 1 to 5.\n\nUpdates automatically whenever you choose your Language on the latest game version!",
+          "Chinese": "在 Rundown 1-5 时使用的插件设置语言。\n\n在最新游戏版本上将自动设置语言！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {
+      "TheArchive.Core.Localization.Language": {
+        "English": {
+          "English": "English",
+          "Chinese": "Chinese",
+          "French": "French",
+          "Italian": "Italian",
+          "German": "German",
+          "Spanish": "Spanish",
+          "Russian": "Russian",
+          "Portuguese_Brazil": "Portuguese Brazil",
+          "Polish": "Polish",
+          "Japanese": "Japanese",
+          "Korean": "Korean"
+        },
+        "Chinese": {
+          "English": "英文",
+          "Chinese": "中文",
+          "French": "法文",
+          "Italian": "意大利文",
+          "German": "德文",
+          "Spanish": "西班牙文",
+          "Russian": "俄文",
+          "Portuguese_Brazil": "巴西葡萄牙文",
+          "Polish": "葡萄牙文",
+          "Japanese": "日文",
+          "Korean": "韩文"
+        },
+        "French": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Italian": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "German": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Spanish": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Russian": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Portuguese_Brazil": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Polish": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Japanese": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Korean": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    }
+  }
+}

@@ -11,7 +11,7 @@ namespace TheArchive.Features.Backport
     {
         public override string Name => "Modern Melee Charge Cancel";
 
-        public override string Group => FeatureGroups.Backport;
+        public override FeatureGroup Group => FeatureGroups.Backport;
 
         public override string Description => "Returns the hammer back to neutral instead of shoving whenever you're charging and alt-fire is pressed.";
 

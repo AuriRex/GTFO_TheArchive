@@ -9,13 +9,14 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => nameof(SettingsDebug);
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         [FeatureConfig]
         public static SettingsDebugSettings Settings { get; set; }
 
         public class SettingsDebugSettings
         {
+            [FSDisplayName("Slider Settings")]
             public Sliders SliderSettings { get; set; } = new Sliders();
 
             public class Sliders

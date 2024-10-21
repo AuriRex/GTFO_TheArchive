@@ -11,7 +11,7 @@ namespace TheArchive.Features.Backport
     {
         public override string Name => "Don't Pause Audio On Unfocus";
 
-        public override string Group => FeatureGroups.Backport;
+        public override FeatureGroup Group => FeatureGroups.Backport;
 
         public override string Description => "Audio in R1 was completely paused whenever the game lost focus resulting in sounds piling up and playing on re-focus.";
 

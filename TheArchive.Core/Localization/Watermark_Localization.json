@@ -1,0 +1,251 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Hud.Watermark.Name": {
+        "FName": {
+          "English": "Watermark Tweaks",
+          "Chinese": "水印调整",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.Watermark.Description": {
+        "FDescription": {
+          "English": "Configurable to either show your current position, a timer or the mod version in the bottom right:\n - <color=red>X:24</color> <color=green>Y:2</color> <color=blue>Z:-46</color>\n - Timer showing elapsed mission time\n - <#{ColorHex}>{ArchiveMod.MOD_NAME} v{ArchiveMod.VERSION_STRING}</color>",
+          "Chinese": "可配置显示您的当前位置，计时器或mod版本在右下角:\n - <color=red>X:24</color> <color=green>Y:2</color> <color=blue>Z:-46</color>\n -计时器显示经过的任务时间\n - <#{ColorHex}>{ArchiveMod.MOD_NAME} v{ArchiveMod.VERSION_STRING}</color>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.Watermark+WatermarkSettings.Mode": {
+        "FSDisplayName": {
+          "English": "Watermark Mode",
+          "Chinese": "水印模式",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Mod: Shows currently installed mod version\n{nameof(WatermarkMode.Positional)}: Shows your current position / XYZ coordinates",
+          "Chinese": "模组: 显示当前安装的模组版本\n{nameof(WatermarkMode.Positional)}: 显示当前位置 / XYZ 坐标",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.Watermark+WatermarkSettings.XYZSaturation": {
+        "FSDisplayName": {
+          "English": "XYZ Saturation",
+          "Chinese": "XYZ 饱和度",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "How much color to apply to the XYZ coords.",
+          "Chinese": "XYZ 坐标应用的颜色饱和度。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.Watermark+WatermarkSettings.Precision": {
+        "FSDisplayName": {
+          "English": "XYZ Decimals",
+          "Chinese": "XYZ 小数位数",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Decimal precision to show on the XYZ coords.",
+          "Chinese": "在 XYZ 坐标上显示的小数精度",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {
+      "TheArchive.Features.Hud.Watermark+WatermarkSettings+DecimalPrecision": {
+        "English": {
+          "None": "None",
+          "One": "One",
+          "Two": "Two"
+        },
+        "Chinese": {
+          "None": "无",
+          "One": "一位",
+          "Two": "两位"
+        },
+        "French": {
+          "None": null,
+          "One": null,
+          "Two": null
+        },
+        "Italian": {
+          "None": null,
+          "One": null,
+          "Two": null
+        },
+        "German": {
+          "None": null,
+          "One": null,
+          "Two": null
+        },
+        "Spanish": {
+          "None": null,
+          "One": null,
+          "Two": null
+        },
+        "Russian": {
+          "None": null,
+          "One": null,
+          "Two": null
+        },
+        "Portuguese_Brazil": {
+          "None": null,
+          "One": null,
+          "Two": null
+        },
+        "Polish": {
+          "None": null,
+          "One": null,
+          "Two": null
+        },
+        "Japanese": {
+          "None": null,
+          "One": null,
+          "Two": null
+        },
+        "Korean": {
+          "None": null,
+          "One": null,
+          "Two": null
+        }
+      },
+      "TheArchive.Features.Hud.Watermark+WatermarkSettings+WatermarkMode": {
+        "English": {
+          "Mod": "Mod",
+          "Positional": "Positional",
+          "Timer": "Timer"
+        },
+        "Chinese": {
+          "Mod": "模组",
+          "Positional": "位置",
+          "Timer": "计时器"
+        },
+        "French": {
+          "Mod": null,
+          "Positional": null,
+          "Timer": null
+        },
+        "Italian": {
+          "Mod": null,
+          "Positional": null,
+          "Timer": null
+        },
+        "German": {
+          "Mod": null,
+          "Positional": null,
+          "Timer": null
+        },
+        "Spanish": {
+          "Mod": null,
+          "Positional": null,
+          "Timer": null
+        },
+        "Russian": {
+          "Mod": null,
+          "Positional": null,
+          "Timer": null
+        },
+        "Portuguese_Brazil": {
+          "Mod": null,
+          "Positional": null,
+          "Timer": null
+        },
+        "Polish": {
+          "Mod": null,
+          "Positional": null,
+          "Timer": null
+        },
+        "Japanese": {
+          "Mod": null,
+          "Positional": null,
+          "Timer": null
+        },
+        "Korean": {
+          "Mod": null,
+          "Positional": null,
+          "Timer": null
+        }
+      }
+    },
+    "ExtraTexts": [
+      {
+        "UntranslatedText": "Configurable to either show your current position, a timer or the mod version in the bottom right:\n - <color=red>X:24</color> <color=green>Y:2</color> <color=blue>Z:-46</color>\n - Timer showing elapsed mission time\n - <#{0}>{1} v{2}</color>",
+        "Description": "",
+        "ID": 1,
+        "Languages": {
+          "English": "Configurable to either show your current position, a timer or the mod version in the bottom right:\n - <color=red>X:24</color> <color=green>Y:2</color> <color=blue>Z:-46</color>\n - Timer showing elapsed mission time\n - <#{0}>{1} v{2}</color>",
+          "Chinese": "可配置显示您的当前位置，计时器或mod版本在右下角:\n - <color=red>X:24</color> <color=green>Y:2</color> <color=blue>Z:-46</color>\n - 任务计时器\n - <#{0}>{1} v{2}</color>"
+        }
+      }
+    ]
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

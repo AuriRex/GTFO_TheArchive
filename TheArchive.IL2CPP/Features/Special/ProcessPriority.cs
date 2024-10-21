@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 
 namespace TheArchive.Features.Special
 {
@@ -11,14 +13,16 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "Process Priority";
 
-        public override string Group => FeatureGroups.Special;
+        public override FeatureGroup Group => FeatureGroups.Special;
 
         public override string Description => $"Set the games process priority.\n\nThis does the same thing as opening up Taskmanager, going into the 'Details' tab and right clicking on GTFO.exe > [Set Priority]\n\nWarning! Your system might lag / stutter while the game is loading if set to {ProcessPrioritySettings.PriorityClass.AboveNormal} or higher!";
 
         public class ProcessPrioritySettings
         {
+            [FSDisplayName("Priority")]
             public PriorityClass Priority { get; set; } = PriorityClass.AboveNormal;
 
+            [Localized]
             public enum PriorityClass
             {
                 High,

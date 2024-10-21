@@ -12,6 +12,7 @@ namespace TheArchive.Core.Settings
         public bool DisableOnRundownEight { get; set; } = true;
 
         [FSHide]
+        [FSDisplayName("DEBUG Use Default Settings")]
         public bool DEBUG_UseDefaultSettings { get; set; } = false;
 
         [FSIgnore]

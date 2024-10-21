@@ -10,7 +10,7 @@ namespace TheArchive.Features.Audio
     {
         public override string Name => "Disable Spitter Audio";
 
-        public override string Group => FeatureGroups.Audio;
+        public override FeatureGroup Group => FeatureGroups.Audio;
 
         public override string Description => "Completely Removes all Audio from spitters.\n\n<color=orange>Keep in mind that you won't get any auditory warnings before it's too late</color>";
 

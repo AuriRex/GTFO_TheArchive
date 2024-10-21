@@ -10,6 +10,8 @@ using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
 using static TheArchive.Utilities.SColorExtensions;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
+
 #if Unhollower
 using UnhollowerBaseLib.Attributes;
 #endif
@@ -40,7 +42,7 @@ namespace TheArchive.Features.Dev
             public void StartListening(KeySetting setting)
             {
                 FeatureLogger.Debug($"[{nameof(KeyListener)}] Starting listener, disabling all input!");
-                setting.UpdateKeyText("<#F00><b>Press any Key!</b></color>");
+                setting.UpdateKeyText($"<#F00><b>{LocalizationCoreService.Get(51, "Press any Key!")}</b></color>");
                 ActiveKeySetting = setting;
                 FeatureManager.EnableAutomatedFeature(typeof(InputDisabler));
                 enabled = true;
@@ -235,7 +237,7 @@ namespace TheArchive.Features.Dev
 
             public ColorPicker()
             {
-                _backgroundPanel = CreateScrollWindow("Color Picker");
+                _backgroundPanel = CreateScrollWindow(LocalizationCoreService.Get(41, "Color Picker"));
                 _backgroundPanel.transform.localPosition = _backgroundPanel.transform.localPosition + new Vector3(1050, 0, 0);
 
 
@@ -274,7 +276,7 @@ namespace TheArchive.Features.Dev
                     return Hue;
                 });
 
-                CreateSimpleNumberField("Hue", .5f, setValueHue, out var settingsItemHue, out _, out _sr_hue, getValueHue, new FSSlider(0, 1), placeInNoMenu: true);
+                CreateSimpleNumberField(LocalizationCoreService.Get(52, "Hue"), .5f, setValueHue, out var settingsItemHue, out _, out _sr_hue, getValueHue, new FSSlider(0, 1), placeInNoMenu: true);
                 #endregion COLOR_PICKER_HUE_SLIDER
 
                 #region COLOR_PICKER_SAT_SLIDER
@@ -290,7 +292,7 @@ namespace TheArchive.Features.Dev
                     return Saturation;
                 });
 
-                CreateSimpleNumberField("Saturation", .5f, setValueSaturation, out var settingsItemSaturation, out _, out _sr_saturation, getValueSaturation, new FSSlider(0, 1), placeInNoMenu: true);
+                CreateSimpleNumberField(LocalizationCoreService.Get(53, "Saturation"), .5f, setValueSaturation, out var settingsItemSaturation, out _, out _sr_saturation, getValueSaturation, new FSSlider(0, 1), placeInNoMenu: true);
                 #endregion COLOR_PICKER_SAT_SLIDER
 
                 #region COLOR_PICKER_VAL_SLIDER
@@ -306,16 +308,16 @@ namespace TheArchive.Features.Dev
                     return Value;
                 });
 
-                CreateSimpleNumberField("Value", .5f, setValueValue, out var settingsItemValue, out _, out _sr_value, getValueValue, new FSSlider(0, 1), placeInNoMenu: true);
+                CreateSimpleNumberField(LocalizationCoreService.Get(54, "Value"), .5f, setValueValue, out var settingsItemValue, out _, out _sr_value, getValueValue, new FSSlider(0, 1), placeInNoMenu: true);
                 #endregion COLOR_PICKER_VAL_SLIDER
 
 
 
-                CreateSimpleButton("Apply Color", $"<{GREEN.ToHexString()}>Apply</color>", OnApplyPress, out var settingsItemApply, placeInNoMenu: true);
+                CreateSimpleButton(LocalizationCoreService.Get(42, "Apply Color"), $"<{GREEN.ToHexString()}>{LocalizationCoreService.Get(43, "Apply")}</color>", OnApplyPress, out var settingsItemApply, placeInNoMenu: true);
 
                 CreateSpacer(out var settingsItemSpacer, placeInNoMenu: true);
 
-                CreateSimpleButton("Close Color Picker", "Cancel", OnCancelPress, out var settingsItemCancel, placeInNoMenu: true);
+                CreateSimpleButton(LocalizationCoreService.Get(44, "Close Color Picker"), LocalizationCoreService.Get(45, "Cancel"), OnCancelPress, out var settingsItemCancel, placeInNoMenu: true);
 
                 CreateSpacer(out var settingsItemSpacer2, placeInNoMenu: true);
                 CreateSpacer(out var settingsItemSpacer3, placeInNoMenu: true);
@@ -339,10 +341,10 @@ namespace TheArchive.Features.Dev
                     return CurrentColor.ToHexString();
                 });
 
-                CreateSimpleTextField("Hex Code", "#COLORS", onValueUpdated: setValueHexCode, out var settingsItemHexField, out _hexField, getValue: getValueHexCode, maxLength: 7, null, null, placeInNoMenu: true);
+                CreateSimpleTextField(LocalizationCoreService.Get(46, "Hex Code"), "#COLORS", onValueUpdated: setValueHexCode, out var settingsItemHexField, out _hexField, getValue: getValueHexCode, maxLength: 7, null, null, placeInNoMenu: true);
 
-                CreateSimpleButton("Copy Color Hex Code", "Copy", OnCopyColor, out var settingsItemCopyColor, placeInNoMenu: true);
-                CreateSimpleButton("Paste Color Hex Code", "Paste", OnPasteColor, out var settingsItemPasteColor, placeInNoMenu: true);
+                CreateSimpleButton(LocalizationCoreService.Get(47, "Copy Color Hex Code"), LocalizationCoreService.Get(49, "Copy"), OnCopyColor, out var settingsItemCopyColor, placeInNoMenu: true);
+                CreateSimpleButton(LocalizationCoreService.Get(48, "Paste Color Hex Code"), LocalizationCoreService.Get(50, "Paste"), OnPasteColor, out var settingsItemPasteColor, placeInNoMenu: true);
 
                 _backgroundPanel.SetContentItems(new List<iScrollWindowContent>()
                 {
@@ -511,7 +513,7 @@ namespace TheArchive.Features.Dev
 
             public DescriptionPanel()
             {
-                _backgroundPanel = CreateScrollWindow("Description");
+                _backgroundPanel = CreateScrollWindow(LocalizationCoreService.Get(40, "Description"));
                 _backgroundPanel.transform.localPosition = _backgroundPanel.transform.localPosition + new Vector3(1050, 0, 0);
 
                 CreateItem("Header Text", ORANGE, _backgroundPanel.transform, out var headerSWC, out var rectTransHeader, out _headerText);

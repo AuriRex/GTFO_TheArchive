@@ -14,7 +14,7 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "AdBlock";
 
-        public override string Group => FeatureGroups.Special;
+        public override FeatureGroup Group => FeatureGroups.Special;
 
         public override string Description => "Removes the Den of Wolves button from the rundown screen.";
 

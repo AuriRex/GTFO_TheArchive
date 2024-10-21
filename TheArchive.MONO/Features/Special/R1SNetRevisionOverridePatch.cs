@@ -1,6 +1,7 @@
 ﻿using SNetwork;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Special
@@ -11,9 +12,10 @@ namespace TheArchive.Features.Special
     {
         public override string Name => "R1 connect to 19087 games";
 
-        public override string Group => FeatureGroups.Special;
+        public override FeatureGroup Group => FeatureGroups.Special;
 
-        public override string Description => $"Makes you able to join players who are playing on R1 build <color=orange>{RevisionOverride}</color> even though you're on <color=orange>{kOriginalRevision}</color>.";
+        [IgnoreLocalization]
+        public override string Description => Localization.Format(1, RevisionOverride, kOriginalRevision);
 
         public const int kOriginalRevision = 19715;
         public static int RevisionOverride { get; set; } = 19087;

@@ -9,7 +9,9 @@ using System.Text;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Utilities;
+using UnityEngine;
 using static TheArchive.Features.Hud.WeaponStats.WeaponStatsSettings;
 
 namespace TheArchive.Features.Hud
@@ -18,9 +20,13 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Show Weapon Stats";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Adds weapon statistics such as damage, clip size and reload speed (and more if applicable) on the weapon select screen.";
+        
+        public static new ILocalizationService Localization { get; set; }
+
+        public override Type[] LocalizationExternalTypes => new Type[] { typeof(FSSlider.RoundTo) };
 
         [FeatureConfig]
         public static WeaponStatsSettings Settings { get; set; }
@@ -51,6 +57,7 @@ namespace TheArchive.Features.Hud
             [FSHide]
             public bool IsFirstTime { get; set; } = true;
 
+            [Localized]
             public enum Stats
             {
                 Damage,
@@ -61,13 +68,15 @@ namespace TheArchive.Features.Hud
                 Precision,
                 Pierce,
                 Burst,
-                BurstDelay,
                 ShotgunPellets,
                 ShotgunSpread,
                 FalloffStart,
                 FalloffEnd,
+                ChargeupTime,
+                FiringRate
             }
 
+            [Localized]
             public enum MeleeStats
             {
                 Damage,
@@ -80,7 +89,8 @@ namespace TheArchive.Features.Hud
                 SleepingBonusCharged,
                 Environment,
                 EnvironmentCharged,
-                CanRun
+                CanRun,
+                MaxDamageChargeTime
             }
 
             public bool IsStatEnabled(Stats stat)
@@ -107,7 +117,7 @@ namespace TheArchive.Features.Hud
 
         public override void Init()
         {
-            if(Settings.IsFirstTime)
+            if (Settings.IsFirstTime)
             {
                 Settings.StatsToDisplay = new List<Stats>()
                 {
@@ -119,7 +129,8 @@ namespace TheArchive.Features.Hud
                     Stats.Pierce,
                     Stats.Burst,
                     Stats.ShotgunPellets,
-                    Stats.FalloffStart
+                    Stats.FalloffStart,
+                    Stats.FiringRate
                 };
 
                 Settings.MeleeStatsToDisplay = new List<MeleeStats>()
@@ -131,6 +142,7 @@ namespace TheArchive.Features.Hud
                     MeleeStats.EnvironmentCharged,
                     MeleeStats.SleepingBonusCharged,
                     MeleeStats.CanRun,
+                    MeleeStats.MaxDamageChargeTime
                 };
 
                 Settings.IsFirstTime = false;
@@ -187,26 +199,28 @@ namespace TheArchive.Features.Hud
         public const string DIVIDER = " | ";
         public const string CLOSE_COLOR_TAG = "</color>";
 
-        public static string Short_MeleeLight { get; } = ".Lgt";
-        public static string Short_MeleeCharged { get; } = ".Hvy";
+        public static string Short_MeleeLight => Localization.Get(1);
+        public static string Short_MeleeCharged => Localization.Get(2);
 
-        public static string Short_MeleeCanRunWhileCharging { get; } = "Run";
-        public static string Short_MeleeSleepingEnemiesMultiplier { get; } = "Zzz";
-        public static string Short_EnvironmentMultiplier { get; } = "Env";
+        public static string Short_MeleeCanRunWhileCharging => Localization.Get(3);
+        public static string Short_MeleeSleepingEnemiesMultiplier => Localization.Get(4);
+        public static string Short_EnvironmentMultiplier => Localization.Get(5);
+        public static string Short_MeleeMaxDamageChargeTime => Localization.Get(19);
 
-        public static string Short_Damage { get; } = "Dmg";
-        public static string Short_Clip { get; } = "Clp";
-        public static string Short_MaxAmmo { get; } = "Max";
-        public static string Short_Reload { get; } = "Rld";
-        public static string Short_Stagger { get; } = "Stgr";
-        public static string Short_Precision { get; } = "Pcsn";
-        public static string Short_PierceCount { get; } = "Prc";
-        public static string Short_ShotgunPelletCount { get; } = "Sh";
-        public static string Short_ShotgunSpread { get; } = "Sh.Sprd";
-        public static string Short_BurstShotCount { get; } = "Brst";
-        public static string Short_BurstDelay { get; } = "Brst.Dly";
-        public static string Short_FalloffDistanceClose { get; } = "Dst.C";
-        public static string Short_FalloffDistanceFar { get; } = "Dst.F";
+        public static string Short_Damage => Localization.Get(6);
+        public static string Short_Clip => Localization.Get(7);
+        public static string Short_MaxAmmo => Localization.Get(8);
+        public static string Short_Reload => Localization.Get(9);
+        public static string Short_Stagger => Localization.Get(10);
+        public static string Short_Precision => Localization.Get(11);
+        public static string Short_PierceCount => Localization.Get(12);
+        public static string Short_ShotgunPelletCount => Localization.Get(13);
+        public static string Short_ShotgunSpread => Localization.Get(14);
+        public static string Short_BurstShotCount => Localization.Get(15);
+        public static string Short_FiringRate => Localization.Get(16);
+        public static string Short_FalloffDistanceClose => Localization.Get(17);
+        public static string Short_FalloffDistanceFar => Localization.Get(18);
+        public static string Short_SpecialChargeupTime => Localization.Get(20);
 
         //public void LoadData(GearIDRange idRange, bool clickable, bool detailedInfo)
 #if IL2CPP
@@ -271,6 +285,9 @@ namespace TheArchive.Features.Hud
             public static string GetFormatedWeaponStats(MeleeArchetypeDataBlock archeTypeDataBlock, ItemDataBlock itemDataBlock)
             {
                 if (archeTypeDataBlock == null) return string.Empty;
+
+                uint meleeAnimationSetID = GearBuilder.GetMeleeAnimationSetID(archeTypeDataBlock);
+                var meleeAnimationSetDataBlock = meleeAnimationSetID > 0U ? GameDataBlockBase<MeleeAnimationSetDataBlock>.GetBlock(meleeAnimationSetID) : null;
 
                 StringBuilder builder = new StringBuilder();
 
@@ -387,9 +404,19 @@ namespace TheArchive.Features.Hud
                     builder.Append(CLOSE_COLOR_TAG);
                 }
 
+                if (meleeAnimationSetDataBlock != null && Settings.IsMeleeStatEnabled(MeleeStats.MaxDamageChargeTime))
+                {
+                    Divider(ref count, builder);
+                    builder.Append("<#C0FF00>");
+                    builder.Append($"{Short_MeleeMaxDamageChargeTime} ");
+                    builder.Append(Round(meleeAnimationSetDataBlock.MaxDamageChargeTime));
+                    builder.Append(" s");
+                    builder.Append(CLOSE_COLOR_TAG);
+                }
+
                 var statsString = builder.ToString();
 
-                return string.IsNullOrWhiteSpace(statsString) ? "You disabled it all, congrats!" : statsString;
+                return string.IsNullOrWhiteSpace(statsString) ? Localization.Get(21) : statsString;
             }
 #endif
         }
@@ -483,7 +510,7 @@ namespace TheArchive.Features.Hud
 
             if (archeTypeDataBlock.PiercingBullets && Settings.IsStatEnabled(Stats.Pierce))
             {
-                Divider(ref count, builder, 4);
+                Divider(ref count, builder, 3);
 
                 builder.Append("<#004E2C>");
                 if(Settings.StrikethroughPierce)
@@ -505,7 +532,7 @@ namespace TheArchive.Features.Hud
             {
                 if (Settings.IsStatEnabled(Stats.ShotgunPellets))
                 {
-                    Divider(ref count, builder, 4);
+                    Divider(ref count, builder, 3);
 
                     builder.Append("<#55022B>");
                     builder.Append($"{Short_ShotgunPelletCount} ");
@@ -515,13 +542,40 @@ namespace TheArchive.Features.Hud
 
                 if (Settings.IsStatEnabled(Stats.ShotgunSpread))
                 {
-                    Divider(ref count, builder, 4);
+                    Divider(ref count, builder, 3);
 
                     builder.Append("<#A918A7>");
                     builder.Append($"{Short_ShotgunSpread} ");
                     builder.Append(Round(archeTypeDataBlock.ShotgunBulletSpread));
                     builder.Append(CLOSE_COLOR_TAG);
                 }
+            }
+
+            if (archeTypeDataBlock.SpecialChargetupTime > 0f)
+            {
+                if (Settings.IsStatEnabled(Stats.ChargeupTime))
+                {
+                    Divider(ref count, builder, 3);
+
+                    builder.Append("<#CC9347>");
+                    builder.Append($"{Short_SpecialChargeupTime} ");
+                    builder.Append(Round(archeTypeDataBlock.SpecialChargetupTime));
+                    builder.Append(" s");
+                    builder.Append(CLOSE_COLOR_TAG);
+                }
+            }
+
+            if (Settings.IsStatEnabled(Stats.FiringRate))
+            {
+                Divider(ref count, builder, 3);
+
+                builder.Append("<#18A4A9>");
+                builder.Append($"{Short_FiringRate} ");
+                float dly = (float)(archeTypeDataBlock.FireMode == eWeaponFireMode.Burst ? Mathf.Max(archeTypeDataBlock.BurstDelay, archeTypeDataBlock.ShotDelay) : archeTypeDataBlock.ShotDelay);
+                builder.Append(dly <= 0 ? Localization.Get(22) : Round(60f / dly));
+                if (dly > 0)
+                    builder.Append(" RPM");
+                builder.Append(CLOSE_COLOR_TAG);
             }
 
             if (archeTypeDataBlock.BurstShotCount > 1 && archeTypeDataBlock.FireMode == eWeaponFireMode.Burst)
@@ -535,19 +589,6 @@ namespace TheArchive.Features.Hud
                     builder.Append(Round(archeTypeDataBlock.BurstShotCount));
                     builder.Append(CLOSE_COLOR_TAG);
                 }
-
-                if (Settings.IsStatEnabled(Stats.BurstDelay))
-                {
-                    Divider(ref count, builder, 4);
-
-                    builder.Append("<#18A4A9>");
-                    builder.Append($"{Short_BurstDelay} ");
-                    builder.Append(Round(archeTypeDataBlock.BurstDelay));
-                    builder.Append(CLOSE_COLOR_TAG);
-
-                    count++; // yes
-                }
-                
             }
 
             if (Settings.IsStatEnabled(Stats.FalloffStart))
@@ -574,7 +615,7 @@ namespace TheArchive.Features.Hud
 
             var statsString = builder.ToString();
 
-            return string.IsNullOrWhiteSpace(statsString) ? "You disabled it all, congrats!" : statsString;
+            return string.IsNullOrWhiteSpace(statsString) ? Localization.Get(21) : statsString;
         }
     }
 }

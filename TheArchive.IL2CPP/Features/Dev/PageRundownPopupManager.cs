@@ -18,7 +18,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "PopupQueue";
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "Popups, yay!";
 

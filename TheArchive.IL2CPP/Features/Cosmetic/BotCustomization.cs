@@ -18,7 +18,7 @@ namespace TheArchive.Features.Cosmetic
     {
         public override string Name => "Bot Customization";
 
-        public override string Group => FeatureGroups.Cosmetic;
+        public override FeatureGroup Group => FeatureGroups.Cosmetic;
 
         public override string Description => "Customize your bots - Change their name and Vanity\n\nAdds the Apparel button to bots if you're host.\n(Bot clothing only works if dropping from lobby atm!)";
 
@@ -32,21 +32,29 @@ namespace TheArchive.Features.Cosmetic
         public class NamedBotsSettings
         {
             [FSMaxLength(25)]
+            [FSDisplayName("Woods")]
             public string Woods { get; set; } = nameof(Woods);
             [FSMaxLength(25)]
+            [FSDisplayName("Dauda")]
             public string Dauda { get; set; } = nameof(Dauda);
             [FSMaxLength(25)]
+            [FSDisplayName("Hackett")]
             public string Hackett { get; set; } = nameof(Hackett);
             [FSMaxLength(25)]
+            [FSDisplayName("Bishop")]
             public string Bishop { get; set; } = nameof(Bishop);
 
             [FSHide]
+            [FSDisplayName("Vanity Woods")]
             public VanitySettings VanityWoods { get; set; } = new VanitySettings();
             [FSHide]
+            [FSDisplayName("Vanity Dauda")]
             public VanitySettings VanityDauda { get; set; } = new VanitySettings();
             [FSHide]
+            [FSDisplayName("Vanity Hackett")]
             public VanitySettings VanityHackett { get; set; } = new VanitySettings();
             [FSHide]
+            [FSDisplayName("Vanity Bishop")]
             public VanitySettings VanityBishop { get; set; } = new VanitySettings();
 
             public VanitySettings GetVanity(int characterIndex)

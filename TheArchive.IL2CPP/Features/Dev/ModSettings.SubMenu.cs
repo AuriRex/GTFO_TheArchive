@@ -1,5 +1,6 @@
 ﻿using CellMenu;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Utilities;
@@ -68,6 +69,7 @@ namespace TheArchive.Features.Dev
                     return;
 
                 RemoveFromAllSettingsWindows(ScrollWindow);
+                ScrollWindowClickAnyWhereListeners.Remove(ScrollWindow.GetInstanceID());
                 ScrollWindow.SafeDestroyGO();
             }
 
@@ -77,6 +79,7 @@ namespace TheArchive.Features.Dev
             public Transform WindowTransform => ScrollWindow?.transform;
             public CM_ScrollWindow ScrollWindow { get; private set; }
 
+            internal static Dictionary<int, List<iCellMenuCursorInputAnywhereItem>> ScrollWindowClickAnyWhereListeners = new Dictionary<int, List<iCellMenuCursorInputAnywhereItem>>();
             protected readonly List<SubMenuEntry> persistentContent = new List<SubMenuEntry>();
             protected readonly List<SubMenuEntry> content = new List<SubMenuEntry>();
             protected bool addContentAsPersistent = false;
@@ -122,6 +125,8 @@ namespace TheArchive.Features.Dev
 
                 ScrollWindow.SetContentItems(list.ToIL2CPPListIfNecessary(), Padding);
 
+                Utils.StartCoroutine(UpdateCellMenuCursorItems());
+
                 HasBeenBuilt = true;
                 return true;
             }
@@ -131,6 +136,12 @@ namespace TheArchive.Features.Dev
                 FeatureLogger.Debug($"Opening SubMenu \"{Title}\" ...");
                 ShowScrollWindow(ScrollWindow);
                 openMenus.Push(this);
+            }
+
+            public virtual void Refresh()
+            {
+                Close();
+                Show();
             }
 
             public void Close()
@@ -148,6 +159,24 @@ namespace TheArchive.Features.Dev
                 {
                     ShowMainModSettingsWindow(0);
                 }
+            }
+
+            private IEnumerator UpdateCellMenuCursorItems()
+            {
+                yield return new WaitForEndOfFrame();
+                var cursorItems = ScrollWindow.GetComponentsInChildren<iCellMenuCursorItem>();
+                foreach (var cursorItem in cursorItems)
+                {
+                    if (cursorItem.ID == 0)
+                    {
+                        cursorItem.ID = CM_PageBase.NextCellItemID();
+                        cursorItem.SetupCMItem();
+                    }
+                }
+
+                var cursorInputAnywhereItems = ScrollWindow.GetComponentsInChildren<iCellMenuCursorInputAnywhereItem>(true).ToList();
+                cursorInputAnywhereItems.RemoveAt(0);
+                ScrollWindowClickAnyWhereListeners[ScrollWindow.GetInstanceID()] = cursorInputAnywhereItems;
             }
 
             public class SubMenuEntry

@@ -11,7 +11,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Block Game Analytics";
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "Prevent analytics data from being sent.\n(Recommended to keep enabled)";
 

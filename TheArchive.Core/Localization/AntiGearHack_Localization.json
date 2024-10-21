@@ -1,0 +1,156 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Security.AntiGearHack.Name": {
+        "FName": {
+          "English": "Anti Gear Hack",
+          "Chinese": "装备数据反作弊",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.AntiGearHack.Description": {
+        "FDescription": {
+          "English": "Prevents clients use modified gears.",
+          "Chinese": "阻止客机使用魔改枪械",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.AntiGearHack+AntiGearHackSettings.PunishFriends": {
+        "FSDisplayName": {
+          "English": "Punish Friends",
+          "Chinese": "惩罚好友",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "If (Steam) Friends should be affected as well.",
+          "Chinese": "是否影响 Steam 好友。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.AntiGearHack+AntiGearHackSettings.Punishment": {
+        "FSDisplayName": {
+          "English": "Punishment",
+          "Chinese": "惩罚方式",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "What to do with griefers that are using modified gears.",
+          "Chinese": "对使用魔改装备的破坏者采取的行动。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {
+      "TheArchive.Features.Security.AntiGearHack+AntiGearHackSettings+PunishmentMode": {
+        "English": {
+          "NoneAndLog": "None And Log",
+          "Kick": "Kick",
+          "KickAndBan": "Kick And Ban"
+        },
+        "Chinese": {
+          "NoneAndLog": "仅记录",
+          "Kick": "踢出",
+          "KickAndBan": "踢出并封禁"
+        },
+        "French": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Italian": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "German": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Spanish": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Russian": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Portuguese_Brazil": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Polish": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Japanese": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Korean": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        }
+      }
+    },
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

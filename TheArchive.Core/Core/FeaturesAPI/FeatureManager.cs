@@ -246,16 +246,16 @@ namespace TheArchive.Core.FeaturesAPI
             }
         }
 
-        public void InitFeature(Type type)
+        public void InitFeature(Type type, IArchiveModule module)
         {
             Feature feature = (Feature) Activator.CreateInstance(type);
-            InitFeature(feature);
+            InitFeature(feature, module);
             CheckSpecialFeatures();
         }
 
-        private void InitFeature(Feature feature)
+        private void InitFeature(Feature feature, IArchiveModule module)
         {
-            FeatureInternal.CreateAndAssign(feature);
+            FeatureInternal.CreateAndAssign(feature, module);
             if (feature.Enabled)
             {
                 if (feature.FeatureInternal.HasUpdateMethod)
@@ -264,6 +264,7 @@ namespace TheArchive.Core.FeaturesAPI
                     _activeLateUpdateMethods.Add(feature.FeatureInternal.LateUpdateDelegate);
             }
             RegisteredFeatures.Add(feature);
+            feature.Group.Features.Add(feature);
         }
 
         public void EnableFeature(Feature feature, bool setConfig = true)
@@ -578,6 +579,16 @@ namespace TheArchive.Core.FeaturesAPI
         public static void InvokeButtonPressed(Feature feature, ButtonSetting setting)
         {
             if (feature == null || setting == null) return;
+
+            try
+            {
+                setting.Callback?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                feature.FeatureLogger.Error($"Button {setting.ButtonID} callback threw an exception! {ex}: {ex.Message}");
+                feature.FeatureLogger.Exception(ex);
+            }
 
             feature.FeatureInternal.OnButtonPressed(setting);
         }

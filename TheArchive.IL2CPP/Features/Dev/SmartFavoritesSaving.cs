@@ -13,7 +13,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Smart Favorites Saving";
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "Only save selected weapons/vanity on drop or game quit.";
 

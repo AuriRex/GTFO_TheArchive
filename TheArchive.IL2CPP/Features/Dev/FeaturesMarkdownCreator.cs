@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
@@ -20,7 +21,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Features Markdown Creator";
 
-        public override string Group => FeatureGroups.Dev;
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "Used to automatically generate a markdown text containing all Features.\n\n(Copied to clipboard)";
 
@@ -31,6 +32,7 @@ namespace TheArchive.Features.Dev
 
         public class ReadmeCreatorSettings
         {
+            [FSDisplayName("Create Markdown")]
             public FButton CreateMarkdownButton { get; set; } = new FButton("Create Markdown (Clipboard)", "create_markdown");
         }
 
@@ -46,13 +48,13 @@ namespace TheArchive.Features.Dev
 
         public static void CreateReadme(Assembly asmFilter = null)
         {
-            var groups = new Dictionary<FeatureGroups.Group, IEnumerable<Feature>>();
+            var groups = new Dictionary<FeatureGroup, IEnumerable<Feature>>();
 
             var builder = new StringBuilder();
 
             foreach(var groupKvp in FeatureManager.Instance.GroupedFeatures)
             {
-                var group = FeatureGroups.Get(groupKvp.Key);
+                var group = FeatureGroups.GetGroup(groupKvp.Key);
 
                 if(group == null)
                 {
@@ -61,9 +63,9 @@ namespace TheArchive.Features.Dev
                 }
 
 
-                if(group == FeatureGroups.Dev)
+                if(group.IsHidden)
                 {
-                    FeatureLogger.Info("Skipping Dev Group!");
+                    FeatureLogger.Info("Skipping Hidden Group!");
                     continue;
                 }
 
@@ -123,7 +125,7 @@ namespace TheArchive.Features.Dev
             FeatureLogger.Notice($"Copied {result.Length} characters to clipboard!");
         }
 
-        public static string CreateQuickLink(FeatureGroups.Group group)
+        public static string CreateQuickLink(FeatureGroup group)
         {
             var name = StripTMPTagsRegex(group.Name);
 
@@ -132,7 +134,7 @@ namespace TheArchive.Features.Dev
             return $"[{name}]({link})";
         }
 
-        public static string CreateGroupEntry(FeatureGroups.Group group)
+        public static string CreateGroupEntry(FeatureGroup group)
         {
             var builder = new StringBuilder();
             builder.Append($"## {StripTMPTagsRegex(group.Name)}");

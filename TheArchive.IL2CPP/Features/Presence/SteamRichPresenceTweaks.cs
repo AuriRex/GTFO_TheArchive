@@ -21,7 +21,7 @@ namespace TheArchive.Features.Presence
 
         public override string Name => "Steam Rich Presence Tweaks";
 
-        public override string Group => FeatureGroups.Presence;
+        public override FeatureGroup Group => FeatureGroups.Presence;
 
         public override string Description => "Set a custom text for Steams' presence system.";
 

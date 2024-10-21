@@ -5,6 +5,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
@@ -15,7 +16,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Situation Aware Weapon Switch";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Switch to either your Melee weapon or Primary depending on if you're sneaking around or in combat after depleting all of your throwables, exit a ladder or place down a sentry gun etc.";
 
@@ -36,6 +37,7 @@ namespace TheArchive.Features.QoL
             };
 
             [FSHide]
+            [FSDisplayName("Is First Time")]
             public bool IsFirstTime { get; set; } = true;
 
             [FSDisplayName("Log Weapon Switches to Console")]
@@ -46,6 +48,7 @@ namespace TheArchive.Features.QoL
             [FSDescription("The states in which the game should switch to Melee instead of your Primary weapon.")]
             public List<DramaState> PreferMeleeStates { get; set; } = new List<DramaState>();
 
+            [Localized]
             public enum DramaState
             {
                 ElevatorIdle,

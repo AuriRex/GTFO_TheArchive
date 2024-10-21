@@ -225,6 +225,8 @@
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ForcedSeed.cs" Link="Features\Dev\ForcedSeed.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\IconRenderSettings.cs" Link="Features\Dev\IconRenderSettings.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\InputDisabler.cs" Link="Features\Dev\InputDisabler.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModLanguage.cs" Link="Features\Dev\ModLanguage.cs" />
+	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModLanguageLegacy.cs" Link="Features\Dev\ModLanguageLegacy.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModSettings.OtherTypes.cs" Link="Features\Dev\ModSettings.OtherTypes.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModSettings.Receivers.cs" Link="Features\Dev\ModSettings.Receivers.cs" />
 	  <Compile Include="..\TheArchive.IL2CPP\Features\Dev\ModSettings.Search.cs" Link="Features\Dev\ModSettings.Search.cs" />

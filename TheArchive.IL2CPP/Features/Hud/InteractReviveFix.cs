@@ -13,7 +13,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Fix Multi-Revive UI";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Fix revive progress <i>visually</i> resetting whenever multiple revives are going on at the same time.";
 

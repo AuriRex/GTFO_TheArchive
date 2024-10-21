@@ -7,7 +7,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Skip Elevator Animation";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Automatically skips the elevator intro animation sequence without having to hold down a button.";
 

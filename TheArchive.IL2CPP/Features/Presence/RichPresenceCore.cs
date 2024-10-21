@@ -18,7 +18,7 @@ namespace TheArchive.Features.Presence
     {
         public override string Name => "Rich Presence Core";
 
-        public override string Group => FeatureGroups.Presence;
+        public override FeatureGroup Group => FeatureGroups.Presence;
 
         public override string Description => "Updates the Presence Game State and provides some values via patches.";
 

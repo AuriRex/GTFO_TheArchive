@@ -8,6 +8,7 @@ using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -20,7 +21,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Nickname";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override FeatureGroup Group => FeatureGroups.Accessibility;
 
         public override string Description => "Nickname related settings.\n\nChange your in game nickname, handy color picker included!";
 
@@ -34,6 +35,7 @@ namespace TheArchive.Features.Accessibility
             [FSDescription("If the color below should be used as nickname color\nUsing a color removes 6 characters from your nickname budget minimum!")]
             public bool UseColor { get; set; } = false;
 
+            [FSDisplayName("Color")]
             [FSDescription("The color used to tint your name.")]
             public SColor Color { get; set; } = new SColor(0f, 1f, 0.75f);
 
@@ -47,12 +49,14 @@ namespace TheArchive.Features.Accessibility
             public bool AllowRemoteTMPTags { get; set; } = true;
 
             [FSHide]
+            [FSDisplayName("Has Migrated")]
             public bool HasMigrated { get; set; } = false;
 
             [FSHide]
             public FLabel HiddenSettingsWarningLabel { get; set; } = new FLabel("<color=red>Old settings below, do not use!</color>");
 
             [FSHide]
+            [FSDisplayName("Mode")]
             [FSDescription($"Modes explained using <#C21F4E>this</color> as the character color and <#404>this</color> as the custom color:\n\n<#E4A818>{nameof(NicknameMode.Normal)}</color>:\n <#C21F4E>> > Nickname</color>: Some chat message here.\n<#E4A818>{nameof(NicknameMode.Color)}</color>:\n <#C21F4E>> > <#404>Nickname</color>: Some chat message here.\n</color><#E4A818>{nameof(NicknameMode.TerminatedColor)}</color>:\n <#C21F4E>> > <#404>Nickname</color></color>: Some chat message here.")]
             public NicknameMode Mode { get; set; } = NicknameMode.Normal;
 
@@ -251,24 +255,24 @@ namespace TheArchive.Features.Accessibility
                 }
             }
 
-            var text = $"Nickname budget: {nickLength} / 25  =>  {colPrefix}{Settings.Nickname}";
+            var text = Localization.Format(1, nickLength, $"{colPrefix}{Settings.Nickname}");
             if (Settings.InfoLabelTop.HasPrimaryText)
                 Settings.InfoLabelTop.PrimaryText.TryCastTo<TextMeshPro>().text = text;
             Settings.InfoLabelTop.LabelText = text;
 
             var textBottom = Settings.Mode switch
             {
-                NicknameMode.Color => "<color=orange><u>/!\\</u></color> Your Player color is going to escape! (Max 11 characters)",
-                NicknameMode.TerminatedColor => "Colored name applied!",
+                NicknameMode.Color => Localization.Get(2),
+                NicknameMode.TerminatedColor => Localization.Get(3),
                 _ => ""
             };
 
             if (nickLength > 19 && Settings.UseColor)
-                textBottom = "<color=red><u>/!\\</u></color> Name too long, can't apply color! (Max 19 characters)";
+                textBottom = Localization.Get(4);
 
             if (advancedMode)
             {
-                textBottom = $"<#440144><u>/!\\</u></color> Custom Color Tags detected! => <noparse>{Settings.Nickname}</noparse>";
+                textBottom = Localization.Format(5, Settings.Nickname);
             }
 
             if (Settings.InfoLabelBottom.HasPrimaryText)
@@ -380,6 +384,7 @@ namespace TheArchive.Features.Accessibility
             }
         }
 
+        [Localized]
         public enum NicknameMode
         {
             Normal,
