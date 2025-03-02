@@ -5,10 +5,6 @@
 	<PropertyGroup>
 		<RootNamespace>TheArchive</RootNamespace>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Include="..\TheArchive.MONO\Features\Hud\EnhancedExpeditionTimer.cs" Link="Features\Hud\EnhancedExpeditionTimer.cs" />
-	</ItemGroup>
 	
 	<ItemGroup>
 		<ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
