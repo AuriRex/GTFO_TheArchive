@@ -193,11 +193,7 @@ namespace TheArchive
 
             try
             {
-                var archiveModule = LoadMainArchiveModule(LoaderWrapper.IsGameIL2CPP());
-
-                var moduleMainType = archiveModule.GetTypes().First(t => typeof(IArchiveModule).IsAssignableFrom(t));
-
-                _mainModule = CreateAndInitModule(moduleMainType);
+                _mainModule = CreateAndInitModule(typeof(MainArchiveModule));
             }
             catch(ReflectionTypeLoadException ex)
             {
@@ -671,30 +667,30 @@ namespace TheArchive
             FeatureManager.Instance.OnLateUpdate();
         }
 
-        private static Assembly LoadMainArchiveModule(bool isIl2Cpp)
-        {
-            try
-            {
-                byte[] bytes;
-                if(isIl2Cpp)
-                {
-                    ArchiveLogger.Notice("Loading IL2CPP module ...");
-                    bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.IL2CPP.dll");
-                    if (bytes.Length < 100) throw new BadImageFormatException("IL2CPP Module is too small, this version might not contain the module build but a dummy dll!");
-                    return Assembly.Load(bytes);
-                }
-
-                ArchiveLogger.Notice("Loading MONO module ...");
-                bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.MONO.dll");
-                if (bytes.Length < 100) throw new BadImageFormatException("MONO Module is too small, this version might not contain the module build but a dummy dll!");
-                return Assembly.Load(bytes);
-            }
-            catch (Exception ex)
-            {
-                ArchiveLogger.Error($"Could not load {(isIl2Cpp ? "IL2CPP" : "MONO")} module! {ex}: {ex.Message}");
-                ArchiveLogger.Error($"{ex.StackTrace}");
-                return null;
-            }
-        }
+        // private static Assembly LoadMainArchiveModule(bool isIl2Cpp)
+        // {
+        //     try
+        //     {
+        //         byte[] bytes;
+        //         if(isIl2Cpp)
+        //         {
+        //             ArchiveLogger.Notice("Loading IL2CPP module ...");
+        //             bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.IL2CPP.dll");
+        //             if (bytes.Length < 100) throw new BadImageFormatException("IL2CPP Module is too small, this version might not contain the module build but a dummy dll!");
+        //             return Assembly.Load(bytes);
+        //         }
+        //
+        //         ArchiveLogger.Notice("Loading MONO module ...");
+        //         bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.MONO.dll");
+        //         if (bytes.Length < 100) throw new BadImageFormatException("MONO Module is too small, this version might not contain the module build but a dummy dll!");
+        //         return Assembly.Load(bytes);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         ArchiveLogger.Error($"Could not load {(isIl2Cpp ? "IL2CPP" : "MONO")} module! {ex}: {ex.Message}");
+        //         ArchiveLogger.Error($"{ex.StackTrace}");
+        //         return null;
+        //     }
+        // }
     }
 }

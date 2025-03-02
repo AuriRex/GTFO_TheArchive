@@ -1,4 +1,7 @@
-﻿using CellMenu;
+﻿#define IL2CPP
+#define Il2CppInterop
+
+using CellMenu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -623,24 +626,6 @@ namespace TheArchive.Utilities
 #endif
 
         public static eGameStateName GetGameState() => (eGameStateName) ArchiveMod.CurrentGameState;
-
-        public static void RegisterOnGameStateChangedEvent(Action<eGameStateName> onGameStateChanged)
-        {
-#if IL2CPP
-            ArchiveIL2CPPModule.OnGameStateChanged += onGameStateChanged;
-#else
-            ArchiveMONOModule.OnGameStateChanged += onGameStateChanged;
-#endif
-        }
-
-        public static void UnregisterOnGameStateChangedEvent(Action<eGameStateName> onGameStateChanged)
-        {
-#if IL2CPP
-            ArchiveIL2CPPModule.OnGameStateChanged -= onGameStateChanged;
-#else
-            ArchiveMONOModule.OnGameStateChanged -= onGameStateChanged;
-#endif
-        }
 
         /// <summary>
         /// Use the games localization system (if available) to localize the text with ID <paramref name="localizedTextID"/>, or use an <paramref name="overrideText"/> replacement instead.

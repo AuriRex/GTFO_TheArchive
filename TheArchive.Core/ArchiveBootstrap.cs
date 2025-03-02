@@ -11,9 +11,9 @@ namespace TheArchive
     [DisallowInGameToggle]
     [DoNotSaveToConfig]
     [EnableFeatureByDefault]
-    public class ArchiveIL2CPPBootstrap : Feature
+    public class ArchiveBootstrap : Feature
     {
-        public override string Name => nameof(ArchiveIL2CPPBootstrap);
+        public override string Name => nameof(ArchiveBootstrap);
         public override FeatureGroup Group => FeatureGroups.Dev;
         public override string Description => "Hooks into a bunch of important game code in order for this mod to work.";
         public override bool RequiresRestart => true;
@@ -50,7 +50,7 @@ namespace TheArchive
                 }
                 catch(System.Reflection.ReflectionTypeLoadException rtlex)
                 {
-                    ArchiveLogger.Error($"Exception thrown in {nameof(ArchiveIL2CPPBootstrap)}");
+                    ArchiveLogger.Error($"Exception thrown in {nameof(ArchiveBootstrap)}");
                     ArchiveLogger.Msg(ConsoleColor.Green, "Oh no, seems like someone's referencing game types from an older/newer game version that do not exist anymore! :c");
                     ArchiveLogger.Exception(rtlex);
                     ArchiveLogger.Warning($"{rtlex.Types?.Length} Types loaded.");
@@ -62,7 +62,7 @@ namespace TheArchive
                 }
                 catch (Exception ex)
                 {
-                    ArchiveLogger.Error($"Exception thrown in {nameof(ArchiveIL2CPPBootstrap)}");
+                    ArchiveLogger.Error($"Exception thrown in {nameof(ArchiveBootstrap)}");
                     ArchiveLogger.Exception(ex);
                     if(ex.InnerException != null)
                         ArchiveLogger.Exception(ex?.InnerException);

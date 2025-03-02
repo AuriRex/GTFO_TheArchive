@@ -5,7 +5,8 @@ using TheArchive.Interfaces;
 
 namespace TheArchive.Features.Dev
 {
-    [EnableFeatureByDefault, HideInModSettings]
+    [HideInModSettings]
+    [ForceDisable]
     public class UnityRandomOverrider : Feature
     {
         public override string Name => "UnityRandomOverrider";
