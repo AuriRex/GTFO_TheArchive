@@ -165,13 +165,13 @@ namespace TheArchive.Features.Presence
         {
             get
             {
-                return PresenceManager.MaxPlayerSlots - GetPlayerCount();
+                return MaxPlayerSlots - GetPlayerCount();
             }
         }
 
         private static int GetPlayerCount()
         {
-            if (BuildInfo.Rundown.IsIncludedIn(RundownFlags.RundownSix.ToLatest()))
+            if (Is.R6OrLater)
                 return GetPlayerCountR6Plus();
 
             return SNet.Lobby?.Players?.Count ?? 1;
@@ -189,6 +189,34 @@ namespace TheArchive.Features.Presence
             return 1;
 #endif
         }
+
+        [PresenceFormatProvider("MaxPlayerSlots")]
+        public static int MaxPlayerSlots => GetMaxPlayers();
+
+        private static int GetMaxPlayers()
+        {
+            if (Is.R6OrLater)
+                return GetMaxPlayersR6Plus();
+
+            return SNet.LobbyPlayers.Capacity;
+        }
+
+        private static int GetMaxPlayersR6Plus()
+        {
+            int slotCount = 0;
+            int capacity = SNet.LobbyPlayers.Capacity;
+            for (int i = 0; i < capacity; i++)
+            {
+                if (SNet.Slots.IsBotPermittedInSlot(i) || SNet.Slots.IsHumanPermittedInSlot(i))
+                {
+                    slotCount += 1;
+                }
+
+            }
+            ArchiveLogger.Info(slotCount.ToString());
+            return slotCount == 0 ? capacity : slotCount;
+        }
+
         #endregion lobby
 
         #region expedition
