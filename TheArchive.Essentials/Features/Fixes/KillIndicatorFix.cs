@@ -9,6 +9,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
+using TheArchive.Loader;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
 
@@ -18,6 +19,19 @@ namespace TheArchive.Features.Fixes;
 [RundownConstraint(RundownFlags.RundownSix, RundownFlags.Latest)]
 internal class KillIndicatorFix : Feature
 {
+    public const string KILL_INDICATOR_FIX_GUID = "randomuserhi.KillIndicatorFix";
+
+    public override bool ShouldInit()
+    {
+        if (LoaderWrapper.IsModInstalled(KILL_INDICATOR_FIX_GUID))
+        {
+            RequestDisable("Kill Indicator Fix is installed, disabling this copy.");
+            return false;
+        }
+        
+        return true;
+    }
+    
     public override string Name => "Kill Indicator Fix";
 
     public override FeatureGroup Group => FeatureGroups.Fixes;
