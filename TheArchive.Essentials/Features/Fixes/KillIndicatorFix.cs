@@ -20,6 +20,7 @@ namespace TheArchive.Features.Fixes;
 internal class KillIndicatorFix : Feature
 {
     public const string KILL_INDICATOR_FIX_GUID = "randomuserhi.KillIndicatorFix";
+    public const string DAMAGE_SYNC_GUID = "randomuserhi.DamageSync";
 
     public override bool ShouldInit()
     {
@@ -60,6 +61,8 @@ internal class KillIndicatorFix : Feature
         public bool DebugLog { get; set; } = false;
     }
 
+    private static bool hasDamageSync = false;
+
     private struct Tag
     {
         public long timestamp;
@@ -71,18 +74,17 @@ internal class KillIndicatorFix : Feature
             this.localHitPosition = localHitPosition;
         }
     }
-
-    private static Dictionary<ushort, Tag> taggedEnemies = new Dictionary<ushort, Tag>();
-    private static Dictionary<ushort, long> markers = new Dictionary<ushort, long>();
+    private static Dictionary<int, Tag> taggedEnemies = new Dictionary<int, Tag>();
 
     public override void Init()
     {
+        hasDamageSync = LoaderWrapper.IsModInstalled(DAMAGE_SYNC_GUID);
+
         RundownManager.add_OnExpeditionGameplayStarted((Action)OnRundownStart);
     }
 
     private void OnRundownStart()
     {
-        markers.Clear();
         taggedEnemies.Clear();
     }
 
@@ -92,7 +94,8 @@ internal class KillIndicatorFix : Feature
     {
         public static void Postfix(Dam_EnemyDamageBase __instance)
         {
-            if (!SNet.IsMaster) return;
+            // Only run if TS DamageSync is not installed (prevents sending duplicate packets)
+            if (!SNet.IsMaster || hasDamageSync) return;
 
             var data = default(pSetHealthData);
             data.health.Set(__instance.Health, __instance.HealthMax);
@@ -100,52 +103,46 @@ internal class KillIndicatorFix : Feature
         }
     }
 
-    [ArchivePatch(typeof(EnemyAppearance), nameof(EnemyAppearance.OnDead))]
-    internal static class EnemyAppearance_OnDead_Patch
+    [ArchivePatch(typeof(EnemyBehaviour), nameof(EnemyBehaviour.ChangeState), new Type[] 
+    { 
+        typeof(EB_States)
+    })]
+    internal static class EnemyBehaviour_ChangeState_Patch
     {
-        public static void Prefix(EnemyAppearance __instance)
+        public static void Prefix(EnemyBehaviour __instance, EB_States state)
         {
             if (SNet.IsMaster) return;
+            if (__instance.m_currentStateName == state || state != EB_States.Dead) return;
 
-            EnemyAgent owner = __instance.m_owner;
-            ushort id = owner.GlobalID;
-            long now = ((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds();
+            try {
+                EnemyAgent owner = __instance.m_ai.m_enemyAgent;
+                int instanceID = owner.GetInstanceID();
+                long now = ((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds();
 
-            if (taggedEnemies.ContainsKey(id))
-            {
-                Tag t = taggedEnemies[id];
+                if (taggedEnemies.ContainsKey(instanceID)) {
+                    Tag t = taggedEnemies[instanceID];
 
-                if (Settings.DebugLog)
-                {
                     if (t.timestamp <= now)
-                    {
                         FeatureLogger.Info($"Received kill update {now - t.timestamp} milliseconds after tag.");
-                    }
                     else
-                    {
-                        FeatureLogger.Notice($"Received kill update for enemy that was tagged in the future? Possibly long overflow...");
+                        FeatureLogger.Info($"Received kill update for enemy that was tagged in the future? Possibly long overflow...");
+
+                    if (t.timestamp <= now && now - t.timestamp < Settings.TagBufferPeriod) {
+                        if (!owner.Damage.DeathIndicatorShown) {
+                            FeatureLogger.Info($"Client side marker was not shown, showing server side one.");
+
+                            GuiManager.CrosshairLayer?.ShowDeathIndicator(owner.transform.position + t.localHitPosition);
+                            owner.Damage.DeathIndicatorShown = true;
+                        } else {
+                            FeatureLogger.Info($"Client side marker was shown, not showing server side one.");
+                        }
+                    } else {
+                        FeatureLogger.Info($"Client was no longer interested in this enemy, marker will not be shown.");
                     }
+
+                    taggedEnemies.Remove(instanceID);
                 }
-
-                if (t.timestamp <= now && now - t.timestamp < Settings.TagBufferPeriod)
-                {
-                    if (!markers.ContainsKey(id))
-                    {
-                        if (Settings.DebugLog) FeatureLogger.Info($"Client side marker was not shown, showing server side one.");
-
-                        GuiManager.CrosshairLayer.ShowDeathIndicator(owner.transform.position + t.localHitPosition);
-                    }
-                    else
-                    {
-                        if (Settings.DebugLog) FeatureLogger.Info($"Client side marker was shown, not showing server side one.");
-
-                        markers.Remove(id);
-                    }
-                }
-                else if (Settings.DebugLog) FeatureLogger.Info($"Client was no longer interested in this enemy, marker will not be shown.");
-
-                taggedEnemies.Remove(id);
-            }
+            } catch { FeatureLogger.Info("Something went wrong."); }
         }
     }
 
@@ -161,7 +158,7 @@ internal class KillIndicatorFix : Feature
         typeof(float),
         typeof(float),
         typeof(uint)
-    })]
+    }, Priority = HarmonyLib.Priority.Last)]
     internal static class Dam_EnemyDamageBase_BulletDamage_Patch
     {
         public static void Prefix(Dam_EnemyDamageBase __instance, float dam, Agent sourceAgent, Vector3 position)
@@ -240,32 +237,6 @@ internal class KillIndicatorFix : Feature
             {
                 FeatureLogger.Info($"Melee Damage: {num}");
                 FeatureLogger.Info($"Tracked current HP: {__instance.Health}, [{id}]");
-            }
-        }
-    }
-
-    [ArchivePatch(typeof(Dam_EnemyDamageLimb), nameof(Dam_EnemyDamageLimb.ShowHitIndicator))]
-    internal static class Dam_EnemyDamageLimb_ShowHitIndicator_Patch
-    {
-        public static void Prefix(Dam_EnemyDamageLimb __instance, bool hitWeakspot, ref bool willDie, Vector3 position, bool hitArmor)
-        {
-            EnemyAgent owner = __instance.m_base.Owner;
-            long now = ((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds();
-
-            // Prevents the case where client fails to receive kill confirm from host so marker persists in dictionary
-            // - Auto removes the marker if it has existed for longer than MarkerLifeTime.
-            ushort[] keys = markers.Keys.ToArray();
-            foreach (ushort id in keys)
-            {
-                if (now - markers[id] > Settings.MarkerLifeTime) markers.Remove(id);
-            }
-
-            // Only call if GuiManager.CrosshairLayer.ShowDeathIndicator(position); is going to get called (condition is taken from source)
-            if (willDie && !__instance.m_base.DeathIndicatorShown)
-            {
-                ushort id = owner.GlobalID;
-                if (!markers.ContainsKey(id)) markers.Add(id, now);
-                else FeatureLogger.Notice($"Marker for enemy was already shown. This should not happen.");
             }
         }
     }
