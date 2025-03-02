@@ -1,177 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="../Dependencies.props" />
+	<Import Project="../Shared.props" />
+	
 	<PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">R_ML</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-
 		<RootNamespace>TheArchive</RootNamespace>
 		<AssemblyName>TheArchive.Core</AssemblyName>
 
-		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-		
-		<NuGetPackageImportStamp>
-		</NuGetPackageImportStamp>
+		<CopyBuildToPluginFolder>false</CopyBuildToPluginFolder>
 	</PropertyGroup>
 	
-<!--	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">-->
-<!--		<TargetFramework>net472</TargetFramework>-->
-<!--		<DefineConstants>TRACE</DefineConstants>-->
-<!--		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>-->
-<!--		<Optimize>true</Optimize>-->
-<!--		<DebugType>pdbonly</DebugType>-->
-<!--		<PlatformTarget>AnyCPU</PlatformTarget>-->
-<!--		<ErrorReport>prompt</ErrorReport>-->
-<!--	</PropertyGroup>-->
-	<PropertyGroup> <!--Condition="'$(Configuration)|$(Platform)' == 'R_BIE|AnyCPU'"-->
-		<TargetFramework>net6.0</TargetFramework>
-		<DefineConstants>$(DefineConstants);IL2CPP;Il2CppInterop</DefineConstants>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-	</PropertyGroup>
-	<!-- -->
-	<Import Project="../Loader.props" />
-	<PropertyGroup>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	</PropertyGroup>
 	<ItemGroup>
-		<Compile Include="..\GlobalUsings.cs" Link="GlobalUsings.cs" />
-		<Compile Include="..\TheArchive.MONO\Features\Dev\DramaManagerNoDebugLog.cs">
-		  <Link>Features\Dev\DramaManagerNoDebugLog.cs</Link>
-		</Compile>
+		<Compile Include="..\TheArchive.MONO\Features\Dev\DramaManagerNoDebugLog.cs" Link="Features\Dev\DramaManagerNoDebugLog.cs" />
 	</ItemGroup>
-	<!-- -->
+
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\discord_game_sdk.dll" />
-		
-		<EmbeddedResource Include="..\README.md">
-			<Link>Resources\README.md</Link>
-		</EmbeddedResource>
-		
-		<EmbeddedResource Include="..\LICENSE">
-			<Link>Resources\LICENSE</Link>
-		</EmbeddedResource>
+		<EmbeddedResource Include="..\README.md" Link="Resources\README.md"/>
+		<EmbeddedResource Include="..\LICENSE" Link="Resources\LICENSE" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="packages.config" />
 	</ItemGroup>
 
-	<!-- GAME ASSEMBLIES -->
-	<ItemGroup>
-		<Reference Include="CellSound-ASM">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)CellSound-ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="DropServerSDK-ASM, Version=3.7.1.6, Culture=neutral, processorArchitecture=MSIL">
-			<SpecificVersion>False</SpecificVersion>
-			<HintPath>$(LatestGeneratedGameAssembliesPath)DropServerSDK-ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="GlobalFramework-ASM">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)GlobalFramework-ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="GUIX-ASM">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)GUIX-ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Il2Cppmscorlib">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Il2Cppmscorlib.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Il2CppSystem">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Il2CppSystem.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Il2CppSystem.Core">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Il2CppSystem.Core.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Modules-ASM">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Modules-ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Newtonsoft.Json">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Newtonsoft.Json.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="PlayFab-ASM">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)PlayFab-ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Plugins-ASM">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Plugins-ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="SNet_ASM">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)SNet_ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="SteamWorks_ASM">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)SteamWorks_ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Unity.TextMeshPro">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Unity.TextMeshPro.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.AudioModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.AudioModule.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.CrashReportingModule">
-			<SpecificVersion>False</SpecificVersion>
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.CrashReportingModule.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.IMGUIModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.IMGUIModule.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.InputLegacyModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.InputLegacyModule.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.Physics2DModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.Physics2DModule.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.PhysicsModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.PhysicsModule.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.UI">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.UI.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="UnityEngine.UnityAnalyticsModule">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)UnityEngine.UnityAnalyticsModule.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Utils-ASM">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Utils-ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="Wwise-ASM">
-			<HintPath>$(LatestGeneratedGameAssembliesPath)Wwise-ASM.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-	</ItemGroup>
-	
 	<ItemGroup>
 		<PackageReference Include="GitInfo" Version="2.3.0" />
 		<PackageReference Include="Mono.Cecil" Version="0.11.5" />
 		<PackageReference Include="SemanticVersioning" Version="2.0.2" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Reference Include="MonoMod.RuntimeDetour">
-	    <HintPath>..\_R_LATEST\BepInEx\core\MonoMod.RuntimeDetour.dll</HintPath>
-	  </Reference>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Features\" />
 	</ItemGroup>
 </Project>

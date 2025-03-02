@@ -1,10 +1,8 @@
-﻿#if R_BIE && IL2CPP
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-#endif
-using Player;
+﻿using Player;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;

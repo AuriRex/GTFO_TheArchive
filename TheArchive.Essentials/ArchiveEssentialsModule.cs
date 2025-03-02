@@ -1,5 +1,10 @@
-﻿using TheArchive.Core;
+﻿using System.Reflection;
+using TheArchive.Core;
 using TheArchive.Core.Attributes;
+
+[assembly: AssemblyVersion(TheArchive.ArchiveEssentialsModule.VERSION)]
+[assembly: AssemblyFileVersion(TheArchive.ArchiveEssentialsModule.VERSION)]
+[assembly: AssemblyInformationalVersion(TheArchive.ArchiveEssentialsModule.VERSION)]
 
 namespace TheArchive;
 

@@ -16,6 +16,17 @@ using TheArchive.Loader;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
+[assembly: AssemblyVersion(ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch)]
+
+[assembly: AssemblyFileVersion(ThisAssembly.Git.SemVer.Major + "." + ThisAssembly.Git.SemVer.Minor + "." + ThisAssembly.Git.SemVer.Patch)]
+
+[assembly: AssemblyInformationalVersion(
+    ThisAssembly.Git.SemVer.Major + "." +
+    ThisAssembly.Git.SemVer.Minor + "." +
+    ThisAssembly.Git.Commits + "-" +
+    ThisAssembly.Git.Branch + "+" +
+    ThisAssembly.Git.Commit)]
+
 [assembly: InternalsVisibleTo("TheArchive.IL2CPP")]
 [assembly: InternalsVisibleTo("TheArchive.MONO")]
 namespace TheArchive

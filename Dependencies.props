@@ -1,0 +1,45 @@
+﻿<Project InitialTargets="ValidateGamePath">
+	<Import Project="$(MSBuildThisFileDirectory)\GameFolder.props" Condition="Exists('$(MSBuildThisFileDirectory)\GameFolder.props')" />
+  
+	<Target Name="ValidateGamePath">
+		<Error Text="The GameFolder property must be set to the GTFO game folder." Condition="'$(GameFolder)' == '' or !Exists('$(GameFolder)')" />
+	</Target>
+
+	<PropertyGroup>
+		<BIELibsFolder>$(GameFolder)\BepInEx\core</BIELibsFolder>
+		<CorLibsFolder>$(GameFolder)\dotnet</CorLibsFolder>
+		<InteropLibsFolder>$(GameFolder)\BepInEx\interop</InteropLibsFolder>
+		<PluginsFolder>$(GameFolder)\BepInEx\plugins</PluginsFolder>
+		<CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
+	</PropertyGroup>
+
+	<!-- BepInEx libs -->
+	<ItemGroup>
+		<Reference Include="$(BIELibsFolder)\BepInEx.*.dll" Private="false" />
+		<Reference Include="$(BIELibsFolder)\0Harmony.dll" Private="false" />
+		<Reference Include="$(BIELibsFolder)\MonoMod.RuntimeDetour.dll" Private="false" />
+		<Reference Include="$(BIELibsFolder)\Il2CppInterop.*.dll" Private="false" />
+	</ItemGroup>
+	
+	<!-- Interop -->
+	<ItemGroup>
+		<Reference Include="$(InteropLibsFolder)/*.dll" Private="false" />
+		<Reference Remove="$(InteropLibsFolder)/netstandard.dll" />
+		<Reference Remove="$(InteropLibsFolder)/Newtonsoft.Json.dll" />
+	</ItemGroup>
+
+	<!-- Other Dependencies -->
+	<ItemGroup>
+		<Reference Include="$(PluginsFolder)/GTFO-API.dll" Private="false" />
+		<Reference Include="$(PluginsFolder)/**/UnityExplorer.BIE.IL2CPP.CoreCLR.dll" Private="false" />
+		<Reference Include="$(PluginsFolder)/**/Clonesoft.Json.dll" Private="false" />
+	</ItemGroup>
+
+	<!-- MSBuild Action-->
+	<Target Name="CustomAfterBuild" AfterTargets="Build" Condition="$(CopyBuildToPluginFolder) == 'true'">
+		<Message Text="Copying Output to Plugins Folder..." Importance="High"/>
+		<Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll"
+			  DestinationFiles="$(PluginsFolder)\$(AssemblyName).dll"/>
+		<Message Text="Output has copied to Plugins Folder!" Importance="High"/>
+	</Target>
+</Project>

@@ -125,9 +125,7 @@ public static class TypeLoader
         Dictionary<string, CachedAssembly<T>> result = new Dictionary<string, CachedAssembly<T>>();
         try
         {
-#if R_BIE
             string path = Path.Combine(BepInEx.Paths.CachePath, cacheName + "_typeloader.dat");
-#endif
             if (!File.Exists(path))
             {
                 return null;
