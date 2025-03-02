@@ -1,27 +1,24 @@
 ﻿using Enemies;
+using Il2CppInterop.Runtime.Runtime;
 using SNetwork;
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Security
 {
-#if BepInEx
-    [ForceDisable] // LoaderWrapper.NativeHookAttach isn't implemented for BIE yet
-#endif
     [EnableFeatureByDefault]
     [RundownConstraint(Utils.RundownFlags.RundownSix, Utils.RundownFlags.Latest)]
     public class AntiSpawn : Feature
     {
         public override string Name => "Anti Spawn";
 
-        public override string Group => FeatureGroups.Security;
+        public override FeatureGroup Group => FeatureGroups.Security;
 
         public override string Description => "Prevents clients from spawning in enemies.";
 
@@ -42,6 +39,7 @@ namespace TheArchive.Features.Security
             [FSDescription("What to do with griefers that are trying to spawn in enemies.")]
             public PunishmentMode Punishment { get; set; } = PunishmentMode.Kick;
 
+            [Localized]
             public enum PunishmentMode
             {
                 NoneAndLog,
@@ -55,109 +53,29 @@ namespace TheArchive.Features.Security
             OneTimePatch();
         }
 
-#warning TODO: Refactor after ML upgrade to Il2CppInterop
-        private static unsafe TDelegate ApplyNativePatch<TToPatch, TDelegate>(MethodInfo patchMethod, string originalMethodName, Type[] parameterTypes = null) where TDelegate : Delegate
-        {
-            var ptr = GetMethodPointerFromGenericType<TToPatch>(originalMethodName, parameterTypes);
-
-            var patch = patchMethod.MethodHandle.GetFunctionPointer();
-
-            FeatureLogger.Debug($"Attaching Native Patch ...");
-            FeatureLogger.Debug($"Info: {nameof(GetMethodPointerFromGenericType)}: {typeof(TToPatch).FullName} | {originalMethodName} (Ptr:{ptr})");
-
-            //calls MelonUtils.NativeHookAttach((IntPtr)(&ptr), patch);
-            LoaderWrapper.NativeHookAttach((IntPtr)(&ptr), patch);
-
-            var del = (TDelegate)Marshal.GetDelegateForFunctionPointer(ptr, typeof(TDelegate));
-
-            FeatureLogger.Debug($"OG Ptr: {ptr}");
-            FeatureLogger.Debug($"Patch Ptr: {patch}");
-            FeatureLogger.Debug($"Delegate Ptr: {del.Method.MethodHandle.GetFunctionPointer()}");
-
-            return del;
-        }
-
-        private static unsafe IntPtr GetMethodPointerFromGenericType<T>(string originalMethodName, Type[] parameterTypes = null)
-        {
-            var constructedGenericType = typeof(T);
-
-            MethodInfo originalMethodInfo;
-
-            if (parameterTypes != null)
-            {
-                originalMethodInfo = constructedGenericType
-                    .GetMethod(originalMethodName, Utils.AnyBindingFlagss, null, parameterTypes, null);
-            }
-            else
-            {
-                originalMethodInfo = constructedGenericType
-                    .GetMethod(originalMethodName, Utils.AnyBindingFlagss);
-            }
-
-#if Unhollower
-            var field = UnhollowerBaseLib.UnhollowerUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(originalMethodInfo);
-#elif Il2CppInterop
-            var field = Il2CppInterop.Common.Il2CppInteropUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(originalMethodInfo);
-#else
-            FieldInfo field = null;
-            throw new NotImplementedException();
-#endif
-
-            // does not work at all if one does not resolve the field from the generic type
-            field = constructedGenericType.GetField(field.Name, Utils.AnyBindingFlagss);
-
-            var ptr = *(IntPtr*)(IntPtr)field.GetValue(null);
-
-            return ptr;
-        }
-
         private static bool _hasBeenPatched = false;
         private static unsafe void OneTimePatch()
         {
             if (_hasBeenPatched)
                 return;
 
-            //_originalMethod_InternalSpawnRequestFromSlaveCallback = ApplyNativePatch<SNet_ReplicationManager<pEnemySpawnData, EnemyReplicator>, Original_InternalSpawnRequestFromSlaveCallback>(typeof(AntiSpawn).GetMethod(nameof(InternalSpawnRequestFromSlaveCallback_Replacement)), "InternalSpawnRequestFromSlaveCallback");
-
-            _originalMethod_InternalSpawnCallback = ApplyNativePatch<SNet_ReplicationManager<pEnemySpawnData, EnemyReplicator>, Original_InternalSpawnCallback>(typeof(AntiSpawn).GetMethod(nameof(InternalSpawnCallback_Replacement)), "InternalSpawnCallback");
-            _originalMethod_Spawn = ApplyNativePatch<SNet_ReplicationManager<pEnemySpawnData, EnemyReplicator>, Original_Spawn>(typeof(AntiSpawn).GetMethod(nameof(Spawn_Replacement)), "Spawn", new Type[] { typeof(pEnemySpawnData) });
-
+            LoaderWrapper.ApplyNativeHook<SNet_ReplicationManager<pEnemySpawnData, EnemyReplicator>, Original_InternalSpawnRequestFromSlaveCallback>(nameof(SNet_ReplicationManager<pEnemySpawnData, EnemyReplicator>.InternalSpawnRequestFromSlaveCallback), 
+                typeof(void).FullName, new string[] { typeof(pEnemySpawnData).FullName }, _detourMethod_InternalSpawnRequestFromSlaveCallback_pEnemySpawnData, out _originalMethod_InternalSpawnRequestFromSlaveCallback_pEnemySpawnData);
+            LoaderWrapper.ApplyNativeHook<SNet_ReplicationManager<pEnemyGroupSpawnData, SNet_DynamicReplicator<pEnemyGroupSpawnData>>, Original_InternalSpawnRequestFromSlaveCallback>(nameof(SNet_ReplicationManager<pEnemyGroupSpawnData, SNet_DynamicReplicator<pEnemyGroupSpawnData>>.InternalSpawnRequestFromSlaveCallback),
+    typeof(void).FullName, new string[] { typeof(pEnemyGroupSpawnData).FullName }, _detourMethod_InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData, out _originalMethod_InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData);
             _hasBeenPatched = true;
         }
 
-        /*
-        private static Original_InternalSpawnRequestFromSlaveCallback _originalMethod_InternalSpawnRequestFromSlaveCallback;
-        public delegate void Original_InternalSpawnRequestFromSlaveCallback(IntPtr self, IntPtr spawnData);
-        public static void InternalSpawnRequestFromSlaveCallback_Replacement(IntPtr self, IntPtr spawnData)
-        {
-            var lastSenderIsMaster = SNet.Replication.IsLastSenderMaster();
 
-            if (IsEnabled)
-            {
-                FeatureLogger.Fail($"Intercepted enemy spawn request packet from client! lastSenderIsMaster: {lastSenderIsMaster}");
-            }
-            else
-            {
-                _originalMethod_InternalSpawnRequestFromSlaveCallback.Invoke(self, spawnData);
-            }
-        }
-        */
-
-        internal static bool isLocallySpawned = false;
-        private static Original_Spawn _originalMethod_Spawn;
-        public delegate void Original_Spawn(IntPtr type, IntPtr self, IntPtr spawnData);
-        public static void Spawn_Replacement(IntPtr type, IntPtr self, IntPtr spawnData)
+        private static Original_InternalSpawnRequestFromSlaveCallback _originalMethod_InternalSpawnRequestFromSlaveCallback_pEnemySpawnData;
+        // cache delegate to fix crash (A callback was made on a garbage collected delegate of type)
+        private unsafe static Original_InternalSpawnRequestFromSlaveCallback _detourMethod_InternalSpawnRequestFromSlaveCallback_pEnemySpawnData = InternalSpawnRequestFromSlaveCallback_pEnemySpawnData_Replacement;
+        private static Original_InternalSpawnRequestFromSlaveCallback _originalMethod_InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData;
+        private unsafe static Original_InternalSpawnRequestFromSlaveCallback _detourMethod_InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData = InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData_Replacement;
+        public unsafe delegate void Original_InternalSpawnRequestFromSlaveCallback(IntPtr self, IntPtr spawnData, Il2CppMethodInfo* methodInfo);
+        public unsafe static void InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData_Replacement(IntPtr self, IntPtr spawnData, Il2CppMethodInfo* methodInfo)
         {
-            isLocallySpawned = true;
-            _originalMethod_Spawn.Invoke(type, self, spawnData);
-            isLocallySpawned = false;
-        }
-
-        private static Original_InternalSpawnCallback _originalMethod_InternalSpawnCallback;
-        public delegate void Original_InternalSpawnCallback(IntPtr type, IntPtr self, IntPtr spawnData);
-        public static void InternalSpawnCallback_Replacement(IntPtr type, IntPtr self, IntPtr spawnData)
-        {
-            if (IsEnabled && SNet.IsMaster && !isLocallySpawned && !SNet.Capture.IsCheckpointRecall)
+            if (IsEnabled && SNet.IsMaster && !SNet.Capture.IsCheckpointRecall)
             {
                 bool cancelSpawn = true;
 
@@ -173,7 +91,27 @@ namespace TheArchive.Features.Security
                 }
             }
 
-            _originalMethod_InternalSpawnCallback.Invoke(type, self, spawnData);
+            _originalMethod_InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData.Invoke(self, spawnData, methodInfo);
+        }
+        public unsafe static void InternalSpawnRequestFromSlaveCallback_pEnemySpawnData_Replacement(IntPtr self, IntPtr spawnData, Il2CppMethodInfo* methodInfo)
+        {
+            if (IsEnabled && SNet.IsMaster && !SNet.Capture.IsCheckpointRecall)
+            {
+                bool cancelSpawn = true;
+
+                if (SNet.Replication.TryGetLastSender(out var sender))
+                {
+                    cancelSpawn = PunishPlayer(sender);
+                }
+
+                if (cancelSpawn)
+                {
+                    FeatureLogger.Fail("Cancelled enemy spawn!");
+                    return;
+                }
+            }
+
+            _originalMethod_InternalSpawnRequestFromSlaveCallback_pEnemySpawnData.Invoke(self, spawnData, methodInfo);
         }
 
         public static bool PunishPlayer(SNet_Player player)

@@ -13,7 +13,7 @@ namespace TheArchive.Features.Fixes
     {
         public override string Name => "Map Chat Abduction Fix";
 
-        public override string Group => FeatureGroups.Fixes;
+        public override FeatureGroup Group => FeatureGroups.Fixes;
 
         public override string Description => "Prevent a switch to the Objectives Screen whenever the chat is open and the 'o' key is pressed.\n\n(Thanks for fixing this in A6 Alex! <3)";
 

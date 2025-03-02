@@ -17,7 +17,7 @@ namespace TheArchive.Features.Backport
     {
         public override string Name => "R5+ Like Instant Hack Release";
 
-        public override string Group => FeatureGroups.Backport;
+        public override FeatureGroup Group => FeatureGroups.Backport;
 
         public override string Description => "Change hacking minigame to be more in line with newest version of the game\nMinigame finishes and hack disappears instantly";
 

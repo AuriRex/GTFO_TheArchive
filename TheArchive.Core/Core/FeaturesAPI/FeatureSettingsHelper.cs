@@ -5,6 +5,7 @@ using System.Reflection;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
@@ -51,7 +52,7 @@ namespace TheArchive.Core.FeaturesAPI
             Feature = feature;
             Property = settingsProperty;
             SettingType = settingsProperty?.GetMethod?.ReturnType ?? throw new ArgumentNullException(nameof(settingsProperty), $"Settings Property must implement a get method!");
-            DisplayName = settingsProperty.GetCustomAttribute<FSDisplayName>()?.DisplayName;
+            SetDisplayName(settingsProperty);
         }
 
         protected FeatureSettingsHelper() { }
@@ -171,6 +172,24 @@ namespace TheArchive.Core.FeaturesAPI
                 _logger.Debug(msg);
         }
 
+        private void SetDisplayName(PropertyInfo settingsProperty)
+        {
+            DisplayName = settingsProperty?.GetCustomAttribute<FSDisplayName>()?.DisplayName;
+            if (settingsProperty?.GetCustomAttribute<FSDisplayName>(true) != null)
+            {
+                string propID = $"{settingsProperty.DeclaringType.FullName}.{settingsProperty.Name}";
+                if (Localization.TryGetFSText(propID, FSType.FSDisplayName, out var text))
+                {
+                    DisplayName = text;
+                }
+            }
+        }
+
+        internal void RefreshDisplayName()
+        {
+            SetDisplayName(Property);
+        }
+
         internal virtual void SetupViaFeatureInstance(object configInstance) => SetupViaInstanceOnHost(Feature, configInstance);
 
         internal virtual void SetupViaInstanceOnHost(object host, object configInstance)
@@ -187,5 +206,7 @@ namespace TheArchive.Core.FeaturesAPI
         {
             return Instance ?? Property.GetValue(host);
         }
+
+        internal FeatureLocalizationService Localization => Feature.FeatureInternal.Localization;
     }
 }

@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
@@ -22,7 +23,7 @@ namespace TheArchive.Features.Cosmetic
     {
         public override string Name => "Glowsticks!";
 
-        public override string Group => FeatureGroups.Cosmetic;
+        public override FeatureGroup Group => FeatureGroups.Cosmetic;
 
         public override string Description => "Costomize your glow-y little friends!\n\nAllows you to change the built in glowstick type and/or customize the color to your liking, or color it based on the player who threw the glowstick.";
 
@@ -63,6 +64,8 @@ namespace TheArchive.Features.Cosmetic
             [FSDescription("Adds a third of the blue component as green to the current color if the green component is below that amount.\n\nBasically makes blue look blue instead of purple.")]
             public bool BlueIsBlue { get; set; } = true;
 
+
+            [Localized]
             public enum LocalOverrideMode
             {
                 Default,
@@ -70,6 +73,8 @@ namespace TheArchive.Features.Cosmetic
                 UsePlayerColor
             }
 
+
+            [Localized]
             public enum GlowstickType
             {
                 Green,

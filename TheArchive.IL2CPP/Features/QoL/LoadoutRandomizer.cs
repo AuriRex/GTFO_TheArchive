@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "Loadout Randomizer";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Adds a Loadout Randomizer button onto the loadout screen.\nSelect which gear to randomize via the settings below.";
 
@@ -29,8 +30,10 @@ namespace TheArchive.Features.QoL
         {
             [FSDisplayName("Do not randomize")]
             public List<InventorySlots> ExcludedSlots { get; set; } = new List<InventorySlots>();
+            [FSDisplayName("Mode")]
             public RandomizerMode Mode { get; set; } = RandomizerMode.NoDuplicate;
 
+            [Localized]
             public enum InventorySlots
             {
                 Primary,
@@ -39,6 +42,7 @@ namespace TheArchive.Features.QoL
                 Melee
             }
 
+            [Localized]
             public enum RandomizerMode
             {
                 True,

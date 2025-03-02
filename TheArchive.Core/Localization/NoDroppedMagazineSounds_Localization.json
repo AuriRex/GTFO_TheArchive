@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.QoL.NoDroppedMagazineSounds.Name": {
+        "FName": {
+          "English": "No Magazine Drop Sound",
+          "Chinese": "无弹匣掉落声音",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.QoL.NoDroppedMagazineSounds.Description": {
+        "FDescription": {
+          "English": "Removes the <i>globalally audible</i> sound whenever a magazine drops on the floor after a reload.",
+          "Chinese": "当弹夹在装填后掉到地板上时，删除<i>全局</i>声音。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

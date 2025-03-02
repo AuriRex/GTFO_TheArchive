@@ -10,7 +10,7 @@ namespace TheArchive.Features.Backport
     {
         public override string Name => "R5+ Mines";
 
-        public override string Group => FeatureGroups.Backport;
+        public override FeatureGroup Group => FeatureGroups.Backport;
 
         public override string Description => "Change explosion code to work like after the R5 update.\nMines = more effective\n\n<#f00>(Might cause desync!)</color>";
 

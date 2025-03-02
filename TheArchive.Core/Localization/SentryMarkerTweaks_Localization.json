@@ -1,0 +1,253 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Accessibility.SentryMarkerTweaks.Name": {
+        "FName": {
+          "English": "Sentry Markers",
+          "Chinese": "炮台标记",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.SentryMarkerTweaks.Description": {
+        "FDescription": {
+          "English": "Add hud markers onto placed down sentry guns and tweak how those are shown.",
+          "Chinese": "在放置的炮台上添加 HUD 标记，并调整显示方式。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.SentryMarkerTweaks+SentryMarkersSettings.DisplayPlayerNameAboveMarker": {
+        "FSDisplayName": {
+          "English": "Show sentry owner name",
+          "Chinese": "显示炮台所有者名称",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Displayes the name of the sentries owner above it.",
+          "Chinese": "在其上方显示炮台所有者的名称。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.SentryMarkerTweaks+SentryMarkersSettings.PlayerNameSize": {
+        "FSDisplayName": {
+          "English": "Name text size",
+          "Chinese": "名称文本大小",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Adjust the size of the nametag where 1 is 100% (normal) size.",
+          "Chinese": "调整姓名标签的大小，其中 1 为 100%（正常）大小。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.SentryMarkerTweaks+SentryMarkersSettings.UsePlayerColorForMarkers": {
+        "FSDisplayName": {
+          "English": "Use player color for markers",
+          "Chinese": "使用玩家颜色作为标记",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Colors the markers according to the players color.",
+          "Chinese": "根据玩家的颜色对标记进行着色。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.SentryMarkerTweaks+SentryMarkersSettings.ShowSentryArchetype": {
+        "FSDisplayName": {
+          "English": "Show Sentry Type",
+          "Chinese": "显示哨戒炮类型",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Displayes the sentries type below the players name.",
+          "Chinese": "在玩家名称下方显示哨戒炮类型。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.SentryMarkerTweaks+SentryMarkersSettings.ShowSentryAmmoPercentage": {
+        "FSDisplayName": {
+          "English": "Show Sentry Ammo Percentage",
+          "Chinese": "显示哨戒炮弹药量百分比",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Displayes the sentries ammo percentage below the players name.",
+          "Chinese": "在玩家名称下方显示哨戒炮弹药量百分比。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.SentryMarkerTweaks+SentryMarkersSettings.ShowOwnMarker": {
+        "FSDisplayName": {
+          "English": "Show your own marker",
+          "Chinese": "显示自己的标记",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Don't forget where you placed it down!",
+          "Chinese": "不要忘记您放置的位置！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": "Marker Toggles",
+          "Chinese": "标记开关",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.SentryMarkerTweaks+SentryMarkersSettings.ShowRemoteMarkers": {
+        "FSDisplayName": {
+          "English": "Show other players markers",
+          "Chinese": "显示其他玩家的标记",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.SentryMarkerTweaks+SentryMarkersSettings.ShowBotMarkers": {
+        "FSDisplayName": {
+          "English": "Show bots markers",
+          "Chinese": "显示机器人的标记",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

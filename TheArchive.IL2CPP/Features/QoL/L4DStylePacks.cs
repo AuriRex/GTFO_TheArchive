@@ -3,6 +3,7 @@ using Player;
 using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -13,9 +14,11 @@ namespace TheArchive.Features.QoL
     {
         public override string Name => "L4D Style Resource Packs";
 
-        public override string Group => FeatureGroups.QualityOfLife;
+        public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
         public override string Description => "Use left and right mouse buttons to apply resource packs instead of E.\n\nLeft mouse = yourself\nRight mouse = other players\n\n<color=orange>[R4+]</color> You're able to hold down M2 and it will start applying to a receiver under your croshair if in range automatically\n\n<#f00><u>/!\\</u> Make sure to <color=orange><u>disable</u></color> the vanilla game setting <color=orange>Gameplay > Separate Use Keybinds</color> for this Feature to work!</color>";
+
+        public static new ILocalizationService Localization { get; set; }
 
         public static new IArchiveLogger FeatureLogger { get; set; }
 
@@ -53,20 +56,20 @@ namespace TheArchive.Features.QoL
 
         public static void ShowDoesNotNeedResourcePrompt(iResourcePackReceiver receiver, eResourceContainerSpawnType packType)
         {
-            string text = receiver.IsLocallyOwned ? "YOU DO" : (receiver.InteractionName + " DOES");
+            string text = receiver.IsLocallyOwned ? Localization.Get(1) : Localization.Format(2, receiver.InteractionName);
             switch (packType)
             {
                 case eResourceContainerSpawnType.AmmoWeapon:
-                    text += " NOT NEED WEAPON AMMUNITION";
+                    text += Localization.Get(3);
                     break;
                 case eResourceContainerSpawnType.AmmoTool:
-                    text += " NOT NEED TOOL AMMUNITION";
+                    text += Localization.Get(4); 
                     break;
                 case eResourceContainerSpawnType.Health:
-                    text += " NOT NEED MEDICAL RESOURCES";
+                    text += Localization.Get(5);
                     break;
                 case eResourceContainerSpawnType.Disinfection:
-                    text += " NOT NEED DISINFECTION";
+                    text += Localization.Get(6);
                     break;
             }
             SetTimedInteractionPrompt(text, 1.4f);
@@ -328,7 +331,7 @@ namespace TheArchive.Features.QoL
                     {
                         if (packReceiver.IsLocallyOwned)
                         {
-                            A_UpdateInteractionActionName.Invoke(__instance, "YOURSELF", true);
+                            A_UpdateInteractionActionName.Invoke(__instance, Localization.Get(7), true);
                             timer.m_input = nextInputAction;
                         }
                         else

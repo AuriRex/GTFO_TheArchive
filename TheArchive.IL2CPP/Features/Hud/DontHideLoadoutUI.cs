@@ -12,7 +12,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Don't Hide Loadout UI";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Keep loadout visible after readying up / in expedition";
 

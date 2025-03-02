@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using TheArchive.Core;
+using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Loader;
 using static TheArchive.Utilities.Utils;
 
@@ -19,9 +21,9 @@ namespace TheArchive.Utilities
         {
             get
             {
-                if(_modLocalLowPath == null)
+                if (_modLocalLowPath == null)
                 {
-                    
+
                     _modLocalLowPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "GTFO_TheArchive");
                     if (!Directory.Exists(_modLocalLowPath))
                         Directory.CreateDirectory(_modLocalLowPath);
@@ -83,7 +85,7 @@ namespace TheArchive.Utilities
         {
             get
             {
-                if(string.IsNullOrEmpty(_savePath))
+                if (string.IsNullOrEmpty(_savePath))
                 {
                     _savePath = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? ModDefaultSaveDataPath : ArchiveMod.Settings.CustomFileSaveLocation;
                     if (!Directory.Exists(_savePath))
@@ -130,7 +132,7 @@ namespace TheArchive.Utilities
             {
                 if (string.IsNullOrEmpty(_versionSpecificSavePath))
                 {
-                    if(LoaderWrapper.IsModInstalled(ArchiveMod.MTFO_GUID))
+                    if (LoaderWrapper.IsModInstalled(ArchiveMod.MTFO_GUID))
                     {
 #warning TODO: Not this
                         _versionSpecificSavePath = Path.Combine(SaveDirectoryPath, "Modded", $"TODO_USE_MTFO_FOLDER_HERE_Data");
@@ -145,12 +147,12 @@ namespace TheArchive.Utilities
                         Directory.CreateDirectory(_versionSpecificSavePath);
                         try
                         {
-                            if(!CopyMostRecentSaveFiles(ArchiveMod.CurrentRundown - 1, ArchiveMod.CurrentRundown))
+                            if (!CopyMostRecentSaveFiles(ArchiveMod.CurrentRundown - 1, ArchiveMod.CurrentRundown))
                             {
                                 ArchiveLogger.Notice("Creating new game settings file(s)!");
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             ArchiveLogger.Warning($"Caught an exception while trying to copy over older settings files: {ex}: {ex.Message}");
                             ArchiveLogger.Debug(ex.StackTrace);
@@ -436,40 +438,85 @@ namespace TheArchive.Utilities
             File.WriteAllText(path, JsonConvert.SerializeObject(config, ArchiveMod.JsonSerializerSettings));
         }
 
-        internal static object LoadFeatureConfig(string featureIdentifier, Type configType, out bool fileExists, bool saveIfNonExistent = true)
+        internal static object LoadFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, out bool fileExists, bool saveIfNonExistent = true)
         {
             if (string.IsNullOrWhiteSpace(featureIdentifier)) throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
             if (configType == null) throw new ArgumentNullException($"Parameter {nameof(configType)} may not be null.");
 
-            var path = Path.Combine(FeatureConfigsDirectoryPath, $"{featureIdentifier}_{configType.Name}.json");
+            var moduleSettingsPath = Path.Combine(FeatureConfigsDirectoryPath, moduleIdentifier);
+            if (!Directory.Exists(moduleSettingsPath)) Directory.CreateDirectory(moduleSettingsPath);
+
+            var path = Path.Combine(moduleSettingsPath, $"{featureIdentifier}_{configType.Name}.json");
 
             if (!File.Exists(path))
             {
                 var newT = Activator.CreateInstance(configType);
                 if (saveIfNonExistent)
                 {
-                    SaveFeatureConfig(featureIdentifier, configType, newT);
+                    SaveFeatureConfig(moduleIdentifier, featureIdentifier, configType, newT);
                 }
                 fileExists = false;
                 return newT;
             }
 
             fileExists = true;
-            return JsonConvert.DeserializeObject(File.ReadAllText(path), configType, ArchiveMod.JsonSerializerSettings);
+            try
+            {
+                return JsonConvert.DeserializeObject(File.ReadAllText(path), configType, ArchiveMod.JsonSerializerSettings);
+            }
+            catch
+            {
+                var newT = Activator.CreateInstance(configType);
+                if (saveIfNonExistent)
+                {
+                    SaveFeatureConfig(moduleIdentifier, featureIdentifier, configType, newT);
+                }
+                fileExists = false;
+                return newT;
+            }
         }
 
-        internal static object LoadFeatureConfig(string featureIdentifier, Type configType, bool saveIfNonExistent = true)
+        internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature)
         {
-            return LoadFeatureConfig(featureIdentifier, configType, out _, saveIfNonExistent);
+            string dir = Path.Combine(Path.GetDirectoryName(feature.ModuleGroup == ArchiveMod.ARCHIVE_CORE_FEATUREGROUP ? ArchiveMod.CORE_PATH : feature.FeatureInternal.OriginAssembly.Location), "Localization");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            var path = Path.Combine(dir, $"{feature.Identifier}_Localization.json");
+            if (!File.Exists(path))
+            {
+                var newData = FeatureInternal.GenerateFeatureLocalization(feature);
+                File.WriteAllText(path, JsonConvert.SerializeObject(newData, ArchiveMod.JsonSerializerSettings));
+                return newData;
+            }
+            else
+            {
+                var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+                var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
+                var rdata = FeatureInternal.GenerateFeatureLocalization(feature, data);
+                var rjson = JsonConvert.SerializeObject(rdata, ArchiveMod.JsonSerializerSettings);
+                if (rjson.HashString() != json.HashString())
+                    File.WriteAllText(path, rjson);
+                return rdata;
+            }
         }
 
-        internal static void SaveFeatureConfig(string featureIdentifier, Type configType, object configInstance)
+        internal static object LoadFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, bool saveIfNonExistent = true)
+        {
+            return LoadFeatureConfig(moduleIdentifier, featureIdentifier, configType, out _, saveIfNonExistent);
+        }
+
+        internal static void SaveFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, object configInstance)
         {
             if (string.IsNullOrWhiteSpace(featureIdentifier)) throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
             if (configType == null) throw new ArgumentNullException($"Parameter {nameof(configType)} may not be null.");
             if (configInstance == null) throw new ArgumentNullException($"Parameter {nameof(configInstance)} may not be null.");
 
-            var path = Path.Combine(FeatureConfigsDirectoryPath, $"{featureIdentifier}_{configType.Name}.json");
+            var moduleSettingsPath = Path.Combine(FeatureConfigsDirectoryPath, moduleIdentifier);
+            if (!Directory.Exists(moduleSettingsPath)) Directory.CreateDirectory(moduleSettingsPath);
+
+            var path = Path.Combine(moduleSettingsPath, $"{featureIdentifier}_{configType.Name}.json");
 
             ArchiveLogger.Debug($"Saving Feature Setting to: {path}");
             File.WriteAllText(path, JsonConvert.SerializeObject(configInstance, ArchiveMod.JsonSerializerSettings));

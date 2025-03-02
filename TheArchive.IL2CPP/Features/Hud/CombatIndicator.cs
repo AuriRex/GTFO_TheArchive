@@ -1,5 +1,7 @@
 ﻿using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Features.Dev;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -11,7 +13,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Combat Indicator";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Displays the current drama state of the game.\n(Above the health bar, right side)\n\nBasically a visual representation of what the music is doing.";
 
@@ -24,8 +26,10 @@ namespace TheArchive.Features.Hud
 
         public class CombatIndicatorSettings
         {
+            [FSDisplayName("Style")]
             public CombatIndicatorStyle Style { get; set; } = CombatIndicatorStyle.Simple;
 
+            [Localized]
             public enum CombatIndicatorStyle
             {
                 Simple,

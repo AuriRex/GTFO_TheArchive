@@ -17,7 +17,7 @@ namespace TheArchive.Features.Cosmetic
     {
         public override string Name => "Weapon FOV Adjustments";
 
-        public override string Group => FeatureGroups.Cosmetic;
+        public override FeatureGroup Group => FeatureGroups.Cosmetic;
 
         public override string Description => "Adjust the Field of View of weapons, consumables and big items.";
 

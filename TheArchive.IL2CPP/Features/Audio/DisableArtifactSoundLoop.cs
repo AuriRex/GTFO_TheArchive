@@ -14,7 +14,7 @@ namespace TheArchive.Features.Audio
     {
         public override string Name => "Disable Artifact Sound Loop";
 
-        public override string Group => FeatureGroups.Audio;
+        public override FeatureGroup Group => FeatureGroups.Audio;
 
         public override string Description => "Removes the Artifacts idle audio loop.";
 

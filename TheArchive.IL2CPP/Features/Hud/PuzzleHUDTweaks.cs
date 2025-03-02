@@ -13,7 +13,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Scan HUD Tweaks";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Adds an overall alarm class counter to the HUD message for door alarms etc";
 

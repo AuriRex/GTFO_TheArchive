@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -18,7 +19,7 @@ namespace TheArchive.Features.Accessibility
     {
         public override string Name => "Player Color Override";
 
-        public override string Group => FeatureGroups.Accessibility;
+        public override FeatureGroup Group => FeatureGroups.Accessibility;
 
         public override string Description => "Override the built in player colors.";
 
@@ -31,6 +32,7 @@ namespace TheArchive.Features.Accessibility
 
         public class PlayerColorOverrideSettings
         {
+            [FSDisplayName("Mode")]
             public ColorizationMode Mode { get; set; } = ColorizationMode.NicknameOnly;
 
             [FSDisplayName("Your Color")]
@@ -61,6 +63,7 @@ namespace TheArchive.Features.Accessibility
             [FSDescription("Only pick the nickname color if the whole name is colored.\n\nExample:\n<#404>Nickname</color> -> <#0c0>use as player color</color>\n<#404>Nick</color>name -> <#c00>don't use as player color</color>")]
             public bool OnlyColorIfWholeNameIsColored { get; set; } = true;
 
+            [Localized]
             public enum ColorizationMode
             {
                 /// <summary>Only use nickname colors if applicable</summary>

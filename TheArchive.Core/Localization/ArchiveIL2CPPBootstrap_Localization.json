@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.ArchiveIL2CPPBootstrap.Name": {
+        "FName": {
+          "English": "Archive IL2CPP Bootstrap",
+          "Chinese": "Archive IL2CPP 加载器",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.ArchiveIL2CPPBootstrap.Description": {
+        "FDescription": {
+          "English": "Hooks into a bunch of important game code in order for this mod to work.",
+          "Chinese": "为了Archive的正常工作，需要HOOK一些重要的游戏代码。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

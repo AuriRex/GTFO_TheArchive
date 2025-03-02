@@ -1,0 +1,104 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Hud.CombatIndicator.Name": {
+        "FName": {
+          "English": "Combat Indicator",
+          "Chinese": "战斗状态指示器",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CombatIndicator.Description": {
+        "FDescription": {
+          "English": "Displays the current drama state of the game.\n(Above the health bar, right side)\n\nBasically a visual representation of what the music is doing.",
+          "Chinese": "显示当前战斗状态。\n(生命值条右上方)\n\n一种与战斗音乐相同目的的视觉表示方式。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CombatIndicator+CombatIndicatorSettings.Style": {
+        "FSDisplayName": {
+          "English": "Style",
+          "Chinese": "类型",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {
+      "TheArchive.Features.Hud.CombatIndicator+CombatIndicatorSettings+CombatIndicatorStyle": {
+        "English": {
+          "Simple": "Simple",
+          "Detailed": "Detailed"
+        },
+        "Chinese": {
+          "Simple": "简易",
+          "Detailed": "详细"
+        },
+        "French": {
+          "Simple": null,
+          "Detailed": null
+        },
+        "Italian": {
+          "Simple": null,
+          "Detailed": null
+        },
+        "German": {
+          "Simple": null,
+          "Detailed": null
+        },
+        "Spanish": {
+          "Simple": null,
+          "Detailed": null
+        },
+        "Russian": {
+          "Simple": null,
+          "Detailed": null
+        },
+        "Portuguese_Brazil": {
+          "Simple": null,
+          "Detailed": null
+        },
+        "Polish": {
+          "Simple": null,
+          "Detailed": null
+        },
+        "Japanese": {
+          "Simple": null,
+          "Detailed": null
+        },
+        "Korean": {
+          "Simple": null,
+          "Detailed": null
+        }
+      }
+    },
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

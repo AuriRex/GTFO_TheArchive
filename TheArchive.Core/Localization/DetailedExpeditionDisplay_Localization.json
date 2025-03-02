@@ -1,0 +1,70 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Hud.DetailedExpeditionDisplay.Name": {
+        "FName": {
+          "English": "Detailed Expedition Display",
+          "Chinese": "详细关卡展示",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.DetailedExpeditionDisplay.Description": {
+        "FDescription": {
+          "English": "Adds the current Rundown Number into the Header as well as onto the Map, Objectives and Success screens.",
+          "Chinese": "在页眉和地图、目标以及成功画面中添加当前 Rundown 编号。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.DetailedExpeditionDisplay+RundownInHeaderSettings.IncludeALTorOGText": {
+        "FSDisplayName": {
+          "English": "{ALTText} and {OGText} prefixes",
+          "Chinese": "{ALTText} 和 {OGText} 前缀",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Adds {ALTText} or {OGText} before any mention of the expedition.\n\n{OGText} for the original releases\n{ALTText} for the re-releases",
+          "Chinese": "在任何包含关卡信息的文本中添加{altttext}或{OGText}。\n\n{OGText}表示原始版本\n{ALTText}表示重新发布的版本",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

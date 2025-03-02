@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -17,7 +18,7 @@ namespace TheArchive.Core.FeaturesAPI
     public abstract class Feature
     {
         private string _identifier = null;
-        public string Identifier => _identifier ??= this.GetType().Name;
+        public string Identifier => _identifier ??= GetType().Name;
         public bool IsHidden => FeatureInternal.HideInModSettings;
         public bool BelongsToGroup => Group != null;
         public bool HasAdditionalSettings => FeatureInternal.HasAdditionalSettings;
@@ -27,6 +28,10 @@ namespace TheArchive.Core.FeaturesAPI
         public void RevokeRestartRequest() => FeatureManager.RevokeRestartRequest(this);
 
         protected void RequestDisable(string reason = null) => FeatureInternal.RequestDisable(reason);
+
+        public ILocalizationService Localization => FeatureInternal.Localization;
+
+        public virtual Type[] LocalizationExternalTypes => Array.Empty<Type>();
 
         /// <summary>
         /// True if this <see cref="Feature"/> is controled via code<br/>
@@ -58,6 +63,8 @@ namespace TheArchive.Core.FeaturesAPI
         /// </summary>
         public static GameBuildInfo BuildInfo { get; internal set; }
 
+        public FeatureGroup ModuleGroup => FeatureGroups.GetOrCreateModuleGroup(FeatureInternal.ArchiveModule.ModuleGroup);
+
         /// <summary>
         /// The <see cref="Feature"/>s Name<br/>
         /// used in Mod Settings
@@ -74,7 +81,7 @@ namespace TheArchive.Core.FeaturesAPI
         /// Used to group multiple settings together under one header<br/>
         /// used in Mod Settings
         /// </summary>
-        public virtual string Group => null;
+        public virtual FeatureGroup Group => ModuleGroup;
 
         /// <summary>
         /// If set, prevents calling of <see cref="OnEnable"/> and <see cref="OnDisable"/> methods and only switches the config state of this <see cref="Feature"/>.
@@ -96,7 +103,7 @@ namespace TheArchive.Core.FeaturesAPI
         public virtual bool PlaceSettingsInSubMenu => false;
 
         /// <summary>
-        /// If this <see cref="Feature"/>s settings should be put inside of íts parent menu in the Mod Settings menu
+        /// If this <see cref="Feature"/>s settings should be put inside of its parent menu in the Mod Settings menu
         /// </summary>
         public virtual bool InlineSettingsIntoParentMenu => false;
 

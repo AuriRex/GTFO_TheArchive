@@ -13,7 +13,7 @@ namespace TheArchive.Features.LocalProgression
     {
         public override string Name => nameof(GTFOApi_Compat);
 
-        public override string Group => FeatureGroups.LocalProgression;
+        public override FeatureGroup Group => FeatureGroups.LocalProgression;
 
         public override bool ShouldInit()
         {

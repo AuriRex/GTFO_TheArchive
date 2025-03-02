@@ -3,16 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
-using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Dev
 {
@@ -20,8 +20,8 @@ namespace TheArchive.Features.Dev
     public partial class ModSettings : Feature
     {
         public override string Name => "Mod Settings (this)";
-        
-        public override string Group => FeatureGroups.Dev;
+
+        public override FeatureGroup Group => FeatureGroups.Dev;
 
         public override string Description => "<color=red>WARNING!</color> Disabling this makes you unable to change settings in game via this very menu after a restart!";
 
@@ -34,13 +34,18 @@ namespace TheArchive.Features.Dev
 
         public class ModSettingsSettings
         {
+            [FSDisplayName("Search Option")]
             public SearchOptions Search { get; set; } = new SearchOptions();
 
             public class SearchOptions
             {
+                [FSDisplayName("Search Titles")]
                 public bool SearchTitles { get; set; } = true;
+                [FSDisplayName("Search Descrption")]
                 public bool SearchDescriptions { get; set; } = false;
+                [FSDisplayName("Search Sub Setting Titles")]
                 public bool SearchSubSettingsTitles { get; set; } = true;
+                [FSDisplayName("Search Sub Settings Description")]
                 public bool SearchSubSettingsDescription { get; set; } = false;
             }
         }
@@ -117,6 +122,7 @@ namespace TheArchive.Features.Dev
 #else
             A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Add(scrollWindow);
 #endif
+            AddToClickAnywhereListeners(scrollWindow.Cast<iCellMenuCursorInputAnywhereItem>());
         }
 
         public static void RemoveFromAllSettingsWindows(CM_ScrollWindow scrollWindow)
@@ -126,11 +132,40 @@ namespace TheArchive.Features.Dev
 #else
             A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Remove(scrollWindow);
 #endif
+            RemoveFromClickAnywhereListeners(scrollWindow.Cast<iCellMenuCursorInputAnywhereItem>());
+        }
+
+        public static void AddToClickAnywhereListeners(iCellMenuCursorInputAnywhereItem item)
+        {
+#if IL2CPP
+            if (!SettingsPageInstance.m_clickAnywhereListeners.Contains(item))
+            {
+                SettingsPageInstance.m_clickAnywhereListeners.Add(item);
+            }
+#endif
+        }
+
+        public static void RemoveFromClickAnywhereListeners(iCellMenuCursorInputAnywhereItem item)
+        {
+#if IL2CPP
+            SettingsPageInstance.m_clickAnywhereListeners.Remove(item);
+#endif
+        }
+
+        public static void RegenerateModSettingsPage()
+        {
+            if (MainModSettingsScrollWindow == null)
+            {
+                return;
+            }
+            CM_PageSettings_Setup_Patch.DestroyModSettingsPage();
+            CM_PageSettings_Setup_Patch.SetupMainModSettingsPage();
+            SettingsPageInstance.UpdateCellMenuCursorItems();
         }
 
         public static void ShowScrollWindow(CM_ScrollWindow window)
         {
-            if(window == MainModSettingsScrollWindow)
+            if (window == MainModSettingsScrollWindow)
             {
                 SubMenu.openMenus.Clear();
             }
@@ -159,7 +194,7 @@ namespace TheArchive.Features.Dev
             public static float Value { get; set; } = 0f;
             public static void Prefix(ref float val)
             {
-                if(OverrideDisplayValue)
+                if (OverrideDisplayValue)
                 {
                     val = Value;
                     OverrideDisplayValue = false;
@@ -167,6 +202,7 @@ namespace TheArchive.Features.Dev
             }
         }
 
+        /*
         // Disable all other active TextFields
         [ArchivePatch(typeof(CM_SettingsInputField), "OnBtnPress")]
         internal static class CM_SettingsInputField_OnBtnPress_Patch
@@ -198,6 +234,104 @@ namespace TheArchive.Features.Dev
                 _alreadyInMethod = false;
             }
         }
+        */
+
+        [ArchivePatch(typeof(CM_SettingsInputField), nameof(CM_SettingsInputField.OnBtnPressAnywhere))]
+        private class CM_SettingsInputField__OnBtnPressAnywhere__Patch
+        {
+            private static void Postfix(CM_SettingsInputField __instance, iCellMenuInputHandler inputHandler, Il2CppSystem.Collections.Generic.List<iCellMenuCursorItem> hoverItems)
+            {
+                if (SubMenu.ScrollWindowClickAnyWhereListeners.TryGetValue(__instance.GetInstanceID(), out var items))
+                {
+                    foreach (var item in items)
+                    {
+                        if (item != null)
+                        {
+                            item.OnBtnPressAnywhere(inputHandler, hoverItems);
+                        }
+                    }
+                }
+            }
+        }
+
+        [ArchivePatch(typeof(CM_PopupOverlay), nameof(CM_PopupOverlay.OnBtnPressAnywhere))]
+        private class CM_PopupOverlay__OnBtnPressAnywhere__Patch
+        {
+            private static void Postfix(CM_PopupOverlay __instance, iCellMenuInputHandler inputHandler, Il2CppSystem.Collections.Generic.List<iCellMenuCursorItem> hoverItems)
+            {
+                if (SubMenu.ScrollWindowClickAnyWhereListeners.TryGetValue(__instance.GetInstanceID(), out var items))
+                {
+                    foreach (var item in items)
+                    {
+                        if (item != null)
+                        {
+                            item.OnBtnPressAnywhere(inputHandler, hoverItems);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Fix IMECompositionMode
+        [ArchivePatch(typeof(PlayerChatManager), nameof(PlayerChatManager.ExitChatMode))]
+        private class PlayerChatManager__ExitChatMode__Patch
+        {
+            private static void Postfix()
+            {
+                Input.imeCompositionMode = IMECompositionMode.Off;
+            }
+        }
+
+        [ArchivePatch(typeof(CM_SettingsInputField), nameof(CM_SettingsInputField.OnBtnPress))]
+        private class CM_SettingsInputField__OnBtnPress__Patch
+        {
+            private static void Postfix()
+            {
+                Input.imeCompositionMode = IMECompositionMode.On;
+            }
+        }
+
+        // Disable TextChatInput
+        [ArchivePatch(typeof(CM_PageSettings), nameof(CM_PageSettings.OnEnable))]
+        private class CM_PageSettings__OnEnable__Patch
+        {
+            private static void Postfix()
+            {
+                PlayerChatManager.TextChatInputEnabled = false;
+            }
+        }
+
+        // Restore TextChatInput
+        [ArchivePatch(typeof(CM_PageSettings), nameof(CM_PageSettings.OnDisable))]
+        private class CM_PageSettings__OnDisable__Patch
+        {
+            private static void Postfix()
+            {
+                PlayerChatManager.OnFocusStateChanged(FocusStateManager.CurrentState);
+            }
+        }
+
+        // Fix text blink update
+        [ArchivePatch(typeof(CM_SettingsInputField), nameof(CM_SettingsInputField.Update))]
+        private class CM_SettingsInputField__Update__Patch
+        {
+            private static void Postfix(CM_SettingsInputField __instance)
+            {
+                if (__instance.m_readingActive)
+                {
+                    __instance.m_text.text = $"{__instance.m_currentValue}{((__instance.m_readingActive && __instance.m_blink) ? '_' : string.Empty)}";
+                }
+            }
+        }
+
+        [ArchivePatch(typeof(CM_SettingsInputField), nameof(CM_SettingsInputField.SetReadingActive))]
+        private class CM_SettingsInputField__SetReadingActive__Patch
+        {
+            private static void Postfix(CM_SettingsInputField __instance, bool active)
+            {
+                __instance.ResetValue();
+            }
+        }
 
         //Setup(MainMenuGuiLayer guiLayer)
         [ArchivePatch(typeof(CM_PageSettings), "Setup")]
@@ -209,9 +343,9 @@ namespace TheArchive.Features.Dev
 
             public static void SetRestartInfoText(bool value)
             {
-                if(value)
+                if (value)
                 {
-                    SetRestartInfoText($"<color=red><b>Restart required for some settings to apply!</b></color>");
+                    SetRestartInfoText(LocalizationCoreService.Get(59, "<color=red><b>Restart required for some settings to apply!</b></color>"));
                 }
                 else
                 {
@@ -268,7 +402,7 @@ namespace TheArchive.Features.Dev
                 {
                     UIHelper.Setup();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     FeatureLogger.Exception(ex);
                 }
@@ -308,7 +442,7 @@ namespace TheArchive.Features.Dev
 
                 ScrollWindowContentElements.Clear();
 
-                var title = "Mod Settings";
+                var title = LocalizationCoreService.Get(3, "Mod Settings");
 
                 var subMenuItemOffset = A_CM_PageSettings_m_subMenuItemOffset.Get(SettingsPageInstance);
 
@@ -349,50 +483,20 @@ namespace TheArchive.Features.Dev
 
                 if (DevMode)
                 {
-                    CreateHeader("Dev Mode enabled - Hidden Features shown!", DISABLED);
+                    CreateHeader(LocalizationCoreService.Get(56, "Dev Mode enabled - Hidden Features shown!"), DISABLED);
                 }
 
                 TheSearchMenu = new SearchMainPage();
 
-                var odereredGroups = FeatureManager.Instance.GroupedFeatures.OrderBy(kvp => kvp.Key);
+                BuildFeatureGroup(FeatureGroups.ArchiveCoreGroups);
 
-                foreach (var kvp in odereredGroups)
+                if (FeatureGroups.ModuleGroups.Count > 1)
                 {
-                    var groupName = kvp.Key;
-                    var featureSet = kvp.Value.OrderBy(fs => fs.Name);
-
-                    if (groupName == FeatureGroups.Dev && !Feature.DevMode)
-                        continue;
-
-                    if (!Feature.DevMode && featureSet.All(f => f.IsHidden))
-                        continue;
-
-                    var group = FeatureGroups.Get(groupName);
-
-                    var inlineSettings = group?.InlineSettings ?? false;
-
-                    CreateHeader(groupName);
-
-                    SubMenu groupSubMenu = null;
-                    if (!inlineSettings)
-                    {
-                        groupSubMenu = new SubMenu(groupName);
-
-                        var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
-                        CreateSubMenuControls(groupSubMenu, menuEntryLabelText: $"{featuresCount} Feature{(featuresCount == 1 ? string.Empty : "s")} >>");
-
-                        CreateHeader(groupName, subMenu: groupSubMenu);
-                    }
-
-                    foreach (var feature in featureSet)
-                    {
-                        SetupEntriesForFeature(feature, groupSubMenu);
-                    }
-
-                    groupSubMenu?.Build();
-
                     CreateSpacer();
+                    CreateHeader(LocalizationCoreService.Get(58, "Add-ons"), GREEN);
                 }
+
+                BuildFeatureGroup(FeatureGroups.ModuleGroups);
 
                 IEnumerable<Feature> features;
                 if (Feature.DevMode)
@@ -411,41 +515,9 @@ namespace TheArchive.Features.Dev
                 var featureAssembliesSet = features.Select(f => f.GetType().Assembly).ToHashSet();
                 var featureAssemblies = featureAssembliesSet.OrderBy(asm => asm.GetName().Name);
 
-                CreateHeader("Uncategorized", DISABLED);
+                CreateHeader(LocalizationCoreService.Get(26, "Info"));
 
-                foreach (var featureAsm in featureAssemblies)
-                {
-                    var featuresFromMod = features.Where(f => f.GetType().Assembly == featureAsm);
-                    featuresFromMod = featuresFromMod.OrderBy(f => f.Name);
-
-                    var headerTitle = featureAsm.GetCustomAttribute<ModDefaultFeatureGroupName>()?.DefaultGroupName ?? featureAsm.GetName().Name;
-                    bool inlineSettings = featureAsm.GetCustomAttribute<ModInlineUncategorizedSettingsIntoMainMenu>() != null;
-
-                    CreateHeader(headerTitle);
-
-                    SubMenu otherModSubMenu = null;
-                    if (!inlineSettings)
-                    {
-                        otherModSubMenu = new SubMenu(headerTitle);
-                        var featuresCount = featuresFromMod.Where(f => !f.IsHidden || DevMode).Count();
-                        CreateSubMenuControls(otherModSubMenu, menuEntryLabelText: $"{featuresCount} Feature{(featuresCount == 1 ? string.Empty : "s")} >>");
-
-                        CreateHeader(headerTitle, subMenu: otherModSubMenu);
-                    }
-
-                    foreach (var feature in featuresFromMod)
-                    {
-                        SetupEntriesForFeature(feature, otherModSubMenu);
-                    }
-
-                    CreateSpacer();
-
-                    otherModSubMenu?.Build();
-                }
-
-                CreateHeader("Info");
-
-                CreateSimpleButton("Open saves folder", "Open", () => {
+                CreateSimpleButton(LocalizationCoreService.Get(27, "Open saves folder"), LocalizationCoreService.Get(28, "Open"), () => {
                     System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
                     {
                         Arguments = System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath),
@@ -458,7 +530,7 @@ namespace TheArchive.Features.Dev
 
                 CreateHeader($"> {System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath)}", WHITE_GRAY, false);
 
-                CreateSimpleButton("Open mod github", "Open in Browser", () => {
+                CreateSimpleButton(LocalizationCoreService.Get(34, "Open mod github"), LocalizationCoreService.Get(35, "Open in Browser"), () => {
                     Application.OpenURL(ArchiveMod.GITHUB_LINK);
                 });
 
@@ -466,16 +538,16 @@ namespace TheArchive.Features.Dev
 
                 if (ArchiveMod.GIT_IS_DIRTY)
                 {
-                    CreateHeader($"Built with uncommitted changes | <color=red>Git is dirty</color>", ORANGE, false);
+                    CreateHeader(LocalizationCoreService.Get(30, "Built with uncommitted changes | <color=red>Git is dirty</color>"), ORANGE, false);
                 }
 
                 if (Feature.DevMode)
                 {
-                    CreateHeader($"Last Commit Hash: {ArchiveMod.GIT_COMMIT_SHORT_HASH}", WHITE_GRAY, false);
-                    CreateHeader($"Last Commit Date: {ArchiveMod.GIT_COMMIT_DATE}", WHITE_GRAY, false);
+                    CreateHeader(LocalizationCoreService.Format(32, "Last Commit Hash: {0}", ArchiveMod.GIT_COMMIT_SHORT_HASH), WHITE_GRAY, false);
+                    CreateHeader(LocalizationCoreService.Format(33, "Last Commit Date: {0}", ArchiveMod.GIT_COMMIT_DATE), WHITE_GRAY, false);
                 }
 
-                CreateHeader($"Currently running GTFO <color=orange>{BuildInfo.Rundown}</color>, build <color=orange>{BuildInfo.BuildNumber}</color>", WHITE_GRAY, false);
+                CreateHeader(LocalizationCoreService.Format(31, "Currently running GTFO <color=orange>{0}</color>, build <color=orange>{1}</color>", BuildInfo.Rundown, BuildInfo.BuildNumber), WHITE_GRAY, false);
 
                 AddToAllSettingsWindows(MainModSettingsScrollWindow);
 
@@ -487,13 +559,70 @@ namespace TheArchive.Features.Dev
                 FeatureLogger.Debug($"It took {_setupStopwatch.Elapsed:ss\\.fff} seconds to run {nameof(SetupMainModSettingsPage)}!");
             }
 
+            private static void BuildFeatureGroup(HashSet<FeatureGroup> groups, SubMenu parentMenu = null)
+            {
+                var orderedGroups = groups.OrderBy(kvp => kvp.Name);
+                var count = 0;
+                foreach (var group in orderedGroups)
+                {
+                    count++;
+                    var groupName = group.Name;
+                    var featureSet = group.Features.OrderBy(fs => fs.Name);
+
+                    if (group.IsHidden && !Feature.DevMode)
+                        continue;
+
+                    if (!group.SubGroups.Any() && !group.Features.Any())
+                        continue;
+
+                    if (!Feature.DevMode && featureSet.All(f => f.IsHidden) && !group.SubGroups.Any())
+                        continue;
+
+                    CreateHeader(group.DisplayName, subMenu: parentMenu);
+
+                    SubMenu groupSubMenu = new SubMenu(group.DisplayName);
+
+                    var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
+                    var subGroupsCount = group.SubGroups.Where(g => (!g.IsHidden || DevMode) && g.Features.Any(f => !f.IsHidden || DevMode)).Count();
+                    string featureText = LocalizationCoreService.Format(24, "{0} Feature{1}", featuresCount, featuresCount == 1 ? string.Empty : "s");
+                    string subGroupText = LocalizationCoreService.Format(57, "{0} Subgroup{1}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
+                    string menuEntryLabelText = string.Empty;
+                    if (featuresCount > 0 && subGroupsCount > 0)
+                        menuEntryLabelText = $"{featureText}, {subGroupText}";
+                    else if (featuresCount == 0 && subGroupsCount > 0)
+                        menuEntryLabelText = $"{subGroupText}";
+                    else if (featuresCount > 0 && subGroupsCount == 0)
+                        menuEntryLabelText = $"{featureText}";
+
+                    CreateSubMenuControls(groupSubMenu, placeIntoMenu: parentMenu, menuEntryLabelText: menuEntryLabelText);
+
+                    CreateHeader(group.DisplayName, subMenu: groupSubMenu);
+
+                    foreach (var feature in featureSet)
+                        SetupEntriesForFeature(feature, groupSubMenu);
+
+                    if (featuresCount > 0 && subGroupsCount > 0)
+                        CreateSpacer(groupSubMenu);
+
+                    BuildFeatureGroup(group.SubGroups, groupSubMenu);
+
+                    groupSubMenu?.Build();
+
+                    if (count != orderedGroups.Count())
+                        CreateSpacer(parentMenu);
+                }
+
+                if (parentMenu == null)
+                    CreateSpacer();
+            }
+
             private static int _versionClickedCounter = 0;
             private static float _lastVersionClickedTime = 0;
             private const int VERSION_CLICK_MIN = 3; // = 5 times because janky code lmao
             private const float VERSION_CLICK_TIME = 1.5f;
             private static void VersionClicked(int _)
             {
-                if(_versionClickedCounter >= VERSION_CLICK_MIN)
+                if (_versionClickedCounter >= VERSION_CLICK_MIN)
                 {
                     ArchiveMod.Settings.FeatureDevMode = !ArchiveMod.Settings.FeatureDevMode;
 
@@ -511,7 +640,7 @@ namespace TheArchive.Features.Dev
 
                 var currentTime = Time.time;
 
-                if(currentTime - _lastVersionClickedTime >= VERSION_CLICK_TIME)
+                if (currentTime - _lastVersionClickedTime >= VERSION_CLICK_TIME)
                 {
                     _lastVersionClickedTime = currentTime;
                     _versionClickedCounter = 0;
@@ -532,12 +661,12 @@ namespace TheArchive.Features.Dev
                     Color? col = null;
                     if (feature.IsHidden)
                     {
-                        featureName = $"[H] {feature.Name}";
+                        featureName = $"[H] {feature.FeatureInternal.DisplayName}";
                         col = DISABLED;
                     }
                     else
                     {
-                        featureName = feature.Name;
+                        featureName = feature.FeatureInternal.DisplayName;
                     }
 
                     if (feature.RequiresRestart)
@@ -546,14 +675,14 @@ namespace TheArchive.Features.Dev
                     }
 
                     SubMenu subMenu = null;
-                    if(!feature.InlineSettingsIntoParentMenu && feature.HasAdditionalSettings && !feature.AllAdditionalSettingsAreHidden)
+                    if (!feature.InlineSettingsIntoParentMenu && feature.HasAdditionalSettings && !feature.AllAdditionalSettingsAreHidden)
                     {
                         subMenu = new SubMenu(featureName);
                         featureName = $"<u>{featureName}</u>";
                     }
 
                     CreateSettingsItem(featureName, out var cm_settingsItem, col, groupSubMenu);
-                    
+
                     SetupToggleButton(cm_settingsItem, out CM_Item toggleButton_cm_item, out var toggleButtonText);
 
 
@@ -590,21 +719,21 @@ namespace TheArchive.Features.Dev
                             FeatureManager.ToggleFeature(feature);
 
                             SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
-                            if(sub_toggleButton_cm_item != null)
+                            if (sub_toggleButton_cm_item != null)
                                 SetFeatureItemTextAndColor(feature, sub_toggleButton_cm_item, sub_toggleButtonText);
                         };
 
                         var descriptionData = new DescriptionPanel.DescriptionPanelData
                         {
-                            Title = feature.Name,
-                            Description = feature.Description,
+                            Title = feature.FeatureInternal.DisplayName,
+                            Description = feature.FeatureInternal.DisplayDescription,
                             CriticalInfo = feature.FeatureInternal.CriticalInfo,
                             FeatureOrigin = feature.FeatureInternal.AsmGroupName,
                         };
 
                         var delHover = delegate (int id, bool hovering)
                         {
-                            if(hovering)
+                            if (hovering)
                             {
                                 TheDescriptionPanel.Show(descriptionData);
                             }
@@ -621,11 +750,11 @@ namespace TheArchive.Features.Dev
                     }
 
                     SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
-                    if(sub_toggleButton_cm_item != null)
+                    if (sub_toggleButton_cm_item != null)
                         SetFeatureItemTextAndColor(feature, sub_toggleButton_cm_item, sub_toggleButtonText);
 
                     CreateRundownInfoTextForItem(cm_settingsItem, feature.AppliesToRundowns);
-                    if(sub_cm_settingsItem != null)
+                    if (sub_cm_settingsItem != null)
                         CreateRundownInfoTextForItem(sub_cm_settingsItem, feature.AppliesToRundowns);
 
                     cm_settingsItem.ForcePopupLayer(true);

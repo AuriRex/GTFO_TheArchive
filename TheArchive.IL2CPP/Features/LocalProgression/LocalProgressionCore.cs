@@ -29,7 +29,7 @@ namespace TheArchive.Features.LocalProgression
     {
         public override string Name => "Local Progression Core";
 
-        public override string Group => FeatureGroups.LocalProgression;
+        public override FeatureGroup Group => FeatureGroups.LocalProgression;
 
         public new static IArchiveLogger FeatureLogger { get; set; }
 

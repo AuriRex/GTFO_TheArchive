@@ -15,7 +15,7 @@ namespace TheArchive.Features.Backport
 
         public override string Description => "Visualize terminal pings in R1 by abusing the local players Middle-Mouse-Ping.\n(Only works as Host)";
 
-        public override string Group => FeatureGroups.Backport;
+        public override FeatureGroup Group => FeatureGroups.Backport;
 
 #if MONO
         private static MethodAccessor<PlayerAgent> A_PlayerAgent_TriggerMarkerPing;
