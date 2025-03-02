@@ -444,7 +444,17 @@ namespace TheArchive.Utilities
             if (configType == null) throw new ArgumentNullException($"Parameter {nameof(configType)} may not be null.");
 
             var moduleSettingsPath = Path.Combine(FeatureConfigsDirectoryPath, moduleIdentifier);
-            if (!Directory.Exists(moduleSettingsPath)) Directory.CreateDirectory(moduleSettingsPath);
+            if (!Directory.Exists(moduleSettingsPath))
+            {
+                // Make sure settings are carried over when migrating from the AIO build to the split one
+                var oldPath = Path.Combine(FeatureConfigsDirectoryPath, "TheArchive.IL2CPP");
+                if (moduleIdentifier == "TheArchive.Essentials" && Directory.Exists(oldPath))
+                {
+                    ArchiveLogger.Msg(ConsoleColor.Green, $"Migrating old config path from \"{oldPath}\" to \"{moduleSettingsPath}\"");
+                    Directory.Move(oldPath, moduleSettingsPath);
+                }
+                else Directory.CreateDirectory(moduleSettingsPath);
+            }
 
             var path = Path.Combine(moduleSettingsPath, $"{featureIdentifier}_{configType.Name}.json");
 
