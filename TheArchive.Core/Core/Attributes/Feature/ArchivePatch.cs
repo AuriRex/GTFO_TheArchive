@@ -35,6 +35,8 @@ public class ArchivePatch : Attribute
 
     public PatchMethodType MethodType { get; internal set; } = PatchMethodType.Method;
 
+    public int Priority { get; set; }
+    
     /// <summary>
     /// Describes what method to patch.
     /// <br/><br/>
@@ -43,7 +45,8 @@ public class ArchivePatch : Attribute
     /// <param name="methodName">The method name to patch</param>
     /// <param name="parameterTypes">Method parameters to distinguish between overloads</param>
     /// <param name="patchMethodType">Method type</param>
-    public ArchivePatch(string methodName, Type[] parameterTypes = null, PatchMethodType patchMethodType = PatchMethodType.Method) : this(null, methodName, parameterTypes, patchMethodType)
+    /// /// <param name="priority">Patch priority</param>
+    public ArchivePatch(string methodName, Type[] parameterTypes = null, PatchMethodType patchMethodType = PatchMethodType.Method, int priority = -1) : this(null, methodName, parameterTypes, patchMethodType, priority)
     {
 
     }
@@ -55,12 +58,14 @@ public class ArchivePatch : Attribute
     /// <param name="methodName">The method name to patch</param>
     /// <param name="parameterTypes">Method parameters to distinguish between overloads</param>
     /// <param name="patchMethodType">Method type</param>
-    public ArchivePatch(Type type, string methodName, Type[] parameterTypes = null, PatchMethodType patchMethodType = PatchMethodType.Method)
+    /// <param name="priority">Patch priority</param>
+    public ArchivePatch(Type type, string methodName, Type[] parameterTypes = null, PatchMethodType patchMethodType = PatchMethodType.Method, int priority = -1)
     {
         Type = type;
         MethodName = methodName;
         ParameterTypes = parameterTypes;
         MethodType = patchMethodType;
+        Priority = priority;
 
         if(patchMethodType == PatchMethodType.Constructor)
         {

@@ -1155,27 +1155,32 @@ internal class FeatureInternal
             if (prefix != null)
                 HarmonyPrefixMethod = new HarmonyLib.HarmonyMethod(prefix)
                 {
-                    wrapTryCatch = wrapTryCatch
+                    wrapTryCatch = wrapTryCatch,
+                    priority = archivePatch.Priority
                 };
             if (postfix != null)
                 HarmonyPostfixMethod = new HarmonyLib.HarmonyMethod(postfix)
                 {
-                    wrapTryCatch = wrapTryCatch
+                    wrapTryCatch = wrapTryCatch,
+                    priority = archivePatch.Priority
                 };
             if (transpiler != null)
                 HarmonyTranspilerMethod = new HarmonyLib.HarmonyMethod(transpiler)
                 {
-                    wrapTryCatch = wrapTryCatch
+                    wrapTryCatch = wrapTryCatch,
+                    priority = archivePatch.Priority
                 };
             if (finalizer != null)
                 HarmonyFinalizerMethod = new HarmonyLib.HarmonyMethod(finalizer)
                 {
-                    wrapTryCatch = wrapTryCatch
+                    wrapTryCatch = wrapTryCatch,
+                    priority = archivePatch.Priority
                 };
             if (ilManipulator != null)
                 HarmonyILManipulatorMethod = new HarmonyLib.HarmonyMethod(ilManipulator)
                 {
-                    wrapTryCatch = wrapTryCatch
+                    wrapTryCatch = wrapTryCatch,
+                    priority = archivePatch.Priority
                 };
         }
     }
