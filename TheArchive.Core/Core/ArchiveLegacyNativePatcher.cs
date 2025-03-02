@@ -10,202 +10,201 @@ using UnhollowerBaseLib;
 using static TheArchive.Core.ArchiveLegacyPatcher;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.Core
-{
+namespace TheArchive.Core;
 #pragma warning disable CS0618 // Type or member is obsolete
-    public class ArchiveLegacyNativePatcher
+public class ArchiveLegacyNativePatcher
+{
+    private RundownID _currentRundown;
+    private Type[] _patchTypes;
+    private List<LegacyNativePatchInstance> _patchInstances = new List<LegacyNativePatchInstance>();
+
+    public ArchiveLegacyNativePatcher()
     {
-        private RundownID _currentRundown;
-        private Type[] _patchTypes;
-        private List<LegacyNativePatchInstance> _patchInstances = new List<LegacyNativePatchInstance>();
 
-        public ArchiveLegacyNativePatcher()
+    }
+
+    public void ApplyNativePatches(RundownID currentRundown, Assembly assembly)
+    {
+        _currentRundown = currentRundown;
+
+        ArchiveLogger.Msg(ConsoleColor.Magenta, $"Applying Native Patches for assembly \"{assembly.GetName().Name}\" ...");
+
+        if(_patchTypes == null)
+            _patchTypes = GetAllTypesWithPatchAttribute(typeof(ArchiveLegacyNativePatch) ,assembly);
+
+        foreach (var patchContainingType in _patchTypes)
         {
-
-        }
-
-        public void ApplyNativePatches(RundownID currentRundown, Assembly assembly)
-        {
-            _currentRundown = currentRundown;
-
-            ArchiveLogger.Msg(ConsoleColor.Magenta, $"Applying Native Patches for assembly \"{assembly.GetName().Name}\" ...");
-
-            if(_patchTypes == null)
-                _patchTypes = GetAllTypesWithPatchAttribute(typeof(ArchiveLegacyNativePatch) ,assembly);
-
-            foreach (var patchContainingType in _patchTypes)
+            ArchiveLegacyNativePatch nativePatchInfo;
+            try
             {
-                ArchiveLegacyNativePatch nativePatchInfo;
-                try
+                nativePatchInfo = patchContainingType.GetCustomAttribute<ArchiveLegacyNativePatch>();
+
+                BindPatchToSetting bindPatchToSettingsInfo;
+                TryGetBindToSettingsAttribute(patchContainingType, out bindPatchToSettingsInfo);
+
+
+                if (!IsPatchEnabledInSettings(ArchiveMod.Settings, bindPatchToSettingsInfo, patchContainingType.FullName))
                 {
-                    nativePatchInfo = patchContainingType.GetCustomAttribute<ArchiveLegacyNativePatch>();
+                    ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{bindPatchToSettingsInfo.BindToSetting}==false] Skipped native patch: \"{patchContainingType.FullName}\". ({nativePatchInfo.RundownsToPatch})");
+                    continue;
+                }
 
-                    BindPatchToSetting bindPatchToSettingsInfo;
-                    TryGetBindToSettingsAttribute(patchContainingType, out bindPatchToSettingsInfo);
 
+                if (!nativePatchInfo.GeneralPurposePatch && !FlagsContain(nativePatchInfo.RundownsToPatch, currentRundown))
+                {
+                    ArchiveLogger.Warning($"Not native patching method \"{nativePatchInfo.MethodName}\" in type \"{(nativePatchInfo.HasType ? nativePatchInfo.Type?.FullName : "(not yet set for type load reasons)")}\" from patch class: \"{patchContainingType.FullName}\". ({nativePatchInfo.RundownsToPatch})");
+                    continue;
+                }
 
-                    if (!IsPatchEnabledInSettings(ArchiveMod.Settings, bindPatchToSettingsInfo, patchContainingType.FullName))
+                if (!nativePatchInfo.HasType)
+                {
+                    if (ArchiveLegacyPatcher.TryGetMethodByName(patchContainingType, "Type", out var typeMethod) && typeMethod.ReturnType == typeof(Type))
                     {
-                        ArchiveLogger.Msg(ConsoleColor.DarkMagenta, $"[{bindPatchToSettingsInfo.BindToSetting}==false] Skipped native patch: \"{patchContainingType.FullName}\". ({nativePatchInfo.RundownsToPatch})");
-                        continue;
-                    }
-
-
-                    if (!nativePatchInfo.GeneralPurposePatch && !FlagsContain(nativePatchInfo.RundownsToPatch, currentRundown))
-                    {
-                        ArchiveLogger.Warning($"Not native patching method \"{nativePatchInfo.MethodName}\" in type \"{(nativePatchInfo.HasType ? nativePatchInfo.Type?.FullName : "(not yet set for type load reasons)")}\" from patch class: \"{patchContainingType.FullName}\". ({nativePatchInfo.RundownsToPatch})");
-                        continue;
-                    }
-
-                    if (!nativePatchInfo.HasType)
-                    {
-                        if (ArchiveLegacyPatcher.TryGetMethodByName(patchContainingType, "Type", out var typeMethod) && typeMethod.ReturnType == typeof(Type))
-                        {
-                            nativePatchInfo.Type = (Type)typeMethod.Invoke(null, new object[0]);
-                            ArchiveLogger.Debug($"Discovered target Type for native Patch \"{patchContainingType.FullName}\" to be \"{nativePatchInfo.Type.FullName}\"");
-                        }
-                        else
-                        {
-                            throw new ArgumentException($"Native Patch \"{patchContainingType.FullName}\" has no static method Type() returning the Type to patch or none set in its Attribute!");
-                        }
-                    }
-
-                    if (ArchiveLegacyPatcher.TryGetMethodByName(patchContainingType, "ParameterTypes", out var paramTypesMethod))
-                    {
-                        ArchiveLogger.Debug($"Patch \"{patchContainingType.FullName}\" - found ParameterTypes method.");
-                        var parameterTypes = (Type[])paramTypesMethod.Invoke(null, null);
-                        nativePatchInfo.ParameterTypes = parameterTypes;
-                    }
-
-
-                    var nPatch = LegacyNativePatchInstance.CreatePatch(nativePatchInfo, patchContainingType);
-
-                    _patchInstances.Add(nPatch);
-
-                    var logPrefix = GetPatchPrefix(bindPatchToSettingsInfo, nativePatchInfo.GeneralPurposePatch);
-
-                    var logMessage = $"{logPrefix}Native Patching \"{nativePatchInfo.Type.FullName}.{nativePatchInfo.MethodName}()\" ({patchContainingType.Name})";
-
-                    if (bindPatchToSettingsInfo?.CustomLogColor != null)
-                    {
-                        ArchiveLogger.Msg(bindPatchToSettingsInfo.CustomLogColor.Value, logMessage);
+                        nativePatchInfo.Type = (Type)typeMethod.Invoke(null, new object[0]);
+                        ArchiveLogger.Debug($"Discovered target Type for native Patch \"{patchContainingType.FullName}\" to be \"{nativePatchInfo.Type.FullName}\"");
                     }
                     else
                     {
-                        ArchiveLogger.Notice(logMessage);
+                        throw new ArgumentException($"Native Patch \"{patchContainingType.FullName}\" has no static method Type() returning the Type to patch or none set in its Attribute!");
                     }
-
-                    if(nPatch.WasNotAbleToSetProperty)
-                    {
-                        ArchiveLogger.Warning($"Native Patch \"{nativePatchInfo.Type.FullName}\" has not gotten its {nameof(LegacyNativePatchInstance)} injected! Create a static set-able property called \"{nameof(LegacyNativePatchInstance)}\" to get it injected.");
-                    }
-
                 }
-                catch(Exception ex)
+
+                if (ArchiveLegacyPatcher.TryGetMethodByName(patchContainingType, "ParameterTypes", out var paramTypesMethod))
                 {
-                    ArchiveLogger.Exception(ex);
+                    ArchiveLogger.Debug($"Patch \"{patchContainingType.FullName}\" - found ParameterTypes method.");
+                    var parameterTypes = (Type[])paramTypesMethod.Invoke(null, null);
+                    nativePatchInfo.ParameterTypes = parameterTypes;
                 }
-                
+
+
+                var nPatch = LegacyNativePatchInstance.CreatePatch(nativePatchInfo, patchContainingType);
+
+                _patchInstances.Add(nPatch);
+
+                var logPrefix = GetPatchPrefix(bindPatchToSettingsInfo, nativePatchInfo.GeneralPurposePatch);
+
+                var logMessage = $"{logPrefix}Native Patching \"{nativePatchInfo.Type.FullName}.{nativePatchInfo.MethodName}()\" ({patchContainingType.Name})";
+
+                if (bindPatchToSettingsInfo?.CustomLogColor != null)
+                {
+                    ArchiveLogger.Msg(bindPatchToSettingsInfo.CustomLogColor.Value, logMessage);
+                }
+                else
+                {
+                    ArchiveLogger.Notice(logMessage);
+                }
+
+                if(nPatch.WasNotAbleToSetProperty)
+                {
+                    ArchiveLogger.Warning($"Native Patch \"{nativePatchInfo.Type.FullName}\" has not gotten its {nameof(LegacyNativePatchInstance)} injected! Create a static set-able property called \"{nameof(LegacyNativePatchInstance)}\" to get it injected.");
+                }
 
             }
+            catch(Exception ex)
+            {
+                ArchiveLogger.Exception(ex);
+            }
+                
+
+        }
 
 
             
 
-        }
+    }
 
-        /// <summary>
-        /// Patch things using MelonUtils.NativeHookAttach, WIP
-        /// </summary>
-        [Obsolete("Just a janky mess, wouldn't recommend using")]
-        public class ArchiveLegacyNativePatch : Attribute
+    /// <summary>
+    /// Patch things using MelonUtils.NativeHookAttach, WIP
+    /// </summary>
+    [Obsolete("Just a janky mess, wouldn't recommend using")]
+    public class ArchiveLegacyNativePatch : Attribute
+    {
+        public bool HasType
         {
-            public bool HasType
+            get
             {
-                get
-                {
-                    return Type != null;
-                }
-            }
-
-            public int ParameterCount
-            {
-                get
-                {
-                    return ParameterTypes?.Length ?? 0;
-                }
-            }
-
-            public string ReturnTypeString
-            {
-                get
-                {
-                    return ReturnType?.Name ?? "void";
-                }
-            }
-
-            public Type Type { get; internal set; }
-
-            public Type ReturnType { get; set; }
-
-            public string MethodName { get; private set; }
-
-            public RundownFlags RundownsToPatch { get; private set; }
-
-            public bool GeneralPurposePatch { get; private set; } = false;
-
-            public Type[] ParameterTypes { get; internal set; }
-
-            public ArchiveLegacyNativePatch(Type type, string methodName, RundownFlags rundowns, Type[] parameterTypes = null, Type returnType = null)
-            {
-                Type = type;
-                MethodName = methodName;
-                RundownsToPatch = rundowns;
-                ParameterTypes = parameterTypes;
-                ReturnType = returnType;
-            }
-
-            public ArchiveLegacyNativePatch(Type type, string methodName, RundownFlags from, RundownFlags to, Type[] parameterTypes = null, Type returnType = null)
-            {
-                Type = type;
-                MethodName = methodName;
-                RundownsToPatch = from.To(to);
-                ParameterTypes = parameterTypes;
-                ReturnType = returnType;
-            }
-
-            public ArchiveLegacyNativePatch(Type type, string methodName, Type[] parameterTypes = null, Type returnType = null)
-            {
-                Type = type;
-                MethodName = methodName;
-                ParameterTypes = parameterTypes;
-                ReturnType = returnType;
-                GeneralPurposePatch = true;
+                return Type != null;
             }
         }
 
-        public class LegacyNativePatchInstance
+        public int ParameterCount
         {
-            public Type DelegateType { get; }
-            public Delegate OriginalMethod { get; }
-
-            public bool WasNotAbleToSetProperty { get; } = false;
-
-            public const string kReplacementMethodName = "Replacement";
-
-            private LegacyNativePatchInstance(ArchiveLegacyNativePatch nativePatchInfo, Type patchContainingType)
+            get
             {
-                if (!ArchiveLegacyPatcher.TryGetMethodByName(nativePatchInfo.Type, nativePatchInfo.MethodName, out var originalMethodInfo))
-                {
-                    throw new ArgumentException($"Could not find the original method \"{nativePatchInfo.Type.FullName}.{nativePatchInfo.MethodName}\" targeted by patch \"{patchContainingType.FullName}\"");
-                }
+                return ParameterTypes?.Length ?? 0;
+            }
+        }
 
-                if (!ArchiveLegacyPatcher.TryGetMethodByName(patchContainingType, kReplacementMethodName, out var replacementMethodInfo))
-                {
-                    throw new ArgumentException($"Could not find \"{kReplacementMethodName}\" method for patch \"{patchContainingType.FullName}\"!");
-                }
+        public string ReturnTypeString
+        {
+            get
+            {
+                return ReturnType?.Name ?? "void";
+            }
+        }
 
-                DelegateType = NativeDelegates.Get(nativePatchInfo);
+        public Type Type { get; internal set; }
+
+        public Type ReturnType { get; set; }
+
+        public string MethodName { get; private set; }
+
+        public RundownFlags RundownsToPatch { get; private set; }
+
+        public bool GeneralPurposePatch { get; private set; } = false;
+
+        public Type[] ParameterTypes { get; internal set; }
+
+        public ArchiveLegacyNativePatch(Type type, string methodName, RundownFlags rundowns, Type[] parameterTypes = null, Type returnType = null)
+        {
+            Type = type;
+            MethodName = methodName;
+            RundownsToPatch = rundowns;
+            ParameterTypes = parameterTypes;
+            ReturnType = returnType;
+        }
+
+        public ArchiveLegacyNativePatch(Type type, string methodName, RundownFlags from, RundownFlags to, Type[] parameterTypes = null, Type returnType = null)
+        {
+            Type = type;
+            MethodName = methodName;
+            RundownsToPatch = from.To(to);
+            ParameterTypes = parameterTypes;
+            ReturnType = returnType;
+        }
+
+        public ArchiveLegacyNativePatch(Type type, string methodName, Type[] parameterTypes = null, Type returnType = null)
+        {
+            Type = type;
+            MethodName = methodName;
+            ParameterTypes = parameterTypes;
+            ReturnType = returnType;
+            GeneralPurposePatch = true;
+        }
+    }
+
+    public class LegacyNativePatchInstance
+    {
+        public Type DelegateType { get; }
+        public Delegate OriginalMethod { get; }
+
+        public bool WasNotAbleToSetProperty { get; } = false;
+
+        public const string kReplacementMethodName = "Replacement";
+
+        private LegacyNativePatchInstance(ArchiveLegacyNativePatch nativePatchInfo, Type patchContainingType)
+        {
+            if (!ArchiveLegacyPatcher.TryGetMethodByName(nativePatchInfo.Type, nativePatchInfo.MethodName, out var originalMethodInfo))
+            {
+                throw new ArgumentException($"Could not find the original method \"{nativePatchInfo.Type.FullName}.{nativePatchInfo.MethodName}\" targeted by patch \"{patchContainingType.FullName}\"");
+            }
+
+            if (!ArchiveLegacyPatcher.TryGetMethodByName(patchContainingType, kReplacementMethodName, out var replacementMethodInfo))
+            {
+                throw new ArgumentException($"Could not find \"{kReplacementMethodName}\" method for patch \"{patchContainingType.FullName}\"!");
+            }
+
+            DelegateType = NativeDelegates.Get(nativePatchInfo);
 
 #if MelonLoader
                 unsafe
@@ -239,32 +238,31 @@ namespace TheArchive.Core
                     WasNotAbleToSetProperty = true;
                 }
 #endif
-            }
-
-            internal static LegacyNativePatchInstance CreatePatch(ArchiveLegacyNativePatch nativePatchInfo, Type patchContainingType)
-            {
-                return new LegacyNativePatchInstance(nativePatchInfo, patchContainingType);
-            }
         }
 
-        public static class NativeDelegates
+        internal static LegacyNativePatchInstance CreatePatch(ArchiveLegacyNativePatch nativePatchInfo, Type patchContainingType)
         {
-            internal static Type Get(ArchiveLegacyNativePatch nativePatchInfo)
-            {
-                string delName = $"{nativePatchInfo.ReturnTypeString}_Param_{nativePatchInfo.ParameterCount}";
-
-                var del = typeof(NativeDelegates).GetNestedType(delName, ArchiveLegacyPatcher.AnyBindingFlags);
-
-                if (del == null) throw new NotImplementedException(delName);
-
-                return del;
-            }
-
-            public delegate /*byte*/ void void_Param_0(IntPtr s, IntPtr n);
-            public delegate void void_Param_1(IntPtr s, IntPtr a, IntPtr n);
-            public delegate void void_Param_2(IntPtr s, IntPtr a, IntPtr b, IntPtr n);
-            public delegate void void_Param_3(IntPtr s, IntPtr a, IntPtr b, IntPtr c, IntPtr n);
+            return new LegacyNativePatchInstance(nativePatchInfo, patchContainingType);
         }
     }
-#pragma warning restore CS0618 // Type or member is obsolete
+
+    public static class NativeDelegates
+    {
+        internal static Type Get(ArchiveLegacyNativePatch nativePatchInfo)
+        {
+            string delName = $"{nativePatchInfo.ReturnTypeString}_Param_{nativePatchInfo.ParameterCount}";
+
+            var del = typeof(NativeDelegates).GetNestedType(delName, ArchiveLegacyPatcher.AnyBindingFlags);
+
+            if (del == null) throw new NotImplementedException(delName);
+
+            return del;
+        }
+
+        public delegate /*byte*/ void void_Param_0(IntPtr s, IntPtr n);
+        public delegate void void_Param_1(IntPtr s, IntPtr a, IntPtr n);
+        public delegate void void_Param_2(IntPtr s, IntPtr a, IntPtr b, IntPtr n);
+        public delegate void void_Param_3(IntPtr s, IntPtr a, IntPtr b, IntPtr c, IntPtr n);
+    }
 }
+#pragma warning restore CS0618 // Type or member is obsolete

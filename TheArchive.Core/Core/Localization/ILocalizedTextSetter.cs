@@ -1,7 +1,6 @@
-﻿namespace TheArchive.Core.Localization
+﻿namespace TheArchive.Core.Localization;
+
+public interface ILocalizedTextSetter
 {
-    public interface ILocalizedTextSetter
-    {
-        void SetText(string text);
-    }
+    void SetText(string text);
 }

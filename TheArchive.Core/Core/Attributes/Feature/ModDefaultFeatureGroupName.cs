@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace TheArchive.Core.Attributes
-{
-    [AttributeUsage(AttributeTargets.Assembly)]
-    public class ModDefaultFeatureGroupName : Attribute
-    {
-        public string DefaultGroupName { get; private set; }
+namespace TheArchive.Core.Attributes;
 
-        public ModDefaultFeatureGroupName(string defaultGroupName)
-        {
-            DefaultGroupName = defaultGroupName;
-        }
+[AttributeUsage(AttributeTargets.Assembly)]
+public class ModDefaultFeatureGroupName : Attribute
+{
+    public string DefaultGroupName { get; private set; }
+
+    public ModDefaultFeatureGroupName(string defaultGroupName)
+    {
+        DefaultGroupName = defaultGroupName;
     }
 }

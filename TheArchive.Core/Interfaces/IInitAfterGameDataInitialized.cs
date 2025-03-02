@@ -1,6 +1,5 @@
-﻿namespace TheArchive.Interfaces
+﻿namespace TheArchive.Interfaces;
+
+public interface IInitAfterGameDataInitialized : IInitializable
 {
-    public interface IInitAfterGameDataInitialized : IInitializable
-    {
-    }
 }

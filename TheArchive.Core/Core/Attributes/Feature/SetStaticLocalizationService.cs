@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace TheArchive.Core.Attributes
+namespace TheArchive.Core.Attributes;
+
+[AttributeUsage(AttributeTargets.Property)]
+public class SetStaticLocalizationService : Attribute
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class SetStaticLocalizationService : Attribute
-    {
-    }
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace TheArchive.Core.Attributes.Feature.Settings
+namespace TheArchive.Core.Attributes.Feature.Settings;
+
+[AttributeUsage(AttributeTargets.Property)]
+public class FSHide : Attribute
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class FSHide : Attribute
-    {
-    }
 }

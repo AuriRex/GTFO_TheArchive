@@ -4,38 +4,38 @@ using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.Features.Dev
+namespace TheArchive.Features.Dev;
+
+[EnableFeatureByDefault, HideInModSettings]
+[RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownAltSix)]
+public class MaulGavelChecksumPatch : Feature
 {
-    [EnableFeatureByDefault, HideInModSettings]
-    [RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownAltSix)]
-    public class MaulGavelChecksumPatch : Feature
-    {
-        public override string Name => "Maul/Gavel Checksum Patch";
+    public override string Name => "Maul/Gavel Checksum Patch";
 
-        public override FeatureGroup Group => FeatureGroups.Dev;
+    public override FeatureGroup Group => FeatureGroups.Dev;
 
-        public override string Description => "Fixes the Maul and Gavel hammers having the same icon.";
+    public override string Description => "Fixes the Maul and Gavel hammers having the same icon.";
 
-        // Fix for Maul and Gavel having the same Checksum for SOME reason ...
+    // Fix for Maul and Gavel having the same Checksum for SOME reason ...
 #if IL2CPP
-        [ArchivePatch(typeof(GearIDRange), "GetChecksum")]
-        internal static class GearIDRange_GetChecksumPatch
+    [ArchivePatch(typeof(GearIDRange), "GetChecksum")]
+    internal static class GearIDRange_GetChecksumPatch
+    {
+        public static void Prefix(GearIDRange __instance)
         {
-            public static void Prefix(GearIDRange __instance)
+            if (__instance.m_checksum == 0U)
             {
-                if (__instance.m_checksum == 0U)
+                ChecksumGenerator_32 checksumGenerator_ = new ChecksumGenerator_32();
+                for (int i = 0; i < __instance.m_comps.Length; i++)
                 {
-                    ChecksumGenerator_32 checksumGenerator_ = new ChecksumGenerator_32();
-                    for (int i = 0; i < __instance.m_comps.Length; i++)
-                    {
-                        checksumGenerator_.Insert((uint)__instance.m_comps[i]);
-                    }
-                    checksumGenerator_.Insert("name", __instance.PublicGearName);
-
-                    __instance.m_checksum = checksumGenerator_.Checksum;
+                    checksumGenerator_.Insert((uint)__instance.m_comps[i]);
                 }
+                checksumGenerator_.Insert("name", __instance.PublicGearName);
+
+                __instance.m_checksum = checksumGenerator_.Checksum;
             }
         }
+    }
 #else
         [ArchivePatch(typeof(GearIDRange), "GetChecksum")]
         internal static class GearIDRange_GetChecksumPatch
@@ -65,5 +65,4 @@ namespace TheArchive.Features.Dev
             }
         }
 #endif
-    }
 }

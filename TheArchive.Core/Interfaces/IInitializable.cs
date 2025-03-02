@@ -1,10 +1,9 @@
-﻿namespace TheArchive.Interfaces
+﻿namespace TheArchive.Interfaces;
+
+public interface IInitializable
 {
-    public interface IInitializable
-    {
-        /// <summary>
-        /// Used to initialize things.
-        /// </summary>
-        public void Init();
-    }
+    /// <summary>
+    /// Used to initialize things.
+    /// </summary>
+    public void Init();
 }

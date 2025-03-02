@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace TheArchive.Core.Localization
+namespace TheArchive.Core.Localization;
+
+[AttributeUsage(AttributeTargets.Property)]
+public class IgnoreLocalization : Attribute
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class IgnoreLocalization : Attribute
-    {
-    }
 }

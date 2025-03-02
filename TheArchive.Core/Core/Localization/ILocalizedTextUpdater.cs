@@ -1,7 +1,6 @@
-﻿namespace TheArchive.Core.Localization
+﻿namespace TheArchive.Core.Localization;
+
+public interface ILocalizedTextUpdater
 {
-    public interface ILocalizedTextUpdater
-    {
-        void UpdateText();
-    }
+    void UpdateText();
 }

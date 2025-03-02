@@ -8,103 +8,102 @@ using TheArchive.Loader;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.Features.Dev
+namespace TheArchive.Features.Dev;
+
+[HideInModSettings]
+[EnableFeatureByDefault]
+[DisallowInGameToggle]
+[RundownConstraint(RundownFlags.RundownFive, RundownFlags.Latest)]
+internal class PageRundownPopupManager : Feature
 {
-    [HideInModSettings]
-    [EnableFeatureByDefault]
-    [DisallowInGameToggle]
-    [RundownConstraint(RundownFlags.RundownFive, RundownFlags.Latest)]
-    internal class PageRundownPopupManager : Feature
+    public override string Name => "PopupQueue";
+
+    public override FeatureGroup Group => FeatureGroups.Dev;
+
+    public override string Description => "Popups, yay!";
+
+    public static new IArchiveLogger FeatureLogger { get; set; }
+
+    private static void Empty()
     {
-        public override string Name => "PopupQueue";
 
-        public override FeatureGroup Group => FeatureGroups.Dev;
+    }
 
-        public override string Description => "Popups, yay!";
+    public static Action EmptyAction { get; private set; } = new(Empty);
 
-        public static new IArchiveLogger FeatureLogger { get; set; }
+    private static readonly Queue<PopupMessage> _popupQueue = new Queue<PopupMessage>();
 
-        private static void Empty()
+    public static void ShowPopup(PopupMessage popupMessage)
+    {
+        if(MainMenuGuiLayer.Current?.PageRundownNew == null)
         {
-
+            FeatureLogger.Error("Called too early!");
+            return;
         }
 
-        public static Action EmptyAction { get; private set; } = new(Empty);
-
-        private static readonly Queue<PopupMessage> _popupQueue = new Queue<PopupMessage>();
-
-        public static void ShowPopup(PopupMessage popupMessage)
+        if (!MainMenuGuiLayer.Current.PageRundownNew.isActiveAndEnabled)
         {
-            if(MainMenuGuiLayer.Current?.PageRundownNew == null)
+            var pageRD = MainMenuGuiLayer.Current.PageRundownNew.gameObject;
+
+            var enabledListener = pageRD.GetComponent<ModSettings.OnEnabledListener>();
+
+            if (enabledListener == null)
             {
-                FeatureLogger.Error("Called too early!");
-                return;
+                enabledListener = pageRD.AddComponent<ModSettings.OnEnabledListener>();
+
+                enabledListener.OnEnabledSelf += PageRundownEnabled;
             }
 
-            if (!MainMenuGuiLayer.Current.PageRundownNew.isActiveAndEnabled)
-            {
-                var pageRD = MainMenuGuiLayer.Current.PageRundownNew.gameObject;
+            _popupQueue.Enqueue(popupMessage);
+            return;
+        }
 
-                var enabledListener = pageRD.GetComponent<ModSettings.OnEnabledListener>();
+        try
+        {
+            GlobalPopupMessageManager.ShowPopup(popupMessage);
+        }
+        catch (Exception ex)
+        {
+            FeatureLogger.Error("Failed to show single popup.");
+            FeatureLogger.Exception(ex);
+        }
+    }
 
-                if (enabledListener == null)
-                {
-                    enabledListener = pageRD.AddComponent<ModSettings.OnEnabledListener>();
+    private static bool _runningAllPopups = false;
+    private static void PageRundownEnabled(GameObject go)
+    {
+        if (_popupQueue.Count <= 0)
+            return;
 
-                    enabledListener.OnEnabledSelf += PageRundownEnabled;
-                }
+        if (_runningAllPopups)
+            return;
+            
+        LoaderWrapper.StartCoroutine(ShowAllPopups());
+    }
 
-                _popupQueue.Enqueue(popupMessage);
-                return;
-            }
+    private static IEnumerator ShowAllPopups()
+    {
+        if (_runningAllPopups)
+            yield break;
 
+        _runningAllPopups = true;
+        yield return new WaitForSeconds(0.1f);
+
+        while (_popupQueue.Count > 0)
+        {
             try
             {
+                var popupMessage = _popupQueue.Dequeue();
+
                 GlobalPopupMessageManager.ShowPopup(popupMessage);
             }
             catch (Exception ex)
             {
-                FeatureLogger.Error("Failed to show single popup.");
+                FeatureLogger.Error("Failed to show popup.");
                 FeatureLogger.Exception(ex);
             }
         }
 
-        private static bool _runningAllPopups = false;
-        private static void PageRundownEnabled(GameObject go)
-        {
-            if (_popupQueue.Count <= 0)
-                return;
-
-            if (_runningAllPopups)
-                return;
-            
-            LoaderWrapper.StartCoroutine(ShowAllPopups());
-        }
-
-        private static IEnumerator ShowAllPopups()
-        {
-            if (_runningAllPopups)
-                yield break;
-
-            _runningAllPopups = true;
-            yield return new WaitForSeconds(0.1f);
-
-            while (_popupQueue.Count > 0)
-            {
-                try
-                {
-                    var popupMessage = _popupQueue.Dequeue();
-
-                    GlobalPopupMessageManager.ShowPopup(popupMessage);
-                }
-                catch (Exception ex)
-                {
-                    FeatureLogger.Error("Failed to show popup.");
-                    FeatureLogger.Exception(ex);
-                }
-            }
-
-            _runningAllPopups = false;
-        }
+        _runningAllPopups = false;
     }
 }

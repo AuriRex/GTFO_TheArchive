@@ -1,6 +1,5 @@
-﻿namespace TheArchive.Interfaces
+﻿namespace TheArchive.Interfaces;
+
+public interface IInitAfterDataBlocksReady : IInitializable
 {
-    public interface IInitAfterDataBlocksReady : IInitializable
-    {
-    }
 }

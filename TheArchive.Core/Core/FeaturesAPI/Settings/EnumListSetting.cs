@@ -5,99 +5,98 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine.Events;
 
-namespace TheArchive.Core.FeaturesAPI.Settings
+namespace TheArchive.Core.FeaturesAPI.Settings;
+
+public class EnumListSetting : FeatureSetting
 {
-    public class EnumListSetting : FeatureSetting
+    public string[] Options { get; }
+    public Dictionary<string, object> Map { get; private set; } = new Dictionary<string, object>();
+    public Dictionary<object, string> ReversedMap { get; private set; } = new Dictionary<object, string>();
+    public Type EnumType { get; }
+    public EnumListSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
     {
-        public string[] Options { get; }
-        public Dictionary<string, object> Map { get; private set; } = new Dictionary<string, object>();
-        public Dictionary<object, string> ReversedMap { get; private set; } = new Dictionary<object, string>();
-        public Type EnumType { get; }
-        public EnumListSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
-        {
-            EnumType = Type.GenericTypeArguments[0];
-            Options = Enum.GetNames(EnumType);
+        EnumType = Type.GenericTypeArguments[0];
+        Options = Enum.GetNames(EnumType);
 
-            foreach (var option in Options)
+        foreach (var option in Options)
+        {
+            if (featureSettingsHelper.Localization.TryGetFSEnumText(EnumType, out var dic) && dic.TryGetValue(option, out var text))
             {
-                if (featureSettingsHelper.Localization.TryGetFSEnumText(EnumType, out var dic) && dic.TryGetValue(option, out var text))
-                {
-                    Map.Add(text, Enum.Parse(EnumType, option));
-                    ReversedMap.Add(Enum.Parse(EnumType, option), text);
-                }
-                else
-                {
-                    Map.Add(option, Enum.Parse(EnumType, option));
-                    ReversedMap.Add(Enum.Parse(EnumType, option), option);
-                }
+                Map.Add(text, Enum.Parse(EnumType, option));
+                ReversedMap.Add(Enum.Parse(EnumType, option), text);
+            }
+            else
+            {
+                Map.Add(option, Enum.Parse(EnumType, option));
+                ReversedMap.Add(Enum.Parse(EnumType, option), option);
             }
         }
+    }
 
-        public object GetEnumValueFor(string option)
+    public object GetEnumValueFor(string option)
+    {
+        if (Map.TryGetValue(option, out var val))
         {
-            if (Map.TryGetValue(option, out var val))
-            {
-                return val;
-            }
-
-            return null;
+            return val;
         }
 
-        public IList GetList()
-        {
-            return GetValue() as IList;
-        }
+        return null;
+    }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns>If the value is now present in the list</returns>
-        public bool ToggleInList(object value)
-        {
-            if (RemoveFromList(value))
-                return false;
-            AddToList(value);
-            return true;
-        }
+    public IList GetList()
+    {
+        return GetValue() as IList;
+    }
 
-        public void AddToList(object value)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns>If the value is now present in the list</returns>
+    public bool ToggleInList(object value)
+    {
+        if (RemoveFromList(value))
+            return false;
+        AddToList(value);
+        return true;
+    }
+
+    public void AddToList(object value)
+    {
+        GetList().Add(value);
+        FeatureManager.Instance.OnFeatureSettingChanged(this);
+        Helper.IsDirty = true;
+    }
+
+    public bool RemoveFromList(object value)
+    {
+        var list = GetList();
+        if (list.Contains(value))
         {
-            GetList().Add(value);
+            list.Remove(value);
             FeatureManager.Instance.OnFeatureSettingChanged(this);
             Helper.IsDirty = true;
+            return true;
         }
+        return false;
+    }
 
-        public bool RemoveFromList(object value)
-        {
-            var list = GetList();
-            if (list.Contains(value))
-            {
-                list.Remove(value);
-                FeatureManager.Instance.OnFeatureSettingChanged(this);
-                Helper.IsDirty = true;
-                return true;
-            }
-            return false;
-        }
+    public object[] CurrentSelectedValues()
+    {
+        var list = GetList();
+        var array = new object[list.Count];
+        list.CopyTo(array, 0);
+        return array;
+    }
 
-        public object[] CurrentSelectedValues()
+    public string[] CurrentSelectedValuesName()
+    {
+        var list = GetList();
+        var resultList = new List<string>(list.Count);
+        foreach (var item in list)
         {
-            var list = GetList();
-            var array = new object[list.Count];
-            list.CopyTo(array, 0);
-            return array;
+            resultList.Add(ReversedMap[item]);
         }
-
-        public string[] CurrentSelectedValuesName()
-        {
-            var list = GetList();
-            var resultList = new List<string>(list.Count);
-            foreach (var item in list)
-            {
-                resultList.Add(ReversedMap[item]);
-            }
-            return resultList.ToArray();
-        }
+        return resultList.ToArray();
     }
 }

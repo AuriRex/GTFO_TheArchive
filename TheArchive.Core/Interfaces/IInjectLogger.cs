@@ -1,7 +1,6 @@
-﻿namespace TheArchive.Interfaces
+﻿namespace TheArchive.Interfaces;
+
+public interface IInjectLogger
 {
-    public interface IInjectLogger
-    {
-        public IArchiveLogger Logger { get; set; }
-    }
+    public IArchiveLogger Logger { get; set; }
 }

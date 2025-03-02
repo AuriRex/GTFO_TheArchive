@@ -1,13 +1,12 @@
-﻿namespace TheArchive.Core.Localization
+﻿namespace TheArchive.Core.Localization;
+
+public enum FSType
 {
-    public enum FSType
-    {
-        FName,
-        FDescription,
-        FSDisplayName,
-        FSDescription,
-        FSHeader,
-        FSLabelText,
-        FSButtonText
-    }
+    FName,
+    FDescription,
+    FSDisplayName,
+    FSDescription,
+    FSHeader,
+    FSLabelText,
+    FSButtonText
 }

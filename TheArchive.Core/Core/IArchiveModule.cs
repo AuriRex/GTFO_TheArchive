@@ -1,16 +1,15 @@
-﻿namespace TheArchive.Core
+﻿namespace TheArchive.Core;
+
+public interface IArchiveModule
 {
-    public interface IArchiveModule
-    {
-        bool ApplyHarmonyPatches { get; }
-        bool UsesLegacyPatches { get; }
-        ArchiveLegacyPatcher Patcher { get; set; }
+    bool ApplyHarmonyPatches { get; }
+    bool UsesLegacyPatches { get; }
+    ArchiveLegacyPatcher Patcher { get; set; }
 
-        string ModuleGroup { get; }
+    string ModuleGroup { get; }
 
-        void Init();
-        void OnSceneWasLoaded(int buildIndex, string sceneName);
-        void OnLateUpdate();
-        void OnExit();
-    }
+    void Init();
+    void OnSceneWasLoaded(int buildIndex, string sceneName);
+    void OnLateUpdate();
+    void OnExit();
 }

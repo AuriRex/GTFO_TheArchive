@@ -4,123 +4,122 @@ using System.Linq;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 
-namespace TheArchive.Utilities
+namespace TheArchive.Utilities;
+
+public class SoundEventCache : IInitAfterGameDataInitialized
 {
-    public class SoundEventCache : IInitAfterGameDataInitialized
+    public static bool IsReady { get; private set; } = false;
+
+    private static readonly Dictionary<string, uint> _soundIdCache = new Dictionary<string, uint>();
+    private static readonly Dictionary<uint, string> _reverseSoundIdCache = new Dictionary<uint, string>();
+
+    private static IArchiveLogger _logger;
+    private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateLoggerInstance(nameof(SoundEventCache), ConsoleColor.DarkGreen);
+
+    public static bool TryResolve(string soundEvent, out uint soundId)
     {
-        public static bool IsReady { get; private set; } = false;
+        soundId = Resolve(soundEvent);
+        return soundId != 0;
+    }
 
-        private static readonly Dictionary<string, uint> _soundIdCache = new Dictionary<string, uint>();
-        private static readonly Dictionary<uint, string> _reverseSoundIdCache = new Dictionary<uint, string>();
-
-        private static IArchiveLogger _logger;
-        private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateLoggerInstance(nameof(SoundEventCache), ConsoleColor.DarkGreen);
-
-        public static bool TryResolve(string soundEvent, out uint soundId)
+    public static uint Resolve(string soundEvent, bool throwIfNotFound = false)
+    {
+        if(!IsReady)
         {
-            soundId = Resolve(soundEvent);
-            return soundId != 0;
-        }
-
-        public static uint Resolve(string soundEvent, bool throwIfNotFound = false)
-        {
-            if(!IsReady)
-            {
-                Logger.Error($"{nameof(SoundEventCache)} isn't ready yet! Try resolving sound events a little later (after GameDataInit for example)!");
-                return 0;
-            }
-
-            if(_soundIdCache.TryGetValue(soundEvent, out var value))
-            {
-                return value;
-            }
-
-            var msg = $"Sound event \"{soundEvent}\" could not be resolved!";
-            if (throwIfNotFound)
-                throw new SoundEventNotFoundException(msg);
-            else
-                Logger.Error(msg);
-
+            Logger.Error($"{nameof(SoundEventCache)} isn't ready yet! Try resolving sound events a little later (after GameDataInit for example)!");
             return 0;
         }
 
-        public static bool TryReverseResolve(uint id, out string eventName)
+        if(_soundIdCache.TryGetValue(soundEvent, out var value))
         {
-            eventName = ReverseResolve(id);
-            return !string.IsNullOrEmpty(eventName);
+            return value;
         }
 
-        public static string ReverseResolve(uint soundId, bool throwIfNotFound = false)
+        var msg = $"Sound event \"{soundEvent}\" could not be resolved!";
+        if (throwIfNotFound)
+            throw new SoundEventNotFoundException(msg);
+        else
+            Logger.Error(msg);
+
+        return 0;
+    }
+
+    public static bool TryReverseResolve(uint id, out string eventName)
+    {
+        eventName = ReverseResolve(id);
+        return !string.IsNullOrEmpty(eventName);
+    }
+
+    public static string ReverseResolve(uint soundId, bool throwIfNotFound = false)
+    {
+        if (!IsReady)
         {
-            if (!IsReady)
-            {
-                Logger.Error($"{nameof(SoundEventCache)} isn't ready yet! Try resolving sound events a little later (after GameDataInit for example)!");
-                return null;
-            }
-
-            if (_reverseSoundIdCache.TryGetValue(soundId, out var value))
-            {
-                return value;
-            }
-
-            var msg = $"Sound id \"{soundId}\" could not be resolved!";
-            if (throwIfNotFound)
-                throw new SoundEventNotFoundException(msg);
-            else
-                Logger.Error(msg);
-
+            Logger.Error($"{nameof(SoundEventCache)} isn't ready yet! Try resolving sound events a little later (after GameDataInit for example)!");
             return null;
         }
 
-        public void Init()
+        if (_reverseSoundIdCache.TryGetValue(soundId, out var value))
         {
-            try
-            {
-                Logger.Msg(ConsoleColor.Magenta, $"Initializing ...");
+            return value;
+        }
 
-                var fieldOrProps = typeof(AK.EVENTS)
+        var msg = $"Sound id \"{soundId}\" could not be resolved!";
+        if (throwIfNotFound)
+            throw new SoundEventNotFoundException(msg);
+        else
+            Logger.Error(msg);
+
+        return null;
+    }
+
+    public void Init()
+    {
+        try
+        {
+            Logger.Msg(ConsoleColor.Magenta, $"Initializing ...");
+
+            var fieldOrProps = typeof(AK.EVENTS)
 #if IL2CPP
-                    .GetProperties().Where(p => p.GetMethod?.ReturnType == typeof(uint));
+                .GetProperties().Where(p => p.GetMethod?.ReturnType == typeof(uint));
 #else
                     .GetFields().Where(f => f.FieldType == typeof(uint));
 #endif
 
-                foreach (var fp in fieldOrProps)
-                {
-                    var name = fp.Name;
-                    uint value = (uint)fp.GetValue(null);
-                    _soundIdCache.Add(name, value);
-                    _reverseSoundIdCache.Add(value, name);
-                }
-
-                Logger.Msg(ConsoleColor.Magenta, $"Cached {_soundIdCache.Count} sound events!");
-            }
-            catch(Exception ex)
+            foreach (var fp in fieldOrProps)
             {
-                Logger.Error($"Threw an exception on {nameof(Init)}:");
-                Logger.Exception(ex);
+                var name = fp.Name;
+                uint value = (uint)fp.GetValue(null);
+                _soundIdCache.Add(name, value);
+                _reverseSoundIdCache.Add(value, name);
             }
 
-            IsReady = true;
+            Logger.Msg(ConsoleColor.Magenta, $"Cached {_soundIdCache.Count} sound events!");
+        }
+        catch(Exception ex)
+        {
+            Logger.Error($"Threw an exception on {nameof(Init)}:");
+            Logger.Exception(ex);
         }
 
-        public class SoundEventNotFoundException : Exception
-        {
-            public SoundEventNotFoundException(string message) : base(message) { }
-        }
+        IsReady = true;
+    }
 
-        /// <summary>
-        /// Prints all cached sound events to the supplied <paramref name="logger"/>
-        /// </summary>
-        /// <param name="logger"></param>
-        public static void DebugLog(IArchiveLogger logger)
+    public class SoundEventNotFoundException : Exception
+    {
+        public SoundEventNotFoundException(string message) : base(message) { }
+    }
+
+    /// <summary>
+    /// Prints all cached sound events to the supplied <paramref name="logger"/>
+    /// </summary>
+    /// <param name="logger"></param>
+    public static void DebugLog(IArchiveLogger logger)
+    {
+        logger.Notice($"Logging all cached sound events! ({_soundIdCache.Count})");
+        foreach(var entry in _soundIdCache.Keys)
         {
-            logger.Notice($"Logging all cached sound events! ({_soundIdCache.Count})");
-            foreach(var entry in _soundIdCache.Keys)
-            {
-                logger.Info(entry);
-            }
-            logger.Notice($"Done logging all cached sound events! ({_soundIdCache.Count})");
+            logger.Info(entry);
         }
+        logger.Notice($"Done logging all cached sound events! ({_soundIdCache.Count})");
     }
 }

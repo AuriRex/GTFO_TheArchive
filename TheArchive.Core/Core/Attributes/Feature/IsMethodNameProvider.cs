@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace TheArchive.Core.Attributes
+namespace TheArchive.Core.Attributes;
+
+[AttributeUsage(AttributeTargets.Method)]
+public class IsMethodNameProvider : Attribute
 {
-    [AttributeUsage(AttributeTargets.Method)]
-    public class IsMethodNameProvider : Attribute
-    {
-    }
 }

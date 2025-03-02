@@ -1,26 +1,25 @@
 ﻿using System;
 using TheArchive.Utilities;
 
-namespace TheArchive.Core.Attributes.Feature.Settings
+namespace TheArchive.Core.Attributes.Feature.Settings;
+
+[AttributeUsage(AttributeTargets.Property)]
+public class FSTimestamp : Attribute
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class FSTimestamp : Attribute
+    public string Format { get; private set; } = "U";
+
+    public FSTimestamp(string customFormat = "")
     {
-        public string Format { get; private set; } = "U";
-
-        public FSTimestamp(string customFormat = "")
+        try
         {
-            try
-            {
-                Format = customFormat;
+            Format = customFormat;
 
-                DateTime.Now.ToString(Format);
-            }
-            catch (Exception)
-            {
-                ArchiveLogger.Warning($"A {nameof(FSTimestamp)}s custom format threw an exception! Format String: \"{Format}\"");
-                Format = "U";
-            }
+            DateTime.Now.ToString(Format);
+        }
+        catch (Exception)
+        {
+            ArchiveLogger.Warning($"A {nameof(FSTimestamp)}s custom format threw an exception! Format String: \"{Format}\"");
+            Format = "U";
         }
     }
 }

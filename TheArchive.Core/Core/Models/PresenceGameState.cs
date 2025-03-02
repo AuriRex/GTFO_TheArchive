@@ -1,14 +1,13 @@
-﻿namespace TheArchive.Core.Models
+﻿namespace TheArchive.Core.Models;
+
+public enum PresenceGameState
 {
-    public enum PresenceGameState
-    {
-        Startup,
-        NoLobby,
-        InLobby,
-        Dropping,
-        LevelGenerationFinished,
-        InLevel,
-        ExpeditionFailed,
-        ExpeditionSuccess
-    }
+    Startup,
+    NoLobby,
+    InLobby,
+    Dropping,
+    LevelGenerationFinished,
+    InLevel,
+    ExpeditionFailed,
+    ExpeditionSuccess
 }

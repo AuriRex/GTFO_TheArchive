@@ -1,49 +1,48 @@
 ﻿using System;
 
-namespace TheArchive.Core.Attributes
+namespace TheArchive.Core.Attributes;
+
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
+public class BuildConstraint : Attribute
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-    public class BuildConstraint : Attribute
+    public int BuildNumber { get; private set; }
+    public string BuildNumberString => BuildNumber.ToString();
+
+    public MatchMode Mode { get; private set; }
+
+    public BuildConstraint(int build, MatchMode mode = MatchMode.Exact)
     {
-        public int BuildNumber { get; private set; }
-        public string BuildNumberString => BuildNumber.ToString();
+        BuildNumber = build;
+        Mode = mode;
+    }
 
-        public MatchMode Mode { get; private set; }
-
-        public BuildConstraint(int build, MatchMode mode = MatchMode.Exact)
+    public bool Matches(int buildNumber)
+    {
+        switch (Mode)
         {
-            BuildNumber = build;
-            Mode = mode;
+            default:
+            case MatchMode.Exact:
+                return buildNumber == BuildNumber;
+            case MatchMode.Greater:
+                return buildNumber > BuildNumber;
+            case MatchMode.GreaterOrEqual:
+                return buildNumber >= BuildNumber;
+            case MatchMode.Lower:
+                return buildNumber < BuildNumber;
+            case MatchMode.LowerOrEqual:
+                return buildNumber <= BuildNumber;
+            case MatchMode.Exclude:
+                return buildNumber != BuildNumber;
         }
+    }
 
-        public bool Matches(int buildNumber)
-        {
-            switch (Mode)
-            {
-                default:
-                case MatchMode.Exact:
-                    return buildNumber == BuildNumber;
-                case MatchMode.Greater:
-                    return buildNumber > BuildNumber;
-                case MatchMode.GreaterOrEqual:
-                    return buildNumber >= BuildNumber;
-                case MatchMode.Lower:
-                    return buildNumber < BuildNumber;
-                case MatchMode.LowerOrEqual:
-                    return buildNumber <= BuildNumber;
-                case MatchMode.Exclude:
-                    return buildNumber != BuildNumber;
-            }
-        }
-
-        public enum MatchMode
-        {
-            Exact,
-            Lower,
-            LowerOrEqual,
-            Greater,
-            GreaterOrEqual,
-            Exclude
-        }
+    public enum MatchMode
+    {
+        Exact,
+        Lower,
+        LowerOrEqual,
+        Greater,
+        GreaterOrEqual,
+        Exclude
     }
 }
