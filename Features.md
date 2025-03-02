@@ -223,6 +223,9 @@ Prevents bio pings (/\) on dead enemies.
 Patches weapons to always shoot into the center of your crosshair.
 Makes shotgun draw & insta-shoot not shoot the floor
 
+### Kill Indicator Fix - `[R6-RL]`
+
+Fixes client orange kill indicators to make them consistent.
 
 ## HUD / UI
 
