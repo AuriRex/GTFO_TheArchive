@@ -168,11 +168,5 @@
 	<ItemGroup>
 		<Folder Include="Properties\" />
 	</ItemGroup>
-
-	<PropertyGroup>
-		<PostBuildEvent>
-			cd $(MSBuildProjectDirectory)
-			copy /y bin\$(Configuration)\TheArchive.IL2CPP.dll ..\TheArchive.Core\Resources\TheArchive.IL2CPP.dll
-		</PostBuildEvent>
-	</PropertyGroup>
+	
 </Project>
