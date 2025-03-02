@@ -6,17 +6,17 @@ using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.Features.Backport
+namespace TheArchive.Features.Backport;
+
+[EnableFeatureByDefault]
+[RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownThree)]
+public class AlarmClassOnDoors : Feature
 {
-    [EnableFeatureByDefault]
-    [RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownThree)]
-    public class AlarmClassOnDoors : Feature
-    {
-        public override string Name => "Alarm Class on Security Doors";
+    public override string Name => "Alarm Class on Security Doors";
 
-        public override FeatureGroup Group => FeatureGroups.Backport;
+    public override FeatureGroup Group => FeatureGroups.Backport;
 
-        public override string Description => "Add alarm classes to security door interaction texts";
+    public override string Description => "Add alarm classes to security door interaction texts";
 
 #if MONO
         [ArchivePatch(typeof(LG_SecurityDoor_Locks), "OnDoorState")]
@@ -50,5 +50,4 @@ namespace TheArchive.Features.Backport
             }
         }
 #endif
-    }
 }

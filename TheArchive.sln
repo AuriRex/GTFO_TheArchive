@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheArchive.MONO", "TheArchi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheArchive.Core", "TheArchive.Core\TheArchive.Core.csproj", "{7BB66DC5-D29D-4CDD-BB82-D228ABE35BDA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheArchive.IL2CPP", "TheArchive.IL2CPP\TheArchive.IL2CPP.csproj", "{65BB64DC-68AB-4543-B176-7BF2FA8488BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheArchive.Essentials", "TheArchive.Essentials\TheArchive.Essentials.csproj", "{65BB64DC-68AB-4543-B176-7BF2FA8488BF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FEB41A54-C766-4572-8882-80F543EEC3BB}"
 	ProjectSection(SolutionItems) = preProject

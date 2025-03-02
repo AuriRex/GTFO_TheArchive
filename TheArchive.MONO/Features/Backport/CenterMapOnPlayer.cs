@@ -4,17 +4,17 @@ using TheArchive.Core.FeaturesAPI;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.Features.Backport
+namespace TheArchive.Features.Backport;
+
+[RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownTwo)]
+[EnableFeatureByDefault]
+public class CenterMapOnPlayer : Feature
 {
-    [RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownTwo)]
-    [EnableFeatureByDefault]
-    public class CenterMapOnPlayer : Feature
-    {
-        public override string Name => "Center Map on Player";
+    public override string Name => "Center Map on Player";
 
-        public override FeatureGroup Group => FeatureGroups.Backport;
+    public override FeatureGroup Group => FeatureGroups.Backport;
 
-        public override string Description => "Center the map on yourself upon opening.";
+    public override string Description => "Center the map on yourself upon opening.";
 
 #if MONO
         [ArchivePatch(typeof(CM_PageMap), "OnEnable")]
@@ -39,5 +39,4 @@ namespace TheArchive.Features.Backport
             }
         }
 #endif
-    }
 }

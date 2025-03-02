@@ -596,7 +596,7 @@ namespace TheArchive.Features.Dev
             internal static List<iScrollWindowContent> ScrollWindowContentElements { get; set; } = new List<iScrollWindowContent>();
             internal static List<CM_ScrollWindow> AllSubmenuScrollWindows { get; set; } = new List<CM_ScrollWindow>();
             internal static Transform MainScrollWindowTransform { get; set; }
-            internal static CM_ScrollWindow PopupWindow { get; set; }
+            public static CM_ScrollWindow PopupWindow { get; internal set; }
             internal static CM_PageSettings SettingsPageInstance { get; set; }
             internal static DescriptionPanel TheDescriptionPanel { get; set; }
             internal static ColorPicker TheColorPicker { get; set; }

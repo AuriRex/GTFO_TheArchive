@@ -3,17 +3,17 @@ using TheArchive.Core.FeaturesAPI;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.Features.Backport
+namespace TheArchive.Features.Backport;
+
+[EnableFeatureByDefault]
+[RundownConstraint(RundownFlags.RundownOne)]
+public class R1LadderFix : Feature
 {
-    [EnableFeatureByDefault]
-    [RundownConstraint(RundownFlags.RundownOne)]
-    public class R1LadderFix : Feature
-    {
-        public override string Name => "R2+ Like Ladders";
+    public override string Name => "R2+ Like Ladders";
 
-        public override string Description => "Fix ladder movement so that W is always upwards and S always downwards, no matter where you're looking.";
+    public override string Description => "Fix ladder movement so that W is always upwards and S always downwards, no matter where you're looking.";
 
-        public override FeatureGroup Group => FeatureGroups.Backport;
+    public override FeatureGroup Group => FeatureGroups.Backport;
 
 #if MONO
         [ArchivePatch(typeof(LG_Ladder), "GetMoveVec")]
@@ -27,5 +27,4 @@ namespace TheArchive.Features.Backport
             }
         }
 #endif
-    }
 }

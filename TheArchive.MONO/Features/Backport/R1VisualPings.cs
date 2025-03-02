@@ -6,16 +6,16 @@ using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.Features.Backport
+namespace TheArchive.Features.Backport;
+
+[RundownConstraint(RundownFlags.RundownOne)]
+public class R1VisualPings : Feature
 {
-    [RundownConstraint(RundownFlags.RundownOne)]
-    public class R1VisualPings : Feature
-    {
-        public override string Name => "Visual Ping Indicators in R1";
+    public override string Name => "Visual Ping Indicators in R1";
 
-        public override string Description => "Visualize terminal pings in R1 by abusing the local players Middle-Mouse-Ping.\n(Only works as Host)";
+    public override string Description => "Visualize terminal pings in R1 by abusing the local players Middle-Mouse-Ping.\n(Only works as Host)";
 
-        public override FeatureGroup Group => FeatureGroups.Backport;
+    public override FeatureGroup Group => FeatureGroups.Backport;
 
 #if MONO
         private static MethodAccessor<PlayerAgent> A_PlayerAgent_TriggerMarkerPing;
@@ -54,5 +54,4 @@ namespace TheArchive.Features.Backport
             }
         }
 #endif
-    }
 }
