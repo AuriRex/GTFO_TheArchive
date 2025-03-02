@@ -7,14 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="..\TheArchive.MONO\Features\Backport\AlarmClassOnDoors.cs" Link="Features\Backport\AlarmClassOnDoors.cs" />
-		<Compile Include="..\TheArchive.MONO\Features\Backport\CenterMapOnPlayer.cs" Link="Features\Backport\CenterMapOnPlayer.cs" />
-		<Compile Include="..\TheArchive.MONO\Features\Backport\DontPauseAudio.cs" Link="Features\Backport\DontPauseAudio.cs" />
-		<Compile Include="..\TheArchive.MONO\Features\Backport\R1LadderFix.cs" Link="Features\Backport\R1LadderFix.cs" />
-		<Compile Include="..\TheArchive.MONO\Features\Backport\R1VisualPings.cs" Link="Features\Backport\R1VisualPings.cs" />
-		<Compile Include="..\TheArchive.MONO\Features\Dev\DramaManagerNoDebugLog.cs" Link="Features\Dev\DramaManagerNoDebugLog.cs" />
 		<Compile Include="..\TheArchive.MONO\Features\Hud\EnhancedExpeditionTimer.cs" Link="Features\Hud\EnhancedExpeditionTimer.cs" />
-		<Compile Include="..\TheArchive.MONO\Features\Special\R1SNetRevisionOverridePatch.cs" Link="Features\Special\R1SNetRevisionOverridePatch.cs" />
 	</ItemGroup>
 	
 	<ItemGroup>

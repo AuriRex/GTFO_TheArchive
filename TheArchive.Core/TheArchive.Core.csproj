@@ -8,10 +8,6 @@
 
 		<CopyBuildToPluginFolder>false</CopyBuildToPluginFolder>
 	</PropertyGroup>
-	
-	<ItemGroup>
-		<Compile Include="..\TheArchive.MONO\Features\Dev\DramaManagerNoDebugLog.cs" Link="Features\Dev\DramaManagerNoDebugLog.cs" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\discord_game_sdk.dll" />
