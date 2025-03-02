@@ -221,15 +221,6 @@ public static class ArchiveMod
         }
 
         InitializeArchiveModuleChainloader();
-
-        try
-        {
-            ApplyPatches(CurrentRundown);
-        }
-        catch (Exception ex)
-        {
-            ArchiveLogger.Exception(ex);
-        }
     }
 
     internal static void OnApplicationQuit()
@@ -291,7 +282,6 @@ public static class ArchiveMod
 
         if (CurrentRundown != RundownID.RundownUnitialized)
         {
-            module.Patcher?.PatchRundownSpecificMethods(module.GetType().Assembly);
             return true;
         }
 
@@ -301,10 +291,7 @@ public static class ArchiveMod
     internal static void InitializeArchiveModuleChainloader()
     {
 #if BepInEx
-        BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Finished += () =>
-        {
-            ArchiveModuleChainloader.Initialize();
-        };
+        BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Finished += ArchiveModuleChainloader.Initialize;
 #endif
     }
 
@@ -547,7 +534,7 @@ public static class ArchiveMod
 
         _moduleTypes.Add(moduleType);
         ArchiveLogger.Info($"Initializing module \"{moduleType.FullName}\" ...");
-        var module = (IArchiveModule) Activator.CreateInstance(moduleType);
+        var module = (IArchiveModule) Activator.CreateInstance(moduleType)!;
 
         if (string.IsNullOrWhiteSpace(module.ModuleGroup))
             throw new Exception($"ArchiveModule: {module.GetType().FullName}, {nameof(IArchiveModule.ModuleGroup)} can not be null!");
@@ -560,9 +547,6 @@ public static class ArchiveMod
         }
 
         _moduleAssemblies.Add(moduleType.Assembly);
-
-        if(module.UsesLegacyPatches)
-            module.Patcher = new ArchiveLegacyPatcher(_harmonyInstance, $"{moduleType.Assembly.GetName().Name}_{moduleType.FullName}_ArchivePatcher");
 
         try
         {
@@ -588,73 +572,6 @@ public static class ArchiveMod
         return module;
     }
 
-    private static void ApplyPatches(RundownID rundownID)
-    {
-        if (rundownID != RundownID.RundownUnitialized)
-        {
-            foreach (var module in Modules)
-            {
-                module.Patcher?.PatchRundownSpecificMethods(module.GetType().Assembly);
-            }
-        }
-    }
-
-    internal static void UnpatchAll()
-    {
-        foreach (var module in Modules)
-        {
-            UnpatchModule(module);
-        }
-    }
-
-    public static void UnpatchModule(Type moduleType)
-    {
-        if (!_moduleTypes.Contains(moduleType)) throw new ArgumentException($"Can't unpatch non patched module \"{moduleType.FullName}\".");
-
-        foreach (var module in Modules)
-        {
-            if (module.GetType() == moduleType)
-            {
-                UnpatchModule(module);
-                return;
-            }
-        }
-
-        throw new ArgumentException($"Can't unpatch module \"{moduleType.FullName}\", module not found.");
-    }
-
-    public static void UnpatchModule(IArchiveModule module)
-    {
-        try
-        {
-            module.Patcher?.Unpatch();
-            module.OnExit();
-        }
-        catch (Exception ex)
-        {
-            ArchiveLogger.Error($"Error while trying to unpatch and/or run {nameof(IArchiveModule.OnExit)} in module \"{module?.GetType()?.FullName ?? "Unknown"}\"!");
-            ArchiveLogger.Exception(ex);
-        }
-        Modules.Remove(module);
-        _moduleTypes.Remove(module.GetType());
-    }
-
-    public static void OnSceneWasLoaded(int buildIndex, string sceneName)
-    {
-        foreach(var module in Modules)
-        {
-            try
-            {
-                module?.OnSceneWasLoaded(buildIndex, sceneName);
-            }
-            catch(Exception ex)
-            {
-                ArchiveLogger.Error($"Error while trying to run {nameof(OnSceneWasLoaded)} in module \"{module?.GetType()?.FullName ?? "Unknown"}\"!");
-                ArchiveLogger.Exception(ex);
-            }
-        }
-    }
-
     public static void OnUpdate()
     {
         FeatureManager.Instance.OnUpdate();
@@ -677,30 +594,4 @@ public static class ArchiveMod
 
         FeatureManager.Instance.OnLateUpdate();
     }
-
-    // private static Assembly LoadMainArchiveModule(bool isIl2Cpp)
-    // {
-    //     try
-    //     {
-    //         byte[] bytes;
-    //         if(isIl2Cpp)
-    //         {
-    //             ArchiveLogger.Notice("Loading IL2CPP module ...");
-    //             bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.IL2CPP.dll");
-    //             if (bytes.Length < 100) throw new BadImageFormatException("IL2CPP Module is too small, this version might not contain the module build but a dummy dll!");
-    //             return Assembly.Load(bytes);
-    //         }
-    //
-    //         ArchiveLogger.Notice("Loading MONO module ...");
-    //         bytes = Utils.LoadFromResource("TheArchive.Resources.TheArchive.MONO.dll");
-    //         if (bytes.Length < 100) throw new BadImageFormatException("MONO Module is too small, this version might not contain the module build but a dummy dll!");
-    //         return Assembly.Load(bytes);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         ArchiveLogger.Error($"Could not load {(isIl2Cpp ? "IL2CPP" : "MONO")} module! {ex}: {ex.Message}");
-    //         ArchiveLogger.Error($"{ex.StackTrace}");
-    //         return null;
-    //     }
-    // }
 }
