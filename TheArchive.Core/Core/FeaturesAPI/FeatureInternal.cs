@@ -1215,22 +1215,23 @@ namespace TheArchive.Core.FeaturesAPI
         }
 
         [Flags]
-        internal enum InternalDisabledReason
+        internal enum InternalDisabledReason : int
         {
-            RundownConstraintMismatch,
-            BuildConstraintMismatch,
-            MainInitMethodFailed,
-            PatchInitMethodFailed,
-            UpdateMethodFailed,
-            LateUpdateMethodFailed,
-            ForceDisabled,
-            DisabledViaShouldInit,
-            DisabledByRequest,
-            TypeLoadException,
-            Other,
-            ShouldInitFailed,
-            LateShouldInitFailed,
-            DisabledViaLateShouldInit,
+            None,
+            RundownConstraintMismatch = 1 << 0,
+            BuildConstraintMismatch = 1 << 1,
+            MainInitMethodFailed = 1 << 2,
+            PatchInitMethodFailed = 1 << 3,
+            UpdateMethodFailed = 1 << 4,
+            LateUpdateMethodFailed = 1 << 5,
+            ForceDisabled = 1 << 6,
+            DisabledViaShouldInit = 1 << 7,
+            DisabledByRequest = 1 << 8,
+            TypeLoadException = 1 << 9,
+            Other = 1 << 10,
+            ShouldInitFailed = 1 << 11,
+            LateShouldInitFailed = 1 << 12,
+            DisabledViaLateShouldInit = 1 << 13,
         }
     }
 }
