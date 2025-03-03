@@ -52,10 +52,6 @@ internal class KillIndicatorFix : Feature
         [FSDescription("Determines how long (in ms) an enemy is tracked for after getting shot at.")]
         public int TagBufferPeriod { get; set; } = 1000;
 
-        [FSDisplayName("Marker Life Time")]
-        [FSDescription("Determines how long (in ms) a shown kill marker is tracked for to prevent duplicates.")]
-        public int MarkerLifeTime { get; set; } = 3000;
-
         [FSHide]
         [FSDescription("Prints debug info to console.")]
         public bool DebugLog { get; set; } = false;
