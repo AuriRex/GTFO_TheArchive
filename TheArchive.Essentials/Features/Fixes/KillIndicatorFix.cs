@@ -51,9 +51,10 @@ internal class KillIndicatorFix : Feature
         [FSDescription("Determines how long (in ms) an enemy is tracked for after getting shot at.")]
         public int TagBufferPeriod { get; set; } = 1000;
 
-        [FSHide]
+        //[FSHide]
+        [FSDisplayName("Debug")]
         [FSDescription("Prints debug info to console.")]
-        public bool DebugLog { get; set; } = false;
+        public bool DebugLog { get; set; } = true;
     }
 
     private class Tag
@@ -66,7 +67,7 @@ internal class KillIndicatorFix : Feature
             this.health = health;
         }
     }
-    private static Dictionary<int, Tag> taggedEnemies = new Dictionary<int, Tag>();
+    private static Dictionary<ushort, Tag> taggedEnemies = new Dictionary<ushort, Tag>();
 
     public override void Init()
     {
@@ -95,11 +96,11 @@ internal class KillIndicatorFix : Feature
 
             try {
                 EnemyAgent owner = __instance.m_ai.m_enemyAgent;
-                int instanceID = owner.GetInstanceID();
+                ushort id = owner.GlobalID;
                 long now = ((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds();
 
-                if (taggedEnemies.ContainsKey(instanceID)) {
-                    Tag t = taggedEnemies[instanceID];
+                if (taggedEnemies.ContainsKey(id)) {
+                    Tag t = taggedEnemies[id];
 
                     if (Settings.DebugLog)
                         if (t.timestamp <= now)
@@ -120,7 +121,7 @@ internal class KillIndicatorFix : Feature
                         FeatureLogger.Info($"Client was no longer interested in this enemy, marker will not be shown.");
                     }
 
-                    taggedEnemies.Remove(instanceID);
+                    taggedEnemies.Remove(id);
                 }
             } catch (Exception e) { FeatureLogger.Error($"Something went wrong:\n{e}"); }
         }
@@ -128,7 +129,7 @@ internal class KillIndicatorFix : Feature
 
     // Used to handle UFloat conversion of damage
     private static pFullDamageData fullDamageData = new();
-    
+
     // Disable vanilla hit indicator when triggering a kill indicator in its place
     private static bool disableHitIndicator = false;
 
@@ -184,10 +185,6 @@ internal class KillIndicatorFix : Feature
                 FeatureLogger.Info($"{num} Bullet Damage done by {p.PlayerName}. IsBot: {p.Owner.IsBot}");
                 FeatureLogger.Info($"Tracked current HP: {t.health}, [{id}]");
             }
-        }
-
-        public static void Postfix(Dam_EnemyDamageBase __instance, float dam, Agent sourceAgent, Vector3 position) {
-            disableHitIndicator = false;
         }
     }
 
@@ -245,10 +242,6 @@ internal class KillIndicatorFix : Feature
                 FeatureLogger.Info($"Tracked current HP: {__instance.Health}, [{id}]");
             }
         }
-
-        public static void Postfix(Dam_EnemyDamageBase __instance, float dam, Agent sourceAgent, Vector3 position) {
-            disableHitIndicator = false;
-        }
     }
 
     [ArchivePatch(typeof(Dam_EnemyDamageLimb), nameof(Dam_EnemyDamageLimb.ShowHitIndicator), new Type[]
@@ -262,7 +255,13 @@ internal class KillIndicatorFix : Feature
     {
         public static bool Prefix(Dam_EnemyDamageLimb __instance, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor)
         {
-            return !disableHitIndicator;
+            if (disableHitIndicator) 
+            {
+                disableHitIndicator = false;
+                return ArchivePatch.SKIP_OG;
+            }
+            
+            return ArchivePatch.RUN_OG;
         }
     }
 
@@ -346,22 +345,27 @@ internal class KillIndicatorFix : Feature
             Dam_EnemyDamageBase m_base = __instance.m_base;
             EnemyAgent owner = m_base.Owner;
             float num = dam;
-            if (!m_base.IsImortal) {
+            if (!m_base.IsImortal) 
+            {
                 num = __instance.ApplyWeakspotAndArmorModifiers(dam, precisionMulti);
                 num = __instance.ApplyDamageFromBehindBonus(num, position, direction);
                 bool willDie = m_base.WillDamageKill(num);
 
                 SendHitIndicator(p, owner, (byte)__instance.m_limbID, num > dam, willDie, position, __instance.m_armorDamageMulti < 1f);
-            } else {
+            } 
+            else 
+            {
                 SendHitIndicator(p, owner, (byte)__instance.m_limbID, num > dam, willDie: false, position, true);
             }
         }
 
-        private static void SendHitIndicator(PlayerAgent sendTo, Agent target, byte limbID, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor = false) {
+        private static void SendHitIndicator(PlayerAgent sendTo, Agent target, byte limbID, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor = false) 
+        {
             // TODO(randomuserhi): Send Network packet (Make sure not sending to a bot)
         }
 
-        private static void ReceiveHitIndicator(Agent target, byte limbID, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor = false) {
+        private static void ReceiveHitIndicator(Agent target, byte limbID, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor = false) 
+        {
             // TODO(randomuserhi): OnReceive, display corresponding hit marker
 
             EnemyAgent? targetEnemy = target.TryCast<EnemyAgent>();
