@@ -56,8 +56,6 @@ internal class KillIndicatorFix : Feature
         public bool DebugLog { get; set; } = false;
     }
 
-    private static bool hasDamageSync = false;
-
     private class Tag
     {
         public float health;
@@ -130,6 +128,9 @@ internal class KillIndicatorFix : Feature
 
     // Used to handle UFloat conversion of damage
     private static pFullDamageData fullDamageData = new();
+    
+    // Disable vanilla hit indicator when triggering a kill indicator in its place
+    private static bool disableHitIndicator = false;
 
     [ArchivePatch(typeof(Dam_EnemyDamageBase), nameof(Dam_EnemyDamageBase.BulletDamage), new Type[]
     {
@@ -175,6 +176,7 @@ internal class KillIndicatorFix : Feature
             if (t.health <= 0 && !__instance.DeathIndicatorShown) {
                 GuiManager.CrosshairLayer?.ShowDeathIndicator(position);
                 __instance.DeathIndicatorShown = true;
+                disableHitIndicator = true;
             }
 
             if (Settings.DebugLog)
@@ -182,6 +184,10 @@ internal class KillIndicatorFix : Feature
                 FeatureLogger.Info($"{num} Bullet Damage done by {p.PlayerName}. IsBot: {p.Owner.IsBot}");
                 FeatureLogger.Info($"Tracked current HP: {t.health}, [{id}]");
             }
+        }
+
+        public static void Postfix(Dam_EnemyDamageBase __instance, float dam, Agent sourceAgent, Vector3 position) {
+            disableHitIndicator = false;
         }
     }
 
@@ -230,6 +236,7 @@ internal class KillIndicatorFix : Feature
             if (t.health <= 0 && !__instance.DeathIndicatorShown) {
                 GuiManager.CrosshairLayer?.ShowDeathIndicator(position);
                 __instance.DeathIndicatorShown = true;
+                disableHitIndicator = true;
             }
 
             if (Settings.DebugLog)
@@ -237,6 +244,25 @@ internal class KillIndicatorFix : Feature
                 FeatureLogger.Info($"Melee Damage: {num}");
                 FeatureLogger.Info($"Tracked current HP: {__instance.Health}, [{id}]");
             }
+        }
+
+        public static void Postfix(Dam_EnemyDamageBase __instance, float dam, Agent sourceAgent, Vector3 position) {
+            disableHitIndicator = false;
+        }
+    }
+
+    [ArchivePatch(typeof(Dam_EnemyDamageLimb), nameof(Dam_EnemyDamageLimb.ShowHitIndicator), new Type[]
+    {
+        typeof(bool),
+        typeof(bool),
+        typeof(Vector3),
+        typeof(bool)
+    })]
+    internal static class Dam_EnemyDamageLimb_ShowHitIndicator_Patch
+    {
+        public static bool Prefix(Dam_EnemyDamageLimb __instance, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor)
+        {
+            return !disableHitIndicator;
         }
     }
 
