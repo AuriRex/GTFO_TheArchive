@@ -75,6 +75,7 @@ internal class KillIndicatorFix : Feature
     public override void Init()
     {
         hasDamageSync = LoaderWrapper.IsModInstalled(DAMAGE_SYNC_GUID);
+        if (!hasDamageSync) FeatureLogger.Notice("Damage Sync is installed, disabling damage sync component.");
 
         RundownManager.add_OnExpeditionGameplayStarted((Action)OnRundownStart);
     }
@@ -164,10 +165,10 @@ internal class KillIndicatorFix : Feature
         public static void Prefix(Dam_EnemyDamageBase __instance, float dam, Agent sourceAgent, Vector3 position)
         {
             if (SNet.IsMaster) return;
-            PlayerAgent p = sourceAgent.TryCast<PlayerAgent>();
+            PlayerAgent p = sourceAgent?.TryCast<PlayerAgent>();
             if (p == null) // Check damage was done by a player
             {
-                if (Settings.DebugLog) FeatureLogger.Notice($"Could not find PlayerAgent, damage was done by agent of type: {sourceAgent.m_type}.");
+                if (Settings.DebugLog) FeatureLogger.Notice($"Could not find PlayerAgent.");
                 return;
             }
             if (p.Owner.IsBot) return; // Check player isnt a bot
@@ -212,10 +213,10 @@ internal class KillIndicatorFix : Feature
         public static void Prefix(Dam_EnemyDamageBase __instance, float dam, Agent sourceAgent, Vector3 position)
         {
             if (SNet.IsMaster) return;
-            PlayerAgent p = sourceAgent.TryCast<PlayerAgent>();
+            PlayerAgent p = sourceAgent?.TryCast<PlayerAgent>();
             if (p == null) // Check damage was done by a player
             {
-                if (Settings.DebugLog) FeatureLogger.Notice($"Could not find PlayerAgent, damage was done by agent of type: {sourceAgent.m_type}.");
+                if (Settings.DebugLog) FeatureLogger.Notice($"Could not find PlayerAgent.");
                 return;
             }
             if (p.Owner.IsBot) return; // Check player isnt a bot
