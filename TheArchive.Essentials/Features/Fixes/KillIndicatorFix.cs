@@ -174,6 +174,7 @@ internal class KillIndicatorFix : Feature
             // Show indicator when tracked health assumes enemy is dead
             if (t.health <= 0 && !__instance.DeathIndicatorShown) {
                 GuiManager.CrosshairLayer?.ShowDeathIndicator(position);
+                __instance.DeathIndicatorShown = true;
             }
 
             if (Settings.DebugLog)
