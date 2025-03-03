@@ -237,8 +237,8 @@ internal class KillIndicatorFix : Feature
             t.localHitPosition = position - owner.transform.position;
             t.timestamp = now;
 
-            fullDamageData.damage.Set(dam, __instance.HealthMax);
-            float num = AgentModifierManager.ApplyModifier(owner, AgentModifier.MeleeResistance, fullDamageData.damage.Get(__instance.HealthMax));
+            fullDamageData.damage.Set(dam, __instance.DamageMax);
+            float num = AgentModifierManager.ApplyModifier(owner, AgentModifier.MeleeResistance, fullDamageData.damage.Get(__instance.DamageMax));
             if (__instance.Owner.Locomotion.CurrentStateEnum == ES_StateEnum.Hibernate)
             {
                 fullDamageData.sleeperMulti.Set(sleeperMulti, 10);
