@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="../Dependencies.props" />
+    <Import Project="../Shared.props" />
+
+    <PropertyGroup>
+        <RootNamespace>TheArchive</RootNamespace>
+
+        <PluginOutputPath>../output/TheArchive.RichPresence/plugins/</PluginOutputPath>
+        <LocalizationFileDir>./Localization/</LocalizationFileDir>
+        <CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
+    </PropertyGroup>
+
+    <Target Name="CopyDiscordDLLToOutput" AfterTargets="CopyAssemblyAfterBuild">
+        <Message Text="Copying Discord SDK to Ouput Folder..." Importance="High"/>
+        <Copy SourceFiles=".\DiscordGameSDK\discord_game_sdk.dll"
+              DestinationFiles="$(PluginOutputPath)\discord_game_sdk.dll"/>
+
+        <Message Text="Discord SDK has been copied to Ouput Folder!" Importance="High"/>
+    </Target>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
+            <Project>{7bb66dc5-d29d-4cdd-bb82-d228abe35bda}</Project>
+            <Name>TheArchive.Core</Name>
+            <Private>False</Private>
+            <CopyLocal>False</CopyLocal>
+        </ProjectReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Core\Utilities\" />
+      <Folder Include="Localization\" />
+    </ItemGroup>
+</Project>

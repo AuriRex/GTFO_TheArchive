@@ -315,7 +315,7 @@ public partial struct ActivitySecrets
 }
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-public partial struct Activity
+public partial record struct Activity
 {
     public ActivityType Type;
 

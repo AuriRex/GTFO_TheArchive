@@ -21,7 +21,6 @@ public static class PresenceFormatter
     internal static void Setup()
     {
         Logger.Debug($"Setting up providers ...");
-        typeof(PresenceManager).RegisterAllPresenceFormatProviders(false);
 
         foreach(var type in _typesToCheckForProviders)
         {

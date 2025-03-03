@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		GameFolder.props = GameFolder.props
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheArchive.RichPresence", "TheArchive.RichPresence\TheArchive.RichPresence.csproj", "{D8E87F52-4FD9-495A-9E6A-160A6E2C3AB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{65BB64DC-68AB-4543-B176-7BF2FA8488BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65BB64DC-68AB-4543-B176-7BF2FA8488BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65BB64DC-68AB-4543-B176-7BF2FA8488BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8E87F52-4FD9-495A-9E6A-160A6E2C3AB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8E87F52-4FD9-495A-9E6A-160A6E2C3AB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8E87F52-4FD9-495A-9E6A-160A6E2C3AB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8E87F52-4FD9-495A-9E6A-160A6E2C3AB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

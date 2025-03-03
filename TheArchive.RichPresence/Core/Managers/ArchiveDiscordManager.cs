@@ -7,6 +7,7 @@ using TheArchive.Core.Models;
 using TheArchive.Core.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
+using UnityEngine;
 
 namespace TheArchive.Core.Managers;
 
@@ -66,33 +67,7 @@ public class ArchiveDiscordManager
         {
             try
             {
-                //Environment.SetEnvironmentVariable("PATH", Environment.GetEnvironmentVariable("PATH") + ";" + LocalFiles.ModLocalLowPath);
-                var path = Path.Combine(LocalFiles.ModLocalLowPath, "discord_game_sdk.dll");
-                string hashExisting = null;
-                if(File.Exists(path))
-                {
-                    hashExisting = Utilities.Utils.GetHash(File.ReadAllBytes(path)).ToUpper();
-                }
-                    
-                if (!File.Exists(path) || hashExisting != null)
-                {
-                    var discord_game_sdk_bytes = Utils.GetResource(Assembly.GetExecutingAssembly(), "TheArchive.Resources.discord_game_sdk.dll");
-
-                    var hashResource = Utils.GetHash(discord_game_sdk_bytes).ToUpper();
-
-                    if(hashExisting == null || hashExisting != hashResource)
-                    {
-                        if (File.Exists(path))
-                        {
-                            Logger.Notice($"Updating discord sdk ... [old:{hashExisting}] vs [new:{hashResource}]");
-                            File.Delete(path);
-                        }
-                        Logger.Notice($"Extracting discord_game_sdk.dll into \"{path}\" ...");
-                        File.WriteAllBytes(path, discord_game_sdk_bytes);
-                    }
-                        
-                }
-                    
+                var path = Path.Combine(Assembly.GetExecutingAssembly().Location, "discord_game_sdk.dll");
                 _discordLibPointer = LoadLibrary(path);
             }
             catch (Exception ex)
@@ -111,9 +86,10 @@ public class ArchiveDiscordManager
         {
             DiscordClient.Initialize();
 
-            if (_lastCheckedTime + 5 <= Utils.Unity_Time)
+            var time = Time.time;
+            if (_lastCheckedTime + 5 <= time)
             {
-                _lastCheckedTime = Utils.Unity_Time;
+                _lastCheckedTime = time;
                 var activity = DiscordClient.BuildActivity(PresenceManager.CurrentState, PresenceManager.CurrentStateStartTime);
                 if (DiscordClient.TryUpdateActivity(activity))
                 {
@@ -143,9 +119,10 @@ public class ArchiveDiscordManager
     {
         if (_internalDisabled) return;
 
-        if(_lastCheckedTime + 5 <= Utils.Unity_Time)
+        var time = Time.time;
+        if(_lastCheckedTime + 5 <= time)
         {
-            _lastCheckedTime = Utils.Unity_Time;
+            _lastCheckedTime = time;
 
             Discord.Activity activity = DiscordClient.BuildActivity(PresenceManager.CurrentState, PresenceManager.CurrentStateStartTime);
 
@@ -186,7 +163,6 @@ public class ArchiveDiscordManager
             _discordClient.SetLogHook(_settings.DEBUG_RichPresenceLogSpam ? LogLevel.Debug : LogLevel.Info, LogHook);
 
             _activityManager = _discordClient.GetActivityManager();
-#warning todo: replace with command that runs steam:// maybe?
             _activityManager.RegisterSteam(ArchiveMod.GTFO_STEAM_APPID); // GTFO App ID
 
             _activityManager.OnActivityJoin += _activityManager_OnActivityJoin;
@@ -197,7 +173,7 @@ public class ArchiveDiscordManager
             OnActivityJoin?.Invoke(secret);
         }
 
-        private static Activity DefaultFallbackActivity = new Activity
+        private static readonly Activity DefaultFallbackActivity = new()
         {
             Details = "???",
             State = "err:// no c0nnec7ion",
@@ -209,7 +185,7 @@ public class ArchiveDiscordManager
             }
         };
 
-        public static ActivityParty GetParty(string partyId = null)
+        private static ActivityParty GetParty(string partyId = null)
         {
             return new ActivityParty
             {
@@ -222,7 +198,7 @@ public class ArchiveDiscordManager
             };
         }
 
-        public static ActivitySecrets? GetSecrets(string joinSecret = null)
+        private static ActivitySecrets? GetSecrets(string joinSecret = null)
         {
             if (joinSecret == null) return null;
             return new ActivitySecrets
@@ -231,7 +207,7 @@ public class ArchiveDiscordManager
             };
         }
 
-        public static ActivityTimestamps GetTimestamp(long startTime = 0, long endTime = 0)
+        private static ActivityTimestamps GetTimestamp(long startTime = 0, long endTime = 0)
         {
             return new ActivityTimestamps
             {

@@ -27,7 +27,7 @@ using static TheArchive.Utilities.Utils;
     ThisAssembly.Git.Branch + "+" +
     ThisAssembly.Git.Commit)]
 
-[assembly: InternalsVisibleTo("TheArchive.IL2CPP")]
+[assembly: InternalsVisibleTo("TheArchive.RichPresence")]
 [assembly: InternalsVisibleTo("TheArchive.MONO")]
 namespace TheArchive;
 
@@ -307,15 +307,6 @@ public static class ArchiveMod
         IsInitialized = true;
 
         ArchiveLogger.Info($"GameData has been initialized, invoking event.");
-
-        try
-        {
-            PresenceFormatter.Setup();
-        }
-        catch (Exception ex)
-        {
-            ArchiveLogger.Exception(ex);
-        }
 
         foreach (var type in _typesToInitOnGameDataInit)
         {

@@ -12,7 +12,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Resources\discord_game_sdk.dll" />
 		<EmbeddedResource Include="..\README.md" Link="Resources\README.md"/>
 		<EmbeddedResource Include="..\LICENSE" Link="Resources\LICENSE" />
 	</ItemGroup>

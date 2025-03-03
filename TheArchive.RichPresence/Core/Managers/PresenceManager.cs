@@ -1,6 +1,5 @@
 ﻿using System;
 using TheArchive.Core.Models;
-using TheArchive.Core.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.PresenceFormatter;
