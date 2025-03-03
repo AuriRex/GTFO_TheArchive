@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Reflection;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
+
+[assembly: AssemblyVersion(TheArchive.ArchiveRichPresenceModule.VERSION)]
+[assembly: AssemblyFileVersion(TheArchive.ArchiveRichPresenceModule.VERSION)]
+[assembly: AssemblyInformationalVersion(TheArchive.ArchiveRichPresenceModule.VERSION)]
 
 namespace TheArchive;
 
