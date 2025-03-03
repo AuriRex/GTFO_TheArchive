@@ -283,6 +283,24 @@ internal class KillIndicatorFix : Feature
         }
     }
 
+    [ArchivePatch(typeof(Dam_EnemyDamageBase), nameof(Dam_EnemyDamageBase.ReceiveSetHealth), new Type[]
+    {
+        typeof(pSetHealthData)
+    })]
+    private class Dam_EnemyDamageBase_ReceiveSetHealth_Patch
+    {
+        private static void Postfix(Dam_EnemyDamageBase __instance, pSetHealthData data)
+        {
+            if (SNet.IsMaster) return;
+
+            ushort id = __instance.Owner.GlobalID;
+            if (!taggedEnemies.ContainsKey(id)) return;
+
+            Tag t = taggedEnemies[id];
+            t.health = data.health.Get(__instance.HealthMax);
+        }
+    }
+
 #endregion
 
 #region Fix for sentries (WIP)
