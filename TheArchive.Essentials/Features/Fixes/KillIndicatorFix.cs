@@ -51,10 +51,9 @@ internal class KillIndicatorFix : Feature
         [FSDescription("Determines how long (in ms) an enemy is tracked for after getting shot at.")]
         public int TagBufferPeriod { get; set; } = 1000;
 
-        //[FSHide]
-        [FSDisplayName("Debug")]
+        [FSHide]
         [FSDescription("Prints debug info to console.")]
-        public bool DebugLog { get; set; } = true;
+        public bool DebugLog { get; set; } = false;
     }
 
     private class Tag
@@ -267,7 +266,7 @@ internal class KillIndicatorFix : Feature
 
 #endregion
 
-#region Fix for sentries (Unfinnished)
+#region Fix for sentries (WIP)
 #if false
 
     // Determine if the shot was performed by a sentry or player
