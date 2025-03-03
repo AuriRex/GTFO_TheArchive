@@ -12,6 +12,8 @@ namespace TheArchive.Core.Bootstrap;
 
 public static class TypeLoader
 {
+    private static bool _ignoreBadImageFormatExceptions = true;
+
     static TypeLoader()
     {
         CecilResolver.ResolveFailure += CecilResolveOnFailure;
@@ -28,12 +30,10 @@ public static class TypeLoader
         }
         foreach (string dir in new string[]
         {
-#if R_BIE
             BepInEx.Paths.BepInExAssemblyDirectory,
             BepInEx.Paths.PluginPath,
             BepInEx.Paths.PatcherPluginPath,
             BepInEx.Paths.ManagedPath
-#endif
         }.Concat(SearchDirectories))
         {
             if (!Directory.Exists(dir))
@@ -101,8 +101,11 @@ public static class TypeLoader
             }
             catch (BadImageFormatException e1)
             {
-                Logger.Error($"Skipping loading {dll} because it's not a valid .NET assembly. Full error:");
-                Logger.Exception(e1);
+                if (!_ignoreBadImageFormatExceptions)
+                {
+                    Logger.Error($"Skipping loading {dll} because it's not a valid .NET assembly. Full error:");
+                    Logger.Exception(e1);
+                }
             }
             catch (Exception e2)
             {
@@ -169,7 +172,6 @@ public static class TypeLoader
         }
         try
         {
-#if R_BIE
             if (!Directory.Exists(BepInEx.Paths.CachePath))
             {
                 Directory.CreateDirectory(BepInEx.Paths.CachePath);
@@ -189,7 +191,6 @@ public static class TypeLoader
                     }
                 }
             }
-#endif
         }
         catch (Exception e)
         {
