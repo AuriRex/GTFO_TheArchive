@@ -89,6 +89,9 @@ internal class KillIndicatorFix : Feature
     }
 
 #if IL2CPP
+
+#region Fix for local player 
+
     [ArchivePatch(typeof(Dam_EnemyDamageBase), nameof(Dam_EnemyDamageBase.ProcessReceivedDamage))]
     internal static class Dam_EnemyDamageBase_ProcessReceivedDamage_Patch
     {
@@ -122,10 +125,11 @@ internal class KillIndicatorFix : Feature
                 if (taggedEnemies.ContainsKey(instanceID)) {
                     Tag t = taggedEnemies[instanceID];
 
-                    if (t.timestamp <= now)
-                        FeatureLogger.Info($"Received kill update {now - t.timestamp} milliseconds after tag.");
-                    else
-                        FeatureLogger.Info($"Received kill update for enemy that was tagged in the future? Possibly long overflow...");
+                    if (Settings.DebugLog)
+                        if (t.timestamp <= now)
+                            FeatureLogger.Info($"Received kill update {now - t.timestamp} milliseconds after tag.");
+                        else
+                            FeatureLogger.Info($"Received kill update for enemy that was tagged in the future? Possibly long overflow...");
 
                     if (t.timestamp <= now && now - t.timestamp < Settings.TagBufferPeriod) {
                         if (!owner.Damage.DeathIndicatorShown) {
@@ -133,16 +137,16 @@ internal class KillIndicatorFix : Feature
 
                             GuiManager.CrosshairLayer?.ShowDeathIndicator(owner.transform.position + t.localHitPosition);
                             owner.Damage.DeathIndicatorShown = true;
-                        } else {
+                        } else if (Settings.DebugLog) {
                             FeatureLogger.Info($"Client side marker was shown, not showing server side one.");
                         }
-                    } else {
+                    } else if (Settings.DebugLog) {
                         FeatureLogger.Info($"Client was no longer interested in this enemy, marker will not be shown.");
                     }
 
                     taggedEnemies.Remove(instanceID);
                 }
-            } catch { FeatureLogger.Info("Something went wrong."); }
+            } catch (Exception e) { FeatureLogger.Error($"Something went wrong:\n{e}"); }
         }
     }
 
@@ -240,6 +244,9 @@ internal class KillIndicatorFix : Feature
             }
         }
     }
+
+#endregion
+
 #endif
 
 #if MONO
