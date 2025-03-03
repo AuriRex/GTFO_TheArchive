@@ -4,6 +4,10 @@
 	
 	<PropertyGroup>
 		<RootNamespace>TheArchive</RootNamespace>
+
+		<PluginOutputPath>../output/TheArchive.Essentials/plugins/</PluginOutputPath>
+		<LocalizationFileDir>./Localization/</LocalizationFileDir>
+		<CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
 	</PropertyGroup>
 	
 	<ItemGroup>

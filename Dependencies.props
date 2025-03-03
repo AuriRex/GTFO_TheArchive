@@ -35,11 +35,45 @@
 		<Reference Include="$(PluginsFolder)/**/Clonesoft.Json.dll" Private="false" />
 	</ItemGroup>
 
-	<!-- MSBuild Action-->
-	<Target Name="CustomAfterBuild" AfterTargets="Build" Condition="$(CopyBuildToPluginFolder) == 'true'">
-		<Message Text="Copying Output to Plugins Folder..." Importance="High"/>
+	<!-- MSBuild Actions -->
+	<Target Name="CopyAssemblyAfterBuild" AfterTargets="Build" Condition="'$(PluginOutputPath)' != ''">
+		<MakeDir Directories="$(PluginOutputPath)" Condition="!Exists('$(PluginOutputPath)')"  />
+		<Message Text="Copying Assembly to Ouput Folder..." Importance="High"/>
 		<Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll"
-			  DestinationFiles="$(PluginsFolder)\$(AssemblyName).dll"/>
-		<Message Text="Output has copied to Plugins Folder!" Importance="High"/>
+			  DestinationFiles="$(PluginOutputPath)\$(AssemblyName).dll"/>
+
+		<Message Text="Assembly has been copied to Ouput Folder!" Importance="High"/>
+	</Target>
+	
+	<Target Name="CopyLocalizationFilesAfterBuild" AfterTargets="CopyAssemblyAfterBuild"  Condition="'$(LocalizationFileDir)' != ''">
+		<Message Text="Copying Localization files to Output Folder ..." Importance="High" />
+		<ItemGroup>
+			<LocalizationFilesToCopy Include="$(LocalizationFileDir)\**\*.*" />
+		</ItemGroup>
+		<Copy
+				SourceFiles="@(LocalizationFilesToCopy)"
+				DestinationFolder="$(PluginOutputPath)\Localization\%(RecursiveDir)"
+				SkipUnchangedFiles="true"
+				OverwriteReadOnlyFiles="true"
+				Retries="3"
+				RetryDelayMilliseconds="300"/>
+		<Message Text="Localization files copied!" Importance="High" />
+	</Target>
+
+	<Target Name="CopyOutputFilesToPluginFolder" AfterTargets="CopyAssemblyAfterBuild;CopyLocalizationFilesAfterBuild" Condition="$(CopyBuildToPluginFolder) == 'true'">
+		<Message Text="Copying Output to Plugins Folder..." Importance="High"/>
+		<MakeDir Directories="$(PluginsFolder)\$(AssemblyName)" Condition="!Exists('$(PluginsFolder)\$(AssemblyName)')"  />
+		<ItemGroup>
+			<OutputFilesToCopy Include="$(PluginOutputPath)\**\*.*" />
+		</ItemGroup>
+		<Copy
+				SourceFiles="@(OutputFilesToCopy)"
+				DestinationFolder="$(PluginsFolder)\$(AssemblyName)\%(RecursiveDir)"
+				SkipUnchangedFiles="true"
+				OverwriteReadOnlyFiles="true"
+				Retries="3"
+				RetryDelayMilliseconds="300"/>
+
+		<Message Text="Output has been copied to Plugins Folder!" Importance="High"/>
 	</Target>
 </Project>

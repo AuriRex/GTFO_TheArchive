@@ -6,7 +6,9 @@
 		<RootNamespace>TheArchive</RootNamespace>
 		<AssemblyName>TheArchive.Core</AssemblyName>
 
-		<CopyBuildToPluginFolder>false</CopyBuildToPluginFolder>
+		<PluginOutputPath>../output/TheArchive.Core/plugins/</PluginOutputPath>
+		<LocalizationFileDir>./Localization/</LocalizationFileDir>
+		<CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
 	</PropertyGroup>
 
 	<ItemGroup>
