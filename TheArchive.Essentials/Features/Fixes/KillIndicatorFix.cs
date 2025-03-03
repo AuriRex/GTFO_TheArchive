@@ -93,12 +93,14 @@ internal class KillIndicatorFix : Feature
             if (SNet.IsMaster) return;
             if (__instance.m_currentStateName == state || state != EB_States.Dead) return;
 
-            try {
+            try
+            {
                 EnemyAgent owner = __instance.m_ai.m_enemyAgent;
                 ushort id = owner.GlobalID;
                 long now = ((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds();
 
-                if (taggedEnemies.ContainsKey(id)) {
+                if (taggedEnemies.ContainsKey(id))
+                {
                     Tag t = taggedEnemies[id];
 
                     if (Settings.DebugLog)
@@ -107,22 +109,32 @@ internal class KillIndicatorFix : Feature
                         else
                             FeatureLogger.Info($"Received kill update for enemy that was tagged in the future? Possibly long overflow...");
 
-                    if (t.timestamp <= now && now - t.timestamp < Settings.TagBufferPeriod) {
-                        if (!owner.Damage.DeathIndicatorShown) {
+                    if (t.timestamp <= now && now - t.timestamp < Settings.TagBufferPeriod)
+                    {
+                        if (!owner.Damage.DeathIndicatorShown)
+                        {
                             FeatureLogger.Info($"Client side marker was not shown, showing server side one.");
 
                             GuiManager.CrosshairLayer?.ShowDeathIndicator(owner.transform.position + t.localHitPosition);
                             owner.Damage.DeathIndicatorShown = true;
-                        } else if (Settings.DebugLog) {
+                        } 
+                        else if (Settings.DebugLog)
+                        {
                             FeatureLogger.Info($"Client side marker was shown, not showing server side one.");
                         }
-                    } else if (Settings.DebugLog) {
+                    }
+                    else if (Settings.DebugLog) 
+                    {
                         FeatureLogger.Info($"Client was no longer interested in this enemy, marker will not be shown.");
                     }
 
                     taggedEnemies.Remove(id);
                 }
-            } catch (Exception e) { FeatureLogger.Error($"Something went wrong:\n{e}"); }
+            }
+            catch (Exception e)
+            {
+                FeatureLogger.Error($"Something went wrong:\n{e}");
+            }
         }
     }
 
@@ -375,12 +387,14 @@ internal class KillIndicatorFix : Feature
             // TODO(randomuserhi): OnReceive, display corresponding hit marker
 
             EnemyAgent? targetEnemy = target.TryCast<EnemyAgent>();
-            if (targetEnemy != null) {
+            if (targetEnemy != null)
+            {
                 Dam_EnemyDamageLimb dam = targetEnemy.Damage.DamageLimbs[limbID];
                 dam.ShowHitIndicator(hitWeakspot, willDie, position, hitArmor);
             }
             PlayerAgent? targetPlayer = target.TryCast<PlayerAgent>();
-            if (targetPlayer != null) {
+            if (targetPlayer != null)
+            {
                 GuiManager.CrosshairLayer.PopFriendlyTarget();
             }
 
