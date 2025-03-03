@@ -30,7 +30,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Log Visualizer";
 
-        public override string Group => FeatureGroups.Hud;
+        public override FeatureGroup Group => FeatureGroups.Hud;
 
         public override string Description => "Missing some logs for <i>that Achievement</i>, huh?";
 

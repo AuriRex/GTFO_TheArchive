@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Mono.Cecil;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Managers;
 using TheArchive.Loader;
