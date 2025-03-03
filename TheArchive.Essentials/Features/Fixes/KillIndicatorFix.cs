@@ -75,7 +75,7 @@ internal class KillIndicatorFix : Feature
     public override void Init()
     {
         hasDamageSync = LoaderWrapper.IsModInstalled(DAMAGE_SYNC_GUID);
-        if (!hasDamageSync) FeatureLogger.Notice("Damage Sync is installed, disabling damage sync component.");
+        if (hasDamageSync) FeatureLogger.Notice("Damage Sync is installed, disabling damage sync component.");
 
         RundownManager.add_OnExpeditionGameplayStarted((Action)OnRundownStart);
     }
