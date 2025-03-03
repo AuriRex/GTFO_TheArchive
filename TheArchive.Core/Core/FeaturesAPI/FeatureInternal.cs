@@ -20,9 +20,9 @@ namespace TheArchive.Core.FeaturesAPI;
 internal class FeatureInternal
 {
     internal FeatureLocalizationService Localization { get; } = new();
-    internal static GameBuildInfo BuildInfo => Feature.BuildInfo;
-    internal bool InternalDisabled { get; private set; } = false;
-    internal InternalDisabledReason DisabledReason { get; private set; }
+    private static GameBuildInfo BuildInfo => Feature.BuildInfo;
+    internal bool InternalDisabled { get; private set; }
+    private InternalDisabledReason DisabledReason { get; set; }
     internal bool HasUpdateMethod => UpdateDelegate != null;
     internal Update UpdateDelegate { get; private set; }
     internal bool HasLateUpdateMethod => LateUpdateDelegate != null;
@@ -33,9 +33,9 @@ internal class FeatureInternal
     internal bool DisableModSettingsButton { get; private set; }
     internal bool HasAdditionalSettings => _settingsHelpers.Count > 0;
     internal bool AllAdditionalSettingsAreHidden { get; private set; } = true;
-    internal bool InitialEnabledState { get; private set; } = false;
+    internal bool InitialEnabledState { get; private set; }
     internal IEnumerable<FeatureSettingsHelper> Settings => _settingsHelpers;
-    internal Utils.RundownFlags Rundowns { get; private set; } = Utils.RundownFlags.None;
+    internal RundownFlags Rundowns { get; private set; } = RundownFlags.None;
     internal IArchiveLogger FeatureLoggerInstance { get; private set; }
     internal Assembly OriginAssembly { get; private set; }
     internal IArchiveModule ArchiveModule { get; private set; }
@@ -43,14 +43,15 @@ internal class FeatureInternal
     {
         get
         {
-            if (_feature.GetType().GetProperty(nameof(Feature.Name)).GetCustomAttribute<IgnoreLocalization>() == null)
+            if (!_doLocalizeName)
+                return _feature.Name;
+            
+            var propID = $"{_featureType.FullName}.{nameof(Feature.Name)}";
+            if (Localization.TryGetFSText(propID, FSType.FName, out var text))
             {
-                string propID = $"{_feature.GetType().FullName}.{nameof(Feature.Name)}";
-                if (Localization.TryGetFSText(propID, FSType.FName, out var text))
-                {
-                    return text;
-                }
+                return text;
             }
+            
             return _feature.Name;
         }
     }
@@ -58,14 +59,15 @@ internal class FeatureInternal
     {
         get
         {
-            if (_feature.GetType().GetProperty(nameof(Feature.Description)).GetCustomAttribute<IgnoreLocalization>() == null)
+            if (!_doLocalizeDescription)
+                return _feature.Description;
+            
+            var propID = $"{_featureType.FullName}.{nameof(Feature.Description)}";
+            if (Localization.TryGetFSText(propID, FSType.FDescription, out var text))
             {
-                string propID = $"{_feature.GetType().FullName}.{nameof(Feature.Description)}";
-                if (Localization.TryGetFSText(propID, FSType.FDescription, out var text))
-                {
-                    return text;
-                }
+                return text;
             }
+            
             return _feature.Description;
         }
     }
@@ -86,28 +88,33 @@ internal class FeatureInternal
     {
         get
         {
-            if (InternalDisabled)
+            if (!InternalDisabled)
             {
-                return string.Format("<#F00>{0}</color>: {1}", LocalizationCoreService.Get(2, "DISABLED"), LocalizationCoreService.Get(DisabledReason));
+                return string.Empty;
             }
-
-            return string.Empty;
+            
+            return $"<#F00>{LocalizationCoreService.Get(2, "DISABLED")}</color>: {LocalizationCoreService.Get(DisabledReason)}";
         }
     }
 
     private Feature _feature;
     private HarmonyLib.Harmony _harmonyInstance;
 
-    private readonly List<Type> _patchTypes = new List<Type>();
-    private readonly HashSet<FeaturePatchInfo> _patchInfos = new HashSet<FeaturePatchInfo>();
-    private readonly HashSet<FeatureSettingsHelper> _settingsHelpers = new HashSet<FeatureSettingsHelper>();
-    private readonly Dictionary<string, object> _storage = new Dictionary<string, object>();
+    private readonly List<Type> _patchTypes = new();
+    private readonly HashSet<FeaturePatchInfo> _patchInfos = new();
+    private readonly HashSet<FeatureSettingsHelper> _settingsHelpers = new();
     private PropertyInfo _isEnabledPropertyInfo;
-    private bool _onGameStateChangedMethodUsesGameEnum = false;
+    private bool _onGameStateChangedMethodUsesGameEnum;
     private MethodInfo _onGameStateChangedMethodInfo;
     private MethodInfo _onLGAreaCullUpdateMethodInfo;
-
-    private static readonly HashSet<string> _usedIdentifiers = new HashSet<string>();
+    
+    private Type _featureType;
+    private PropertyInfo _namePropertyInfo;
+    private PropertyInfo _descriptionPropertyInfo;
+    private bool _doLocalizeName;
+    private bool _doLocalizeDescription;
+    
+    private static readonly HashSet<string> _usedIdentifiers = new();
     private static readonly IArchiveLogger _FILogger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureInternal), ConsoleColor.DarkYellow);
 
     private static Type _gameStateType;
@@ -117,14 +124,9 @@ internal class FeatureInternal
 
     internal static void CreateAndAssign(Feature feature, IArchiveModule module)
     {
-        if (_gameStateType == null)
-        {
-            _gameStateType = ImplementationManager.GameTypeByIdentifier("eGameStateName");
-        }
-        if (_lgAreaType == null)
-        {
-            _lgAreaType = ImplementationManager.GameTypeByIdentifier("LG_Area");
-        }
+        _gameStateType ??= ImplementationManager.GameTypeByIdentifier("eGameStateName");
+        _lgAreaType ??= ImplementationManager.GameTypeByIdentifier("LG_Area");
+        
         var fi = new FeatureInternal();
         feature.FeatureInternal = fi;
         try
@@ -136,7 +138,7 @@ internal class FeatureInternal
             _FILogger.Error($"Initialization of {fi._feature.Identifier} failed! - {tle.GetType().FullName}");
             _FILogger.Warning($"!!! PLEASE FIX THIS !!!");
             _FILogger.Debug($"StackTrace:\n{tle.Message}\n{tle.StackTrace}");
-            fi.InternalyDisableFeature(InternalDisabledReason.TypeLoadException);
+            fi.InternallyDisableFeature(InternalDisabledReason.TypeLoadException);
             _FILogger.Msg(ConsoleColor.Magenta, $"Feature \"{fi._feature.Identifier}\" has been disabled internally! ({fi.DisabledReason})");
             return;
         }
@@ -146,55 +148,61 @@ internal class FeatureInternal
     public delegate void Update();
     public delegate void LateUpdate();
 
-    internal void Init(Feature feature, IArchiveModule module)
+    private void Init(Feature feature, IArchiveModule module)
     {
         _feature = feature;
 
         ArchiveModule = module;
 
-        var featureType = _feature.GetType();
-        OriginAssembly = featureType.Assembly;
+        _featureType = _feature.GetType();
+        OriginAssembly = _featureType.Assembly;
 
         feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature));
 
         _FILogger.Msg(ConsoleColor.Black, "-");
         _FILogger.Msg(ConsoleColor.Green, $"Initializing {_feature.Identifier} ...");
 
-        if (_usedIdentifiers.Contains(_feature.Identifier))
+        if (!_usedIdentifiers.Add(_feature.Identifier))
         {
             throw new ArchivePatchDuplicateIDException($"Provided feature id \"{_feature.Identifier}\" has already been registered by {FeatureManager.GetById(_feature.Identifier)}!");
         }
 
         FeatureLoggerInstance = LoaderWrapper.CreateArSubLoggerInstance($"F::{_feature.Identifier}", ConsoleColor.Cyan);
 
-        HideInModSettings = featureType.GetCustomAttribute<HideInModSettings>() != null;
-        DoNotSaveToConfig = featureType.GetCustomAttribute<DoNotSaveToConfig>() != null;
-        AutomatedFeature = featureType.GetCustomAttribute<AutomatedFeature>() != null;
-        DisableModSettingsButton = featureType.GetCustomAttribute<DisallowInGameToggle>() != null;
+        HideInModSettings = _featureType.GetCustomAttribute<HideInModSettings>() != null;
+        DoNotSaveToConfig = _featureType.GetCustomAttribute<DoNotSaveToConfig>() != null;
+        AutomatedFeature = _featureType.GetCustomAttribute<AutomatedFeature>() != null;
+        DisableModSettingsButton = _featureType.GetCustomAttribute<DisallowInGameToggle>() != null;
 
-        if (featureType.GetCustomAttribute<ForceDisable>() != null)
+        if (_featureType.GetCustomAttribute<ForceDisable>() != null)
         {
             InternalDisabled = true;
             DisabledReason |= InternalDisabledReason.ForceDisabled;
         }
 
-        foreach (var constraint in featureType.GetCustomAttributes<RundownConstraint>())
+        foreach (var constraint in _featureType.GetCustomAttributes<RundownConstraint>())
         {
             Rundowns |= constraint.Rundowns;
         }
 
-        if (!AnyRundownConstraintMatches(featureType))
+        if (!AnyRundownConstraintMatches(_featureType))
         {
             InternalDisabled = true;
             DisabledReason |= InternalDisabledReason.RundownConstraintMismatch;
         }
 
-        if (!AnyBuildConstraintMatches(featureType))
+        if (!AnyBuildConstraintMatches(_featureType))
         {
             InternalDisabled = true;
             DisabledReason |= InternalDisabledReason.BuildConstraintMismatch;
         }
 
+        _namePropertyInfo = _featureType.GetProperty(nameof(Feature.Name));
+        _doLocalizeName = _namePropertyInfo?.GetCustomAttribute<IgnoreLocalization>() == null;
+        
+        _descriptionPropertyInfo = _featureType.GetProperty(nameof(Feature.Description));
+        _doLocalizeDescription = _descriptionPropertyInfo?.GetCustomAttribute<IgnoreLocalization>() == null;
+        
         try
         {
             if (!_feature.ShouldInit())
@@ -217,7 +225,7 @@ internal class FeatureInternal
             return;
         }
 
-        var featureMethods = featureType.GetMethods();
+        var featureMethods = _featureType.GetMethods();
 
         var updateMethod = featureMethods
             .FirstOrDefault(mi => (mi.Name == "Update" || mi.GetCustomAttribute<IsUpdate>() != null)
@@ -249,7 +257,7 @@ internal class FeatureInternal
             LateUpdateDelegate = (LateUpdate)lateUpdateDelegate;
         }
 
-        var featureProperties = featureType.GetProperties();
+        var featureProperties = _featureType.GetProperties();
 
         var settingsProps = featureProperties
             .Where(pi => pi.GetCustomAttribute<FeatureConfig>() != null);
@@ -257,6 +265,7 @@ internal class FeatureInternal
         _isEnabledPropertyInfo = featureProperties
             .FirstOrDefault(pi => (pi.Name == "IsEnabled" || pi.GetCustomAttribute<SetEnabledStatus>() != null)
                                   && pi.SetMethod != null
+                                  && pi.GetMethod != null
                                   && pi.GetMethod.IsStatic
                                   && pi.GetMethod.ReturnType == typeof(bool));
 
@@ -327,7 +336,7 @@ internal class FeatureInternal
 
         _harmonyInstance = new HarmonyLib.Harmony($"{ArchiveMod.MOD_NAME}_FeaturesAPI_{_feature.Identifier}");
 
-        var potentialPatchTypes = featureType.GetNestedTypes(Utils.AnyBindingFlagss).Where(nt => nt.GetCustomAttribute<ArchivePatch>() != null);
+        var potentialPatchTypes = _featureType.GetNestedTypes(AnyBindingFlagss).Where(nt => nt.GetCustomAttribute<ArchivePatch>() != null);
 
         foreach (var type in potentialPatchTypes)
         {
@@ -336,10 +345,8 @@ internal class FeatureInternal
                 _patchTypes.Add(type);
                 continue;
             }
-            else
-            {
-                _FILogger.Debug($"{_feature.Identifier}: ignoring {type.FullName} (Rundown | Build not matching.)");
-            }
+
+            _FILogger.Debug($"{_feature.Identifier}: ignoring {type.FullName} (Rundown | Build not matching.)");
         }
 
         _FILogger.Notice($"Discovered {_patchTypes.Count} Patch{(_patchTypes.Count == 1 ? string.Empty : "es")} matching constraints.");
@@ -362,7 +369,7 @@ internal class FeatureInternal
                     _FILogger.Debug($"Populated PatchInfo Property for Patch \"{patchType.FullName}\".");
                 }
 
-                var patchTypeMethods = patchType.GetMethods(Utils.AnyBindingFlagss);
+                var patchTypeMethods = patchType.GetMethods(AnyBindingFlagss);
 
                 if (!archivePatchInfo.HasType)
                 {
@@ -421,21 +428,20 @@ internal class FeatureInternal
                     case ArchivePatch.PatchMethodType.Method:
                         if (archivePatchInfo.ParameterTypes != null)
                         {
-                            original = archivePatchInfo.Type.GetMethod(archivePatchInfo.MethodName, Utils.AnyBindingFlagss, null, archivePatchInfo.ParameterTypes, null);
+                            original = archivePatchInfo.Type.GetMethod(archivePatchInfo.MethodName, AnyBindingFlagss, null, archivePatchInfo.ParameterTypes, null);
+                            break;
                         }
-                        else
-                        {
-                            original = archivePatchInfo.Type.GetMethod(archivePatchInfo.MethodName, Utils.AnyBindingFlagss);
-                        }
+
+                        original = archivePatchInfo.Type.GetMethod(archivePatchInfo.MethodName, AnyBindingFlagss);
                         break;
                     case ArchivePatch.PatchMethodType.Getter:
-                        original = archivePatchInfo.Type.GetProperty(archivePatchInfo.MethodName, Utils.AnyBindingFlagss)?.GetMethod;
+                        original = archivePatchInfo.Type.GetProperty(archivePatchInfo.MethodName, AnyBindingFlagss)?.GetMethod;
                         break;
                     case ArchivePatch.PatchMethodType.Setter:
-                        original = archivePatchInfo.Type.GetProperty(archivePatchInfo.MethodName, Utils.AnyBindingFlagss)?.SetMethod;
+                        original = archivePatchInfo.Type.GetProperty(archivePatchInfo.MethodName, AnyBindingFlagss)?.SetMethod;
                         break;
                     case ArchivePatch.PatchMethodType.Constructor:
-                        original = archivePatchInfo.Type.GetConstructor(Utils.AnyBindingFlagss, null, archivePatchInfo.ParameterTypes, null);
+                        original = archivePatchInfo.Type.GetConstructor(AnyBindingFlagss, null, archivePatchInfo.ParameterTypes, null);
                         break;
                 }
 
@@ -486,9 +492,9 @@ internal class FeatureInternal
                     ilManipulatorMethodInfo = null;
                 }
 
-                if (prefixMethodInfo == null && postfixMethodInfo == null && transpilerMethodInfo == null)
+                if (prefixMethodInfo == null && postfixMethodInfo == null && finalizerMethodInfo == null && transpilerMethodInfo == null && ilManipulatorMethodInfo == null)
                 {
-                    throw new ArchivePatchNoPatchMethodException($"Patch class \"{patchType.FullName}\" doesn't contain a Prefix, Postfix or Transpiler method, at least one is required!");
+                    throw new ArchivePatchNoPatchMethodException($"Patch class \"{patchType.FullName}\" doesn't contain a Prefix, Postfix, Finalizer, Transpiler or ILManipulator method, at least one is required!");
                 }
 
                 _patchInfos.Add(new FeaturePatchInfo(original,
@@ -525,7 +531,7 @@ internal class FeatureInternal
                 {
                     _FILogger.Error($"Static Init method on {_feature.Identifier} failed! - {ex}: {ex.Message}");
                     _FILogger.Exception(ex);
-                    InternalyDisableFeature(InternalDisabledReason.PatchInitMethodFailed);
+                    InternallyDisableFeature(InternalDisabledReason.PatchInitMethodFailed);
                     return;
                 }
             }
@@ -542,7 +548,7 @@ internal class FeatureInternal
         {
             if (!_feature.LateShouldInit())
             {
-                InternalyDisableFeature(InternalDisabledReason.DisabledViaLateShouldInit);
+                InternallyDisableFeature(InternalDisabledReason.DisabledViaLateShouldInit);
                 return;
             }
         }
@@ -550,7 +556,7 @@ internal class FeatureInternal
         {
             _FILogger.Error($"{nameof(Feature.LateShouldInit)} method on {nameof(Feature)} failed: {ex}: {ex.Message}");
             _FILogger.Exception(ex);
-            InternalyDisableFeature(InternalDisabledReason.LateShouldInitFailed);
+            InternallyDisableFeature(InternalDisabledReason.LateShouldInitFailed);
             return;
         }
 
@@ -562,7 +568,7 @@ internal class FeatureInternal
         {
             _FILogger.Error($"Main Feature Init method on {_feature.Identifier} failed! - {ex}: {ex.Message}");
             _FILogger.Exception(ex);
-            InternalyDisableFeature(InternalDisabledReason.MainInitMethodFailed);
+            InternallyDisableFeature(InternalDisabledReason.MainInitMethodFailed);
             return;
         }
 
@@ -585,7 +591,7 @@ internal class FeatureInternal
         }
     }
 
-    internal void LoadFeatureSettings(bool refreshDisplayName = false)
+    private void LoadFeatureSettings(bool refreshDisplayName = false)
     {
         if (InternalDisabled) return;
 
@@ -625,7 +631,7 @@ internal class FeatureInternal
         }
     }
 
-    internal void SaveAndReloadFeatureSettings()
+    private void SaveAndReloadFeatureSettings()
     {
         SaveFeatureSettings();
         LoadFeatureSettings(refreshDisplayName: true);
@@ -780,7 +786,7 @@ internal class FeatureInternal
             {
                 gameState = Enum.ToObject(_gameStateType, state);
             }
-            _onGameStateChangedMethodInfo?.Invoke(_feature, new object[] { gameState });
+            _onGameStateChangedMethodInfo?.Invoke(_feature, new[] { gameState });
         }
         catch (Exception ex)
         {
@@ -806,7 +812,7 @@ internal class FeatureInternal
         }
     }
 
-    internal void OnLGAreaCullUpdate(object lg_area, bool active)
+    internal void OnLGAreaCullUpdate(object lgArea, bool active)
     {
         if (InternalDisabled) return;
 
@@ -814,7 +820,7 @@ internal class FeatureInternal
 
         try
         {
-            _onLGAreaCullUpdateMethodInfo?.Invoke(_feature, new object[] { lg_area, active });
+            _onLGAreaCullUpdateMethodInfo?.Invoke(_feature, new[] { lgArea, active });
         }
         catch (Exception ex)
         {
@@ -861,7 +867,7 @@ internal class FeatureInternal
         }
     }
 
-    internal static Dictionary<string, PropertyInfo> GetFSProperties(Type type)
+    private static Dictionary<string, PropertyInfo> GetFSProperties(Type type)
     {
         return type.GetProperties()
             .Where(prop => prop.GetCustomAttribute<FSIgnore>() == null
@@ -878,11 +884,11 @@ internal class FeatureInternal
     {
         var parentType = feature.GetType();
 
-        var allproperties = new List<Dictionary<string, PropertyInfo>>();
+        var allProperties = new List<Dictionary<string, PropertyInfo>>();
         var enumTypes = new HashSet<Type>();
 
-        var FSTexts = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
-        var FSEnumTexts = new Dictionary<string, Dictionary<Language, Dictionary<string, string>>>();
+        var fsTexts = new Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>>();
+        var fsEnumTexts = new Dictionary<string, Dictionary<Language, Dictionary<string, string>>>();
 
         foreach (var type in GetNestedClasses(parentType))
         {
@@ -893,10 +899,10 @@ internal class FeatureInternal
                 if (nestedType.IsEnum)
                     enumTypes.Add(nestedType);
             }
-            allproperties.Add(GetFSProperties(type));
+            allProperties.Add(GetFSProperties(type));
         }
 
-        foreach (var props in allproperties)
+        foreach (var props in allProperties)
         {
             foreach (var propPair in props)
             {
@@ -965,7 +971,7 @@ internal class FeatureInternal
 
                     fsdic[fstype] = languages;
                 }
-                FSTexts[propPair.Key] = fsdic;
+                fsTexts[propPair.Key] = fsdic;
             }
         }
 
@@ -986,13 +992,13 @@ internal class FeatureInternal
                 }
                 enumdic[language] = languagedic;
             }
-            FSEnumTexts[type.FullName] = enumdic;
+            fsEnumTexts[type.FullName] = enumdic;
         }
 
         FeatureInternalLocalizationData internalData = new()
         {
-            FeatureSettingsTexts = FSTexts,
-            FeatureSettingsEnumTexts = FSEnumTexts,
+            FeatureSettingsTexts = fsTexts,
+            FeatureSettingsEnumTexts = fsEnumTexts,
             ExtraTexts = defaultData?.Internal?.ExtraTexts ?? new()
         };
 
@@ -1116,29 +1122,32 @@ internal class FeatureInternal
             }
         }
 
-        FeatureExternalLocalizationData ExternalData = new()
+        FeatureExternalLocalizationData externalData = new()
         {
             ExternalFeatureSettingsTexts = externalFSTexts,
             ExternalEnumTexts = externalFSEnumTexts
         };
 
-        return new() { Internal = internalData, External = ExternalData };
+        return new() { Internal = internalData, External = externalData };
     }
 
     private class FeaturePatchInfo
     {
-        internal ArchivePatch ArchivePatchInfo { get; private set; }
-        internal MethodBase OriginalMethod { get; private set; }
-        internal HarmonyLib.HarmonyMethod HarmonyPrefixMethod { get; private set; }
-        internal HarmonyLib.HarmonyMethod HarmonyPostfixMethod { get; private set; }
-        internal HarmonyLib.HarmonyMethod HarmonyTranspilerMethod { get; private set; }
-        internal HarmonyLib.HarmonyMethod HarmonyFinalizerMethod { get; private set; }
-        internal HarmonyLib.HarmonyMethod HarmonyILManipulatorMethod { get; private set; }
+        internal ArchivePatch ArchivePatchInfo { get; }
+        internal MethodBase OriginalMethod { get; }
+        internal HarmonyLib.HarmonyMethod HarmonyPrefixMethod { get; }
+        internal HarmonyLib.HarmonyMethod HarmonyPostfixMethod { get; }
+        internal HarmonyLib.HarmonyMethod HarmonyTranspilerMethod { get; }
+        internal HarmonyLib.HarmonyMethod HarmonyFinalizerMethod { get; }
+        internal HarmonyLib.HarmonyMethod HarmonyILManipulatorMethod { get; }
+
+        // ReSharper disable UnusedAutoPropertyAccessor.Local
         internal MethodInfo PrefixPatchMethod { get; private set; }
         internal MethodInfo PostfixPatchMethod { get; private set; }
         internal MethodInfo TranspilerPatchMethod { get; private set; }
         internal MethodInfo FinalizerPatchMethod { get; private set; }
         internal MethodInfo ILManipulatorPatchMethod { get; private set; }
+        // ReSharper restore UnusedAutoPropertyAccessor.Local
 
         public FeaturePatchInfo(MethodBase original, MethodInfo prefix, MethodInfo postfix, MethodInfo transpiler, MethodInfo finalizer, MethodInfo ilManipulator, ArchivePatch archivePatch, bool wrapTryCatch = true)
         {
@@ -1185,40 +1194,20 @@ internal class FeatureInternal
         }
     }
 
-    internal bool Store<T>(string key, T obj)
-    {
-        if (_storage.TryGetValue(key, out var _))
-        {
-            return false;
-        }
-        _storage.Add(key, obj);
-        return true;
-    }
-
-    internal bool Retrieve<T>(string key, out T value)
-    {
-        if (_storage.TryGetValue(key, out var val))
-        {
-            value = (T)val;
-            return true;
-        }
-        value = default;
-        return false;
-    }
-
     internal void RequestDisable(string reason)
     {
         _FILogger.Info($"Feature {_feature.Identifier} has requested to be disabled: {reason}");
-        InternalyDisableFeature(InternalDisabledReason.DisabledByRequest);
+        InternallyDisableFeature(InternalDisabledReason.DisabledByRequest);
     }
 
-    private void InternalyDisableFeature(InternalDisabledReason reason)
+    private void InternallyDisableFeature(InternalDisabledReason reason)
     {
         InternalDisabled = true;
         DisabledReason |= reason;
         FeatureManager.Instance.DisableFeature(_feature, setConfig: false);
     }
 
+    // ReSharper disable UnusedMember.Global
     [Flags]
     internal enum InternalDisabledReason : int
     {
@@ -1238,4 +1227,5 @@ internal class FeatureInternal
         LateShouldInitFailed = 1 << 12,
         DisabledViaLateShouldInit = 1 << 13,
     }
+    // ReSharper restore UnusedMember.Global
 }
