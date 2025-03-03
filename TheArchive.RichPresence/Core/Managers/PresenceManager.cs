@@ -148,7 +148,7 @@ public class PresenceManager
             switch (toolKey)
             {
                 case "tool_bio":
-                    return "∞";
+                    return "Infinite";
                 case "tool_sentry":
                     if (toolAmmo > 0)
                         return $"{toolAmmo}/{maxToolAmmo}";
