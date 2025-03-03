@@ -244,6 +244,119 @@ internal class KillIndicatorFix : Feature
 
 #endregion
 
+#region Fix for sentries (Unfinnished)
+#if false
+
+    // Determine if the shot was performed by a sentry or player
+    private static bool sentryShot = false;
+
+    // Auto or Burst Sentry
+    [ArchivePatch(typeof(SentryGunInstance_Firing_Bullets), nameof(SentryGunInstance_Firing_Bullets.FireBullet), new Type[] 
+    {  
+        typeof(bool),
+        typeof(bool)
+    })]
+    internal static class SentryGunInstance_Firing_Bullets_FireBullet_Patch
+    {
+        public static void Prefix(SentryGunInstance_Firing_Bullets __instance, bool doDamage, bool targetIsTagged)
+        {
+            if (!doDamage) return;
+            sentryShot = true;
+        }
+
+        public static void Postfix(SentryGunInstance_Firing_Bullets __instance, bool doDamage, bool targetIsTagged)
+        {
+            sentryShot = false;
+        }
+    }
+
+    // Shotgun Sentry
+    [ArchivePatch(typeof(SentryGunInstance_Firing_Bullets), nameof(SentryGunInstance_Firing_Bullets.UpdateFireShotgunSemi), new Type[] 
+    {  
+        typeof(bool),
+        typeof(bool)
+    })]
+    internal static class SentryGunInstance_Firing_Bullets_UpdateFireShotgunSemi_Patch
+    {
+        public static void Prefix(SentryGunInstance_Firing_Bullets __instance, bool isMaster, bool targetIsTagged)
+        {
+            if (!isMaster) return;
+            sentryShot = true;
+        }
+
+        public static void Postfix(SentryGunInstance_Firing_Bullets __instance, bool isMaster, bool targetIsTagged)
+        {
+            sentryShot = false;
+        }
+    }
+
+    // Send hitmarkers to clients from sentry shots
+    [ArchivePatch(typeof(Dam_EnemyDamageLimb), nameof(Dam_EnemyDamageLimb.BulletDamage), new Type[] 
+    {  
+        typeof(float),
+        typeof(Agent),
+        typeof(Vector3),
+        typeof(Vector3),
+        typeof(Vector3),
+        typeof(bool),
+        typeof(float),
+        typeof(float),
+        typeof(uint)
+    }, Priority = HarmonyLib.Priority.Last)]
+    internal static class SentryGunInstance_Firing_Bullets_UpdateFireShotgunSemi_Patch
+    {
+        public static void Prefix(Dam_EnemyDamageLimb __instance, float dam, Agent sourceAgent, Vector3 position, Vector3 direction, Vector3 normal, bool allowDirectionalBonus, float staggerMulti, float precisionMulti, uint gearCategoryId)
+        {
+            if (!SNet.IsMaster) return;
+
+            if (!sentryShot) return; // Check that it was a sentry that shot
+            PlayerAgent? p = sourceAgent.TryCast<PlayerAgent>();
+            if (p == null) // Check damage was done by a player
+            {
+                if (Settings.DebugLog) FeatureLogger.Info($"Could not find PlayerAgent, damage was done by agent of type: {sourceAgent.m_type}.");
+                return;
+            }
+            if (p.Owner.IsBot) return; // Check player isnt a bot
+            if (sourceAgent.IsLocallyOwned) return; // Check player is someone else
+
+            Dam_EnemyDamageBase m_base = __instance.m_base;
+            EnemyAgent owner = m_base.Owner;
+            float num = dam;
+            if (!m_base.IsImortal) {
+                num = __instance.ApplyWeakspotAndArmorModifiers(dam, precisionMulti);
+                num = __instance.ApplyDamageFromBehindBonus(num, position, direction);
+                bool willDie = m_base.WillDamageKill(num);
+
+                SendHitIndicator(p, owner, (byte)__instance.m_limbID, num > dam, willDie, position, __instance.m_armorDamageMulti < 1f);
+            } else {
+                SendHitIndicator(p, owner, (byte)__instance.m_limbID, num > dam, willDie: false, position, true);
+            }
+        }
+
+        private static void SendHitIndicator(PlayerAgent sendTo, Agent target, byte limbID, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor = false) {
+            // TODO(randomuserhi): Send Network packet (Make sure not sending to a bot)
+        }
+
+        private static void ReceiveHitIndicator(Agent target, byte limbID, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor = false) {
+            // TODO(randomuserhi): OnReceive, display corresponding hit marker
+
+            EnemyAgent? targetEnemy = target.TryCast<EnemyAgent>();
+            if (targetEnemy != null) {
+                Dam_EnemyDamageLimb dam = targetEnemy.Damage.DamageLimbs[limbID];
+                dam.ShowHitIndicator(hitWeakspot, willDie, position, hitArmor);
+            }
+            PlayerAgent? targetPlayer = target.TryCast<PlayerAgent>();
+            if (targetPlayer != null) {
+                GuiManager.CrosshairLayer.PopFriendlyTarget();
+            }
+
+            if (Settings.DebugLog) FeatureLogger.Info("Received hit indicator from host.");
+        }
+    }
+
+#endif
+#endregion
+
 #endif
 
 #if MONO
