@@ -204,7 +204,7 @@ internal class KillIndicatorFix : Feature
     })]
     internal static class Dam_EnemyDamageBase_MeleeDamage_Patch
     {
-        public static void Prefix(Dam_EnemyDamageBase __instance, float dam, Agent sourceAgent, Vector3 position)
+        public static void Prefix(Dam_EnemyDamageBase __instance, float dam, Agent sourceAgent, Vector3 position, Vector3 direction, int limbID, float staggerMulti, float precisionMulti, float backstabberMulti, float sleeperMulti, bool skipLimbDestruction, DamageNoiseLevel damageNoiseLevel)
         {
             if (SNet.IsMaster) return;
             PlayerAgent p = sourceAgent?.TryCast<PlayerAgent>();
@@ -226,6 +226,11 @@ internal class KillIndicatorFix : Feature
 
             fullDamageData.damage.Set(dam, __instance.HealthMax);
             float num = AgentModifierManager.ApplyModifier(owner, AgentModifier.MeleeResistance, fullDamageData.damage.Get(__instance.HealthMax));
+            if (__instance.Owner.Locomotion.CurrentStateEnum == ES_StateEnum.Hibernate)
+            {
+                fullDamageData.sleeperMulti.Set(sleeperMulti, 10);
+                num *= fullDamageData.sleeperMulti.Get(10);
+            }
             t.health -= num;
 
             // Show indicator when tracked health assumes enemy is dead
