@@ -1,5 +1,5 @@
 ﻿using System;
-using UnityEngine;
+using TMPro;
 
 namespace TheArchive.Core.FeaturesAPI.Components;
 
@@ -14,11 +14,11 @@ public class FButton : ISettingsComponent
 
     public bool HasPrimaryText => PrimaryText != null;
 
-    public MonoBehaviour PrimaryText { get; set; }
+    public TextMeshPro PrimaryText { get; set; }
 
     public bool HasSecondaryText => SecondaryText != null;
 
-    public MonoBehaviour SecondaryText { get; set; }
+    public TextMeshPro SecondaryText { get; set; }
 
     public bool HasCallback => Callback != null;
 

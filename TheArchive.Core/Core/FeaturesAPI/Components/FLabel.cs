@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using TMPro;
 
 namespace TheArchive.Core.FeaturesAPI.Components;
 
@@ -9,11 +9,11 @@ public class FLabel : ISettingsComponent
 
     public bool HasPrimaryText => PrimaryText != null;
 
-    public MonoBehaviour PrimaryText { get; set; }
+    public TextMeshPro PrimaryText { get; set; }
 
     public bool HasSecondaryText => false;
 
-    public MonoBehaviour SecondaryText { get; set; }
+    public TextMeshPro SecondaryText { get; set; }
 
     public FLabel() { }
 
