@@ -17,8 +17,8 @@ namespace TheArchive;
 public class ArchiveRichPresenceModule : IArchiveModule
 {
     public const string GUID = $"{ArchiveMod.GUID}.RichPresence";
-    public const string MOD_NAME = $"{ArchiveMod.MOD_NAME}.RichPresence";
-    public const string VERSION = "0.0.1";
+    public const string MOD_NAME = ManifestInfo.TSName;
+    public const string VERSION = ManifestInfo.TSVersion;
 
     private IArchiveLogger _logger = LoaderWrapper.CreateLoggerInstance(MOD_NAME);
     
@@ -28,6 +28,7 @@ public class ArchiveRichPresenceModule : IArchiveModule
     public void Init()
     {
         ArchiveMod.GameDataInitialized += OnGameDataInitialized;
+        
     }
 
     private void OnGameDataInitialized(Utils.RundownID obj)

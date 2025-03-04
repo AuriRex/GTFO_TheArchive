@@ -12,8 +12,8 @@ namespace TheArchive;
 public class ArchiveEssentialsModule : IArchiveModule
 {
     public const string GUID = $"{ArchiveMod.GUID}.Essentials";
-    public const string MOD_NAME = $"{ArchiveMod.MOD_NAME}.Essentials";
-    public const string VERSION = "0.0.1";
+    public const string MOD_NAME = ManifestInfo.TSName;
+    public const string VERSION = ManifestInfo.TSVersion;
 
     public bool ApplyHarmonyPatches => false;
     public bool UsesLegacyPatches => false;
