@@ -27,8 +27,6 @@ using static TheArchive.Utilities.Utils;
     ThisAssembly.Git.Branch + "+" +
     ThisAssembly.Git.Commit)]
 
-[assembly: InternalsVisibleTo("TheArchive.RichPresence")]
-[assembly: InternalsVisibleTo("TheArchive.MONO")]
 namespace TheArchive;
 
 public static class ArchiveMod

@@ -18,7 +18,7 @@ public static class PresenceFormatter
     private static IArchiveLogger _logger;
     private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateArSubLoggerInstance(nameof(PresenceFormatter), ConsoleColor.DarkMagenta);
 
-    internal static void Setup()
+    public static void Setup()
     {
         Logger.Debug($"Setting up providers ...");
 
@@ -88,7 +88,7 @@ public static class PresenceFormatter
         Logger.Debug($"{(fallbackOverridden ? " (Fallback Overridden)" : ((pfp is FallbackPresenceFormatProvider) ? " (Fallback)" : string.Empty))} Registered: \"{pfp.Identifier}\" => {pfp.DebugIdentifier}");
     }
 
-    internal static object Get(string identifier)
+    public static object Get(string identifier)
     {
         _formatters.TryGetValue(identifier, out var former);
 
@@ -97,7 +97,7 @@ public static class PresenceFormatter
         return former.GetValue();
     }
 
-    internal static T Get<T>(string identifier)
+    public static T Get<T>(string identifier)
     {
         _formatters.TryGetValue(identifier, out var former);
 
@@ -173,7 +173,7 @@ public static class PresenceFormatter
     }
 
     [AttributeUsage(AttributeTargets.Property)]
-    internal class FallbackPresenceFormatProvider : PresenceFormatProvider
+    public class FallbackPresenceFormatProvider : PresenceFormatProvider
     {
         public bool NoNotImplementedWarning { get; private set; } = false;
 
