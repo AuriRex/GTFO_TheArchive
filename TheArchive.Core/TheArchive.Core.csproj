@@ -36,8 +36,4 @@
 		<PackageReference Include="Mono.Cecil" Version="0.11.5" />
 		<PackageReference Include="SemanticVersioning" Version="2.0.2" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="_thunderstore\" />
-	</ItemGroup>
 </Project>

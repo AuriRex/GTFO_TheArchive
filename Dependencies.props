@@ -38,7 +38,7 @@
 	<!-- MSBuild Actions -->
 	<Target Name="CopyAssemblyAfterBuild" AfterTargets="Build" Condition="'$(PluginOutputPath)' != ''">
 		<MakeDir Directories="$(PluginOutputPath)" Condition="!Exists('$(PluginOutputPath)')"  />
-		<Message Text="Copying Assembly to Ouput Folder..." Importance="High"/>
+		<Message Text="Copying Assembly to Ouput Folder..." />
 		<Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll"
 			  DestinationFiles="$(PluginOutputPath)\$(AssemblyName).dll"/>
 
@@ -46,7 +46,7 @@
 	</Target>
 	
 	<Target Name="CopyLocalizationFilesAfterBuild" AfterTargets="CopyAssemblyAfterBuild"  Condition="'$(LocalizationFileDir)' != ''">
-		<Message Text="Copying Localization files to Output Folder ..." Importance="High" />
+		<Message Text="Copying Localization files to Output Folder ..." />
 		<ItemGroup>
 			<LocalizationFilesToCopy Include="$(LocalizationFileDir)\**\*.*" />
 		</ItemGroup>
@@ -61,7 +61,7 @@
 	</Target>
 
 	<Target Name="CopyOutputFilesToPluginFolder" AfterTargets="CopyAssemblyAfterBuild;CopyLocalizationFilesAfterBuild" Condition="$(CopyBuildToPluginFolder) == 'true'">
-		<Message Text="Copying Output to Plugins Folder..." Importance="High"/>
+		<Message Text="Copying Output to Plugins Folder..." />
 		<MakeDir Directories="$(PluginsFolder)\$(AssemblyName)" Condition="!Exists('$(PluginsFolder)\$(AssemblyName)')"  />
 		<ItemGroup>
 			<OutputFilesToCopy Include="$(PluginOutputPath)\**\*.*" />
@@ -75,5 +75,27 @@
 				RetryDelayMilliseconds="300"/>
 
 		<Message Text="Output has been copied to Plugins Folder!" Importance="High"/>
+	</Target>
+
+	<Target Name="CopyMiscFilesToOutputFolder" AfterTargets="CopyAssemblyAfterBuild">
+		<Message Text="Copying Misc files to Output Folder..." />
+		<ItemGroup Condition="Exists('$(MSBuildProjectDirectory)\icon.png')">
+			<MiscFilesToCopy Include="$(MSBuildProjectDirectory)\icon.png" />
+		</ItemGroup>
+		<ItemGroup Condition="Exists('$(MSBuildProjectDirectory)\README.md')">
+			<MiscFilesToCopy Include="$(MSBuildProjectDirectory)\README.md" />
+		</ItemGroup>
+		<ItemGroup Condition="Exists('$(MSBuildProjectDirectory)\CHANGELOG.md')">
+			<MiscFilesToCopy Include="$(MSBuildProjectDirectory)\CHANGELOG.md" />
+		</ItemGroup>
+		<Copy
+				SourceFiles="@(MiscFilesToCopy)"
+				DestinationFolder="$(PluginOutputPath)\..\"
+				SkipUnchangedFiles="true"
+				OverwriteReadOnlyFiles="true"
+				Retries="3"
+				RetryDelayMilliseconds="300" Condition="'@(MiscFilesToCopy)' != ''" />
+
+		<Message Text="Misc files have been copied to Output Folder!" Importance="High"/>
 	</Target>
 </Project>
