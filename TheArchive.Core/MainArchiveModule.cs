@@ -25,9 +25,7 @@ public class MainArchiveModule : IArchiveModule
     }
     
     public bool ApplyHarmonyPatches => false;
-    public bool UsesLegacyPatches => false;
-    public ArchiveLegacyPatcher Patcher { get; set; }
-    
+
     public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
 
     public Dictionary<Language, string> ModuleGroupLanguages => new()
@@ -42,17 +40,7 @@ public class MainArchiveModule : IArchiveModule
         CrashReportHandler.enableCaptureExceptions = false;
     }
 
-    public void OnSceneWasLoaded(int buildIndex, string sceneName)
-    {
-        
-    }
-
     public void OnLateUpdate()
-    {
-        
-    }
-
-    public void OnExit()
     {
         
     }

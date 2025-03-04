@@ -16,9 +16,6 @@ public class ArchiveEssentialsModule : IArchiveModule
     public const string VERSION = ManifestInfo.TSVersion;
 
     public bool ApplyHarmonyPatches => false;
-    public bool UsesLegacyPatches => false;
-
-    public ArchiveLegacyPatcher Patcher { get; set; }
 
     public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
 
@@ -27,17 +24,7 @@ public class ArchiveEssentialsModule : IArchiveModule
             
     }
 
-    public void OnSceneWasLoaded(int buildIndex, string sceneName)
-    {
-
-    }
-
     public void OnLateUpdate()
-    {
-
-    }
-
-    public void OnExit()
     {
 
     }
