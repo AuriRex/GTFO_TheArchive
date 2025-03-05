@@ -14,6 +14,7 @@
 	<ItemGroup>
 		<EmbeddedResource Include="..\README.md" Link="Resources\README.md"/>
 		<EmbeddedResource Include="..\LICENSE" Link="Resources\LICENSE" />
+		<EmbeddedResource Include="..\LICENSE_BepInEx" Link="Resources\LICENSE_BepInEx" />
 	</ItemGroup>
 
 	<PropertyGroup>

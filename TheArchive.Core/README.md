@@ -20,3 +20,8 @@ Most Features are toggleable mid-game and some even have extra options to mess w
 <p align="center">
   <img src="https://user-images.githubusercontent.com/37329066/190881761-1c0550c3-2d2e-4e74-9904-d0f439b96f24.png" alt="Mod Settings"/>
 </p>
+
+## License
+
+See [main GitHub repository](https://github.com/AuriRex/GTFO_TheArchive/).  
+Contains parts of [BepInEx](https://github.com/BepInEx/BepInEx/) code, denoted in source files.

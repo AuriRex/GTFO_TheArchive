@@ -72,7 +72,8 @@ This project uses a custom MSBuild task, located in the separate [BuildTasks](Bu
 # License
 
 Everything in [this repository](https://github.com/AuriRex/GTFO_TheArchive) is licensed under the MIT License ***(unless stated otherwise inside a given source file)***,  
-**excluding** `TheArchive.RichPresence/DiscordGameSDK/discord_game_sdk.dll` and all the files inside of `TheArchive.RichPresence/Core/DiscordApi/*`, which are copyright [Discord](https://discord.com/developers/docs/legal) and only included for convenience.
+**excluding** `TheArchive.RichPresence/DiscordGameSDK/discord_game_sdk.dll` and all the files inside of `TheArchive.RichPresence/Core/DiscordApi/*`, which are copyright [Discord](https://discord.com/developers/docs/legal) and only included for convenience.  
+Contains parts of [BepInEx](https://github.com/BepInEx/BepInEx/) code, denoted in source files.
 
 ## Icons
 

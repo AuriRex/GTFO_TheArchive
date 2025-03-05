@@ -1,6 +1,11 @@
-﻿using Mono.Cecil;
+﻿// This file is licensed under the LGPL 2.1 LICENSE
+// See LICENSE_BepInEx in the projects root folder
+// Original code from https://github.com/BepInEx/BepInEx
+
+using Mono.Cecil;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,203 +15,246 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Core.Bootstrap;
 
+/// <summary>
+///     Provides methods for loading specified types from an assembly.
+/// </summary>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
+[SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
+[SuppressMessage("ReSharper", "ConvertToConstant.Local")]
+[SuppressMessage("Usage", "CA2211:Non-constant fields should not be visible")]
 public static class TypeLoader
 {
-    private static bool _ignoreBadImageFormatExceptions = true;
+    private static IArchiveLogger _logger;
+    private static IArchiveLogger Logger => _logger ??= Loader.LoaderWrapper.CreateLoggerInstance(nameof(TypeLoader));
+    
+    /// <summary>
+    ///     Default assembly resolved used by the <see cref="TypeLoader" />
+    /// </summary>
+    public static readonly DefaultAssemblyResolver CecilResolver;
 
+    /// <summary>
+    ///     Default reader parameters used by <see cref="TypeLoader" />
+    /// </summary>
+    public static readonly ReaderParameters ReaderParameters;
+
+    public static HashSet<string> SearchDirectories = new();
+
+    private static readonly bool EnableAssemblyCache = true;
+    
     static TypeLoader()
     {
+        CecilResolver = new DefaultAssemblyResolver();
+        ReaderParameters = new ReaderParameters { AssemblyResolver = CecilResolver };
+        
         CecilResolver.ResolveFailure += CecilResolveOnFailure;
     }
-
-    private static IArchiveLogger _logger;
-    private static IArchiveLogger Logger => _logger ??= Loader.LoaderWrapper.CreateLoggerInstance(nameof(TypeLoader), ConsoleColor.White);
-
+    
     public static AssemblyDefinition CecilResolveOnFailure(object sender, AssemblyNameReference reference)
     {
         if (!Utils.TryParseAssemblyName(reference.FullName, out var name))
-        {
             return null;
-        }
-        foreach (string dir in new string[]
+
+        var resolveDirs = new[]
         {
             BepInEx.Paths.BepInExAssemblyDirectory,
             BepInEx.Paths.PluginPath,
             BepInEx.Paths.PatcherPluginPath,
             BepInEx.Paths.ManagedPath
-        }.Concat(SearchDirectories))
+        }.Concat(SearchDirectories);
+        
+        foreach (var dir in resolveDirs)
         {
             if (!Directory.Exists(dir))
             {
                 Logger.Debug($"Unable to resolve cecil search directory '{dir}'");
+                continue;
             }
-            else if (Utils.TryResolveDllAssembly(name, dir, ReaderParameters, out var assembly))
-            {
+
+            if (Utils.TryResolveDllAssembly(name, dir, ReaderParameters, out var assembly))
                 return assembly;
-            }
         }
-        AssemblyResolveEventHandler assemblyResolve = AssemblyResolve;
-        if (assemblyResolve == null)
-        {
-            return null;
-        }
-        return assemblyResolve(sender, reference);
+        
+        return AssemblyResolve?.Invoke(sender, reference);
     }
 
+    /// <summary>
+    ///     Event fired when <see cref="TypeLoader" /> fails to resolve a type during type loading.
+    /// </summary>
     public static event AssemblyResolveEventHandler AssemblyResolve;
 
-    public static Dictionary<string, List<T>> FindModuleTypes<T>(string directory, Func<TypeDefinition, string, T> typeSelector, Func<AssemblyDefinition, bool> assemblyFilter = null, string cacheName = null) where T : ICacheable, new()
+    /// <summary>
+    ///     Looks up assemblies in the given directory and locates all types that can be loaded and collects their metadata.
+    /// </summary>
+    /// <typeparam name="T">The specific base type to search for.</typeparam>
+    /// <param name="directory">The directory to search for assemblies.</param>
+    /// <param name="typeSelector">A function to check if a type should be selected and to build the type metadata.</param>
+    /// <param name="assemblyFilter">A filter function to quickly determine if the assembly can be loaded.</param>
+    /// <param name="cacheName">The name of the cache to get cached types from.</param>
+    /// <returns>
+    ///     A dictionary of all assemblies in the directory and the list of type metadatas of types that match the
+    ///     selector.
+    /// </returns>
+    public static Dictionary<string, List<T>> FindModuleTypes<T>(string directory,
+                                                                 Func<TypeDefinition, string, T> typeSelector,
+                                                                 Func<AssemblyDefinition, bool> assemblyFilter = null,
+                                                                 string cacheName = null)
+        where T : ICacheable, new()
     {
-        Dictionary<string, List<T>> result = new Dictionary<string, List<T>>();
-        Dictionary<string, string> hashes = new Dictionary<string, string>();
+        var result = new Dictionary<string, List<T>>();
+        var hashes = new Dictionary<string, string>();
         Dictionary<string, CachedAssembly<T>> cache = null;
+        
         if (cacheName != null)
-        {
             cache = LoadAssemblyCache<T>(cacheName);
-        }
-        string[] files = Directory.GetFiles(Path.GetFullPath(directory), "*.dll", SearchOption.AllDirectories);
-        for (int i = 0; i < files.Length; i++)
+        
+        foreach(var dll in Directory.GetFiles(Path.GetFullPath(directory), "*.dll", SearchOption.AllDirectories))
         {
-            string dll = files[i];
             try
             {
-                using (MemoryStream dllMs = new MemoryStream(File.ReadAllBytes(dll)))
+                using var dllMs = new MemoryStream(File.ReadAllBytes(dll));
+                
+                var hash = Utils.HashStream(dllMs);
+                hashes[dll] = hash;
+                dllMs.Position = 0L;
+                if (cache != null && cache.TryGetValue(dll, out var cacheEntry) && hash == cacheEntry.Hash)
                 {
-                    string hash = Utils.HashStream(dllMs);
-                    hashes[dll] = hash;
-                    dllMs.Position = 0L;
-                    if (cache != null && cache.TryGetValue(dll, out var cacheEntry) && hash == cacheEntry.Hash)
-                    {
-                        result[dll] = cacheEntry.CacheItems;
-                    }
-                    else
-                    {
-                        using (AssemblyDefinition ass = AssemblyDefinition.ReadAssembly(dllMs, ReaderParameters))
-                        {
-                            if (assemblyFilter != null && !assemblyFilter(ass))
-                            {
-                                result[dll] = new List<T>();
-                            }
-                            else
-                            {
-                                List<T> matches = (from t in ass.MainModule.Types
-                                                   select typeSelector(t, dll) into t
-                                                   where t != null
-                                                   select t).ToList();
-                                result[dll] = matches;
-                            }
-                        }
-                    }
+                    result[dll] = cacheEntry.CacheItems;
+                    continue;
                 }
-            }
-            catch (BadImageFormatException e1)
-            {
-                if (!_ignoreBadImageFormatExceptions)
+
+                using var ass = AssemblyDefinition.ReadAssembly(dllMs, ReaderParameters);
+                
+                if (!assemblyFilter?.Invoke(ass) ?? false)
                 {
-                    Logger.Error($"Skipping loading {dll} because it's not a valid .NET assembly. Full error:");
-                    Logger.Exception(e1);
+                    result[dll] = new List<T>();
+                    continue;
                 }
+
+                var matches = ass.MainModule.Types
+                                        .Select(t => typeSelector(t, dll))
+                                        .Where(t => t != null).ToList();
+                result[dll] = matches;
             }
-            catch (Exception e2)
+            catch (BadImageFormatException e)
             {
-                Logger.Exception(e2);
+                Logger.Debug($"Skipping loading {dll} because it's not a valid .NET assembly. Full error: {e.Message}");
+            }
+            catch (Exception e)
+            {
+                Logger.Exception(e);
             }
         }
+        
         if (cacheName != null)
-        {
             SaveAssemblyCache(cacheName, result, hashes);
-        }
+        
         return result;
     }
 
+    /// <summary>
+    ///     Loads an index of type metadatas from a cache.
+    /// </summary>
+    /// <param name="cacheName">Name of the cache</param>
+    /// <typeparam name="T">Cacheable item</typeparam>
+    /// <returns>
+    ///     Cached type metadatas indexed by the path of the assembly that defines the type. If no cache is defined,
+    ///     return null.
+    /// </returns>
     public static Dictionary<string, CachedAssembly<T>> LoadAssemblyCache<T>(string cacheName) where T : ICacheable, new()
     {
         if (!EnableAssemblyCache)
-        {
             return null;
-        }
-        Dictionary<string, CachedAssembly<T>> result = new Dictionary<string, CachedAssembly<T>>();
+        
+        var result = new Dictionary<string, CachedAssembly<T>>();
         try
         {
-            string path = Path.Combine(BepInEx.Paths.CachePath, cacheName + "_typeloader.dat");
+            var path = Path.Combine(BepInEx.Paths.CachePath, $"{cacheName}_typeloader.dat");
             if (!File.Exists(path))
-            {
                 return null;
-            }
-            using (BinaryReader br = new BinaryReader(File.OpenRead(path)))
+
+            using var br = new BinaryReader(File.OpenRead(path));
+            
+            var entriesCount = br.ReadInt32();
+            
+            for (var i = 0; i < entriesCount; i++)
             {
-                int entriesCount = br.ReadInt32();
-                for (int i = 0; i < entriesCount; i++)
+                var entryIdentifier = br.ReadString();
+                var hash = br.ReadString();
+                var itemsCount = br.ReadInt32();
+                var items = new List<T>();
+                
+                for (var j = 0; j < itemsCount; j++)
                 {
-                    string entryIdentifier = br.ReadString();
-                    string hash = br.ReadString();
-                    int itemsCount = br.ReadInt32();
-                    List<T> items = new List<T>();
-                    for (int j = 0; j < itemsCount; j++)
-                    {
-                        T entry = new T();
-                        entry.Load(br);
-                        items.Add(entry);
-                    }
-                    result[entryIdentifier] = new CachedAssembly<T>
-                    {
-                        Hash = hash,
-                        CacheItems = items
-                    };
+                    var entry = new T();
+                    entry.Load(br);
+                    items.Add(entry);
                 }
+                
+                result[entryIdentifier] = new CachedAssembly<T>
+                {
+                    Hash = hash,
+                    CacheItems = items
+                };
             }
         }
         catch (Exception e)
         {
-            Logger.Error($"Failed to load cache \"{cacheName}\": skipping loading cache. Reason:");
-            Logger.Exception(e);
+            Logger.Warning($"Failed to load cache \"{cacheName}\": skipping loading cache. Reason: {e.Message}");
         }
+        
         return result;
     }
 
+    /// <summary>
+    ///     Saves indexed type metadata into a cache.
+    /// </summary>
+    /// <param name="cacheName">Name of the cache</param>
+    /// <param name="entries">List of plugin metadatas indexed by the path to the assembly that contains the types</param>
+    /// <param name="hashes">Hash values that can be used for checking similarity between cached and live assembly</param>
+    /// <typeparam name="T">Cacheable item</typeparam>
     public static void SaveAssemblyCache<T>(string cacheName, Dictionary<string, List<T>> entries, Dictionary<string, string> hashes) where T : ICacheable
     {
         if (!EnableAssemblyCache)
-        {
             return;
-        }
+        
         try
         {
             if (!Directory.Exists(BepInEx.Paths.CachePath))
-            {
                 Directory.CreateDirectory(BepInEx.Paths.CachePath);
-            }
-            using (BinaryWriter bw = new BinaryWriter(File.OpenWrite(Path.Combine(BepInEx.Paths.CachePath, cacheName + "_typeloader.dat"))))
+
+            using var bw = new BinaryWriter(File.OpenWrite(Path.Combine(BepInEx.Paths.CachePath, $"{cacheName}_typeloader.dat")));
+            bw.Write(entries.Count);
+            
+            foreach (var kv in entries)
             {
-                bw.Write(entries.Count);
-                foreach (KeyValuePair<string, List<T>> kv in entries)
-                {
-                    bw.Write(kv.Key);
-                    string hash;
-                    bw.Write(hashes.TryGetValue(kv.Key, out hash) ? hash : "");
-                    bw.Write(kv.Value.Count);
-                    foreach (T item in kv.Value)
-                    {
-                        item.Save(bw);
-                    }
-                }
+                bw.Write(kv.Key);
+                bw.Write(hashes.GetValueOrDefault(kv.Key, ""));
+                bw.Write(kv.Value.Count);
+                
+                foreach (var item in kv.Value)
+                    item.Save(bw);
             }
         }
         catch (Exception e)
         {
-            Logger.Error($"Failed to save cache \"{cacheName}\"; skipping saving cache. Reason:");
-            Logger.Exception(e);
+            Logger.Warning($"Failed to save cache \"{cacheName}\"; skipping saving cache. Reason: {e.Message}");
         }
     }
 
+    /// <summary>
+    ///     Converts TypeLoadException to a readable string.
+    /// </summary>
+    /// <param name="ex">TypeLoadException</param>
+    /// <returns>Readable representation of the exception</returns>
     public static string TypeLoadExceptionToString(ReflectionTypeLoadException ex)
     {
-        StringBuilder sb = new StringBuilder();
-        foreach (Exception exSub in ex.LoaderExceptions)
+        var sb = new StringBuilder();
+        foreach (var exSub in ex.LoaderExceptions)
         {
-            sb.AppendLine(exSub.Message);
-            FileNotFoundException exFileNotFound = exSub as FileNotFoundException;
-            if (exFileNotFound != null)
+            sb.AppendLine(exSub!.Message);
+            if (exSub is FileNotFoundException exFileNotFound)
             {
                 if (!string.IsNullOrEmpty(exFileNotFound.FusionLog))
                 {
@@ -214,28 +262,18 @@ public static class TypeLoader
                     sb.AppendLine(exFileNotFound.FusionLog);
                 }
             }
-            else
+            else if (exSub is FileLoadException exLoad)
             {
-                FileLoadException exLoad = exSub as FileLoadException;
-                if (exLoad != null && !string.IsNullOrEmpty(exLoad.FusionLog))
+                if (!string.IsNullOrEmpty(exLoad.FusionLog))
                 {
                     sb.AppendLine("Fusion Log:");
                     sb.AppendLine(exLoad.FusionLog);
                 }
             }
+            
             sb.AppendLine();
         }
+        
         return sb.ToString();
     }
-
-    public static readonly DefaultAssemblyResolver CecilResolver = new DefaultAssemblyResolver();
-
-    public static readonly ReaderParameters ReaderParameters = new ReaderParameters
-    {
-        AssemblyResolver = CecilResolver
-    };
-
-    public static HashSet<string> SearchDirectories = new HashSet<string>();
-
-    private static readonly bool EnableAssemblyCache = true;
 }

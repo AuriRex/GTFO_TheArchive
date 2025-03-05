@@ -1,6 +1,11 @@
-﻿using Mono.Cecil;
+﻿// This file is licensed under the LGPL 2.1 LICENSE
+// See LICENSE_BepInEx in the projects root folder
+// Original code from https://github.com/BepInEx/BepInEx
+
+using Mono.Cecil;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using TheArchive.Core.Bootstrap;
@@ -8,20 +13,37 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Core.Attributes;
 
+/// <summary>
+///     This attribute specifies other modules that are incompatible with this module.
+/// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class ArchiveIncompatibility : Attribute, ICacheable
 {
+    /// <summary>
+    ///     Marks this <see cref="IArchiveModule" /> as incompatible with another module.
+    ///     If the other module exists, this module will not be loaded and a warning will be shown.
+    /// </summary>
+    /// <param name="IncompatibilityGUID">The GUID of the referenced module.</param>
     public ArchiveIncompatibility(string IncompatibilityGUID)
     {
         this.IncompatibilityGUID = IncompatibilityGUID;
     }
 
+    /// <summary>
+    ///     The GUID of the referenced module.
+    /// </summary>
     public string IncompatibilityGUID { get; protected set; }
 
     internal static IEnumerable<ArchiveIncompatibility> FromCecilType(TypeDefinition td)
     {
-        return (from customAttribute in MetadataHelper.GetCustomAttributes<ArchiveIncompatibility>(td, true)
-                select new ArchiveIncompatibility((string)customAttribute.ConstructorArguments[0].Value)).ToList();
+        var attrs = MetadataHelper.GetCustomAttributes<ArchiveIncompatibility>(td, true);
+        return attrs.Select(customAttribute =>
+        {
+            var dependencyGuid = (string) customAttribute.ConstructorArguments[0].Value;
+            return new ArchiveIncompatibility(dependencyGuid);
+        }).ToList();
     }
 
     public void Save(BinaryWriter bw)
