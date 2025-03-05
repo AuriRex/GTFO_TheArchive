@@ -335,96 +335,36 @@ public class LocalFiles
     }
 
     public static string GetBotFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_BOT_FAVORITES_JSON);
-
-
-    private static string _boostersPath = null;
-    public static string BoostersPath
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(_boostersPath))
-                _boostersPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"Booster_Data.json");
-            return _boostersPath;
-        }
-    }
-
-    private static string _vanityItemsPath = null;
-    public static string VanityItemsPath
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(_vanityItemsPath))
-                _vanityItemsPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"VanityItems_Data.json");
-            return _vanityItemsPath;
-        }
-    }
-
-    private static string _vanityItemsLayerDropsPath = null;
-    public static string VanityItemsLayerDropsPath
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(_vanityItemsLayerDropsPath))
-                _vanityItemsLayerDropsPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"VanityItemsLayerDrops_Data.json");
-            return _vanityItemsLayerDropsPath;
-        }
-    }
-
-    private static string _progressionPath = null;
-    private static string LocalProgressionBasePathNoExtension
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(_progressionPath))
-                _progressionPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"RundownProgression_Data");
-            return _progressionPath;
-        }
-    }
-
-    public static string GetLocalProgressionPathForKey(string rundownKey)
-    {
-        return $"{LocalProgressionBasePathNoExtension}_{rundownKey}.json";
-    }
-
-    public static void SaveToFilesDir(string filename, string jsonOrSomething)
-    {
-
-        string path = Path.Combine(FilesDirectoryPath, filename);
-        if (string.IsNullOrEmpty(jsonOrSomething))
-        {
-            ArchiveLogger.Msg(ConsoleColor.DarkRed, $"Saving \"{filename}\" to disk failed because the data is null or empty! Path: {path}");
-            return;
-        }
-        ArchiveLogger.Msg(ConsoleColor.Blue, $"Saving \"{filename}\" to disk at: {path}");
-        File.WriteAllText(path, jsonOrSomething);
-    }
-
-    public static string LoadFromFilesDir(string filename, bool isJson = true)
-    {
-        string path = Path.Combine(FilesDirectoryPath, filename);
-        ArchiveLogger.Msg(ConsoleColor.Green, $"Loading \"{filename}\" from disk at: {path}");
-        if (!File.Exists(path))
-            return isJson ? "{}" : string.Empty;
-        return File.ReadAllText(path);
-    }
-
+    
     public static T LoadConfig<T>(out bool fileExists, bool saveIfNonExistent = true) where T : new()
     {
         var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
-
-        if (!File.Exists(path))
+        
+        try
         {
-            var newT = new T();
-            if (saveIfNonExistent)
+            if (!File.Exists(path))
             {
-                SaveConfig(newT);
+                var newT = new T();
+                if (saveIfNonExistent)
+                {
+                    SaveConfig(newT);
+                }
+
+                fileExists = false;
+                return newT;
             }
-            fileExists = false;
-            return newT;
+
+            fileExists = true;
+            return JsonConvert.DeserializeObject<T>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+        }
+        catch (Exception ex)
+        {
+            ArchiveLogger.Error($"An error occured while loading config file {typeof(T).Name}.json");
+            ArchiveLogger.Exception(ex);
         }
 
-        fileExists = true;
-        return JsonConvert.DeserializeObject<T>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+        fileExists = false;
+        return new T();
     }
     public static T LoadConfig<T>(bool saveIfNonExistent = true) where T : new()
     {
@@ -433,15 +373,25 @@ public class LocalFiles
 
     public static void SaveConfig<T>(T config)
     {
-        var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
+        try
+        {
+            var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
 
-        File.WriteAllText(path, JsonConvert.SerializeObject(config, ArchiveMod.JsonSerializerSettings));
+            File.WriteAllText(path, JsonConvert.SerializeObject(config, ArchiveMod.JsonSerializerSettings));
+        }
+        catch (Exception ex)
+        {
+            ArchiveLogger.Error($"An error occured while saving config file {typeof(T).Name}.json");
+            ArchiveLogger.Exception(ex);
+        }
     }
 
-    internal static object LoadFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, out bool fileExists, bool saveIfNonExistent = true)
+    private static object LoadFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, out bool fileExists, bool saveIfNonExistent = true)
     {
-        if (string.IsNullOrWhiteSpace(featureIdentifier)) throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
-        if (configType == null) throw new ArgumentNullException($"Parameter {nameof(configType)} may not be null.");
+        if (string.IsNullOrWhiteSpace(featureIdentifier))
+            throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
+        if (configType == null)
+            throw new ArgumentNullException(nameof(configType));
 
         var moduleSettingsPath = Path.Combine(FeatureConfigsDirectoryPath, moduleIdentifier);
         if (!Directory.Exists(moduleSettingsPath))
@@ -488,7 +438,7 @@ public class LocalFiles
 
     internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature)
     {
-        string dir = Path.Combine(Path.GetDirectoryName(feature.FeatureInternal.OriginAssembly.Location), "Localization");
+        var dir = Path.Combine(Path.GetDirectoryName(feature.FeatureInternal.OriginAssembly.Location), "Localization");
         if (!Directory.Exists(dir))
         {
             Directory.CreateDirectory(dir);
@@ -500,16 +450,14 @@ public class LocalFiles
             File.WriteAllText(path, JsonConvert.SerializeObject(newData, ArchiveMod.JsonSerializerSettings));
             return newData;
         }
-        else
-        {
-            var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
-            var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
-            var rdata = FeatureInternal.GenerateFeatureLocalization(feature, data);
-            var rjson = JsonConvert.SerializeObject(rdata, ArchiveMod.JsonSerializerSettings);
-            if (rjson.HashString() != json.HashString())
-                File.WriteAllText(path, rjson);
-            return rdata;
-        }
+
+        var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+        var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
+        var rdata = FeatureInternal.GenerateFeatureLocalization(feature, data);
+        var rjson = JsonConvert.SerializeObject(rdata, ArchiveMod.JsonSerializerSettings);
+        if (rjson.HashString() != json.HashString())
+            File.WriteAllText(path, rjson);
+        return rdata;
     }
 
     internal static object LoadFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, bool saveIfNonExistent = true)
@@ -519,12 +467,16 @@ public class LocalFiles
 
     internal static void SaveFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, object configInstance)
     {
-        if (string.IsNullOrWhiteSpace(featureIdentifier)) throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
-        if (configType == null) throw new ArgumentNullException($"Parameter {nameof(configType)} may not be null.");
-        if (configInstance == null) throw new ArgumentNullException($"Parameter {nameof(configInstance)} may not be null.");
+        if (string.IsNullOrWhiteSpace(featureIdentifier))
+            throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
+        if (configType == null)
+            throw new ArgumentNullException(nameof(configType));
+        if (configInstance == null)
+            throw new ArgumentNullException(nameof(configInstance));
 
         var moduleSettingsPath = Path.Combine(FeatureConfigsDirectoryPath, moduleIdentifier);
-        if (!Directory.Exists(moduleSettingsPath)) Directory.CreateDirectory(moduleSettingsPath);
+        if (!Directory.Exists(moduleSettingsPath))
+            Directory.CreateDirectory(moduleSettingsPath);
 
         var path = Path.Combine(moduleSettingsPath, $"{featureIdentifier}_{configType.Name}.json");
 

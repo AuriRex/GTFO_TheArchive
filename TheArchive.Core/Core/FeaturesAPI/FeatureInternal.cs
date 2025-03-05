@@ -597,15 +597,24 @@ internal class FeatureInternal
 
         foreach (var settingsHelper in _settingsHelpers)
         {
-            _FILogger.Info($"Loading config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
+            try
+            {
+                _FILogger.Info($"Loading config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
 
-            var configInstance = LocalFiles.LoadFeatureConfig(ArchiveModule.GetType().Assembly.GetName().Name, $"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
-            if (refreshDisplayName)
-                settingsHelper.RefreshDisplayName();
-            settingsHelper.SetupViaFeatureInstance(configInstance);
+                var configInstance = LocalFiles.LoadFeatureConfig(ArchiveModule.GetType().Assembly.GetName().Name,
+                    $"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType);
+                if (refreshDisplayName)
+                    settingsHelper.RefreshDisplayName();
+                settingsHelper.SetupViaFeatureInstance(configInstance);
 
-            if (settingsHelper.Settings.Any(fs => !fs.HideInModSettings))
-                AllAdditionalSettingsAreHidden = false;
+                if (settingsHelper.Settings.Any(fs => !fs.HideInModSettings))
+                    AllAdditionalSettingsAreHidden = false;
+            }
+            catch (Exception ex)
+            {
+                _FILogger.Error($"An error occured while loading config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName})!");
+                _FILogger.Exception(ex);
+            }
         }
     }
 
@@ -623,10 +632,18 @@ internal class FeatureInternal
 
             _FILogger.Success($"Saving config {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName}) ...");
 
-            var configInstance = settingsHelper.GetFeatureInstance();
+            try
+            {
+                var configInstance = settingsHelper.GetFeatureInstance();
 
-            LocalFiles.SaveFeatureConfig(ArchiveModule.GetType().Assembly.GetName().Name, $"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType, configInstance);
-
+                LocalFiles.SaveFeatureConfig(ArchiveModule.GetType().Assembly.GetName().Name, $"{_feature.Identifier}_{settingsHelper.PropertyName}", settingsHelper.SettingType, configInstance);
+            }
+            catch (Exception ex)
+            {
+                _FILogger.Error($"Failed to save config file {_feature.Identifier} [{settingsHelper.PropertyName}] ({settingsHelper.TypeName})!");
+                _FILogger.Exception(ex);
+            }
+            
             settingsHelper.IsDirty = false;
         }
     }
