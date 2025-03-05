@@ -35,7 +35,7 @@
 	
 	<UsingTask TaskName="ManifestGenerator.ManifestGeneratorTask" AssemblyFile="$(MSBuildThisFileDirectory)\BuildTasks\Tasks\ManifestGenerator.dll"/>
 	
-	<Target Name="GenerateManifestFile" AfterTargets="GitVersion;CopyAssemblyAfterBuild" Condition="'$(TSName)' != ''">
+	<Target Name="GenerateManifestFile" AfterTargets="CopyAssemblyAfterBuild" Condition="'$(TSName)' != ''">
 		<PropertyGroup Condition="'$(TSVersion)' == '' And '$(GitSemVerMajor)' != ''">
 			<TSVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</TSVersion>
 		</PropertyGroup>
