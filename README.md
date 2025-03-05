@@ -23,7 +23,7 @@ A collection of mods for the game [GTFO](https://gtfothegame.com/), that add a t
 Improve the game via Quality of Life and cosmetic additions without disrupting the experience of other players.  
 All mechanics are still kept vanilla and in spirit of the games original design.
 
-## What this **doesn't** do
+## What this does NOT do
 This ***does not*** give you access to the game or any of the old versions, you have to have bought the game on steam!  
 This ***does not*** give any player an unfair advantage or trivialize the game, you have to bring your own skill.
 
@@ -58,8 +58,8 @@ You can customize the save folder by editing `TheArchive_Settings.json`'s `"Cust
 
 ### Building
 1. Open the solution `TheArchive.sln` in Visual Studio or JetBrains Rider
-2. Built the solution
-3. profit
+2. Build the solution
+3. Profit
 
 ## Building the project (On Linux)
 
