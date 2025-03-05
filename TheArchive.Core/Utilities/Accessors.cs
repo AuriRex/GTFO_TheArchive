@@ -224,7 +224,7 @@ public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>, IStatic
         {
             return (FT)_field.GetValue(instance);
         }
-        catch (NullReferenceException nre)
+        catch (NullReferenceException)
         {
             if (!IgnoreErrors)
             {
@@ -235,7 +235,7 @@ public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>, IStatic
                 }
 
                 ArchiveLogger.Error($"NullReferenceException while getting {nameof(FieldAccessor<T, FT>)} field \"{Identifier}\"!");
-                throw nre;
+                throw;
             }
         }
         catch (Exception ex)
@@ -257,7 +257,7 @@ public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>, IStatic
         {
             _field.SetValue(instance, value);
         }
-        catch (NullReferenceException nre)
+        catch (NullReferenceException)
         {
             if (!IgnoreErrors)
             {
@@ -268,7 +268,7 @@ public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>, IStatic
                 }
 
                 ArchiveLogger.Error($"NullReferenceException while setting {nameof(FieldAccessor<T, FT>)} field \"{Identifier}\"!");
-                throw nre;
+                throw;
             }
         }
         catch (Exception ex)
@@ -343,7 +343,7 @@ public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>, ISta
         {
             return (PT)_property.GetValue(instance);
         }
-        catch (NullReferenceException nre)
+        catch (NullReferenceException)
         {
             if (!IgnoreErrors)
             {
@@ -354,7 +354,7 @@ public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>, ISta
                 }
 
                 ArchiveLogger.Error($"NullReferenceException while getting {nameof(PropertyAccessor<T, PT>)} property \"{Identifier}\"!");
-                throw nre;
+                throw;
             }
         }
         catch (Exception ex)
@@ -376,7 +376,7 @@ public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>, ISta
         {
             _property.SetValue(instance, value);
         }
-        catch (NullReferenceException nre)
+        catch (NullReferenceException)
         {
             if (!IgnoreErrors)
             {
@@ -387,7 +387,7 @@ public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>, ISta
                 }
 
                 ArchiveLogger.Error($"NullReferenceException while setting {nameof(PropertyAccessor<T, PT>)} property \"{Identifier}\"!");
-                throw nre;
+                throw;
             }
         }
         catch (Exception ex)
@@ -480,7 +480,7 @@ public class MethodAccessor<T, RT> : AccessorBase
 
             return (RT)value;
         }
-        catch (NullReferenceException nre)
+        catch (NullReferenceException)
         {
             if (!IgnoreErrors)
             {
@@ -491,7 +491,7 @@ public class MethodAccessor<T, RT> : AccessorBase
                 }
 
                 ArchiveLogger.Error($"NullReferenceException while calling {nameof(MethodAccessor<T, RT>)} method \"{Identifier}\"!");
-                throw nre;
+                throw;
             }
         }
         catch (Exception ex)
@@ -596,7 +596,7 @@ public class MethodAccessor<T> : AccessorBase
             }
             _method.Invoke(instance, parameters ?? NoParams);
         }
-        catch(NullReferenceException nre)
+        catch(NullReferenceException)
         {
             if(!IgnoreErrors)
             {
@@ -607,7 +607,7 @@ public class MethodAccessor<T> : AccessorBase
                 }
 
                 ArchiveLogger.Error($"NullReferenceException while calling {nameof(MethodAccessor<T>)} method \"{Identifier}\"!");
-                throw nre;
+                throw;
             }
         }
         catch(Exception ex)

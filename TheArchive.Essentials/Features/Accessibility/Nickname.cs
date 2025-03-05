@@ -301,7 +301,7 @@ public class Nickname : Feature
         {
             if(!ex.Message.Contains("Steamworks"))
             {
-                throw ex;
+                throw;
             }
         }
     }
