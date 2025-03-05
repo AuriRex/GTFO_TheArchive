@@ -23,6 +23,10 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+		<EmbeddedResource Include="./Resources/RundownFiveBoosterTemplates.json" Link="Resources/RundownFiveBoosterTemplates.json" />
+	</ItemGroup>
+	
+	<ItemGroup>
 		<ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
 			<Project>{7bb66dc5-d29d-4cdd-bb82-d228abe35bda}</Project>
 			<Name>TheArchive.Core</Name>
