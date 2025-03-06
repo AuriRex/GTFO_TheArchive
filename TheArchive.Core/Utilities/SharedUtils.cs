@@ -520,7 +520,22 @@ public static class SharedUtils
 
         if(!ArchiveMod.IsPlayingModded && text != null)
         {
-            text = text.Replace("TITLE:", "-");
+            try
+            {
+                var split = text.Split("TITLE: ");
+
+                var title = split[1];
+                
+                var part1 = split[0];
+                var rundown = part1.Split('#')[1].Split('.')[0];
+                
+                text = $"R{rundown} - {title}";
+            }
+            catch
+            {
+                // ignored
+            }
+            //text = text.Replace("TITLE:", "-");
         }
 
         if(ArchiveMod.IsOnALTBuild && text == null)

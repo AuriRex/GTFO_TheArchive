@@ -20,7 +20,7 @@ public class ReactorDiscordRPC : Feature
 
     public override FeatureGroup Group => FeatureGroups.Presence;
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     private static IValueAccessor<LG_WardenObjective_Reactor, float> A_m_currentWaveProgress;
     private static IValueAccessor<LG_WardenObjective_Reactor, float> A_m_currentDuration;

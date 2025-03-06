@@ -24,7 +24,7 @@ public class DiscordRichPresence : Feature
 
     public override bool SkipInitialOnEnable => true;
 
-    public override Type[] LocalizationExternalTypes => new Type[] { typeof(RichPresenceSettings) };
+    public override Type[] LocalizationExternalTypes => new[] { typeof(RichPresenceSettings) };
 
     [FeatureConfig]
     public static RichPresenceSettings DiscordRPCSettings { get; set; }
@@ -36,20 +36,17 @@ public class DiscordRichPresence : Feature
         PresenceManager.UpdateGameState(PresenceGameState.Startup, false);
     }
 
-    private static bool _wasDisabledForR8 = false;
-
     public override void OnEnable()
     {
-        if (Is.R8OrLater && !_wasDisabledForR8 && !DataBlocksReady && DiscordRPCSettings.DisableOnRundownEight)
-        {
-            FeatureLogger.Notice("Disabling Archive Rich Presence for Rundown 8!");
-            FeatureManager.Instance.DisableFeature(this, setConfig: false);
-            _wasDisabledForR8 = true; // Only do it once, user might re-enable it
+        if (!DataBlocksReady)
             return;
-        }
 
+        if (ArchiveDiscordManager.IsEnabled)
+            return;
+        
         try
         {
+            ArchiveDiscordManager.RenewPartyGuid();
             ArchiveDiscordManager.OnActivityJoin += DiscordManager_OnActivityJoin;
             ArchiveDiscordManager.Enable(DiscordRPCSettings);
         }
@@ -59,14 +56,23 @@ public class DiscordRichPresence : Feature
         }
     }
 
-    public override void OnGameDataInitialized()
+    public void OnGameStateChanged(eGameStateName state)
+    {
+        if (state == eGameStateName.NoLobby)
+        {
+            FeatureLogger.Debug($"Creating a new Party GUID.");
+            ArchiveDiscordManager.RenewPartyGuid();
+        }
+    }
+
+    public override void OnDatablocksReady()
     {
         OnEnable();
     }
 
-    private void DiscordManager_OnActivityJoin(string secret)
+    private static void DiscordManager_OnActivityJoin(string secret)
     {
-        ulong.TryParse(secret, out ulong value);
+        if (!ulong.TryParse(secret, out var value)) return;
         if (value == 0) return;
 
         CM_Utils.JoinLobby(value, new Action(() => FeatureLogger.Success($"Successfully joined lobby \"{secret}\"!")), new Action(() => FeatureLogger.Fail($"Failed to join lobby \"{secret}\".")));
@@ -74,8 +80,18 @@ public class DiscordRichPresence : Feature
 
     public override void OnDisable()
     {
-        ArchiveDiscordManager.OnActivityJoin -= DiscordManager_OnActivityJoin;
-        ArchiveDiscordManager.Disable();
+        if (!ArchiveDiscordManager.IsEnabled)
+            return;
+        
+        try
+        {
+            ArchiveDiscordManager.OnActivityJoin -= DiscordManager_OnActivityJoin;
+            ArchiveDiscordManager.Disable();
+        }
+        catch (Exception ex)
+        {
+            FeatureLogger.Exception(ex);
+        }
     }
 
     public override void Update()

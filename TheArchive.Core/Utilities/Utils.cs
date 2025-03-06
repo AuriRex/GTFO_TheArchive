@@ -131,11 +131,8 @@ public static partial class Utils
 
     public static string GetRundownTag(RundownFlags rundowns, bool generalizeLatest = false)
     {
-        var success = Enum.TryParse<RundownID>(rundowns.LowestRundownFlag().ToString(), out var lowestId);
-        success &= Enum.TryParse<RundownID>(rundowns.HighestRundownFlag().ToString(), out var highestId);
-
-        if (!success)
-            throw new ArgumentException($"Failed to parse {nameof(RundownFlags)}.", nameof(rundowns));
+        _ = Enum.TryParse<RundownID>(rundowns.LowestRundownFlag().ToString(), out var lowestId);
+        _ = Enum.TryParse<RundownID>(rundowns.HighestRundownFlag().ToString(), out var highestId);
         
         if (highestId == 0)
             highestId = GetLatestRundownID();
@@ -186,7 +183,7 @@ public static partial class Utils
     {
         return rundown switch
         {
-            RundownID.RundownOne => "Rundown Protocol #001",
+            RundownID.RundownOne => "Deviation",
             RundownID.RundownTwo => "Infection",
             RundownID.RundownThree => "The Vessel",
             RundownID.RundownFour => "Contact",
@@ -444,11 +441,13 @@ public static partial class Utils
         RundownAltFive = 1 << 11,
         RundownAltSix = 1 << 12,
         RundownEight = 1 << 13,
-
-        All = RundownOne | RundownTwo | RundownThree | RundownFour | RundownFive
-              | RundownSix | RundownSeven | RundownAltOne | RundownAltTwo | RundownAltThree
-              | RundownAltFour | RundownAltFive | RundownAltSix | RundownEight,
     }
+
+    public const RundownFlags ALL_RUNDOWN_FLAGS = RundownFlags.RundownOne | RundownFlags.RundownTwo | RundownFlags.RundownThree
+                                    | RundownFlags.RundownFour | RundownFlags.RundownFive | RundownFlags.RundownSix
+                                    | RundownFlags.RundownSeven | RundownFlags.RundownAltOne | RundownFlags.RundownAltTwo
+                                    | RundownFlags.RundownAltThree | RundownFlags.RundownAltFour | RundownFlags.RundownAltFive
+                                    | RundownFlags.RundownAltSix | RundownFlags.RundownEight;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static RundownFlags GetLatestRundownFlags()

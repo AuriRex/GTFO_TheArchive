@@ -6,11 +6,6 @@ namespace TheArchive.Core.Settings;
 
 public class RichPresenceSettings
 {
-    [FSDisplayName("Disable on R8")]
-    [FSDescription("Only disables Custom Discord Rich Presence on the Rundown 8 game version.\n\nIt will still be enabled if playing on older game versions.")]
-    [FSRundownHint(Utilities.Utils.RundownFlags.RundownEight, Utilities.Utils.RundownFlags.Latest)]
-    public bool DisableOnRundownEight { get; set; } = true;
-
     [FSHide]
     [FSDisplayName("DEBUG Use Default Settings")]
     public bool DEBUG_UseDefaultSettings { get; set; } = false;
