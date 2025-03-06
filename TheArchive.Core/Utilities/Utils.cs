@@ -1,58 +1,28 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Mono.Cecil;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Managers;
 using TheArchive.Loader;
 
 namespace TheArchive.Utilities;
 
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Utils
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public const BindingFlags AnyBindingFlagss = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
-
-    private static Type _UnityEngine_Random = Type.GetType("UnityEngine.Random, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
-    private static MethodInfo _UnityEngine_Random_RandomRangeInt;
-    private static MethodInfo _UnityEngine_Random_Range;
-
-    static Utils()
-    {
-        try
-        {
-            _UnityEngine_Random_RandomRangeInt = _UnityEngine_Random.GetMethod("RandomRangeInt");
-        } catch(Exception) { }
-
-        try
-        {
-            _UnityEngine_Random_Range = _UnityEngine_Random.GetMethod("Range", new Type[] { typeof(int), typeof(int) });
-        }
-        catch (Exception) { }
-    }
-
-    private static Type _UnityEngine_Time = Type.GetType("UnityEngine.Time, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
-    private static PropertyInfo _UnityEngine_time_PI = _UnityEngine_Time.GetProperty("time");
-
-    internal static float Unity_Time
-    {
-        get
-        {
-            return (float) _UnityEngine_time_PI.GetValue(null);
-        }
-    }
 
     internal static int RandomRangeInt(int min, int max)
     {
-        if(_UnityEngine_Random_RandomRangeInt != null)
-            return (int) _UnityEngine_Random_RandomRangeInt.Invoke(null, new object[] { min, max });
-        return (int) _UnityEngine_Random_Range.Invoke(null, new object[] { min, max });
+        return UnityEngine.Random.RandomRangeInt(min, max);
     }
 
     public static T PickRandom<T>(this T[] array)
@@ -152,22 +122,21 @@ public static partial class Utils
 
     public static bool TryGetEnumFromName<T>(string name, out T value) where T : struct
     {
-        if (Enum.TryParse<T>(name, out value))
-        {
-            return true;
-        }
-        return false;
+        return Enum.TryParse(name, out value);
     }
 
-    public static object StartCoroutine(System.Collections.IEnumerator routine) => LoaderWrapper.StartCoroutine(routine);
+    public static object StartCoroutine(IEnumerator routine) => LoaderWrapper.StartCoroutine(routine);
 
     public static void StopCoroutine(object coroutineToken) => LoaderWrapper.StopCoroutine(coroutineToken);
 
     public static string GetRundownTag(RundownFlags rundowns, bool generalizeLatest = false)
     {
-        Enum.TryParse<RundownID>(rundowns.LowestRundownFlag().ToString(), out var lowestId);
-        Enum.TryParse<RundownID>(rundowns.HighestRundownFlag().ToString(), out var highestId);
+        var success = Enum.TryParse<RundownID>(rundowns.LowestRundownFlag().ToString(), out var lowestId);
+        success &= Enum.TryParse<RundownID>(rundowns.HighestRundownFlag().ToString(), out var highestId);
 
+        if (!success)
+            throw new ArgumentException($"Failed to parse {nameof(RundownFlags)}.", nameof(rundowns));
+        
         if (highestId == 0)
             highestId = GetLatestRundownID();
 
@@ -187,54 +156,46 @@ public static partial class Utils
             }
             return $"{R}{(int)lowestId}";
         }
-        else
-        {
-            var RL = "R";
-            if (lowestId >= RundownID.RundownAltOne && lowestId < RundownID.RundownEight)
-            {
-                RL = "A";
-                lowestId = lowestId - (int)RundownID.RundownAltOne + 1;
-            }
-            else if (lowestId >= RundownID.RundownEight)
-            {
-                lowestId = lowestId - 6;
-            }
 
-            var RH = "R";
-            if (highestId >= RundownID.RundownAltOne && highestId < RundownID.RundownEight)
-            {
-                RH = "A";
-                highestId = highestId - (int)RundownID.RundownAltOne + 1;
-            }
-            else if (highestId >= RundownID.RundownEight)
-            {
-                highestId = highestId - 6;
-            }
-            return $"{RL}{(int)lowestId}-{(isLatest && generalizeLatest ? "RL" : RH+(int)highestId)}";
+        var RL = "R";
+        if (lowestId >= RundownID.RundownAltOne && lowestId < RundownID.RundownEight)
+        {
+            RL = "A";
+            lowestId = lowestId - (int)RundownID.RundownAltOne + 1;
         }
+        else if (lowestId >= RundownID.RundownEight)
+        {
+            lowestId = lowestId - 6;
+        }
+
+        var RH = "R";
+        if (highestId >= RundownID.RundownAltOne && highestId < RundownID.RundownEight)
+        {
+            RH = "A";
+            highestId = highestId - (int)RundownID.RundownAltOne + 1;
+        }
+        else if (highestId >= RundownID.RundownEight)
+        {
+            highestId = highestId - 6;
+        }
+        return $"{RL}{(int)lowestId}-{(isLatest && generalizeLatest ? "RL" : RH+(int)highestId)}";
     }
 
     public static string GetRundownTitle() => GetRundownTitle(ArchiveMod.CurrentRundown);
     public static string GetRundownTitle(RundownID rundown)
     {
-        switch(rundown)
+        return rundown switch
         {
-            case RundownID.RundownOne:
-                return "Rundown Protocol #001";
-            case RundownID.RundownTwo:
-                return "Infection";
-            case RundownID.RundownThree:
-                return "The Vessel";
-            case RundownID.RundownFour:
-                return "Contact";
-            case RundownID.RundownFive:
-                return "Rebirth";
-            case RundownID.RundownSix:
-                return "Destination";
-            case RundownID.RundownSeven:
-                return "Rise";
-        }
-        return "Unknown";
+            RundownID.RundownOne => "Rundown Protocol #001",
+            RundownID.RundownTwo => "Infection",
+            RundownID.RundownThree => "The Vessel",
+            RundownID.RundownFour => "Contact",
+            RundownID.RundownFive => "Rebirth",
+            RundownID.RundownSix => "Destination",
+            RundownID.RundownSeven => "Rise",
+            RundownID.RundownEight => "Duality",
+            _ => "Unknown"
+        };
     }
 
     public static string GetHash(byte[] bytes)
@@ -302,22 +263,24 @@ public static partial class Utils
     // https://stackoverflow.com/a/11749642
     public static string ToRoman(int number)
     {
-        if ((number < 0) || (number > 3999)) throw new ArgumentOutOfRangeException("insert value betwheen 1 and 3999");
-        if (number < 1) return string.Empty;
-        if (number >= 1000) return "M" + ToRoman(number - 1000);
-        if (number >= 900) return "CM" + ToRoman(number - 900);
-        if (number >= 500) return "D" + ToRoman(number - 500);
-        if (number >= 400) return "CD" + ToRoman(number - 400);
-        if (number >= 100) return "C" + ToRoman(number - 100);
-        if (number >= 90) return "XC" + ToRoman(number - 90);
-        if (number >= 50) return "L" + ToRoman(number - 50);
-        if (number >= 40) return "XL" + ToRoman(number - 40);
-        if (number >= 10) return "X" + ToRoman(number - 10);
-        if (number >= 9) return "IX" + ToRoman(number - 9);
-        if (number >= 5) return "V" + ToRoman(number - 5);
-        if (number >= 4) return "IV" + ToRoman(number - 4);
-        if (number >= 1) return "I" + ToRoman(number - 1);
-        throw new ArgumentOutOfRangeException("something bad happened");
+        return number switch
+        {
+            < 0 or > 3999 => throw new ArgumentOutOfRangeException(nameof(number), "Value has to be between 1 and 3999"),
+            < 1 => string.Empty,
+            >= 1000 => "M" + ToRoman(number - 1000),
+            >= 900 => "CM" + ToRoman(number - 900),
+            >= 500 => "D" + ToRoman(number - 500),
+            >= 400 => "CD" + ToRoman(number - 400),
+            >= 100 => "C" + ToRoman(number - 100),
+            >= 90 => "XC" + ToRoman(number - 90),
+            >= 50 => "L" + ToRoman(number - 50),
+            >= 40 => "XL" + ToRoman(number - 40),
+            >= 10 => "X" + ToRoman(number - 10),
+            >= 9 => "IX" + ToRoman(number - 9),
+            >= 5 => "V" + ToRoman(number - 5),
+            >= 4 => "IV" + ToRoman(number - 4),
+            >= 1 => "I" + ToRoman(number - 1)
+        };
     }
 
     // https://stackoverflow.com/a/600306
@@ -352,8 +315,14 @@ public static partial class Utils
     public static byte[] GetResource(Assembly assembly, string resourcePath)
     {
         var stream = assembly.GetManifestResourceStream(resourcePath);
+
+        if (stream == null || !stream.CanRead)
+        {
+            throw new ArgumentException("Resource could not be loaded.", nameof(resourcePath));
+        }
+        
         var data = new byte[stream.Length];
-        stream.Read(data, 0, (int) stream.Length);
+        _ = stream.Read(data, 0, (int) stream.Length);
         return data;
     }
 
@@ -394,19 +363,6 @@ public static partial class Utils
         return sb.ToString();
     }
 
-    [Obsolete]
-    public class ValueAttribute : Attribute
-    {
-        public object Value { get; private set; }
-        public Type Type { get; private set; }
-
-        public ValueAttribute(object value)
-        {
-            Value = value;
-            Type = value.GetType();
-        }
-    }
-
     public static IEnumerator NextFrame(Action action)
     {
         yield return null;
@@ -423,7 +379,7 @@ public static partial class Utils
      * 29 = RD#006
      */
 
-    private static RundownID? _latestRundownID = null;
+    private static RundownID? _latestRundownID;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static RundownID GetLatestRundownID()
@@ -434,7 +390,7 @@ public static partial class Utils
     /// <summary>
     /// This is used to identify the game build in a more broad way.
     /// </summary>
-    public enum RundownID : int
+    public enum RundownID
     {
         Latest = -2,
 
@@ -459,7 +415,7 @@ public static partial class Utils
     // IMPORTANT VALUE HERE
     // IMPORTANT VALUE HERE
     // IMPORTANT VALUE HERE
-    private const RundownFlags LatestRundownFlags = RundownFlags.RundownEight;
+    private const RundownFlags LATEST_RUNDOWN_FLAGS = RundownFlags.RundownEight;
     // IMPORTANT VALUE ABOVE
     // IMPORTANT VALUE ABOVE
     // IMPORTANT VALUE ABOVE
@@ -468,7 +424,7 @@ public static partial class Utils
     /// <b>Avoid</b> using <seealso cref="RundownFlags.Latest"/> outside of <seealso cref="RundownConstraint"/>, similar Attributes or without using <seealso cref="RundownFlagsExtensions.To(RundownFlags, RundownFlags)"/>
     /// </summary>
     [Flags]
-    public enum RundownFlags : int
+    public enum RundownFlags
     {
         Latest = -2,
 
@@ -497,7 +453,7 @@ public static partial class Utils
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static RundownFlags GetLatestRundownFlags()
     {
-        return LatestRundownFlags;
+        return LATEST_RUNDOWN_FLAGS;
     }
 
     public static bool FlagsContain(RundownFlags flags, RundownID id)
@@ -551,14 +507,14 @@ public static partial class Utils
             flags = (RundownFlags) i;
         }
 
-        return flags.Value;
+        return flags!.Value;
     }
 
     public static bool AnyRundownConstraintMatches(MemberInfo memberInfo)
     {
-        var constraints = memberInfo.GetCustomAttributes<RundownConstraint>();
+        var constraints = memberInfo.GetCustomAttributes<RundownConstraint>().ToArray();
 
-        if (constraints.Count() == 0)
+        if (constraints.Length == 0)
             return true;
 
         var rundown = ArchiveMod.CurrentBuildInfo.Rundown;
@@ -573,9 +529,9 @@ public static partial class Utils
 
     public static bool AnyBuildConstraintMatches(MemberInfo memberInfo)
     {
-        var constraints = memberInfo.GetCustomAttributes<BuildConstraint>();
+        var constraints = memberInfo.GetCustomAttributes<BuildConstraint>().ToArray();
 
-        if (constraints.Count() == 0)
+        if (constraints.Length == 0)
             return true;
 
         var buildNumber = ArchiveMod.CurrentBuildInfo.BuildNumber;
@@ -585,17 +541,6 @@ public static partial class Utils
                 return true;
         }
 
-        return false;
-    }
-
-    public static bool TryGetMethodByName(Type type, string name, out MethodInfo methodInfo)
-    {
-        if (type.GetMethods(AnyBindingFlagss).Any(x => x.Name.Equals(name)))
-        {
-            methodInfo = type.GetMethod(name, AnyBindingFlagss);
-            return true;
-        }
-        methodInfo = null;
         return false;
     }
 

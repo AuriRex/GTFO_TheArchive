@@ -15,7 +15,7 @@ public static class RundownFlagsExtensions
     /// <returns>True if <paramref name="flags"/> contains the <paramref name="rundownID"/></returns>
     public static bool IsIncludedIn(this RundownID rundownID, RundownFlags flags)
     {
-        return Utils.FlagsContain(flags, rundownID);
+        return FlagsContain(flags, rundownID);
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public static class RundownFlagsExtensions
         return FlagsFromTo(flags, RundownFlags.Latest);
     }
 
-    private static IEnumerable<RundownFlags> _allFlagsOrdered = null;
+    private static IEnumerable<RundownFlags> _allFlagsOrdered;
     // https://stackoverflow.com/a/2344594
     public static IEnumerable<RundownFlags> AllFlagsOrdered
     {
@@ -78,38 +78,5 @@ public static class RundownFlagsExtensions
     public static RundownFlags HighestRundownFlag(this RundownFlags flags)
     {
         return AllFlagsOrdered.LastOrDefault(x => flags.HasFlag(x));
-    }
-
-    /// <summary>
-    /// Get the <seealso cref="int"/> Value of a <see cref="ValueAttribute"/> attached to a specific <seealso cref="Enum"/> entry.
-    /// </summary>
-    /// <typeparam name="T">An <seealso cref="Enum"/></typeparam>
-    /// <param name="thisEnum"></param>
-    /// <returns>The <seealso cref="int"/> value represented by the <seealso cref="ValueAttribute"/> or -1 if <typeparamref name="T"/> is not of type <seealso cref="Enum"/></returns>
-    [Obsolete]
-    public static int GetIntValue<T>(this T thisEnum) where T : IConvertible
-    {
-        if (thisEnum is Enum)
-        {
-            Type type = thisEnum.GetType();
-            Array values = Enum.GetValues(type);
-
-            foreach (int val in values)
-            {
-                if (val == thisEnum.ToInt32(System.Globalization.CultureInfo.InvariantCulture))
-                {
-                    var valueAttribute = type.GetField(type.GetEnumName(val))
-                        .GetCustomAttributes(typeof(ValueAttribute), false)
-                        .FirstOrDefault() as ValueAttribute;
-
-                    if (valueAttribute != null && valueAttribute.Type == typeof(int))
-                    {
-                        return (int) valueAttribute.Value;
-                    }
-                }
-            }
-        }
-
-        return -1;
     }
 }
