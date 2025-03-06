@@ -1,6 +1,7 @@
 ﻿using Player;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
@@ -19,6 +20,8 @@ public class MuteSpeak : Feature
 
     public override string Description => "Binds a few voice lines to keyboard keys.\n\nArrow keys\n[P, L, K, J, H] toggleable by hitting F8; off by default\nHold [Right Control] for alternate lines";
 
+    public new static IArchiveLogger FeatureLogger { get; set; }
+    
     public static bool EnableOtherVoiceBinds { get; set; } = false;
 
     private static PlayerAgent _localPlayerAgent = null!;
@@ -45,7 +48,7 @@ public class MuteSpeak : Feature
         if (Input.GetKeyDown(KeyCode.F8))
         {
             EnableOtherVoiceBinds = !EnableOtherVoiceBinds;
-            ArchiveLogger.Notice($"Voice binds enabled: {EnableOtherVoiceBinds}");
+            FeatureLogger.Notice($"Voice binds enabled: {EnableOtherVoiceBinds}");
         }
 
         if (PlayerChatManager.InChatMode) return;

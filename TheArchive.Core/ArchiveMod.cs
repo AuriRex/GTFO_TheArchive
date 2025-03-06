@@ -140,7 +140,7 @@ public static class ArchiveMod
 
     internal static void OnApplicationStart(IArchiveLogger logger, HarmonyLib.Harmony harmonyInstance)
     {
-        ArchiveLogger.logger = logger;
+        ArchiveLogger.Logger = logger;
         _harmonyInstance = harmonyInstance;
 
         if(GIT_IS_DIRTY)

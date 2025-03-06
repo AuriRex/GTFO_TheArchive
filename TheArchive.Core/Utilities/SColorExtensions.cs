@@ -1,4 +1,5 @@
-﻿using TheArchive.Core.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using TheArchive.Core.Models;
 using UnityEngine;
 
 namespace TheArchive.Utilities;
@@ -18,9 +19,7 @@ public static class SColorExtensions
 
     public static Color? ToUnityColor(this SColor? col)
     {
-        if (col.HasValue)
-            return col.Value.ToUnityColor();
-        return null;
+        return col?.ToUnityColor();
     }
 
     public static SColor ToSColor(this Color col)
@@ -72,8 +71,9 @@ public static class SColorExtensions
         return $"#{ComponentToHex(col.r)}{ComponentToHex(col.g)}{ComponentToHex(col.b)}";
     }
 
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static string ComponentToHex(float component)
     {
-        return string.Format("{0:X1}", Mathf.Clamp((int)(component * 16f), 0, 15));
+        return $"{Mathf.Clamp((int)(component * 16f), 0, 15):X1}";
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
 namespace TheArchive.Utilities;
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public static class AccessorExtensions
 {
     public static IValueAccessor<T, MT> OrAlternative<T, MT>(this IValueAccessor<T, MT> self, Func<IValueAccessor<T, MT>> func)
@@ -24,6 +26,7 @@ public static class AccessorExtensions
 /// </summary>
 /// <typeparam name="T">The Type that the member belongs to</typeparam>
 /// <typeparam name="MT">The Type of the member itself</typeparam>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public interface IValueAccessor<T, MT>
 {
     /// <summary>
@@ -61,6 +64,7 @@ public interface IValueAccessor<T, MT>
 /// </summary>
 /// <typeparam name="T">The Type that the member belongs to</typeparam>
 /// <typeparam name="MT">The Type of the member itself</typeparam>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public interface IStaticValueAccessor<T, MT> : IValueAccessor<T, MT>
 {
     /// <summary>
@@ -84,19 +88,21 @@ public interface IStaticValueAccessor<T, MT> : IValueAccessor<T, MT>
 /// <summary>
 /// AccessorBase, contains a static Dictionary containing all cached accessors.
 /// </summary>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
 public abstract class AccessorBase
 {
-    public static object[] NoParams { get; private set; } = Array.Empty<object>();
-    public static BindingFlags AnyBindingFlags => Utils.AnyBindingFlagss;
+    protected static object[] NoParams { get; } = Array.Empty<object>();
+    protected static BindingFlags AnyBindingFlags => Utils.AnyBindingFlagss;
 
-    protected static readonly Dictionary<string, AccessorBase> Accessors = new Dictionary<string, AccessorBase>();
+    protected static readonly Dictionary<string, AccessorBase> Accessors = new();
 
     /// <summary>
     /// Identifies the reflected member.<br/>
     /// </summary>
-    public string Identifier { get; private set; } = null;
+    public string Identifier { get; private set; }
 
-    public bool IgnoreErrors { get; private set; } = false;
+    public bool IgnoreErrors { get; private set; }
 
     public abstract bool HasMemberBeenFound { get; }
 
@@ -175,12 +181,14 @@ public abstract class AccessorBase
 /// </summary>
 /// <typeparam name="T">The Type that the field belongs to</typeparam>
 /// <typeparam name="FT">The Type of the field itself</typeparam>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>, IStaticValueAccessor<T, FT>
 {
     /// <summary>
     /// Gets a <see cref="FieldAccessor{T, FT}"/> from the global cache or creates a new instance if there is none and adds it to the cache.
     /// </summary>
     /// <param name="fieldName">The name of the field</param>
+    /// <param name="ignoreErrors">If Exceptions should be ignored</param>
     /// <returns><see cref="FieldAccessor{T, FT}"/></returns>
     public static FieldAccessor<T, FT> GetAccessor(string fieldName, bool ignoreErrors = false)
     {
@@ -294,12 +302,14 @@ public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>, IStatic
 /// </summary>
 /// <typeparam name="T">The Type that the property belongs to</typeparam>
 /// <typeparam name="PT">The Type of the property itself</typeparam>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>, IStaticValueAccessor<T, PT>
 {
     /// <summary>
     /// Gets a <see cref="PropertyAccessor{T, FT}"/> from the global cache or creates a new instance if there is none and adds it to the cache.
     /// </summary>
     /// <param name="propertyName">The name of the property</param>
+    /// <param name="ignoreErrors">If Exceptions should be ignored</param>
     /// <returns><see cref="PropertyAccessor{T, FT}"/></returns>
     public static PropertyAccessor<T, PT> GetAccessor(string propertyName, bool ignoreErrors = false)
     {
@@ -413,6 +423,8 @@ public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>, ISta
 /// </summary>
 /// <typeparam name="T">The Type that the method belongs to</typeparam>
 /// <typeparam name="RT">The returned Type (use object for void)</typeparam>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class MethodAccessor<T, RT> : AccessorBase
 {
     /// <summary>
@@ -514,6 +526,7 @@ public class MethodAccessor<T, RT> : AccessorBase
 /// Globally cached reflection wrapper for void methods.
 /// </summary>
 /// <typeparam name="T">The Type that the method belongs to</typeparam>
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class MethodAccessor<T> : AccessorBase
 {
     /// <summary>
@@ -566,11 +579,12 @@ public class MethodAccessor<T> : AccessorBase
         }
         catch (Exception ex)
         {
+            parameterTypes ??= Array.Empty<Type>();
             ArchiveLogger.Error($"Method \"{methodName}\" in Type {typeof(T).FullName} could not be resolved on {ex.Source}!");
             ArchiveLogger.Exception(ex);
             ArchiveLogger.Debug($"Constructor debug data:\nidentifier:{identifier}\nmethodName:{methodName}\nparameterTypes:{string.Join(", ", parameterTypes.Select(p => p.FullName))}");
-            var frame = new System.Diagnostics.StackTrace().GetFrame(2);
-            ArchiveLogger.Debug($"FileName:{frame.GetFileName()} {frame.GetFileLineNumber()}\nMethod:{frame.GetMethod().DeclaringType.FullName}:{frame.GetMethod().Name}");
+            var frame = new System.Diagnostics.StackTrace().GetFrame(2)!;
+            ArchiveLogger.Debug($"FileName:{frame.GetFileName()} {frame.GetFileLineNumber()}\nMethod:{frame.GetMethod()?.DeclaringType?.FullName ?? "Unknown"}:{frame.GetMethod()?.Name ?? "Unknown"}");
             PrintDebug();
         }
     }
@@ -578,7 +592,7 @@ public class MethodAccessor<T> : AccessorBase
     private void PrintDebug()
     {
         if (_method == null) return;
-        ArchiveLogger.Debug($"Method debug data:\nName:{_method.Name}\nDeclaringType:{_method.DeclaringType.FullName}\nReturnType:{_method.ReturnType}\nParameter Count:{_method.GetParameters()?.Count() ?? 0}\nParameters:{string.Join(", ", _method.GetParameters().Select(p => p.ParameterType.FullName))}");
+        ArchiveLogger.Debug($"Method debug data:\nName:{_method.Name}\nDeclaringType:{_method.DeclaringType?.FullName ?? "Unknown"}\nReturnType:{_method.ReturnType}\nParameter Count:{_method.GetParameters().Length}\nParameters:{string.Join(", ", _method.GetParameters().Select(p => p.ParameterType.FullName))}");
     }
 
     /// <summary>

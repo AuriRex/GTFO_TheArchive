@@ -213,7 +213,6 @@ public class RichPresenceCore : Feature
             }
 
         }
-        ArchiveLogger.Info(slotCount.ToString());
         return slotCount == 0 ? capacity : slotCount;
     }
 

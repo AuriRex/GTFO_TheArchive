@@ -5,7 +5,7 @@ using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Core.Settings;
-using TheArchive.Utilities;
+using TheArchive.Interfaces;
 
 namespace TheArchive.Features.Presence;
 
@@ -18,6 +18,8 @@ public class DiscordRichPresence : Feature
 
     public override string Description => "Show the current game state in detail on discord.";
 
+    public new static IArchiveLogger FeatureLogger { get; set; }
+    
     public override bool InlineSettingsIntoParentMenu => true;
 
     public override bool SkipInitialOnEnable => true;
@@ -53,7 +55,7 @@ public class DiscordRichPresence : Feature
         }
         catch (Exception ex)
         {
-            ArchiveLogger.Exception(ex);
+            FeatureLogger.Exception(ex);
         }
     }
 

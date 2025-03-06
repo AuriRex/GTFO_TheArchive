@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
@@ -8,10 +9,11 @@ namespace TheArchive.Utilities;
 
 public class SoundEventCache : IInitAfterGameDataInitialized
 {
-    public static bool IsReady { get; private set; } = false;
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public static bool IsReady { get; private set; }
 
-    private static readonly Dictionary<string, uint> _soundIdCache = new Dictionary<string, uint>();
-    private static readonly Dictionary<uint, string> _reverseSoundIdCache = new Dictionary<uint, string>();
+    private static readonly Dictionary<string, uint> _soundIdCache = new();
+    private static readonly Dictionary<uint, string> _reverseSoundIdCache = new();
 
     private static IArchiveLogger _logger;
     private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateLoggerInstance(nameof(SoundEventCache), ConsoleColor.DarkGreen);
@@ -38,9 +40,8 @@ public class SoundEventCache : IInitAfterGameDataInitialized
         var msg = $"Sound event \"{soundEvent}\" could not be resolved!";
         if (throwIfNotFound)
             throw new SoundEventNotFoundException(msg);
-        else
-            Logger.Error(msg);
-
+        
+        Logger.Error(msg);
         return 0;
     }
 
@@ -66,9 +67,8 @@ public class SoundEventCache : IInitAfterGameDataInitialized
         var msg = $"Sound id \"{soundId}\" could not be resolved!";
         if (throwIfNotFound)
             throw new SoundEventNotFoundException(msg);
-        else
-            Logger.Error(msg);
-
+        
+        Logger.Error(msg);
         return null;
     }
 
@@ -88,7 +88,7 @@ public class SoundEventCache : IInitAfterGameDataInitialized
             foreach (var fp in fieldOrProps)
             {
                 var name = fp.Name;
-                uint value = (uint)fp.GetValue(null);
+                var value = (uint)fp.GetValue(null)!;
                 _soundIdCache.Add(name, value);
                 _reverseSoundIdCache.Add(value, name);
             }

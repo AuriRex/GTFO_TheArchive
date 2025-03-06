@@ -1,14 +1,11 @@
-﻿#define IL2CPP
-#define Il2CppInterop
-
-using CellMenu;
+﻿using CellMenu;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using GameData;
-using TheArchive.Core.FeaturesAPI;
 using System.Runtime.CompilerServices;
 using TheArchive.Loader;
 using SNetwork;
@@ -26,21 +23,23 @@ using IL2ColGen = Il2CppSystem.Collections.Generic;
 
 namespace TheArchive.Utilities;
 
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public static class SharedUtils
 {
 
 #if MONO
-        public static FieldAccessor<CM_Item, Color> A_CM_Item_m_spriteColorOrg = FieldAccessor<CM_Item, Color>.GetAccessor("m_spriteColorOrg");
-        public static FieldAccessor<CM_Item, Color> A_CM_Item_m_spriteColorOut = FieldAccessor<CM_Item, Color>.GetAccessor("m_spriteColorOut");
-        public static FieldAccessor<CM_Item, Color> A_CM_Item_m_spriteColorOver = FieldAccessor<CM_Item, Color>.GetAccessor("m_spriteColorOver");
+    public static FieldAccessor<CM_Item, Color> A_CM_Item_m_spriteColorOrg = FieldAccessor<CM_Item, Color>.GetAccessor("m_spriteColorOrg");
+    public static FieldAccessor<CM_Item, Color> A_CM_Item_m_spriteColorOut = FieldAccessor<CM_Item, Color>.GetAccessor("m_spriteColorOut");
+    public static FieldAccessor<CM_Item, Color> A_CM_Item_m_spriteColorOver = FieldAccessor<CM_Item, Color>.GetAccessor("m_spriteColorOver");
 
-        public static FieldAccessor<CM_Item, Color[]> A_CM_Item_m_textColorOrg = FieldAccessor<CM_Item, Color[]>.GetAccessor("m_textColorOrg");
-        public static FieldAccessor<CM_Item, Color[]> A_CM_Item_m_textColorOut = FieldAccessor<CM_Item, Color[]>.GetAccessor("m_textColorOut");
-        public static FieldAccessor<CM_Item, Color[]> A_CM_Item_m_textColorOver = FieldAccessor<CM_Item, Color[]>.GetAccessor("m_textColorOver");
+    public static FieldAccessor<CM_Item, Color[]> A_CM_Item_m_textColorOrg = FieldAccessor<CM_Item, Color[]>.GetAccessor("m_textColorOrg");
+    public static FieldAccessor<CM_Item, Color[]> A_CM_Item_m_textColorOut = FieldAccessor<CM_Item, Color[]>.GetAccessor("m_textColorOut");
+    public static FieldAccessor<CM_Item, Color[]> A_CM_Item_m_textColorOver = FieldAccessor<CM_Item, Color[]>.GetAccessor("m_textColorOver");
 #endif
 
 #if IL2CPP
-    public static List<T> ToSystemList<T>(this Il2CppSystem.Collections.Generic.List<T> il2List)
+    public static List<T> ToSystemList<T>(this IL2ColGen.List<T> il2List)
     {
         var list = new List<T>();
 
@@ -52,9 +51,9 @@ public static class SharedUtils
         return list;
     }
 
-    public static Il2CppSystem.Collections.Generic.List<T> ToIL2CPPListIfNecessary<T>(this List<T> list)
+    public static IL2ColGen.List<T> ToIL2CPPListIfNecessary<T>(this List<T> list)
     {
-        Il2CppSystem.Collections.Generic.List<T> il2List = new Il2CppSystem.Collections.Generic.List<T>();
+        var il2List = new IL2ColGen.List<T>();
         foreach (var item in list)
         {
             il2List.Add(item);
@@ -62,26 +61,26 @@ public static class SharedUtils
         return il2List;
     }
 
-    public static Il2CppSystem.Collections.Generic.List<T> NewListForGame<T>()
+    public static IL2ColGen.List<T> NewListForGame<T>()
     {
-        return new Il2CppSystem.Collections.Generic.List<T>();
+        return new IL2ColGen.List<T>();
     }
 #else
-        public static List<T> ToSystemList<T>(this List<T> list) => list;
-        public static List<T> ToIL2CPPListIfNecessary<T>(this List<T> list) => list;
-        public static List<T> NewListForGame<T>()
-        {
-            return new List<T>();
-        }
+    public static List<T> ToSystemList<T>(this List<T> list) => list;
+    public static List<T> ToIL2CPPListIfNecessary<T>(this List<T> list) => list;
+    public static List<T> NewListForGame<T>()
+    {
+        return new List<T>();
+    }
 #endif
 
-    public static void ChangeColorTimedExpeditionButton(CM_TimedButton button, Color col) => ChangeColorOnAllChildren(button.transform, col, new string[] { "ProgressFill" });
+    public static void ChangeColorTimedExpeditionButton(CM_TimedButton button, Color col) => ChangeColorOnAllChildren(button.transform, col, new[] { "ProgressFill" });
 
     public static void ChangeColorCMItem(CM_Item item, Color idleColor, Color? hoverColor = null)
     {
         ChangeColorOnSelfAndAllChildren(item.transform, idleColor);
-        List<Color> textColorsOut = new List<Color>();
-        List<Color> textColorsOver = new List<Color>();
+        var textColorsOut = new List<Color>();
+        var textColorsOver = new List<Color>();
         var colorOut = idleColor.WithAlpha(.5f);
         var colorOver = hoverColor ?? idleColor.WithAlpha(1f);
 #if IL2CPP
@@ -89,7 +88,7 @@ public static class SharedUtils
         item.m_spriteColorOut = colorOut;
         item.m_spriteColorOver = colorOver;
         if (item.m_textColorOrg != null)
-            foreach (Color textCol in item.m_textColorOrg)
+            foreach (var _ in item.m_textColorOrg)
             {
                 textColorsOut.Add(colorOut);
                 textColorsOver.Add(colorOver);
@@ -98,19 +97,19 @@ public static class SharedUtils
         item.m_textColorOut = textColorsOut.ToArray();
         item.m_textColorOver = textColorsOver.ToArray();
 #else
-            A_CM_Item_m_spriteColorOrg.Set(item, colorOut);
-            A_CM_Item_m_spriteColorOut.Set(item, colorOut);
-            A_CM_Item_m_spriteColorOver.Set(item, colorOver);
-            var m_textColorOrg = A_CM_Item_m_textColorOrg.Get(item);
-            if (m_textColorOrg != null)
-                foreach (var textCol in m_textColorOrg)
-                {
-                    textColorsOut.Add(colorOut);
-                    textColorsOver.Add(colorOver);
-                }
-            A_CM_Item_m_textColorOrg.Set(item, textColorsOut.ToArray());
-            A_CM_Item_m_textColorOut.Set(item, textColorsOut.ToArray());
-            A_CM_Item_m_textColorOver.Set(item, textColorsOver.ToArray());
+        A_CM_Item_m_spriteColorOrg.Set(item, colorOut);
+        A_CM_Item_m_spriteColorOut.Set(item, colorOut);
+        A_CM_Item_m_spriteColorOver.Set(item, colorOver);
+        var m_textColorOrg = A_CM_Item_m_textColorOrg.Get(item);
+        if (m_textColorOrg != null)
+            foreach (var textCol in m_textColorOrg)
+            {
+                textColorsOut.Add(colorOut);
+                textColorsOver.Add(colorOver);
+            }
+        A_CM_Item_m_textColorOrg.Set(item, textColorsOut.ToArray());
+        A_CM_Item_m_textColorOut.Set(item, textColorsOut.ToArray());
+        A_CM_Item_m_textColorOver.Set(item, textColorsOver.ToArray());
 #endif
     }
 
@@ -123,7 +122,7 @@ public static class SharedUtils
     public static void ChangeColorOnAllChildren(Transform trans, Color col, IList<string> excludeNames = null, IgnoreMode mode = IgnoreMode.StartsWith, Action<Transform> extraModificationForEachChild = null)
     {
         if (trans == null) return;
-        trans.ForEachChildDo((child) => {
+        trans.ForEachChildDo(child => {
             ChangeColor(child?.transform, col, excludeNames, mode, extraModificationForEachChild);
         });
     }
@@ -131,13 +130,12 @@ public static class SharedUtils
     public static void ChangeColor(Transform trans, Color col, IList<string> excludeNames = null, IgnoreMode mode = IgnoreMode.StartsWith, Action<Transform> extraModificationForEachChild = null)
     {
         if (trans == null) return;
-        if (col == null) return;
         if (excludeNames != null)
         {
             switch (mode)
             {
                 case IgnoreMode.Match:
-                    if (excludeNames.Contains((string)trans.name))
+                    if (excludeNames.Contains(trans.name))
                         return;
                     break;
                 case IgnoreMode.StartsWith:
@@ -168,7 +166,7 @@ public static class SharedUtils
 #if IL2CPP
         typeof(T).GetProperty(eventFieldName, Utils.AnyBindingFlagss).SetValue(instance, null);
 #else
-            MonoUtils.RemoveAllEventHandlers<T>(eventFieldName, instance);
+        MonoUtils.RemoveAllEventHandlers<T>(eventFieldName, instance);
 #endif
     }
 
@@ -184,7 +182,7 @@ public static class SharedUtils
 
     public static CM_Item SetCMItemEvents(this CM_Item item, Action<int> onButtonPress, Action<int, bool> onButtonHover = null)
     {
-        if (item == null) throw new ArgumentNullException($"Parameter {nameof(item)} may not be null!");
+        if (item == null) throw new ArgumentNullException(nameof(item));
 
         if(item.m_onBtnPress == null)
             item.m_onBtnPress = new UnityEngine.Events.UnityEvent();
@@ -195,13 +193,13 @@ public static class SharedUtils
         if(onButtonHover != null)
             item.OnBtnHoverChanged = onButtonHover;
 #else
-            MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnHoverChanged), item);
-            MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnPressCallback), item);
+        MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnHoverChanged), item);
+        MonoUtils.RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnPressCallback), item);
 
-            if(onButtonPress!= null)
-                item.OnBtnPressCallback += onButtonPress;
-            if(onButtonHover != null)
-                item.OnBtnHoverChanged += onButtonHover;
+        if(onButtonPress!= null)
+            item.OnBtnPressCallback += onButtonPress;
+        if(onButtonHover != null)
+            item.OnBtnHoverChanged += onButtonHover;
 #endif
 
         return item;
@@ -221,7 +219,7 @@ public static class SharedUtils
 #if IL2CPP
         button.m_holdButtonDuration = duration;
 #else
-            FieldAccessor<CM_TimedButton, float>.GetAccessor("m_holdButtonDuration").Set(button, duration);
+        FieldAccessor<CM_TimedButton, float>.GetAccessor("m_holdButtonDuration").Set(button, duration);
 #endif
     }
 
@@ -251,21 +249,21 @@ public static class SharedUtils
     /// <param name="recursive">If the children of every child should be included</param>
     public static void ForEachChildDo(this Transform trans, Action<Transform> func, bool recursive = true)
     {
-        if (trans == null) throw new ArgumentNullException($"Parameter {nameof(trans)} may not be null!");
-        for (int i = 0; i < trans.childCount; i++)
+        if (trans == null) throw new ArgumentNullException(nameof(trans));
+        for (var i = 0; i < trans.childCount; i++)
         {
             var child = trans.GetChild(i);
             func?.Invoke(child);
             if (recursive)
             {
-                ForEachChildDo(child, func, recursive);
+                ForEachChildDo(child, func);
             }
         }
     }
 
     public static IEnumerable<Transform> DirectChildren(this Transform trans)
     {
-        for (int i = 0; i < trans.childCount; i++)
+        for (var i = 0; i < trans.childCount; i++)
         {
             yield return trans.GetChild(i);
         }
@@ -273,7 +271,7 @@ public static class SharedUtils
 
     public static Transform GetChildWithExactName(this Transform trans, string name)
     {
-        for (int i = 0; i < trans.childCount; i++)
+        for (var i = 0; i < trans.childCount; i++)
         {
             var child = trans.GetChild(i);
             if (child.name == name) return child;
@@ -303,14 +301,14 @@ public static class SharedUtils
     {
         if (trans == null) return null;
 
-        T component = trans.GetComponent<T>();
+        var component = trans.GetComponent<T>();
 
         if (component != null)
         {
             return component;
         }
 
-        return trans?.GetComponentOnParents<T>();
+        return trans.GetComponentOnParents<T>();
     }
 
     public static T GetComponentOnParents<T>(this Transform trans) where T : Component
@@ -319,7 +317,7 @@ public static class SharedUtils
 
         var parent = trans.parent;
 
-        T component = parent.GetComponent<T>();
+        var component = parent.GetComponent<T>();
 
         if (component != null)
         {
@@ -357,7 +355,7 @@ public static class SharedUtils
 #if IL2CPP
         var lobbyBars = CM_PageLoadout.Current.m_playerLobbyBars.ToArray();
 #else
-            var lobbyBars = _A_CM_PageLoadout_m_playerLobbyBars.Get(CM_PageLoadout.Current);
+        var lobbyBars = _A_CM_PageLoadout_m_playerLobbyBars.Get(CM_PageLoadout.Current);
 #endif
 
         var resultPlayerLobbyBar = lobbyBars.FirstOrDefault(plb => GetPlayerLobbyBarIndex(plb) == index);
@@ -372,11 +370,11 @@ public static class SharedUtils
         return player != null;
     }
 
-    public static bool TryGetPlayerByCharacterIndex(int id, out SNetwork.SNet_Player player)
+    public static bool TryGetPlayerByCharacterIndex(int id, out SNet_Player player)
     {
         try
         {
-            player = SNetwork.SNet.Lobby.Players
+            player = SNet.Lobby.Players
 #if IL2CPP
                 .ToSystemList()
 #endif
@@ -398,7 +396,7 @@ public static class SharedUtils
         var renderers = go.GetComponentsInChildren<Renderer>();
         if (renderers.Length == 0) return new Bounds(go.transform.position, Vector3.zero);
         var bounds = renderers[0].bounds;
-        foreach (Renderer renderer in renderers)
+        foreach (var renderer in renderers)
         {
             bounds.Encapsulate(renderer.bounds);
         }
@@ -412,50 +410,50 @@ public static class SharedUtils
 #if IL2CPP
             foreach(var listItem in list)
             {
-                Il2CppSystem.Object il2Object = listItem as Il2CppSystem.Object;
+                var il2Object = listItem as Il2CppSystem.Object;
                 if (il2Object.Pointer == (item as Il2CppSystem.Object).Pointer)
                     return true;
             }
             return false;
 #else
-                throw new InvalidOperationException("This should never be called!");
+            throw new InvalidOperationException("This should never be called!");
 #endif
         }
 
         return list.Contains(item);
     }
 
-    public static bool SafeIsBot(this SNetwork.SNet_Player player)
+    public static bool SafeIsBot(this SNet_Player player)
     {
         if (player == null)
             return false;
-        if (Feature.Is.R6OrLater)
+        if (Is.R6OrLater)
             return IsBotR6(player);
         return false;
     }
 
-    public static bool IsFriend(this SNetwork.SNet_Player player)
+    public static bool IsFriend(this SNet_Player player)
     {
         if (player == null)
             return false;
-        return SNetwork.SNet.Friends.TryGetFriend(player.Lookup, out _);
+        return SNet.Friends.TryGetFriend(player.Lookup, out _);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static bool IsBotR6(SNetwork.SNet_Player player)
+    private static bool IsBotR6(SNet_Player player)
     {
 #if IL2CPP
         return player.IsBot;
 #else
-            return false;
+        return false;
 #endif
     }
 
-    private static readonly MethodAccessor<CellSoundPlayer> A_CellSoundPlayer_Post_sub_R5 = MethodAccessor<CellSoundPlayer>.GetAccessor("Post", new Type[] { typeof(uint) }, ignoreErrors: true);
+    private static readonly MethodAccessor<CellSoundPlayer> A_CellSoundPlayer_Post_sub_R5 = MethodAccessor<CellSoundPlayer>.GetAccessor("Post", new[] { typeof(uint) }, ignoreErrors: true);
 
     public static void SafePost(this CellSoundPlayer player, uint eventId, bool isGlobal = true)
     {
-        if (Feature.Is.R6OrLater)
+        if (Is.R6OrLater)
         {
             SafePostR6Plus(player, eventId, isGlobal);
             return;
@@ -472,9 +470,9 @@ public static class SharedUtils
     }
 
 #if IL2CPP
-    private static PropertyAccessor<GameSetupDataBlock, uint> _rundownIdToLoad = PropertyAccessor<GameSetupDataBlock, uint>.GetAccessor("RundownIdToLoad");
+    private static readonly PropertyAccessor<GameSetupDataBlock, uint> _rundownIdToLoad = PropertyAccessor<GameSetupDataBlock, uint>.GetAccessor("RundownIdToLoad");
         
-    private static GameSetupDataBlock _setupBlock = null;
+    private static GameSetupDataBlock _setupBlock;
 #endif
 
     public static bool TryGetRundownDataBlock(out RundownDataBlock block)
@@ -496,18 +494,15 @@ public static class SharedUtils
         }
         else
         {
-            if (_setupBlock == null)
-                _setupBlock = GameData.GameSetupDataBlock.GetBlock(1);
+            _setupBlock ??= GameSetupDataBlock.GetBlock(1);
             blockToLoad = _rundownIdToLoad.Get(_setupBlock);
         }
 #else
-            blockToLoad = Globals.Global.RundownIdToLoad;
+        blockToLoad = Globals.Global.RundownIdToLoad;
 #endif
         if (blockToLoad != 0)
         {
-            block = GameData.RundownDataBlock.GetBlock(blockToLoad);
-
-                
+            block = RundownDataBlock.GetBlock(blockToLoad);
             return true;
         }
 
@@ -552,7 +547,7 @@ public static class SharedUtils
     private static IValueAccessor<LG_Floor, IL2ColGen.List<LG_Layer>> _A_LG_Floor_m_layers;
 #endif
 #if MONO
-        private static IValueAccessor<LG_Floor, List<LG_Zone>> _A_LG_Floor_m_zones;
+    private static IValueAccessor<LG_Floor, List<LG_Zone>> _A_LG_Floor_m_zones;
 #endif
 
     /// <summary>
@@ -581,33 +576,33 @@ public static class SharedUtils
         }
 #endif
 #if MONO
-            if(Is.R3OrLater)
-            {
-                foreach (var zone in GetAllZonesR3Plus())
-                    yield return zone;
-                yield break;
-            }
-            else
-            {
-                //R2, R1
-                _A_LG_Floor_m_zones ??= AccessorBase.GetValueAccessor<LG_Floor, List<LG_Zone>>("m_zones");
+        if(Is.R3OrLater)
+        {
+            foreach (var zone in GetAllZonesR3Plus())
+                yield return zone;
+            yield break;
+        }
+        else
+        {
+            //R2, R1
+            _A_LG_Floor_m_zones ??= AccessorBase.GetValueAccessor<LG_Floor, List<LG_Zone>>("m_zones");
 
-                foreach(var zone in _A_LG_Floor_m_zones.Get(Builder.CurrentFloor))
-                    yield return zone;
-            }
+            foreach(var zone in _A_LG_Floor_m_zones.Get(Builder.CurrentFloor))
+                yield return zone;
+        }
 #endif
     }
 
 #if MONO
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static IEnumerable<LG_Zone> GetAllZonesR3Plus()
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static IEnumerable<LG_Zone> GetAllZonesR3Plus()
+    {
+        foreach (var layer in Builder.CurrentFloor.m_layers)
         {
-            foreach (var layer in Builder.CurrentFloor.m_layers)
-            {
-                foreach (var zone in layer.m_zones)
-                    yield return zone;
-            }
+            foreach (var zone in layer.m_zones)
+                yield return zone;
         }
+    }
 #endif
 
 #if IL2CPP
@@ -638,7 +633,7 @@ public static class SharedUtils
     {
         var text = overrideText;
 
-        if(Feature.Is.R6OrLater && !forceOverrideText)
+        if(Is.R6OrLater && !forceOverrideText)
         {
             text = Localization_Text_Get_R6Plus(localizedTextID);
         }
@@ -671,7 +666,7 @@ public static class SharedUtils
 #if IL2CPP
         return Localization.Text.Get(id);
 #else
-            return string.Empty;
+        return string.Empty;
 #endif
     }
 
@@ -692,20 +687,20 @@ public static class SharedUtils
         return castedValue != null;
     }
 #else
-        public static T CastTo<T>(this object value)
-        {
-            return (T) value;
-        }
+    public static T CastTo<T>(this object value)
+    {
+        return (T) value;
+    }
 
-        public static T TryCastTo<T>(this object value) where T : class
-        {
-            return value as T;
-        }
+    public static T TryCastTo<T>(this object value) where T : class
+    {
+        return value as T;
+    }
 
-        public static bool TryCastTo<T>(this object value, out T castedValue) where T : class
-        {
-            castedValue = value.TryCastTo<T>();
-            return castedValue != null;
-        }
+    public static bool TryCastTo<T>(this object value, out T castedValue) where T : class
+    {
+        castedValue = value.TryCastTo<T>();
+        return castedValue != null;
+    }
 #endif
 }

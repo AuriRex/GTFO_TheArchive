@@ -1,6 +1,7 @@
 ﻿using System;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 #if Unhollower
@@ -21,6 +22,8 @@ public class RemoveChatRestrictions : Feature
 
     public override string Description => "Allows the usage of '>' and '<' characters in chat.\n\n(Also enables TextMeshPro RichText tags to be used in chat, don't do stupid things!)";
 
+    public new static IArchiveLogger FeatureLogger { get; set; }
+    
 #if IL2CPP
     private static PropertyAccessor<PlayerChatManager, Il2CppStructArray<int>> A_PlayerChatManager_m_forbiddenChars;
 #else
@@ -74,7 +77,7 @@ public class RemoveChatRestrictions : Feature
             }
             catch (Exception ex)
             {
-                ArchiveLogger.Exception(ex);
+                FeatureLogger.Exception(ex);
             }
         }
     }
