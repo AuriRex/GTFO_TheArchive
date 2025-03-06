@@ -15,7 +15,7 @@ using TheArchive.Loader;
 
 namespace TheArchive.Utilities;
 
-public static class Utils
+public static partial class Utils
 {
     public const BindingFlags AnyBindingFlagss = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
@@ -72,7 +72,7 @@ public static class Utils
     public static T PickRandomExcept<T>(this T[] array, T except)
     {
         if (array.Length == 1) return array[0];
-        int c = 0;
+        var c = 0;
         T random;
         do
         {
@@ -95,7 +95,7 @@ public static class Utils
     public static T PickRandomExcept<T>(this T[] array, Func<T, bool> selectFunction)
     {
         if (array.Length == 1) return array[0];
-        int c = 0;
+        var c = 0;
         T random;
         do
         {
@@ -239,11 +239,11 @@ public static class Utils
 
     public static string GetHash(byte[] bytes)
     {
-        using (SHA256 hasher = SHA256.Create())
+        using (var hasher = SHA256.Create())
         {
-            byte[] hashBytes = hasher.ComputeHash(bytes);
+            var hashBytes = hasher.ComputeHash(bytes);
 
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             foreach (var b in hashBytes)
             {
                 builder.Append(b.ToString("x2"));
@@ -260,7 +260,7 @@ public static class Utils
     /// <returns>The formatted string with every {i} replaced with <paramref name="replacementData"/>[i]</returns>
     public static string UsersafeFormat(string format, params string[] replacementData)
     {
-        for(int i = 0; i < replacementData.Length; i++)
+        for(var i = 0; i < replacementData.Length; i++)
         {
             var thisSequenceOfCharacters = $"{{{i}}}"; // {0}, {1}
             if (format.Contains(thisSequenceOfCharacters))
@@ -278,7 +278,7 @@ public static class Utils
 
             var listType = genListType.MakeGenericType(type);
 
-            IList list = (IList) Activator.CreateInstance(typeof(System.Collections.Generic.List<>).MakeGenericType(type));
+            var list = (IList) Activator.CreateInstance(typeof(System.Collections.Generic.List<>).MakeGenericType(type));
 
             // Invoke to get UnhollowerBaseLib.Il2CppArrayBase<T>
             var listAsEnumerable = (IEnumerable) listType.GetMethod("ToArray", AnyBindingFlagss).Invoke(allBlocks, Array.Empty<object>());
@@ -329,7 +329,7 @@ public static class Utils
     // https://stackoverflow.com/a/6276029
     public static string ReplaceCaseInsensitive(this string input, string search, string replacement)
     {
-        string result = Regex.Replace(
+        var result = Regex.Replace(
             input,
             Regex.Escape(search),
             replacement.Replace("$", "$$"),
@@ -351,15 +351,15 @@ public static class Utils
     /// <param name="resourcePath">Path to resource</param>
     public static byte[] GetResource(Assembly assembly, string resourcePath)
     {
-        Stream stream = assembly.GetManifestResourceStream(resourcePath);
-        byte[] data = new byte[stream.Length];
+        var stream = assembly.GetManifestResourceStream(resourcePath);
+        var data = new byte[stream.Length];
         stream.Read(data, 0, (int) stream.Length);
         return data;
     }
 
     public static string GetStartupTextForRundown(RundownID currentRundownID)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         switch (currentRundownID)
         {
             case RundownID.RundownOne:
@@ -541,7 +541,7 @@ public static class Utils
 
         RundownFlags? flags = null;
 
-        for(int i = (int) from; i <= (int) to; i = i * 2)
+        for(var i = (int) from; i <= (int) to; i = i * 2)
         {
             if(flags.HasValue)
             {
@@ -578,7 +578,7 @@ public static class Utils
         if (constraints.Count() == 0)
             return true;
 
-        int buildNumber = ArchiveMod.CurrentBuildInfo.BuildNumber;
+        var buildNumber = ArchiveMod.CurrentBuildInfo.BuildNumber;
         foreach (var constraint in constraints)
         {
             if (constraint.Matches(buildNumber))
@@ -612,177 +612,16 @@ public static class Utils
         return types.ToHashSet();
     }
 
-    public static string ByteArrayToString(byte[] data)
-    {
-        StringBuilder builder = new StringBuilder(data.Length * 2);
-        foreach (byte b in data)
-        {
-            builder.AppendFormat("{0:x2}", b);
-        }
-        return builder.ToString();
-    }
-
     public static string HashString(this string input)
     {
-        using (SHA256 sha256 = SHA256.Create())
-        {
-            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            byte[] hashBytes = sha256.ComputeHash(inputBytes);
-            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-        }
+        using var sha256 = SHA256.Create();
+        
+        var inputBytes = Encoding.UTF8.GetBytes(input);
+        var hashBytes = sha256.ComputeHash(inputBytes);
+        
+        return BitConverter.ToString(hashBytes).Replace("-", string.Empty).ToLower();
     }
 
-    public static string HashStream(Stream stream)
-    {
-        string text;
-        using (SHA256 sha256 = SHA256.Create())
-        {
-            byte[] buf = new byte[4096];
-            int read;
-            while ((read = stream.Read(buf, 0, buf.Length)) > 0)
-            {
-                sha256.TransformBlock(buf, 0, read, buf, 0);
-            }
-            sha256.TransformFinalBlock(new byte[0], 0, 0);
-            text = ByteArrayToString(sha256.Hash);
-        }
-        return text;
-    }
-
-    public static bool TryResolveDllAssembly<T>(AssemblyName assemblyName, string directory, Func<string, T> loader, out T assembly) where T : class
-    {
-        assembly = default(T);
-        List<string> potentialDirectories = new List<string> { directory };
-        if (!Directory.Exists(directory))
-        {
-            return false;
-        }
-        potentialDirectories.AddRange(Directory.GetDirectories(directory, "*", SearchOption.AllDirectories));
-        foreach (string subDirectory in potentialDirectories)
-        {
-            foreach (string potentialPath in new string[]
-                     {
-                         assemblyName.Name + ".dll",
-                         assemblyName.Name + ".exe"
-                     })
-            {
-                string path = Path.Combine(subDirectory, potentialPath);
-                if (File.Exists(path))
-                {
-                    try
-                    {
-                        assembly = loader(path);
-                    }
-                    catch (Exception)
-                    {
-                        goto IL_A5;
-                    }
-                    return true;
-                }
-                IL_A5:;
-            }
-        }
-        return false;
-    }
-
-    public static bool IsSubtypeOf(this TypeDefinition self, Type td)
-    {
-        if (self.FullName == td.FullName)
-        {
-            return true;
-        }
-        if (self.FullName != typeof(object).FullName)
-        {
-            TypeReference baseType = self.BaseType;
-            bool? flag;
-            if (baseType == null)
-            {
-                flag = null;
-            }
-            else
-            {
-                TypeDefinition typeDefinition = baseType.Resolve();
-                flag = ((typeDefinition != null) ? new bool?(typeDefinition.IsSubtypeOf(td)) : null);
-            }
-            bool? flag2 = flag;
-            return flag2.GetValueOrDefault();
-        }
-        return false;
-    }
-
-    public static bool TryResolveDllAssembly(AssemblyName assemblyName, string directory, out Assembly assembly)
-    {
-        return TryResolveDllAssembly<Assembly>(assemblyName, directory, new Func<string, Assembly>(Assembly.LoadFrom), out assembly);
-    }
-
-    public static bool TryResolveDllAssembly(AssemblyName assemblyName, string directory, ReaderParameters readerParameters, out AssemblyDefinition assembly)
-    {
-        return TryResolveDllAssembly<AssemblyDefinition>(assemblyName, directory, (string s) => AssemblyDefinition.ReadAssembly(s, readerParameters), out assembly);
-    }
-
-    public static bool TryParseAssemblyName(string fullName, out AssemblyName assemblyName)
-    {
-        bool flag;
-        try
-        {
-            assemblyName = new AssemblyName(fullName);
-            flag = true;
-        }
-        catch (Exception)
-        {
-            assemblyName = null;
-            flag = false;
-        }
-        return flag;
-    }
-
-    public static IEnumerable<TNode> TopologicalSort<TNode>(IEnumerable<TNode> nodes, Func<TNode, IEnumerable<TNode>> dependencySelector)
-    {
-        var sortedList = new List<TNode>();
-        var visited = new HashSet<TNode>();
-        var sorted = new HashSet<TNode>();
-
-        bool Visit(TNode node, Stack<TNode> stack)
-        {
-            if (visited.Contains(node))
-            {
-                if (!sorted.Contains(node))
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                visited.Add(node);
-                stack.Push(node);
-
-                foreach (var dep in dependencySelector(node))
-                {
-                    if (!Visit(dep, stack))
-                    {
-                        return false;
-                    }
-                }
-
-                sorted.Add(node);
-                sortedList.Add(node);
-                stack.Pop();
-            }
-
-            return true;
-        }
-
-        foreach (var node in nodes)
-        {
-            var currentStack = new Stack<TNode>();
-            if (!Visit(node, currentStack))
-            {
-                throw new Exception("Cyclic Dependency:\r\n" + string.Join("\r\n", currentStack.Select(x => $" - {x}")));
-            }
-        }
-
-        return sortedList;
-    }
     
     public static bool TryParseRundownKey(string rundownKey, out uint rundownID)
     {
