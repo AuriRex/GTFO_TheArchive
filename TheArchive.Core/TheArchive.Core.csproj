@@ -18,7 +18,7 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-		<TSName>TheArchive.Core</TSName>
+		<TSName>TheArchive_Core</TSName>
 		<TSAuthor>AuriRex</TSAuthor>
 		<!--<TSVersion>0.8.0</TSVersion>--> <!-- TSVersion empty = GitInfo used instead -->
 		<TSWebsite>https://github.com/AuriRex/GTFO_TheArchive</TSWebsite>
