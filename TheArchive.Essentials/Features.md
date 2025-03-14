@@ -1,15 +1,13 @@
-# Features
+# TheArchive.Essentials Features
 
-  * [Accessibility](#accessibility)
-  * [Archive Core](#archive-core)
-  * [Backport](#backport)
-  * [Cosmetic](#cosmetic)
-  * [Discord / Steam Presence](#discord--steam-presence)
-  * [Fixes](#fixes)
-  * [HUD / UI](#hud--ui)
-  * [Misc](#misc)
-  * [Quality of Life](#quality-of-life)
-  * [Security / Anti Cheat](#security--anti-cheat)
+* [Accessibility](#accessibility)
+* [Audio](#audio)
+* [Cosmetic](#cosmetic)
+* [Fixes](#fixes)
+* [HUD / UI](#hud--ui)
+* [Misc](#misc)
+* [Quality of Life](#quality-of-life)
+* [Security / Anti Cheat](#security--anti-cheat)
 
 
 ## Accessibility
@@ -22,20 +20,6 @@ CTRL+C copies and CTRL+V pastes into the chat box
 ### Disable Ambient Particles
 
 Disable the little floating dust particles in the air.
-
-### Disable Breathing (Infection) - `[R2-RL]`
-
-Disables the infection "drinking-straw-sucking" sounding sound.
-
-### Disable Breathing (Stamina)
-
-Disables the player breathing and panting due to running around or enemy encounters in pre-R6 builds.
-
-### Disable Coughing (Infection) - `[R2-RL]`
-
-Disables the cough sound effect whenever a player looses HP due to infection.
-
-(SoundEvent="PLAY_COUGHSOFT01")
 
 ### Disable Downed Sound
 
@@ -61,14 +45,6 @@ Disables the Paralax/Moving of UI elements in menu screens.
 Adjust the games "Glass Liquid System"
 The thing that renders the blood splatters etc on your visor.
 
-### Loud Volume Override
-
-Lower the game volume during loud sections:
- - game intro
- - elevator drop
-
-Adjust alt-tab sound behavior.
-
 ### Nickname
 
 Nickname related settings.
@@ -84,65 +60,43 @@ Override the built in player colors.
 Add hud markers onto placed down sentry guns and tweak how those are shown.
 
 
-## Archive Core
+## Audio
 
-### Update Notifier - `[R5-RL]`
+### Disable Artifact Sound Loop - `[R5-RL]`
 
-Shows a popup whenever a new version is available.
+Removes the Artifacts idle audio loop.
 
+### Disable Breathing (Infection) - `[R2-RL]`
 
-## Backport
+Disables the infection "drinking-straw-sucking" sounding sound.
 
-### Alarm Class on Security Doors - `[R1-R3]`
+### Disable Breathing (Stamina)
 
-Add alarm classes to security door interaction texts
+Disables the player breathing and panting due to running around or enemy encounters in pre-R6 builds.
 
-### Center Map on Player - `[R1-R2]`
+### Disable Coughing (Infection) - `[R2-RL]`
 
-Center the map on yourself upon opening.
+Disables the cough sound effect whenever a player looses HP due to infection.
 
-### Don't Pause Audio On Unfocus - `[R1]`
+(SoundEvent="PLAY_COUGHSOFT01")
 
-Audio in R1 was completely paused whenever the game lost focus resulting in sounds piling up and playing on re-focus.
+### Disable Respawn Sack Audio - `[R5-RL]`
 
-### Modern Melee Charge Cancel - `[R1-R5]`
+Prevents Respawn Sacks from emitting audio.
 
-Returns the hammer back to neutral instead of shoving whenever you're charging and alt-fire is pressed.
+### Disable Spitter Audio - `[R2-RL]`
 
-### R2+ Like Ladders - `[R1]`
+Completely Removes all Audio from spitters.
 
-Fix ladder movement so that W is always upwards and S always downwards, no matter where you're looking.
+Keep in mind that you won't get any auditory warnings before it's too late
 
-### R5+ Like Instant Hack Release - `[R1-R4]`
+### Loud Volume Override
 
-Change hacking minigame to be more in line with newest version of the game
-Minigame finishes and hack disappears instantly
+Lower the game volume during loud sections:
+- game intro
+- elevator drop
 
-### R5+ Mines - `[R1-R4]`
-
-Change explosion code to work like after the R5 update.
-Mines = more effective
-
-(Might cause desync!)
-
-### R6+ Terminal Key / Zone Info - `[R1-R5]`
-
-Adds the following text at the start of every terminal:
-"Welcome to TERMINAL_XYZ, located in ZONE_XY"
-(except for reactor terminals ...)
-
-### Throwables Run / Fall Fix - `[R1-R5]`
-
-Prevents you from accidentally throwing your C-Foam nade / Glowsticks whenever you start running / jumping
-
-### Unready Button - `[R1-R5]`
-
-Allows you to unready in the lobby.
-
-### Visual Ping Indicators in R1 - `[R1]`
-
-Visualize terminal pings in R1 by abusing the local players Middle-Mouse-Ping.
-(Only works as Host)
+Adjust alt-tab sound behavior.
 
 
 ## Cosmetic
@@ -154,7 +108,11 @@ Customize your bots - Change their name and Vanity
 Adds the Apparel button to bots if you're host.
 (Bot clothing only works if dropping from lobby atm!)
 
-### Enable old Hammers - `[R6-RL]`
+### Disable Bullet Tracers
+
+Removes Bullet Tracer Effects
+
+### Enable old Hammers - `[R6-A6]`
 
 Re-enable the pre-R6 Hammers:
 Maul, Gavel, Sledge and Mallet
@@ -174,17 +132,6 @@ Set all vanity items (clothes) dirt amount.
 Adjust the Field of View of weapons, consumables and big items.
 
 
-## Discord / Steam Presence
-
-### Discord Rich Presence
-
-Show the current game state in detail on discord.
-
-### Steam Rich Presence Tweaks
-
-Set a custom text for Steams' presence system.
-
-
 ## Fixes
 
 ### 99% Reload Fix
@@ -196,12 +143,20 @@ Fixes the bug that leaves you with one bullet short in the mag.
 
 Stops the tagging progress sound after unwielding the tracker, just in case the sound gets stuck.
 
+### Bio Tracker Small Red Dots - `[R6-RL]`
+
+Fixes tiny red dots on the bio tracker.
+
 ### Interaction Fix
 
 Prevents resource packs from getting interrupted from other interacts.
 Most notably: running past lockers etc
 
 (Text might sometimes disappear)
+
+### Kill Indicator Fix - `[R6-RL]`
+
+Fixes orange kill indicators not being consistent for clients.
 
 ### Map Chat Abduction Fix - `[R4-A5]`
 
@@ -218,14 +173,15 @@ Makes you able to zoom in on far out zones.
 
 Prevents bio pings (/\) on dead enemies.
 
+### Pouncer ScreenFX Stuck Fix - `[R7-RL]`
+
+(WIP) Prevents the pouncer tentacles from getting stuck on screen.
+
 ### Weapons shoot forward - `[R1-A5]`
 
 Patches weapons to always shoot into the center of your crosshair.
 Makes shotgun draw & insta-shoot not shoot the floor
 
-### Kill Indicator Fix - `[R6-RL]`
-
-Fixes client orange kill indicators to make them consistent.
 
 ## HUD / UI
 
@@ -286,6 +242,10 @@ Keybind to toggle parts of the HUD
 
 Displays a little indicator that shows if other players have finished loading yet.
 
+### Log Visualizer - `[R8]`
+
+Missing some logs for that Achievement, huh?
+
 ### Remove Downed Message
 
 Completely removes the 'You are dead, use TAB to check map' message.
@@ -305,9 +265,9 @@ Adds weapon statistics such as damage, clip size and reload speed (and more if a
 ### Watermark Tweaks
 
 Configurable to either show your current position, a timer or the mod version in the bottom right:
- - X:24 Y:2 Z:-46
- - Timer showing elapsed mission time
- - TheArchive v0.5.87
+- X:24 Y:2 Z:-46
+- Timer showing elapsed mission time
+- TheArchive v0.7.202
 
 ### Weapon Picker Tweaks - `[R6-RL]`
 
@@ -315,6 +275,10 @@ Allows you to Favorite and Hide Gear in the weapon picker.
 
 
 ## Misc
+
+### AdBlock - `[R8]`
+
+Removes the Den of Wolves button from the rundown screen.
 
 ### Alt Tab Counter
 
@@ -340,19 +304,11 @@ This does the same thing as opening up Taskmanager, going into the 'Details' tab
 
 Warning! Your system might lag / stutter while the game is loading if set to AboveNormal or higher!
 
-### R1 connect to 19087 games - `[R1]`
-
-Makes you able to join players who are playing on R1 build 19087 even though you're on 19715.
-
 ### Remove Chat Restrictions - `[R4-RL]`
 
 Allows the usage of '>' and '<' characters in chat.
 
 (Also enables TextMeshPro RichText tags to be used in chat, don't do stupid things!)
-
-### Rundown 8 Reminder - `[A6]`
-
-Reminds you to turn off "Remove Story Dialog" for whenever Rundown 8 drops!
 
 ### Weapon Model Toggle (F2)
 
@@ -422,6 +378,14 @@ Sorts your booster inventory by type and alphabetically
 
 
 ## Security / Anti Cheat
+
+### Anti Booster Hack
+
+Prevents clients from using modified boosters.
+
+### Anti Gear Hack
+
+Prevents clients from using modified gear.
 
 ### Anti Spawn - `[R6-RL]`
 

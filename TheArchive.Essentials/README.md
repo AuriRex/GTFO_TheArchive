@@ -143,6 +143,6 @@ Automatically change the games process priority, potentially increasing performa
 
 ## Other things not mentioned here
 
-**Check the [List of all Features](https://github.com/AuriRex/GTFO_TheArchive/blob/main/Features.md) for everything else.**
+**Check the [List of all Features](https://github.com/AuriRex/GTFO_TheArchive/blob/main/TheArchive.Essentials/Features.md) for everything else.**
 
 ---
