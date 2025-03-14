@@ -32,20 +32,68 @@ internal class FeaturesMarkdownCreator : Feature
 
     public class ReadmeCreatorSettings
     {
+        [FSDisplayName("Switch Assembly")]
+        public FButton NextAssemblyButton { get; set; } = new FButton("Next ASM", "next_asm");
+        
+        [FSDisplayName("Selected ASM:")]
+        public FLabel SelectedAssemblyLabel { get; set; } = new FLabel("///");
+        
+        [FSSpacer]
         [FSDisplayName("Create Markdown")]
         public FButton CreateMarkdownButton { get; set; } = new FButton("Create Markdown (Clipboard)", "create_markdown");
     }
 
-    public const string NEWLINE = "\n";
+    public const char NEWLINE = '\n';
+
+    private static Assembly _selectedAssembly;
+
+    public override void OnDatablocksReady()
+    {
+        DiscoverAssemblies();
+    }
 
     public override void OnButtonPressed(ButtonSetting setting)
     {
-        if(setting.ButtonID == "create_markdown")
+        switch (setting.ButtonID)
         {
-            CreateReadme();
+            case "next_asm":
+                NextAssembly();
+                break;
+            case "create_markdown":
+                CreateReadme(_selectedAssembly);
+                break;
         }
     }
 
+    private static int _index;
+    private static Assembly[] _loadedModules;
+    private static void DiscoverAssemblies()
+    {
+        _loadedModules = ArchiveMod.Modules.Select(m => m.GetType().Assembly).Distinct().ToArray();
+        
+        SelectAssembly(_loadedModules[0]);
+    }
+    
+    public static void NextAssembly()
+    {
+        _index++;
+        
+        if (_index >= _loadedModules.Length)
+        {
+            _index = 0;
+        }
+        
+        var asm = _loadedModules[_index];
+        
+        SelectAssembly(asm);
+    }
+
+    public static void SelectAssembly(Assembly asm)
+    {
+        _selectedAssembly = asm;
+        Settings.SelectedAssemblyLabel.PrimaryText.SetText($"Current ASM: <color=orange>{asm?.GetName()?.Name ?? "None"}</color>");
+    }
+    
     public static void CreateReadme(Assembly asmFilter = null)
     {
         var groups = new Dictionary<FeatureGroup, IEnumerable<Feature>>();
@@ -62,10 +110,9 @@ internal class FeaturesMarkdownCreator : Feature
                 continue;
             }
 
-
             if(group.IsHidden)
             {
-                FeatureLogger.Info("Skipping Hidden Group!");
+                FeatureLogger.Info($"Skipping hidden group \"{groupKvp.Key}\".");
                 continue;
             }
 
@@ -75,18 +122,26 @@ internal class FeaturesMarkdownCreator : Feature
                 continue;
             }
 
-            var features = groupKvp.Value.Where(f => !f.IsHidden);
+            var features = groupKvp.Value.Where(f => !f.IsHidden).ToArray();
 
-            if (features.Count() == 0)
+            if(asmFilter != null)
+            {
+                features = features.Where(f => f.GetType().Assembly == asmFilter).ToArray();
+            }
+            
+            if (!features.Any())
             {
                 FeatureLogger.Info($"Skipping Group \"{group}\": All Features are hidden!");
                 continue;
             }
 
-            groups.Add(group, features);
+            if (features.Length > 0)
+            {
+                groups.Add(group, features);
+            }
         }
 
-        var orderedGroups = groups.OrderBy(kvp => StripTMPTagsRegex(kvp.Key.Name));
+        var orderedGroups = groups.OrderBy(kvp => StripTMPTagsRegex(kvp.Key.Name)).ToArray();
 
         foreach(var entry in orderedGroups)
         {
@@ -101,11 +156,6 @@ internal class FeaturesMarkdownCreator : Feature
             var group = entry.Key;
             var features = entry.Value;
 
-            if(asmFilter != null)
-            {
-                features = features.Where(f => f.GetType().Assembly == asmFilter);
-            }
-
             features = features.OrderBy(f => StripTMPTagsRegex(f.Name));
 
             builder.Append(NEWLINE);
@@ -118,7 +168,7 @@ internal class FeaturesMarkdownCreator : Feature
             }
         }
 
-        var result = builder.Replace("\\n", NEWLINE).ToString();
+        var result = builder.Replace("\\n", NEWLINE.ToString()).ToString();
 
         GUIUtility.systemCopyBuffer = result;
 
