@@ -18,7 +18,7 @@
       },
       "TheArchive.Features.Security.AntiGearHack.Description": {
         "FDescription": {
-          "English": "Prevents clients use modified gears.",
+          "English": "Prevents clients from using modified gear.",
           "Chinese": "阻止客机使用魔改枪械",
           "French": null,
           "Italian": null,
@@ -74,7 +74,7 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": "What to do with griefers that are using modified gears.",
+          "English": "What to do with griefers that are using modified gear.",
           "Chinese": "对使用魔改装备的破坏者采取的行动。",
           "French": null,
           "Italian": null,

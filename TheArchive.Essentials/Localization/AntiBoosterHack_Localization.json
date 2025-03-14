@@ -18,7 +18,7 @@
       },
       "TheArchive.Features.Security.AntiBoosterHack.Description": {
         "FDescription": {
-          "English": "Prevents clients use modified boosters.",
+          "English": "Prevents clients from using modified boosters.",
           "Chinese": "阻止客机使用魔改强化剂",
           "French": null,
           "Italian": null,

@@ -18,7 +18,7 @@ public class AntiGearHack : Feature
 {
     public override string Name => "Anti Gear Hack";
 
-    public override string Description => "Prevents clients use modified gears.";
+    public override string Description => "Prevents clients from using modified gear.";
 
     public override FeatureGroup Group => FeatureGroups.Security;
 

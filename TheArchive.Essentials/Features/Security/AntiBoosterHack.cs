@@ -20,7 +20,7 @@ public class AntiBoosterHack : Feature
 {
     public override string Name => "Anti Booster Hack";
 
-    public override string Description => "Prevents clients use modified boosters.";
+    public override string Description => "Prevents clients from using modified boosters.";
 
     public override FeatureGroup Group => FeatureGroups.Security;
 
