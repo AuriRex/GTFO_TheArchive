@@ -143,7 +143,7 @@ public class DataBlockManager
 
     internal static void Setup()
     {
-        Logger.Msg(ConsoleColor.Green, $"Setting up ...");
+        Logger.Debug("Setting up ...");
         try
         {
             if (ArchiveMod.Settings.DumpDataBlocks && !ArchiveMod.IsPlayingModded)

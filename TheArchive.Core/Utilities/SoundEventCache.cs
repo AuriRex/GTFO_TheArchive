@@ -76,13 +76,13 @@ public class SoundEventCache : IInitAfterGameDataInitialized
     {
         try
         {
-            Logger.Msg(ConsoleColor.Magenta, $"Initializing ...");
+            Logger.Debug("Initializing ...");
 
             var fieldOrProps = typeof(AK.EVENTS)
 #if IL2CPP
                 .GetProperties().Where(p => p.GetMethod?.ReturnType == typeof(uint));
 #else
-                    .GetFields().Where(f => f.FieldType == typeof(uint));
+                .GetFields().Where(f => f.FieldType == typeof(uint));
 #endif
 
             foreach (var fp in fieldOrProps)
@@ -93,7 +93,7 @@ public class SoundEventCache : IInitAfterGameDataInitialized
                 _reverseSoundIdCache.Add(value, name);
             }
 
-            Logger.Msg(ConsoleColor.Magenta, $"Cached {_soundIdCache.Count} sound events!");
+            Logger.Debug($"Cached {_soundIdCache.Count} sound events!");
         }
         catch(Exception ex)
         {

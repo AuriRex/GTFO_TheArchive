@@ -28,7 +28,7 @@ public class ArchiveModuleChainloader
     public static ArchiveModuleChainloader Instance { get; private set; }
     
     private static IArchiveLogger _logger;
-    private static IArchiveLogger Logger => _logger ??= Loader.LoaderWrapper.CreateLoggerInstance(nameof(ArchiveModuleChainloader));
+    private static IArchiveLogger Logger => _logger ??= Loader.LoaderWrapper.CreateLoggerInstance(nameof(ArchiveModuleChainloader), ConsoleColor.Magenta);
 
     private static Regex allowedGuidRegex { get; } = new(@"^[a-zA-Z0-9\._\-]+$");
 
