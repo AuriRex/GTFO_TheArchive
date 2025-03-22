@@ -22,7 +22,6 @@ public class ArchiveRichPresenceModule : IArchiveModule
 
     private IArchiveLogger _logger = LoaderWrapper.CreateLoggerInstance(MOD_NAME);
     
-    public bool ApplyHarmonyPatches => false;
     public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
     
     public void Init()

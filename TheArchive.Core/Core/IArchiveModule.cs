@@ -2,8 +2,6 @@
 
 public interface IArchiveModule
 {
-    bool ApplyHarmonyPatches { get; }
-
     string ModuleGroup { get; }
 
     void Init();

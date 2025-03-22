@@ -540,12 +540,6 @@ public static class ArchiveMod
         try
         {
             module.Init();
-
-            if (module.ApplyHarmonyPatches)
-            {
-                ArchiveLogger.Warning($"Applying regular Harmony patches on module \"{moduleType.FullName}\" ...");
-                _harmonyInstance.PatchAll(moduleType.Assembly);
-            }
         }
         catch(Exception ex)
         {

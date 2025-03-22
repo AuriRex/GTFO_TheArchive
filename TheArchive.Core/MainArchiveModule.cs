@@ -24,8 +24,6 @@ public class MainArchiveModule : IArchiveModule
         typeof(Il2CppSystem.Collections.Generic.List<>).RegisterForIdentifier("GenericList");
     }
     
-    public bool ApplyHarmonyPatches => false;
-
     public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
 
     public Dictionary<Language, string> ModuleGroupLanguages => new()
