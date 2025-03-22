@@ -36,7 +36,7 @@ public class Watermark : Feature
     {
         [FSDisplayName("Watermark Mode")]
         [FSDescription($"{nameof(WatermarkMode.Mod)}: Shows currently installed mod version\n{nameof(WatermarkMode.Positional)}: Shows your current position / XYZ coordinates")]
-        public WatermarkMode Mode { get; set; } = WatermarkMode.Positional;
+        public WatermarkMode Mode { get; set; } = WatermarkMode.Timer;
 
         [FSSlider(0f, 1f)]
         [FSDisplayName("XYZ Saturation")]
