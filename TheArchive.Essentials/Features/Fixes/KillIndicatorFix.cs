@@ -20,7 +20,6 @@ namespace TheArchive.Features.Fixes;
 internal class KillIndicatorFix : Feature
 {
     public const string KILL_INDICATOR_FIX_GUID = "randomuserhi.KillIndicatorFix";
-    public const string DAMAGE_SYNC_GUID = "randomuserhi.DamageSync";
 
     public override bool ShouldInit()
     {
@@ -57,26 +56,20 @@ internal class KillIndicatorFix : Feature
         public bool DebugLog { get; set; } = false;
     }
 
-    private static bool hasDamageSync = false;
-
-    private struct Tag
+    private class Tag
     {
+        public float health;
         public long timestamp;
         public Vector3 localHitPosition; // Store local position to prevent desync when enemy moves since hit position is relative to world not enemy.
 
-        public Tag(long timestamp, Vector3 localHitPosition)
-        {
-            this.timestamp = timestamp;
-            this.localHitPosition = localHitPosition;
+        public Tag(float health) {
+            this.health = health;
         }
     }
-    private static Dictionary<int, Tag> taggedEnemies = new Dictionary<int, Tag>();
+    private static Dictionary<ushort, Tag> taggedEnemies = new Dictionary<ushort, Tag>();
 
     public override void Init()
     {
-        hasDamageSync = LoaderWrapper.IsModInstalled(DAMAGE_SYNC_GUID);
-        if (hasDamageSync) FeatureLogger.Notice("Damage Sync is installed, disabling damage sync component.");
-
         RundownManager.add_OnExpeditionGameplayStarted((Action)OnRundownStart);
     }
 
@@ -89,20 +82,6 @@ internal class KillIndicatorFix : Feature
 
 #region Fix for local player 
 
-    [ArchivePatch(typeof(Dam_EnemyDamageBase), nameof(Dam_EnemyDamageBase.ProcessReceivedDamage))]
-    internal static class Dam_EnemyDamageBase_ProcessReceivedDamage_Patch
-    {
-        public static void Postfix(Dam_EnemyDamageBase __instance)
-        {
-            // Only run if TS DamageSync is not installed (prevents sending duplicate packets)
-            if (!SNet.IsMaster || hasDamageSync) return;
-
-            var data = default(pSetHealthData);
-            data.health.Set(__instance.Health, __instance.HealthMax);
-            __instance.m_setHealthPacket.Send(data, SNet_ChannelType.GameReceiveCritical);
-        }
-    }
-
     [ArchivePatch(typeof(EnemyBehaviour), nameof(EnemyBehaviour.ChangeState), new Type[] 
     { 
         typeof(EB_States)
@@ -114,13 +93,15 @@ internal class KillIndicatorFix : Feature
             if (SNet.IsMaster) return;
             if (__instance.m_currentStateName == state || state != EB_States.Dead) return;
 
-            try {
+            try
+            {
                 EnemyAgent owner = __instance.m_ai.m_enemyAgent;
-                int instanceID = owner.GetInstanceID();
+                ushort id = owner.GlobalID;
                 long now = ((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds();
 
-                if (taggedEnemies.ContainsKey(instanceID)) {
-                    Tag t = taggedEnemies[instanceID];
+                if (taggedEnemies.ContainsKey(id))
+                {
+                    Tag t = taggedEnemies[id];
 
                     if (Settings.DebugLog)
                         if (t.timestamp <= now)
@@ -128,24 +109,40 @@ internal class KillIndicatorFix : Feature
                         else
                             FeatureLogger.Info($"Received kill update for enemy that was tagged in the future? Possibly long overflow...");
 
-                    if (t.timestamp <= now && now - t.timestamp < Settings.TagBufferPeriod) {
-                        if (!owner.Damage.DeathIndicatorShown) {
+                    if (t.timestamp <= now && now - t.timestamp < Settings.TagBufferPeriod)
+                    {
+                        if (!owner.Damage.DeathIndicatorShown)
+                        {
                             FeatureLogger.Info($"Client side marker was not shown, showing server side one.");
 
                             GuiManager.CrosshairLayer?.ShowDeathIndicator(owner.transform.position + t.localHitPosition);
                             owner.Damage.DeathIndicatorShown = true;
-                        } else if (Settings.DebugLog) {
+                        } 
+                        else if (Settings.DebugLog)
+                        {
                             FeatureLogger.Info($"Client side marker was shown, not showing server side one.");
                         }
-                    } else if (Settings.DebugLog) {
+                    }
+                    else if (Settings.DebugLog) 
+                    {
                         FeatureLogger.Info($"Client was no longer interested in this enemy, marker will not be shown.");
                     }
 
-                    taggedEnemies.Remove(instanceID);
+                    taggedEnemies.Remove(id);
                 }
-            } catch (Exception e) { FeatureLogger.Error($"Something went wrong:\n{e}"); }
+            }
+            catch (Exception e)
+            {
+                FeatureLogger.Error($"Something went wrong:\n{e}");
+            }
         }
     }
+
+    // Used to handle UFloat conversion of damage
+    private static pFullDamageData fullDamageData = new();
+
+    // Disable vanilla hit indicator when triggering a kill indicator in its place
+    private static bool disableHitIndicator = false;
 
     [ArchivePatch(typeof(Dam_EnemyDamageBase), nameof(Dam_EnemyDamageBase.BulletDamage), new Type[]
     {
@@ -172,23 +169,33 @@ internal class KillIndicatorFix : Feature
                 return;
             }
             if (p.Owner.IsBot) return; // Check player isnt a bot
+            if (__instance.Health <= 0) return;
 
             EnemyAgent owner = __instance.Owner;
             ushort id = owner.GlobalID;
             long now = ((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds();
 
-            float num = AgentModifierManager.ApplyModifier(owner, AgentModifier.ProjectileResistance, Mathf.Clamp(dam, 0, __instance.HealthMax));
-            __instance.Health -= num;
+            if (!taggedEnemies.ContainsKey(id)) taggedEnemies.Add(id, new Tag(__instance.Health));
+            Tag t = taggedEnemies[id];
+            t.localHitPosition = position - owner.transform.position;
+            t.timestamp = now;
 
-            Vector3 localHit = position - owner.transform.position;
-            Tag t = new Tag(now, localHit);
-            if (taggedEnemies.ContainsKey(id)) taggedEnemies[id] = t;
-            else taggedEnemies.Add(id, t);
+            fullDamageData.damage.Set(dam, __instance.HealthMax);
+            float num = AgentModifierManager.ApplyModifier(owner, AgentModifier.ProjectileResistance, fullDamageData.damage.Get(__instance.HealthMax));
+            t.health -= num;
+
+            // Show indicator when tracked health assumes enemy is dead
+            if (t.health <= 0 && !__instance.DeathIndicatorShown) 
+            {
+                GuiManager.CrosshairLayer?.ShowDeathIndicator(position);
+                __instance.DeathIndicatorShown = true;
+                disableHitIndicator = true;
+            }
 
             if (Settings.DebugLog)
             {
                 FeatureLogger.Info($"{num} Bullet Damage done by {p.PlayerName}. IsBot: {p.Owner.IsBot}");
-                FeatureLogger.Info($"Tracked current HP: {__instance.Health}, [{id}]");
+                FeatureLogger.Info($"Tracked current HP: {t.health}, [{id}]");
             }
         }
     }
@@ -210,7 +217,7 @@ internal class KillIndicatorFix : Feature
     })]
     internal static class Dam_EnemyDamageBase_MeleeDamage_Patch
     {
-        public static void Prefix(Dam_EnemyDamageBase __instance, float dam, Agent sourceAgent, Vector3 position)
+        public static void Prefix(Dam_EnemyDamageBase __instance, float dam, Agent sourceAgent, Vector3 position, Vector3 direction, int limbID, float staggerMulti, float precisionMulti, float backstabberMulti, float sleeperMulti, bool skipLimbDestruction, DamageNoiseLevel damageNoiseLevel)
         {
             if (SNet.IsMaster) return;
             PlayerAgent p = sourceAgent?.TryCast<PlayerAgent>();
@@ -225,14 +232,27 @@ internal class KillIndicatorFix : Feature
             ushort id = owner.GlobalID;
             long now = ((DateTimeOffset)DateTime.Now).ToUnixTimeMilliseconds();
 
-            // Apply damage modifiers (head, occiput etc...)
-            float num = AgentModifierManager.ApplyModifier(owner, AgentModifier.MeleeResistance, Mathf.Clamp(dam, 0, __instance.DamageMax));
-            __instance.Health -= num;
+            if (!taggedEnemies.ContainsKey(id)) taggedEnemies.Add(id, new Tag(__instance.Health));
+            Tag t = taggedEnemies[id];
+            t.localHitPosition = position - owner.transform.position;
+            t.timestamp = now;
 
-            Vector3 localHit = position - owner.transform.position;
-            Tag t = new Tag(now, localHit);
-            if (taggedEnemies.ContainsKey(id)) taggedEnemies[id] = t;
-            else taggedEnemies.Add(id, t);
+            fullDamageData.damage.Set(dam, __instance.DamageMax);
+            float num = AgentModifierManager.ApplyModifier(owner, AgentModifier.MeleeResistance, fullDamageData.damage.Get(__instance.DamageMax));
+            if (__instance.Owner.Locomotion.CurrentStateEnum == ES_StateEnum.Hibernate)
+            {
+                fullDamageData.sleeperMulti.Set(sleeperMulti, 10);
+                num *= fullDamageData.sleeperMulti.Get(10);
+            }
+            t.health -= num;
+
+            // Show indicator when tracked health assumes enemy is dead
+            if (t.health <= 0 && !__instance.DeathIndicatorShown) 
+            {
+                GuiManager.CrosshairLayer?.ShowDeathIndicator(position);
+                __instance.DeathIndicatorShown = true;
+                disableHitIndicator = true;
+            }
 
             if (Settings.DebugLog)
             {
@@ -242,9 +262,48 @@ internal class KillIndicatorFix : Feature
         }
     }
 
+    [ArchivePatch(typeof(Dam_EnemyDamageLimb), nameof(Dam_EnemyDamageLimb.ShowHitIndicator), new Type[]
+    {
+        typeof(bool),
+        typeof(bool),
+        typeof(Vector3),
+        typeof(bool)
+    })]
+    internal static class Dam_EnemyDamageLimb_ShowHitIndicator_Patch
+    {
+        public static bool Prefix(Dam_EnemyDamageLimb __instance, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor)
+        {
+            if (disableHitIndicator) 
+            {
+                disableHitIndicator = false;
+                return ArchivePatch.SKIP_OG;
+            }
+            
+            return ArchivePatch.RUN_OG;
+        }
+    }
+
+    [ArchivePatch(typeof(Dam_EnemyDamageBase), nameof(Dam_EnemyDamageBase.ReceiveSetHealth), new Type[]
+    {
+        typeof(pSetHealthData)
+    })]
+    private class Dam_EnemyDamageBase_ReceiveSetHealth_Patch
+    {
+        private static void Postfix(Dam_EnemyDamageBase __instance, pSetHealthData data)
+        {
+            if (SNet.IsMaster) return;
+
+            ushort id = __instance.Owner.GlobalID;
+            if (!taggedEnemies.ContainsKey(id)) return;
+
+            Tag t = taggedEnemies[id];
+            t.health = data.health.Get(__instance.HealthMax);
+        }
+    }
+
 #endregion
 
-#region Fix for sentries (Unfinnished)
+#region Fix for sentries (WIP)
 #if false
 
     // Determine if the shot was performed by a sentry or player
@@ -322,31 +381,38 @@ internal class KillIndicatorFix : Feature
             Dam_EnemyDamageBase m_base = __instance.m_base;
             EnemyAgent owner = m_base.Owner;
             float num = dam;
-            if (!m_base.IsImortal) {
+            if (!m_base.IsImortal) 
+            {
                 num = __instance.ApplyWeakspotAndArmorModifiers(dam, precisionMulti);
                 num = __instance.ApplyDamageFromBehindBonus(num, position, direction);
                 bool willDie = m_base.WillDamageKill(num);
 
                 SendHitIndicator(p, owner, (byte)__instance.m_limbID, num > dam, willDie, position, __instance.m_armorDamageMulti < 1f);
-            } else {
+            } 
+            else 
+            {
                 SendHitIndicator(p, owner, (byte)__instance.m_limbID, num > dam, willDie: false, position, true);
             }
         }
 
-        private static void SendHitIndicator(PlayerAgent sendTo, Agent target, byte limbID, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor = false) {
+        private static void SendHitIndicator(PlayerAgent sendTo, Agent target, byte limbID, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor = false) 
+        {
             // TODO(randomuserhi): Send Network packet (Make sure not sending to a bot)
         }
 
-        private static void ReceiveHitIndicator(Agent target, byte limbID, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor = false) {
+        private static void ReceiveHitIndicator(Agent target, byte limbID, bool hitWeakspot, bool willDie, Vector3 position, bool hitArmor = false) 
+        {
             // TODO(randomuserhi): OnReceive, display corresponding hit marker
 
             EnemyAgent? targetEnemy = target.TryCast<EnemyAgent>();
-            if (targetEnemy != null) {
+            if (targetEnemy != null)
+            {
                 Dam_EnemyDamageLimb dam = targetEnemy.Damage.DamageLimbs[limbID];
                 dam.ShowHitIndicator(hitWeakspot, willDie, position, hitArmor);
             }
             PlayerAgent? targetPlayer = target.TryCast<PlayerAgent>();
-            if (targetPlayer != null) {
+            if (targetPlayer != null)
+            {
                 GuiManager.CrosshairLayer.PopFriendlyTarget();
             }
 
