@@ -143,7 +143,7 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": "Change colors for you only\n\n<#404>{nameof(LocalOverrideMode.Default)}</color>: Do whatever the game does\n<#404>{nameof(LocalOverrideMode.ForceColor)}</color>: Force Glowstick Colors\n<#404>{nameof(LocalOverrideMode.UsePlayerColor)}</color>: Player color determines Glowstick color\n\n<color=orange>(NOTICE: The first time per game start, after throwing the first glowstick, the game might stutter a little for a second to generate a texture)</color>",
+          "English": "Change colors for you only\n\n<#404>Default</color>: Do whatever the game does\n<#404>Force Color</color>: Force Glowstick Colors\n<#404>Use Player Color</color>: Player color determines Glowstick color\n\n<color=orange>(NOTICE: The first time per game start, after throwing the first glowstick, the game might stutter a little for a second to generate a texture)</color>",
           "Chinese": "只改变你的颜色\n\n<#404>默认</color>: 跟随游戏设定\n<#404>强制</color>: 强制荧光棒的颜色\n<#404>使用玩家颜色</color>: 玩家的颜色决定荧光棒的颜色\n\n<color=orange>(注意:每次游戏开始时，在投掷第一支荧光棒后，游戏可能会在生成纹理时停顿一秒钟)</color>",
           "French": null,
           "Italian": null,

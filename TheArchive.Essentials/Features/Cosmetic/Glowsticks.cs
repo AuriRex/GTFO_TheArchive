@@ -4,6 +4,7 @@ using SNetwork;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
@@ -54,7 +55,7 @@ public class Glowsticks : Feature
 
         [FSDisplayName("Force Color")]
         [FSDescription($"Sets the Glowstick color for every glowstick\nSet Mode above to {nameof(LocalOverrideMode.ForceColor)} to use this!")]
-        public SColor ForcedColor { get; set; } = new SColor(0, 1, 0);
+        public SColor ForcedColor { get; set; } = new(0, 1, 0);
 
         [FSDisplayName("Scale up dark colors")]
         [FSDescription("Turns dark colors bright to actually make them glow")]
@@ -96,7 +97,27 @@ public class Glowsticks : Feature
         IsHalloween = halloween.AddDays(-1) <= now && now <= halloween.AddDays(7);
     }
 
-    public static Dictionary<GlowstickSettings.GlowstickType, uint> GlowstickLookup = new Dictionary<GlowstickSettings.GlowstickType, uint>()
+    public override void OnGameDataInitialized()
+    {
+        GlowstickEmissiveMapPath = Path.Combine(LocalFiles.GameLogsAndCachePath, "Glowsticks_EmissiveMap.png");
+
+        if (!File.Exists(GlowstickEmissiveMapPath))
+            return;
+        
+        FeatureLogger.Info("Loading cached emissive map from disk.");
+        
+        var tex2d = new Texture2D(2, 2);
+        
+        if (!tex2d.LoadImage(File.ReadAllBytes(GlowstickEmissiveMapPath)))
+            return;
+        
+        GlowstickInstance_Setup_Patch.EmissiveMapMonochrome = tex2d;
+        GlowstickInstance_Setup_Patch.EmissiveMapMonochrome.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset;
+    }
+
+    private static string GlowstickEmissiveMapPath { get; set; }
+
+    public static readonly Dictionary<GlowstickSettings.GlowstickType, uint> GlowstickLookup = new()
     {
         { GlowstickSettings.GlowstickType.Green, 114 },
         { GlowstickSettings.GlowstickType.Red, 130 },
@@ -120,8 +141,8 @@ public class Glowsticks : Feature
     internal static class GlowstickInstance_Setup_Patch
     {
         public static bool DebugForceEmissionMapRegeneration { get; set; } = false;
-        public static Texture2D EmissiveMapMonochrome { get; private set; } = null;
-        private static bool _creatingTexture = false;
+        public static Texture2D EmissiveMapMonochrome { get; internal set; }
+        private static bool _creatingTexture;
 
         public static void Postfix(GlowstickInstance __instance)
         {
@@ -166,7 +187,7 @@ public class Glowsticks : Feature
 
                 if (big > 0)
                 {
-                    float multi = 1 / big;
+                    var multi = 1 / big;
                     col = new Color(col.r * multi, col.g * multi, col.b * multi);
                 }
                 else
@@ -221,13 +242,13 @@ public class Glowsticks : Feature
                 var originalEmissiveMap = material.GetTexture("_EmissiveMap").TryCastTo<Texture2D>();
 
                 // Original texture is not readable, Blit into new, readable one to access pixel data
-                RenderTexture tmp = RenderTexture.GetTemporary(originalEmissiveMap.width, originalEmissiveMap.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
+                var tmp = RenderTexture.GetTemporary(originalEmissiveMap.width, originalEmissiveMap.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
 
-                RenderTexture previous = RenderTexture.active;
+                var previous = RenderTexture.active;
                 Graphics.Blit(originalEmissiveMap, tmp);
                 RenderTexture.active = previous;
 
-                Texture2D newEmissiveMap = new Texture2D(originalEmissiveMap.width, originalEmissiveMap.height);
+                var newEmissiveMap = new Texture2D(originalEmissiveMap.width, originalEmissiveMap.height);
 
                 yield return null;
 
@@ -244,8 +265,8 @@ public class Glowsticks : Feature
 
                 var ogPixels = newEmissiveMap.GetPixels();
                 var newPixels = new Color[ogPixels.Length];
-                float big = 0f;
-                for (int i = 0; i < ogPixels.Length; i++)
+                var big = 0f;
+                for (var i = 0; i < ogPixels.Length; i++)
                 {
                     var value = ogPixels[i].grayscale;
                     if (value > big)
@@ -259,7 +280,7 @@ public class Glowsticks : Feature
                 {
                     var multi = 1 / big;
                     // Push up all values to get a range from 0 to 1 on the map
-                    for (int i = 0; i < newPixels.Length; i++)
+                    for (var i = 0; i < newPixels.Length; i++)
                     {
                         newPixels[i] = newPixels[i] * multi;
                         if (i % 17600 == 17599)
@@ -272,7 +293,11 @@ public class Glowsticks : Feature
 
                 EmissiveMapMonochrome = newEmissiveMap;
                 EmissiveMapMonochrome.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset;
-
+                
+                FeatureLogger.Info("Saving emissive map to disk.");
+                var bytes = newEmissiveMap.EncodeToPNG().ToArray();
+                File.WriteAllBytes(GlowstickEmissiveMapPath, bytes);
+                
                 _creatingTexture = false;
             }
 
