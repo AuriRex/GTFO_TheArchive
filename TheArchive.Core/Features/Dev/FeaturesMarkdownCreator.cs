@@ -91,7 +91,7 @@ internal class FeaturesMarkdownCreator : Feature
     public static void SelectAssembly(Assembly asm)
     {
         _selectedAssembly = asm;
-        Settings.SelectedAssemblyLabel.PrimaryText.SetText($"Current ASM: <color=orange>{asm?.GetName()?.Name ?? "None"}</color>");
+        Settings?.SelectedAssemblyLabel?.PrimaryText?.SetText($"Current ASM: <color=orange>{asm?.GetName().Name ?? "None"}</color>");
     }
     
     public static void CreateReadme(Assembly asmFilter = null)
