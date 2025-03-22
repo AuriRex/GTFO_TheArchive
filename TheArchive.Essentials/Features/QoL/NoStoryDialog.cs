@@ -22,7 +22,7 @@ public class NoStoryDialog : Feature
     public override string Description => "Removes all level-based voice events that come with subtitles.\naka Schaeffer-be-gone";
 
 #if IL2CPP
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     [ArchivePatch(typeof(WardenObjectiveManager), nameof(WardenObjectiveManager.CheckAndExecuteEventsOnTrigger), new Type[] { typeof(WardenObjectiveEventData), typeof(eWardenObjectiveEventTrigger), typeof(bool), typeof(float) })]
     internal static class WardenObjectiveManager_CheckAndExecuteEventsOnTrigger_Patch

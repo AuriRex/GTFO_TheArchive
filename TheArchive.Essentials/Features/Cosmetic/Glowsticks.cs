@@ -27,7 +27,7 @@ public class Glowsticks : Feature
 
     public override string Description => "Costomize your glow-y little friends!\n\nAllows you to change the built in glowstick type and/or customize the color to your liking, or color it based on the player who threw the glowstick.";
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     [FeatureConfig]
     public static GlowstickSettings Settings { get; set; }

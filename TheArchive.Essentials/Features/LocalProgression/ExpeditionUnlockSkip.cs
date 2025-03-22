@@ -17,7 +17,7 @@ internal class ExpeditionUnlockSkip : Feature
 
     public override FeatureGroup Group => FeatureGroups.LocalProgression;
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     public override void OnEnable()
     {

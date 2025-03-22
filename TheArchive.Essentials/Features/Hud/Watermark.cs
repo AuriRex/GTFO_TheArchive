@@ -25,7 +25,7 @@ public class Watermark : Feature
 
     public const string ColorHex = "FBF3FF";
 
-    public static new ILocalizationService Localization { get; set; }
+    public new static ILocalizationService Localization { get; set; }
 
     public new static IArchiveLogger FeatureLogger { get; set; }
 

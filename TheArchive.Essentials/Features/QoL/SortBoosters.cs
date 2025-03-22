@@ -17,7 +17,7 @@ public class SortBoosters : Feature
 
     public override string Description => "Sorts your booster inventory by type and alphabetically";
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     public override bool SkipInitialOnEnable => true;
 

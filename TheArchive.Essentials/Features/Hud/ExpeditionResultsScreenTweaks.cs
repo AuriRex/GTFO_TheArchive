@@ -26,7 +26,7 @@ public class ExpeditionResultsScreenTweaks : Feature
 
     public override bool SkipInitialOnEnable => true;
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     [FeatureConfig]
     public static ExpeditionResultsScreenTweaksSettings Settings { get; set; }

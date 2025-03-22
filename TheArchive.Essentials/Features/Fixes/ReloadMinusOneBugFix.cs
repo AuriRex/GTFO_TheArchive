@@ -19,7 +19,7 @@ internal class ReloadMinusOneBugFix : Feature
 
     public override bool InlineSettingsIntoParentMenu => true;
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     [FeatureConfig]
     public static ReloadMinusOneBugFixSettings Settings { get; set; }

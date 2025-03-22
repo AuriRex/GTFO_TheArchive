@@ -8,12 +8,12 @@ namespace TheArchive.Core.Discord;
 
 public partial struct ImageHandle
 {
-    static public ImageHandle User(Int64 id)
+    public static ImageHandle User(Int64 id)
     {
         return User(id, 128);
     }
 
-    static public ImageHandle User(Int64 id, UInt32 size)
+    public static ImageHandle User(Int64 id, UInt32 size)
     {
         return new ImageHandle
         {

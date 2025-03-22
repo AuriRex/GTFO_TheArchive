@@ -19,7 +19,7 @@ public class WeaponShootForward : Feature
 
     public override string Description => "Patches weapons to always shoot into the center of your crosshair.\nMakes shotgun draw & insta-shoot not shoot the floor";
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     public static Vector3 Direction = Vector3.zero;
     public static int Frame = 0;

@@ -40,7 +40,7 @@ internal class KillIndicatorFix : Feature
 
     public override bool InlineSettingsIntoParentMenu => true;
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     [FeatureConfig]
     public static KillIndicatorFixSettings Settings { get; set; }

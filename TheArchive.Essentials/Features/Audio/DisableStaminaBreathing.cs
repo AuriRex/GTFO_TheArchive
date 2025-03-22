@@ -14,7 +14,7 @@ internal class DisableStaminaBreathing : Feature
 
     public override string Description => "Disables the player breathing and panting due to running around or enemy encounters in pre-R6 builds.";
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     public static IValueAccessor<PlayerBreathing, CellSoundPlayer> A_m_sfxBreathe;
     public override void Init()

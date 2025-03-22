@@ -79,7 +79,7 @@ public class Nickname : Feature
     [FeatureConfig]
     public static NicknameSettings Settings { get; set; }
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     private static Color? _currentNicknameColor;
     public static Color CurrentNicknameColor

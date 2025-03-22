@@ -69,11 +69,11 @@ public class AntiSpawn : Feature
 
     private static Original_InternalSpawnRequestFromSlaveCallback _originalMethod_InternalSpawnRequestFromSlaveCallback_pEnemySpawnData;
     // cache delegate to fix crash (A callback was made on a garbage collected delegate of type)
-    private unsafe static Original_InternalSpawnRequestFromSlaveCallback _detourMethod_InternalSpawnRequestFromSlaveCallback_pEnemySpawnData = InternalSpawnRequestFromSlaveCallback_pEnemySpawnData_Replacement;
+    private static unsafe Original_InternalSpawnRequestFromSlaveCallback _detourMethod_InternalSpawnRequestFromSlaveCallback_pEnemySpawnData = InternalSpawnRequestFromSlaveCallback_pEnemySpawnData_Replacement;
     private static Original_InternalSpawnRequestFromSlaveCallback _originalMethod_InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData;
-    private unsafe static Original_InternalSpawnRequestFromSlaveCallback _detourMethod_InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData = InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData_Replacement;
+    private static unsafe Original_InternalSpawnRequestFromSlaveCallback _detourMethod_InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData = InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData_Replacement;
     public unsafe delegate void Original_InternalSpawnRequestFromSlaveCallback(IntPtr self, IntPtr spawnData, Il2CppMethodInfo* methodInfo);
-    public unsafe static void InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData_Replacement(IntPtr self, IntPtr spawnData, Il2CppMethodInfo* methodInfo)
+    public static unsafe void InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData_Replacement(IntPtr self, IntPtr spawnData, Il2CppMethodInfo* methodInfo)
     {
         if (IsEnabled && SNet.IsMaster && !SNet.Capture.IsCheckpointRecall)
         {
@@ -93,7 +93,7 @@ public class AntiSpawn : Feature
 
         _originalMethod_InternalSpawnRequestFromSlaveCallback_pEnemyGroupSpawnData.Invoke(self, spawnData, methodInfo);
     }
-    public unsafe static void InternalSpawnRequestFromSlaveCallback_pEnemySpawnData_Replacement(IntPtr self, IntPtr spawnData, Il2CppMethodInfo* methodInfo)
+    public static unsafe void InternalSpawnRequestFromSlaveCallback_pEnemySpawnData_Replacement(IntPtr self, IntPtr spawnData, Il2CppMethodInfo* methodInfo)
     {
         if (IsEnabled && SNet.IsMaster && !SNet.Capture.IsCheckpointRecall)
         {

@@ -25,7 +25,7 @@ public class DisableUIMirroring : Feature
         A_ApplySetttings = MethodAccessor<UI_Apply>.GetAccessor("ApplySetttings", Array.Empty<Type>());
     }
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     public override void OnEnable()
     {

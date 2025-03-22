@@ -28,9 +28,9 @@ public class PlayerLobbyManagement : Feature
 
     public override string Description => "Allows you to open a players steam profile by clicking on their name as well as kick and ban players as host.";
 
-    public static new ILocalizationService Localization { get; set; }
+    public new static ILocalizationService Localization { get; set; }
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     [FeatureConfig]
     public static LobbyManagementSettings Settings { get; set; }

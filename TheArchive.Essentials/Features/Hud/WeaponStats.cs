@@ -24,7 +24,7 @@ public class WeaponStats : Feature
 
     public override string Description => "Adds weapon statistics such as damage, clip size and reload speed (and more if applicable) on the weapon select screen.";
         
-    public static new ILocalizationService Localization { get; set; }
+    public new static ILocalizationService Localization { get; set; }
 
     public override Type[] LocalizationExternalTypes => new Type[] { typeof(FSSlider.RoundTo) };
 

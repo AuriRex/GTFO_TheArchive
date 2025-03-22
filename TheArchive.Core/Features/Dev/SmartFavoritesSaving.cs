@@ -17,7 +17,7 @@ internal class SmartFavoritesSaving : Feature
 
     public override string Description => "Only save selected weapons/vanity on drop or game quit.";
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     private static readonly eGameStateName _eGameStateName_Generating = GetEnumFromName<eGameStateName>(nameof(eGameStateName.Generating));
 

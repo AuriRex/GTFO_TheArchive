@@ -27,7 +27,7 @@ internal class CarryItemMarker : Feature
 
     public static bool IsEnabled { get; set; }
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     [FeatureConfig]
     public static CarryItemMarkerSettings Settings { get; set; }

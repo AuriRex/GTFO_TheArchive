@@ -187,7 +187,7 @@ namespace TheArchive.Features.Hud
             }));
         }
 
-        public static new IArchiveLogger FeatureLogger { get; set; }
+        public new static IArchiveLogger FeatureLogger { get; set; }
 
         public record class LogInExpedition
         {

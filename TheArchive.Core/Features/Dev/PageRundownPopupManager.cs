@@ -22,7 +22,7 @@ internal class PageRundownPopupManager : Feature
 
     public override string Description => "Popups, yay!";
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
     private static void Empty()
     {

@@ -20,7 +20,7 @@ public class LoadingIndicator : Feature
 
     public override string Description => "Displays a little indicator that shows if other players have finished loading yet.";
 
-    public static new IArchiveLogger FeatureLogger { get; set; }
+    public new static IArchiveLogger FeatureLogger { get; set; }
 
 
     public static Color Cutscene = new Color(0.2f, 0.2f, 1);
