@@ -16,14 +16,14 @@ public static partial class LoaderWrapper
 
     public static IArchiveLogger CreateLoggerInstance(string name, ConsoleColor col = ConsoleColor.White)
     {
-        return new BIE_LogWrapper(new BepInEx.Logging.ManualLogSource(name));
+        return new BIE_LogWrapper(new ArManualLogSource(name, col));
     }
 
     public static IArchiveLogger CreateArSubLoggerInstance(string name, ConsoleColor col = ConsoleColor.White) => CreateLoggerInstance($"{ArchiveMod.ABBREVIATION}::{name}", col);
 
-    public static IArchiveLogger WrapLogger(BepInEx.Logging.ManualLogSource loggerInstance)
+    public static IArchiveLogger WrapLogger(BepInEx.Logging.ManualLogSource loggerInstance, ConsoleColor? col = null)
     {
-        return new BIE_LogWrapper(loggerInstance);
+        return new BIE_LogWrapper(new ArManualLogSource(loggerInstance.SourceName, col));
     }
 
     public static object StartCoroutine(System.Collections.IEnumerator routine)

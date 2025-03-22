@@ -16,7 +16,7 @@ public class BIE_ArchiveMod : BasePlugin
     public override void Load()
     {
         var harmony = new HarmonyLib.Harmony(ArchiveMod.GUID);
-        ArchiveMod.OnApplicationStart(LoaderWrapper.WrapLogger(Log), harmony);
+        ArchiveMod.OnApplicationStart(LoaderWrapper.WrapLogger(Log, ConsoleColor.DarkMagenta), harmony);
 
         Application.add_quitting((Il2CppSystem.Action) (() => ArchiveMod.OnApplicationQuit()));
 

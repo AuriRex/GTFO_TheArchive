@@ -15,15 +15,31 @@ internal class BIE_LogWrapper : IArchiveLogger
             Logger.Sources.Add(_logger);
     }
 
-    public void Success(string msg) => _logger.LogMessage(msg);
+    public void Success(string msg)
+    {
+        BIE_LogSourceColorLookup.SetColor(_logger, ConsoleColor.Green);
+        _logger.LogMessage(msg);
+    }
 
-    public void Notice(string msg) => _logger.LogMessage(msg);
+    public void Notice(string msg)
+    {
+        BIE_LogSourceColorLookup.SetColor(_logger, ConsoleColor.Cyan);
+        _logger.LogMessage(msg);
+    }
 
     public void Info(string msg) => _logger.LogInfo(msg);
 
-    public void Fail(string msg) => _logger.LogInfo(msg);
+    public void Fail(string msg)
+    {
+        BIE_LogSourceColorLookup.SetColor(_logger, ConsoleColor.Red);
+        _logger.LogInfo(msg);
+    }
 
-    public void Msg(ConsoleColor col, string msg) => _logger.LogMessage(msg);
+    public void Msg(ConsoleColor col, string msg)
+    {
+        BIE_LogSourceColorLookup.SetColor(_logger, col);
+        _logger.LogMessage(msg);
+    }
 
     public void Msg(string msg) => _logger.LogMessage(msg);
 
