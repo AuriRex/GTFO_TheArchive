@@ -26,7 +26,7 @@ public class Glowsticks : Feature
 
     public override FeatureGroup Group => FeatureGroups.Cosmetic;
 
-    public override string Description => "Costomize your glow-y little friends!\n\nAllows you to change the built in glowstick type and/or customize the color to your liking, or color it based on the player who threw the glowstick.";
+    public override string Description => "Customize your glow-y little friends!\n\nAllows you to change the built in glowstick type and/or customize the color to your liking, or color it based on the player who threw the glowstick.";
 
     public new static IArchiveLogger FeatureLogger { get; set; }
 
@@ -111,8 +111,8 @@ public class Glowsticks : Feature
         if (!tex2d.LoadImage(File.ReadAllBytes(GlowstickEmissiveMapPath)))
             return;
         
-        GlowstickInstance_Setup_Patch.EmissiveMapMonochrome = tex2d;
-        GlowstickInstance_Setup_Patch.EmissiveMapMonochrome.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset;
+        GlowstickInstance__Setup__Patch.EmissiveMapMonochrome = tex2d;
+        GlowstickInstance__Setup__Patch.EmissiveMapMonochrome.hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset;
     }
 
     private static string GlowstickEmissiveMapPath { get; set; }
@@ -125,8 +125,11 @@ public class Glowsticks : Feature
         { GlowstickSettings.GlowstickType.Yellow, 174 }, // A1+ only!
     };
 
+    private static readonly int EMISSIVE_COLOR = Shader.PropertyToID("_EmissiveColor");
+    private static readonly int EMISSIVE_MAP = Shader.PropertyToID("_EmissiveMap");
+
     [ArchivePatch(typeof(ItemReplicationManager), nameof(ItemReplicationManager.OnItemSpawn))]
-    internal static class ItemReplicationManager_OnItemSpawn_Patch
+    internal static class ItemReplicationManager__OnItemSpawn__Patch
     {
         public static SNet_Player LastItemSpawner { get; set; }
 
@@ -138,7 +141,7 @@ public class Glowsticks : Feature
     }
 
     [ArchivePatch(typeof(GlowstickInstance), nameof(GlowstickInstance.Setup))]
-    internal static class GlowstickInstance_Setup_Patch
+    internal static class GlowstickInstance__Setup__Patch
     {
         public static bool DebugForceEmissionMapRegeneration { get; set; } = false;
         public static Texture2D EmissiveMapMonochrome { get; internal set; }
@@ -168,7 +171,7 @@ public class Glowsticks : Feature
                     col = Settings.ForcedColor.ToUnityColor();
                     break;
                 case GlowstickSettings.LocalOverrideMode.UsePlayerColor:
-                    col = ItemReplicationManager_OnItemSpawn_Patch.LastItemSpawner?.PlayerColor ?? new Color(1, 0, 1);
+                    col = ItemReplicationManager__OnItemSpawn__Patch.LastItemSpawner?.PlayerColor ?? new Color(1, 0, 1);
                     break;
             }
 
@@ -226,13 +229,13 @@ public class Glowsticks : Feature
 
         public static IEnumerator CreateAndOrAssignEmission(GlowstickInstance glowstickInstance, Color col)
         {
-            // "Glostick_Something_Something" / "GlowStick"
+            // "Glowstick_Something_Something" / "GlowStick"
             var renderer = glowstickInstance.transform.GetChild(0).GetChild(0).GetChildWithExactName("Glowstick_1").GetComponent<MeshRenderer>();
 
             var propertyBlock = new MaterialPropertyBlock();
 
             // Colorize the glowstick model
-            propertyBlock.SetVector("_EmissiveColor", col.WithAlpha(0.2f));
+            propertyBlock.SetVector(EMISSIVE_COLOR, col.WithAlpha(0.2f));
 
             while (_creatingTexture && EmissiveMapMonochrome == null)
                 yield return null;
@@ -241,7 +244,7 @@ public class Glowsticks : Feature
             {
                 _creatingTexture = true;
                 // The original emission map is colored! Turn into monochrome first or else colors are gonna be all weird ...
-                var originalEmissiveMap = renderer.sharedMaterial.GetTexture("_EmissiveMap").TryCastTo<Texture2D>();
+                var originalEmissiveMap = renderer.sharedMaterial.GetTexture(EMISSIVE_MAP).TryCastTo<Texture2D>();
 
                 // Original texture is not readable, Blit into new, readable one to access pixel data
                 var tmp = RenderTexture.GetTemporary(originalEmissiveMap.width, originalEmissiveMap.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
@@ -303,13 +306,13 @@ public class Glowsticks : Feature
                 _creatingTexture = false;
             }
 
-            propertyBlock.SetTexture("_EmissiveMap", EmissiveMapMonochrome);
+            propertyBlock.SetTexture(EMISSIVE_MAP, EmissiveMapMonochrome);
             renderer.SetPropertyBlock(propertyBlock);
         }
     }
 
     [ArchivePatch(typeof(ItemReplicationManager), nameof(ItemReplicationManager.ThrowItem))]
-    internal static class ItemReplicationManager_ThrowItem_Patch
+    internal static class ItemReplicationManager__ThrowItem__Patch
     {
         private static HashSet<uint> _glowstickIDs;
         public static void Init()
@@ -319,28 +322,29 @@ public class Glowsticks : Feature
 
         public static void Prefix(ref pItemData data)
         {
-            if (_glowstickIDs.Contains(data.itemID_gearCRC))
+            if (!_glowstickIDs.Contains(data.itemID_gearCRC))
+                return;
+            // Only replace glowsticks!
+
+            if (!Settings.Override)
+                return;
+
+            if (!GlowstickLookup.TryGetValue(Settings.OverrideType, out var overrideId))
+                return;
+            
+            if (Settings.AutoFestiveGlowsticks)
             {
-                // Only replace glowsticks!
+                if (IsXMas)
+                    overrideId = GlowstickLookup[GlowstickSettings.GlowstickType.Red];
 
-                if (Settings.Override && GlowstickLookup.TryGetValue(Settings.OverrideType, out var overrideId))
-                {
-                    if (Settings.AutoFestiveGlowsticks)
-                    {
-                        if (IsXMas)
-                            overrideId = GlowstickLookup[GlowstickSettings.GlowstickType.Red];
-
-                        if (IsHalloween)
-                            overrideId = GlowstickLookup[GlowstickSettings.GlowstickType.Orange];
-                    }
-
-                    if (!ItemDataBlock.GetAllBlocks().Any(x => x.persistentID == overrideId))
-                        overrideId = GlowstickLookup[GlowstickSettings.GlowstickType.Green];
-
-                    data.itemID_gearCRC = overrideId;
-                    return;
-                }
+                if (IsHalloween)
+                    overrideId = GlowstickLookup[GlowstickSettings.GlowstickType.Orange];
             }
+
+            if (ItemDataBlock.GetAllBlocks().All(x => x.persistentID != overrideId))
+                overrideId = GlowstickLookup[GlowstickSettings.GlowstickType.Green];
+
+            data.itemID_gearCRC = overrideId;
         }
     }
 }
