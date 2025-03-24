@@ -227,10 +227,12 @@ public class Glowsticks : Feature
         public static IEnumerator CreateAndOrAssignEmission(GlowstickInstance glowstickInstance, Color col)
         {
             // "Glostick_Something_Something" / "GlowStick"
-            var material = glowstickInstance.transform.GetChild(0).GetChild(0).GetChildWithExactName("Glowstick_1").GetComponent<MeshRenderer>().material;
+            var renderer = glowstickInstance.transform.GetChild(0).GetChild(0).GetChildWithExactName("Glowstick_1").GetComponent<MeshRenderer>();
+
+            var propertyBlock = new MaterialPropertyBlock();
 
             // Colorize the glowstick model
-            material.SetVector("_EmissiveColor", col.WithAlpha(0.2f));
+            propertyBlock.SetVector("_EmissiveColor", col.WithAlpha(0.2f));
 
             while (_creatingTexture && EmissiveMapMonochrome == null)
                 yield return null;
@@ -239,7 +241,7 @@ public class Glowsticks : Feature
             {
                 _creatingTexture = true;
                 // The original emission map is colored! Turn into monochrome first or else colors are gonna be all weird ...
-                var originalEmissiveMap = material.GetTexture("_EmissiveMap").TryCastTo<Texture2D>();
+                var originalEmissiveMap = renderer.sharedMaterial.GetTexture("_EmissiveMap").TryCastTo<Texture2D>();
 
                 // Original texture is not readable, Blit into new, readable one to access pixel data
                 var tmp = RenderTexture.GetTemporary(originalEmissiveMap.width, originalEmissiveMap.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
@@ -301,7 +303,8 @@ public class Glowsticks : Feature
                 _creatingTexture = false;
             }
 
-            material.SetTexture("_EmissiveMap", EmissiveMapMonochrome);
+            propertyBlock.SetTexture("_EmissiveMap", EmissiveMapMonochrome);
+            renderer.SetPropertyBlock(propertyBlock);
         }
     }
 
