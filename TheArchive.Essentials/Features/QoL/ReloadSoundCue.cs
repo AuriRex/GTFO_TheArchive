@@ -28,7 +28,7 @@ public class ReloadSoundCue : Feature
         public FButton TestSoundButton { get; set; } = new FButton("Play Sound");
 
         [FSDisplayName("Sound Event")]
-        [FSDescription("The sound event to play whenever the reaload has happend.")]
+        [FSDescription("The sound event to play whenever the reload has happened.")]
         public string SoundEvent { get; set; } = nameof(AK.EVENTS.HACKING_PUZZLE_CORRECT);
             
         [FSDisplayName("Print Sound Events To Console")]

@@ -18,7 +18,7 @@
       },
       "TheArchive.Features.QoL.NoDroppedMagazineSounds.Description": {
         "FDescription": {
-          "English": "Removes the <i>globalally audible</i> sound whenever a magazine drops on the floor after a reload.",
+          "English": "Removes the <i>globally audible</i> sound whenever a magazine drops on the floor after a reload.",
           "Chinese": "当弹夹在装填后掉到地板上时，删除<i>全局</i>声音。",
           "French": null,
           "Italian": null,

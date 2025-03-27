@@ -11,7 +11,7 @@ internal class AltTabCounter : Feature
 
     public override FeatureGroup Group => FeatureGroups.Special;
 
-    public override string Description => "Counts the ammount of times that the game went out of focus. (ALT + TAB)";
+    public override string Description => "Counts the amount of times that the game went out of focus. (ALT + TAB)";
 
     [FeatureConfig]
     public static AltTabCounterSettings Settings { get; set; }

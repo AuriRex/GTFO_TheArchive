@@ -87,7 +87,7 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": "The sound event to play whenever the reaload has happend.",
+          "English": "The sound event to play whenever the reload has happened.",
           "Chinese": "换弹时将播放这个音效",
           "French": null,
           "Italian": null,

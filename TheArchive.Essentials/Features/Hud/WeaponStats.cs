@@ -47,7 +47,7 @@ public class WeaponStats : Feature
         public bool HideDefaultDescriptions { get; set; } = false;
 
         [FSDisplayName("Rounding")]
-        [FSDescription("Ammount of digits to round excessively long numbers up to.\n\n<color=orange>Some values might not be 100% accurate with this on!</color>")]
+        [FSDescription("Amount of digits to round excessively long numbers up to.\n\n<color=orange>Some values might not be 100% accurate with this on!</color>")]
         public FSSlider.RoundTo Rounding { get; set; } = FSSlider.RoundTo.TwoDecimal;
 
         [FSDisplayName("Strikethrough Pierce Stat")]

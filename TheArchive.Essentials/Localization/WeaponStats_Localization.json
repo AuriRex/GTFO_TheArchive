@@ -143,7 +143,7 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": "Ammount of digits to round excessively long numbers up to.\n\n<color=orange>Some values might not be 100% accurate with this on!</color>",
+          "English": "Amount of digits to round excessively long numbers up to.\n\n<color=orange>Some values might not be 100% accurate with this on!</color>",
           "Chinese": "将过长的数字四舍五入到指定的小数位数。\n\n<color=orange>某些值可能在启用此功能时不完全准确！</color>",
           "French": null,
           "Italian": null,

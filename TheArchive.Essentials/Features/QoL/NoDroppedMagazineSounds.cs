@@ -13,7 +13,7 @@ internal class NoDroppedMagazineSounds : Feature
 
     public override FeatureGroup Group => FeatureGroups.QualityOfLife;
 
-    public override string Description => "Removes the <i>globalally audible</i> sound whenever a magazine drops on the floor after a reload.";
+    public override string Description => "Removes the <i>globally audible</i> sound whenever a magazine drops on the floor after a reload.";
 
     public override bool RequiresRestart => true;
 

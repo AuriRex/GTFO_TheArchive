@@ -18,7 +18,7 @@
       },
       "TheArchive.Features.Special.AltTabCounter.Description": {
         "FDescription": {
-          "English": "Counts the ammount of times that the game went out of focus. (ALT + TAB)",
+          "English": "Counts the amount of times that the game went out of focus. (ALT + TAB)",
           "Chinese": "统计游戏失去焦点的次数。（ALT + TAB）",
           "French": null,
           "Italian": null,

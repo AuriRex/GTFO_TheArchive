@@ -8,6 +8,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
@@ -34,6 +35,8 @@ namespace TheArchive.Features.Hud
 
         public override string Description => "Missing some logs for <i>that Achievement</i>, huh?";
 
+        public new static ILocalizationService Localization { get; set; }
+        
         [FeatureConfig]
         public static LogVisualizerSettings Settings { get; set; }
 
@@ -73,6 +76,7 @@ namespace TheArchive.Features.Hud
             [FSDisplayName("Color: No Logs Available")]
             public SColor ColorNoLogs { get; set; } = new SColor(0.5f, 0.5f, 0.5f);
 
+            [Localized]
             public enum SpoilerMode
             {
                 Never,
@@ -86,9 +90,9 @@ namespace TheArchive.Features.Hud
             return !IsPlayingModded;
         }
 
-        private static string _noLogsAvailableText = "N/A";
-        private static string _pageObjectives_NoLogsAvailableText = "Logs N/A";
-        public static string _pageObjectives_Item_LogUnknownText = "???";
+        //private static string _noLogsAvailableText = "N/A";
+        //private static string _pageObjectives_NoLogsAvailableText = "Logs N/A";
+        //public static string _pageObjectives_Item_LogUnknownText = "???";
 
         public override void Init()
         {
@@ -622,14 +626,15 @@ namespace TheArchive.Features.Hud
                 if(logsForRundownDistinct.Length == 0)
                 {
                     color = Settings.ColorNoLogs;
-                    logCountText = _noLogsAvailableText;
+                    logCountText = Localization.Get(1);
                 }
                 else if(logsIHaveDistinct.Length == logsForRundownDistinct.Length)
                 {
                     color = Settings.ColorAllGotten;
                 }
 
-                var logsText = $"<br><size=60%><{color.ToHexString()}>Logs: ({logCountText})</color></size>";
+                
+                var logsText = $"<br><size=60%><{color.ToHexString()}>{Localization.Get(2)}: ({logCountText})</color></size>";
 
                 rundownSelection.m_rundownText.SetText($"{rundownText}{logsText}");
 
@@ -692,7 +697,7 @@ namespace TheArchive.Features.Hud
 
                 if (logsForExpeditionDistinct.Length == 0)
                 {
-                    logsText = _noLogsAvailableText;
+                    logsText = Localization.Get(1);
                     color = Settings.ColorNoLogs;
                 }
                 else if(logsIHaveDistinct.Length == logsForExpeditionDistinct.Length)
@@ -700,7 +705,7 @@ namespace TheArchive.Features.Hud
                     color = Settings.ColorAllGotten;
                 }
 
-                __instance.m_statusText.SetText($"{originalStatus}<br><{color.ToHexString()}>Logs: ({logsText})</color>");
+                __instance.m_statusText.SetText($"{originalStatus}<br><{color.ToHexString()}>{Localization.Get(2)}: ({logsText})</color>");
             }
         }
 
@@ -794,13 +799,13 @@ namespace TheArchive.Features.Hud
             {
                 if (_items.Count == 0)
                 {
-                    HeaderText.SetText(_pageObjectives_NoLogsAvailableText);
+                    HeaderText.SetText(Localization.Get(3));
                     return;
                 }
 
                 var collectedAmount = _items.Where(item => item.Collected).Count();
 
-                HeaderText.SetText($"Logs: ({collectedAmount} / {_items.Count})");
+                HeaderText.SetText($"{Localization.Get(2)}: ({collectedAmount} / {_items.Count})");
             }
 
             public void UpdateItemVisuals()
@@ -898,7 +903,7 @@ namespace TheArchive.Features.Hud
                     return;
                 }
 
-                Text.SetText($"{_pageObjectives_Item_LogUnknownText}{specialText}");
+                Text.SetText($"{Localization.Get(4)}{specialText}");
                 Text.color = Color.gray;
                 Divider.color = Color.red;
                 Gradient.color = Color.red.WithAlpha(0.025f);
@@ -978,7 +983,7 @@ namespace TheArchive.Features.Hud
 
             var headerText = rootGO.transform.GetChildWithExactName("HeaderText").GetComponent<TextMeshPro>();
             headerText.GetComponent<TMP_Localizer>().SafeDestroy();
-            headerText.SetText("Logs");
+            headerText.SetText(Localization.Get(2));
 
             logDisplayRoot.HeaderText = headerText;
             logDisplayRoot.LocalItemRootPos = logItemPrefab.transform.localPosition;
