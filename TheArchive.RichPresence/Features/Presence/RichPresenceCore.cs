@@ -198,14 +198,14 @@ public class RichPresenceCore : Feature
         if (Is.R6OrLater)
             return GetMaxPlayersR6Plus();
 
-        return SNet.LobbyPlayers.Capacity;
+        return SNet.Slots.PlayerSlots.Count;
     }
 
     private static int GetMaxPlayersR6Plus()
     {
-        int slotCount = 0;
-        int capacity = SNet.LobbyPlayers.Capacity;
-        for (int i = 0; i < capacity; i++)
+        var slotCount = 0;
+        var capacity = SNet.Slots.PlayerSlots.Count;
+        for (var i = 0; i < capacity; i++)
         {
             if (SNet.Slots.IsBotPermittedInSlot(i) || SNet.Slots.IsHumanPermittedInSlot(i))
             {
@@ -307,7 +307,7 @@ public class RichPresenceCore : Feature
     // RundownManager.SetActiveExpedition(pActiveExpedition expPackage, ExpeditionInTierData expTierData) calls:
     // RundownManager.GetUniqueExpeditionKey(string rundownKey, eRundownTier tier, int expIndex)
     [ArchivePatch(typeof(RundownManager), nameof(RundownManager.GetUniqueExpeditionKey), new Type[] { typeof(string), typeof(eRundownTier), typeof(int) })]
-    internal static class RundownManager_SetActiveExpeditionPatch
+    internal static class RundownManager__GetUniqueExpeditionKey__Patch
     {
         public static void Postfix(string rundownKey, eRundownTier tier, int expIndex)
         {
