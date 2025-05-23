@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using TheArchive.Core;
 using TheArchive.Core.Bootstrap;
 using TheArchive.Core.FeaturesAPI;
@@ -198,6 +199,8 @@ public static class ArchiveMod
             File.WriteAllText(steam_appidtxt, $"{GTFO_STEAM_APPID}");
         }
 
+        AddInternalAttribution();
+        
         FeatureManager.Internal_Init();
 
         try
@@ -576,5 +579,28 @@ public static class ArchiveMod
         }
 
         FeatureManager.Instance.OnLateUpdate();
+    }
+
+    private static void AddInternalAttribution()
+    {
+        try
+        {
+            var archiveLicense = Encoding.UTF8.GetString(LoadFromResource("TheArchive.Resources.LICENSE"));
+            Attribution.Add(new Attribution.AttributionInfo("TheArchive License", $"{archiveLicense}")
+            {
+                Origin = "TheArchive.Core"
+            });
+
+            var bepinLicense = Encoding.UTF8.GetString(LoadFromResource("TheArchive.Resources.LICENSE_BepInEx"));
+            Attribution.Add(new Attribution.AttributionInfo("BepInEx Info + License", $"This project contains parts of BepInEx code, denoted in source files.\n\nLICENSE (Truncated, see repository):\n\n{bepinLicense}".Substring(0, 619) + "\n\n[...]")
+            {
+                Origin = "TheArchive.Core"
+            });
+        }
+        catch (Exception ex)
+        {
+            ArchiveLogger.Error("Error while trying to add internal AttributionInfos");
+            ArchiveLogger.Exception(ex);
+        }
     }
 }

@@ -604,6 +604,7 @@ public partial class ModSettings
         internal static DescriptionPanel TheDescriptionPanel { get; set; }
         internal static ColorPicker TheColorPicker { get; set; }
         internal static SearchMainPage TheSearchMenu { get; set; }
+        internal static Attribution AttributionPage { get; set; }
 
         internal static CM_Item MainModSettingsButton { get; set; }
         internal static GameObject SubMenuButtonPrefab { get; set; }

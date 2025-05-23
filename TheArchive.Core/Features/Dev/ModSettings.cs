@@ -421,6 +421,9 @@ public partial class ModSettings : Feature
 
             TheSearchMenu.Dispose();
             TheSearchMenu = null;
+            
+            AttributionPage.Dispose();
+            AttributionPage = null;
 
             foreach (var scrollWindow in AllSubmenuScrollWindows)
             {
@@ -488,6 +491,8 @@ public partial class ModSettings : Feature
 
             TheSearchMenu = new SearchMainPage();
 
+            AttributionPage = new Attribution();
+
             BuildFeatureGroup(FeatureGroups.ArchiveCoreGroups);
 
             if (FeatureGroups.ModuleGroups.Count > 1)
@@ -547,6 +552,8 @@ public partial class ModSettings : Feature
                 CreateHeader(LocalizationCoreService.Format(33, "Last Commit Date: {0}", ArchiveMod.GIT_COMMIT_DATE), WHITE_GRAY, false);
             }
 
+            AttributionPage.InsertMenuButton();
+            
             CreateHeader(LocalizationCoreService.Format(31, "Currently running GTFO <color=orange>{0}</color>, build <color=orange>{1}</color>", BuildInfo.Rundown, BuildInfo.BuildNumber), WHITE_GRAY, false);
 
             AddToAllSettingsWindows(MainModSettingsScrollWindow);

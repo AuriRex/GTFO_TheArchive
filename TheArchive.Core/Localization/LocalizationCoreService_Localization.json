@@ -589,6 +589,16 @@
         "Chinese": "<color=red><b>某些设置需要重启才能应用！</b></color>",
         "German": null
       }
+    },
+    {
+      "UntranslatedText": "Attribution & Licenses",
+      "Description": "",
+      "ID": 60,
+      "Languages": {
+        "English": "Attribution & Licenses",
+        "Chinese": null,
+        "German": null
+      }
     }
   ],
   "EnumTexts": {
