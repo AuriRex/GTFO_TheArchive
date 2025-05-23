@@ -98,4 +98,14 @@
 
 		<Message Text="Misc files have been copied to Output Folder!" Importance="High"/>
 	</Target>
+
+	<Target Name="ZipOutputPath" AfterTargets="CopyAssemblyAfterBuild;CopyLocalizationFilesAfterBuild;CopyMiscFilesToOutputFolder;GenerateManifestFile" Condition="'$(Configuration)' == 'Release'">
+		<PropertyGroup Condition="'$(TSVersion)' == '' And '$(GitSemVerMajor)' != ''">
+			<TSVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</TSVersion>
+		</PropertyGroup>
+		<ZipDirectory
+				SourceDirectory="$(PluginOutputPath)\..\"
+				DestinationFile="$(PluginOutputPath)\..\..\$(AssemblyName)_v$(TSVersion).zip"
+				Overwrite="true" />
+	</Target>
 </Project>
