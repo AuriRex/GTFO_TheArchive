@@ -21,11 +21,15 @@
         <TSDependencyStrings Include="BepInEx-BepInExPack_GTFO-3.2.1" InProject="false" />
         <TSDependencyStrings Include="AuriRex-TheArchive.Core-0.7.0" InProject="false" />
     </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="./DiscordGameSDK/DiscordRPC.dll" Private="false" />
+    </ItemGroup>
     
     <Target Name="CopyDiscordDLLToOutput" AfterTargets="CopyAssemblyAfterBuild">
         <Message Text="Copying Discord SDK to Ouput Folder..." Importance="High"/>
-        <Copy SourceFiles=".\DiscordGameSDK\discord_game_sdk.dll"
-              DestinationFiles="$(PluginOutputPath)\discord_game_sdk.dll"/>
+        <Copy SourceFiles=".\DiscordGameSDK\DiscordRPC.dll"
+              DestinationFiles="$(PluginOutputPath)\DiscordRPC.dll"/>
 
         <Message Text="Discord SDK has been copied to Ouput Folder!" Importance="High"/>
     </Target>

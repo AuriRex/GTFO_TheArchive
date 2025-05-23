@@ -1,9 +1,16 @@
 using System;
-using TheArchive.Core.Discord;
+using System.Buffers.Text;
+using System.Security.Cryptography;
+using System.Text;
+using DiscordRPC;
+using DiscordRPC.Message;
 using TheArchive.Core.Models;
 using TheArchive.Core.Settings;
-using TheArchive.Interfaces;
+using TheArchive.Loader;
 using TheArchive.Utilities;
+using UnityEngine;
+using EventType = DiscordRPC.EventType;
+using ILogger = DiscordRPC.Logging.ILogger;
 
 namespace TheArchive.Core.Managers;
 
@@ -11,157 +18,173 @@ public partial class ArchiveDiscordManager
 {
     public static class DiscordClient
     {
-        public const long CLIENT_ID = 946141176338190346L;
+        public const long DEFAULT_CLIENT_ID = 946141176338190346L;
 
-        private static long _clientId = 0L;
-        private static Discord.Discord _discordClient;
-        private static Discord.ActivityManager _activityManager;
+        public static long UsedClientID { get; private set; }
+        private static DiscordRpcClient _discordClient;
 
-        private static IArchiveLogger _clientLogger;
-        private static IArchiveLogger ClientLogger
+        private static ILogger _clientLogger;
+        
+        private static string _lastLobbyId;
+        private static string _lastPartyHash;
+
+        public static void Initialize(long clientId = DEFAULT_CLIENT_ID)
         {
-            get
+            UsedClientID = clientId;
+            
+            _clientLogger = new DiscordLogger(LoaderWrapper.CreateLoggerInstance("DiscordClient", ConsoleColor.Magenta), DiscordRPC.Logging.LogLevel.Warning);
+            
+            _discordClient = new DiscordRpcClient(clientId.ToString(), autoEvents: false, logger: _clientLogger);
+
+            _discordClient.RegisterUriScheme(steamAppID: ArchiveMod.GTFO_STEAM_APPID.ToString());
+
+            _discordClient.OnReady += OnReady;
+            _discordClient.OnJoin += OnJoin;
+
+            _discordClient.Subscribe(EventType.Join);
+            
+            _discordClient.Initialize();
+        }
+
+        private static void OnJoin(object sender, JoinMessage args)
+        {
+            Logger.Notice($"OnJoin received! ({args.Secret})");
+            OnActivityJoin?.Invoke(args.Secret);
+        }
+
+        private static void OnReady(object sender, ReadyMessage args)
+        {
+            Logger.Notice("Discord is ready!");
+            var time = Time.realtimeSinceStartup;
+            if (time < _lastCheckedTime + 5)
+                return;
+            
+            _lastCheckedTime = time;
+            var activity = BuildActivity(PresenceManager.CurrentState, PresenceManager.CurrentStateStartTime);
+            if (TryUpdateActivity(activity))
             {
-                return _clientLogger ??= Loader.LoaderWrapper.CreateLoggerInstance("DiscordClient", ConsoleColor.Magenta);
+                _lastActivity = activity;
             }
         }
 
-        public static void Initialize(long clientId = CLIENT_ID)
-        {
-            _clientId = clientId;
-            _discordClient = new Discord.Discord(_clientId, (UInt64) CreateFlags.NoRequireDiscord);
-
-            _discordClient.SetLogHook(_settings.DEBUG_RichPresenceLogSpam ? LogLevel.Debug : LogLevel.Info, LogHook);
-
-            _activityManager = _discordClient.GetActivityManager();
-            _activityManager.RegisterSteam(ArchiveMod.GTFO_STEAM_APPID); // GTFO App ID
-
-            _activityManager.OnActivityJoin += _activityManager_OnActivityJoin;
-        }
-
-        private static void _activityManager_OnActivityJoin(string secret)
-        {
-            OnActivityJoin?.Invoke(secret);
-        }
-
-        private static readonly Activity DefaultFallbackActivity = new()
+        private static readonly RichPresence DefaultFallbackActivity = new()
         {
             Details = "???",
             State = "err:// no c0nnec7ion",
-            ApplicationId = CLIENT_ID,
-            Assets = new ActivityAssets
+            Assets = new Assets
             {
-                LargeImage = "gtfo_icon",
-                LargeText = "GTFO",
+                LargeImageKey = "gtfo_icon",
+                LargeImageText = "GTFO",
             }
         };
 
-        private static ActivityParty GetParty(string partyId = null)
+        private static Party GetParty(string partyId = null)
         {
-            return new ActivityParty
+            return new Party
             {
-                Id = partyId,
-                Size = new PartySize
-                {
-                    CurrentSize = PresenceFormatter.Get<int>("MaxPlayerSlots") - PresenceFormatter.Get<int>("OpenSlots"),
-                    MaxSize = PresenceFormatter.Get<int>("MaxPlayerSlots")
-                }
+                ID = partyId,
+                Size = PresenceFormatter.Get<int>("MaxPlayerSlots") - PresenceFormatter.Get<int>("OpenSlots"),
+                Max = PresenceFormatter.Get<int>("MaxPlayerSlots")
+            };
+        }
+        
+        private static Secrets GetSecrets(string joinSecret = null)
+        {
+            if (joinSecret == null)
+                return null;
+            
+            return new Secrets
+            {
+                JoinSecret = joinSecret,
             };
         }
 
-        private static ActivitySecrets? GetSecrets(string joinSecret = null)
+        private static Timestamps GetTimestamp(ulong? startTime = null, ulong? endTime = null)
         {
-            if (joinSecret == null) return null;
-            return new ActivitySecrets
+            return new Timestamps
             {
-                Join = joinSecret,
+                StartUnixMilliseconds = startTime * 1000,
+                EndUnixMilliseconds = endTime * 1000,
             };
         }
 
-        private static ActivityTimestamps GetTimestamp(long startTime = 0, long endTime = 0)
+        internal static RichPresence BuildActivity(PresenceGameState state, DateTimeOffset startTime)
         {
-            return new ActivityTimestamps
-            {
-                Start = startTime,
-                End = endTime
-            };
-        }
+            if (!_settings.DiscordRPCFormat.TryGetValue(state, out var format))
+                return DefaultFallbackActivity;
+            
+            RichPresenceSettings.GSActivity nextActivityFormat = format;
 
-        internal static Activity BuildActivity(PresenceGameState state, DateTimeOffset startTime)
-        {
-            if(_settings.DiscordRPCFormat.TryGetValue(state, out var format))
-            {
-                RichPresenceSettings.GSActivity nextActivityFormat = format;
-
-                // Check for sub activities!
-                if(format.HasSubActivities)
-                {
-                    foreach(var subAct in format.SubActivities)
-                    {
-                        try
-                        {
-                            if (subAct.DisplayConditionsAnyMode)
-                            {
-                                // Any condition true to enter
-                                bool anyTrue = false;
-                                foreach (var dCond in subAct.DisplayConditions)
-                                {
-                                    var value = dCond.Format();
-                                    if (value == "True" || value == "!False")
-                                        anyTrue = true;
-                                }
-                                if (!anyTrue)
-                                    throw null;
-                            }
-                            else
-                            {
-                                foreach (var dCond in subAct.DisplayConditions)
-                                {
-                                    var value = dCond.Format();
-                                    if (value != "True" && value != "!False")
-                                        throw null;
-                                }
-                            }
-                            // Use sub activity instead
-                            nextActivityFormat = subAct;
-                            break;
-                        } catch { }
-                    }
-                }
-
+            // Check for sub activities!
+            if (!format.HasSubActivities)
                 return ActivityFromFormat(nextActivityFormat.GetNext(), state, startTime);
+            
+            foreach(var subAct in format.SubActivities)
+            {
+                try
+                {
+                    if (subAct.DisplayConditionsAnyMode)
+                    {
+                        // Any condition true to enter
+                        var anyTrue = false;
+                        foreach (var dCond in subAct.DisplayConditions)
+                        {
+                            var value = dCond.Format();
+                            if (value == "True" || value == "!False")
+                                anyTrue = true;
+                        }
+                        if (!anyTrue)
+                            throw null!;
+                    }
+                    else
+                    {
+                        foreach (var dCond in subAct.DisplayConditions)
+                        {
+                            var value = dCond.Format();
+                            if (value != "True" && value != "!False")
+                                throw null!;
+                        }
+                    }
+                    // Use sub activity instead
+                    nextActivityFormat = subAct;
+                    break;
+                }
+                catch
+                {
+                    // ignored
+                }
             }
-            return DefaultFallbackActivity;
+
+            return ActivityFromFormat(nextActivityFormat.GetNext(), state, startTime);
         }
 
-        private static Activity ActivityFromFormat(RichPresenceSettings.GSActivityFormat format, PresenceGameState state, DateTimeOffset startTime)
+        private static RichPresence ActivityFromFormat(RichPresenceSettings.GSActivityFormat format, PresenceGameState state, DateTimeOffset startTime)
         {
             if (format == null) return DefaultFallbackActivity;
 
             var extra = ("state", state.ToString());
 
-            var activity = new Activity
+            var activity = new RichPresence
             {
-                ApplicationId = _clientId,
                 Details = format.Details?.Format(extra),
                 State = format.Status?.Format(extra),
             };
 
-            activity.Assets = new ActivityAssets
+            activity.Assets = new Assets
             {
-                LargeImage = format.Assets.LargeImageKey?.Format(extra),
-                LargeText = format.Assets.LargeTooltip?.Format(extra),
-                SmallImage = format.Assets.SmallImageKey?.Format(extra),
-                SmallText = format.Assets.SmallTooltip?.Format(extra)
+                LargeImageKey = format.Assets.LargeImageKey?.Format(extra),
+                LargeImageText = format.Assets.LargeTooltip?.Format(extra),
+                SmallImageKey = format.Assets.SmallImageKey?.Format(extra),
+                SmallImageText = format.Assets.SmallTooltip?.Format(extra)
             };
 
             if (format.DisplayStateTimeElapsed)
             {
-                activity.Timestamps = GetTimestamp(startTime.ToUnixTimeSeconds());
+                activity.Timestamps = GetTimestamp((ulong) startTime.ToUnixTimeSeconds());
             }
             else
             {
-                if(!string.IsNullOrWhiteSpace(format.CustomTimeProvider) && long.TryParse(format.CustomTimeProvider.Format(), out var unixTime))
+                if(!string.IsNullOrWhiteSpace(format.CustomTimeProvider) && ulong.TryParse(format.CustomTimeProvider.Format(), out var unixTime))
                 {
                     if(format.CustomProviderIsEndTime)
                     {
@@ -176,94 +199,77 @@ public partial class ArchiveDiscordManager
 
             if (format.DisplayPartyInfo)
             {
-                activity.Party = GetParty(PartyGuid.ToString());
-                if(PresenceFormatter.Get<bool>(nameof(PresenceManager.HasLobby)))
+                var hasLobby = PresenceFormatter.Get<bool>(nameof(PresenceManager.HasLobby));
+                
+                if(hasLobby)
                 {
-                    var secrets = GetSecrets(PresenceFormatter.Get(nameof(PresenceManager.LobbyID)).ToString());
-                    if (secrets.HasValue)
-                        activity.Secrets = secrets.Value;
+                    var lobbyId = PresenceFormatter.Get(nameof(PresenceManager.LobbyID)).ToString();
+                    activity.Party = GetParty(GetPartyID(lobbyId));
+                    activity.Secrets = GetSecrets(lobbyId);
+                }
+                else
+                {
+                    activity.Party = GetParty(PartyGuid.ToString());
                 }
             }
 
             return activity;
         }
 
-        internal static bool TryUpdateActivity(Discord.Activity activity)
+        private static string GetPartyID(string lobbyId)
         {
-            if (_activityManager == null) return false;
+            var hasChanged = _lastLobbyId != lobbyId;
+            _lastLobbyId = lobbyId;
+            
+            if (string.IsNullOrWhiteSpace(lobbyId))
+                return PartyGuid.ToString();
+
+            if (!hasChanged)
+                return _lastPartyHash;
+            
+            var hashedBytes = SHA256.HashData(Encoding.UTF8.GetBytes(lobbyId));
+
+            var hashedString = Convert.ToBase64String(hashedBytes);
+
+            if (hashedString.Length > 128)
+            {
+                hashedString = hashedString.Substring(0, 128);
+            }
+
+            _lastPartyHash = hashedString;
+            
+            return hashedString;
+        }
+
+        internal static bool TryUpdateActivity(RichPresence activity)
+        {
+            if (_discordClient == null)
+                return false;
                 
             if(_settings.DEBUG_RichPresenceLogSpam)
             {
-                ClientLogger.Notice($"Activity updated: Details:{activity.Details} State:{activity.State}");
-                _activityManager.UpdateActivity(activity, ActivityUpdateDebugLog);
-                return true;
+                Logger.Notice($"Activity updated: Details:{activity.Details} State:{activity.State}");
             }
 
-            _activityManager.UpdateActivity(activity, ActivityVoidLog);
+            _discordClient.SetPresence(activity);
             return true;
         }
 
         public static void Dispose()
         {
-            if(_activityManager != null)
+            if (_discordClient != null)
             {
-                _activityManager.OnActivityJoin -= _activityManager_OnActivityJoin;
-                _activityManager.ClearActivity((result) =>
-                {
-                    ClientLogger.Debug($"Activity clear result: {result}");
-                    DisposeClient();
-                });
-                _activityManager = null;
+                _discordClient.OnReady += OnReady;
+                _discordClient.OnJoin += OnJoin;
+                _discordClient.Dispose();
             }
-            else
-            {
-                DisposeClient();
-            }
-        }
-
-        private static void DisposeClient()
-        {
-            _discordClient?.Dispose();
+  
             _discordClient = null;
-        }
-
-        private static void ActivityUpdateDebugLog(Result result)
-        {
-            ClientLogger.Debug($"Activity update result: {result}");
-        }
-
-        private static void ActivityVoidLog(Result result)
-        {
-            if(result != Result.Ok)
-            {
-                ClientLogger.Error("Update Activity failed!");
-            }
-        }
-
-        private static void LogHook(LogLevel level, string message)
-        {
-            var msg = $"{level}: {message}";
-            switch (level)
-            {
-                case LogLevel.Error:
-                    ClientLogger.Error(msg);
-                    return;
-                case LogLevel.Warn:
-                    ClientLogger.Warning(msg);
-                    return;
-                default:
-                case LogLevel.Info:
-                    ClientLogger.Notice(msg);
-                    return;
-                case LogLevel.Debug:
-                    ClientLogger.Debug(msg);
-                    return;
-            }
         }
 
         public static void RunCallbacks()
         {
-            _discordClient?.RunCallbacks();
+            _discordClient.Invoke();
         }
     }
 }
