@@ -261,6 +261,7 @@ public static class ArchiveMod
         File.WriteAllText(path, JsonConvert.SerializeObject(Settings, JsonSerializerSettings));
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public static bool RegisterArchiveModule(Assembly asm)
     {
         foreach (var type in asm.GetTypes().Where(t => typeof(IArchiveModule).IsAssignableFrom(t)))
@@ -517,6 +518,7 @@ public static class ArchiveMod
         }
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     internal static IArchiveModule CreateAndInitModule(Type moduleType)
     {
         if (moduleType == null) throw new ArgumentException($"Parameter {nameof(moduleType)} can not be null!");
@@ -593,6 +595,13 @@ public static class ArchiveMod
 
             var bepinLicense = Encoding.UTF8.GetString(LoadFromResource("TheArchive.Resources.LICENSE_BepInEx"));
             Attribution.Add(new Attribution.AttributionInfo("BepInEx Info + License", $"This project contains parts of BepInEx code, denoted in source files.\n\nLICENSE (Truncated, see repository):\n\n{bepinLicense}".Substring(0, 619) + "\n\n[...]")
+            {
+                Origin = "TheArchive.Core"
+            });
+
+            var icons =
+                "<color=orange>Material Symbols</color> used in ThunderStore mod icons licensed under <color=orange>Apache License Version 2.0</color>\n\n> https://github.com/google/material-design-icons\n> https://www.apache.org/licenses/LICENSE-2.0.txt";
+            Attribution.Add(new Attribution.AttributionInfo("Mod Icon(s) Info + License", icons)
             {
                 Origin = "TheArchive.Core"
             });

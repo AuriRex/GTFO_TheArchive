@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
@@ -69,7 +70,8 @@ public class ImplementationManager
     /// </summary>
     /// <typeparam name="T">Implementation to lookup (cached)</typeparam>
     /// <returns>An instance of the first found type that implements <typeparamref name="T"/></returns>
-    public static T GetOrFindImplementation<T>() 
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    public static T GetOrFindImplementation<T>()
     {
         if(_implementationInstances.TryGetValue(typeof(T), out var val)) {
             return (T) val;
@@ -123,6 +125,7 @@ public class ImplementationManager
     /// <param name="typeName"></param>
     /// <param name="exactMatch"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
     public static Type FindTypeInCurrentAppDomain(string typeName, bool exactMatch = false)
     {
         IEnumerable<Type> types = new List<Type>();
