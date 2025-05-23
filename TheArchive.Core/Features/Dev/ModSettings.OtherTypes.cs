@@ -1,6 +1,7 @@
 ﻿using CellMenu;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
@@ -23,6 +24,7 @@ namespace TheArchive.Features.Dev;
 
 public partial class ModSettings
 {
+    [SuppressMessage("ReSharper", "Unity.PerformanceCriticalCodeInvocation")]
     public class KeyListener : MonoBehaviour
     {
         public static readonly KeyCode[] allKeys = (KeyCode[])Enum.GetValues(typeof(KeyCode));
@@ -60,6 +62,7 @@ public partial class ModSettings
             OnKeyFound(currentOrNone);
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         public void OnKeyFound(KeyCode key)
         {
             if (key == KeyCode.Escape)
