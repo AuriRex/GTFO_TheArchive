@@ -28,17 +28,4 @@
 		<CompilerVisibleProperty Include="TSWebsite" />
 		<CompilerVisibleProperty Include="TSDescription" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="$(MSBuildThisFileDirectory)\ManifestInfoSourceGenerator\ManifestInfoSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true"  />
-	</ItemGroup>
-	
-	<UsingTask TaskName="ManifestGenerator.ManifestGeneratorTask" AssemblyFile="$(MSBuildThisFileDirectory)\BuildTasks\Tasks\ManifestGenerator.dll"/>
-	
-	<Target Name="GenerateManifestFile" AfterTargets="CopyAssemblyAfterBuild" Condition="'$(TSName)' != ''">
-		<PropertyGroup Condition="'$(TSVersion)' == '' And '$(GitSemVerMajor)' != ''">
-			<TSVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</TSVersion>
-		</PropertyGroup>
-		<ManifestGeneratorTask Name="$(TSName)" Author="$(TSAuthor)" Version="$(TSVersion)" WebsiteURL="$(TSWebsite)" Description="$(TSDescription)" Dependencies="@(TSDependencyStrings)" OutputPath="$(PluginOutputPath)\..\" />
-	</Target>
 </Project>
