@@ -42,4 +42,9 @@
             <CopyLocal>False</CopyLocal>
         </ProjectReference>
     </ItemGroup>
+    
+    <ItemGroup>
+      <None Remove="DiscordGameSDK\LICENSE_DiscordRPC" />
+      <EmbeddedResource Include="DiscordGameSDK\LICENSE_DiscordRPC" />
+    </ItemGroup>
 </Project>

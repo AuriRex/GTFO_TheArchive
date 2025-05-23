@@ -27,7 +27,23 @@ public class ArchiveRichPresenceModule : IArchiveModule
     public void Init()
     {
         ArchiveMod.GameDataInitialized += OnGameDataInitialized;
-        
+
+        try
+        {
+            var discordrpcLicense =
+                System.Text.Encoding.UTF8.GetString(Utils.GetResource(Assembly.GetExecutingAssembly(),
+                    "TheArchive.DiscordGameSDK.LICENSE_DiscordRPC"));
+            Attribution.Add(new Attribution.AttributionInfo("DiscordRPC License", discordrpcLicense)
+            {
+                Comment = "<#fff18e>Huge shoutouts to <#88e2e9>Lachee</color> for her re-implementation of the discord_game_sdks functions in C#!</color>",
+                Origin = MOD_NAME.Replace("_", "."),
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Something went wrong while trying to add Attribution.");
+            _logger.Exception(ex);
+        }
     }
 
     private void OnGameDataInitialized(Utils.RundownID obj)
