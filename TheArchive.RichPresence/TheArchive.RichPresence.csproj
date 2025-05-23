@@ -26,7 +26,7 @@
         <Reference Include="./DiscordGameSDK/DiscordRPC.dll" Private="false" />
     </ItemGroup>
     
-    <Target Name="CopyDiscordDLLToOutput" AfterTargets="CopyAssemblyAfterBuild">
+    <Target Name="CopyDiscordDLLToOutput" AfterTargets="CopyAssemblyAfterBuild" BeforeTargets="ZipOutputPath">
         <Message Text="Copying Discord SDK to Ouput Folder..." Importance="High"/>
         <Copy SourceFiles=".\DiscordGameSDK\DiscordRPC.dll"
               DestinationFiles="$(PluginOutputPath)\DiscordRPC.dll"/>
