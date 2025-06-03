@@ -151,7 +151,7 @@ public class RichPresenceCore : Feature
         {
             try
             {
-                return PlayerManager.GetLocalPlayerSlotIndex();
+                return PlayerManager.GetLocalPlayerAgent()?.CharacterID ?? 0;
             }
             catch (Exception)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using SNetwork;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -220,15 +221,8 @@ public class PresenceManager
     {
         get
         {
-            int charId = Get<int>(nameof(LocalCharacterID));
-            return charId switch
-            {
-                0 => "Woods",
-                1 => "Dauda",
-                2 => "Hackett",
-                3 => "Bishop",
-                _ => "The Warden uwu",
-            };
+            var charId = Get<int>(nameof(LocalCharacterID));
+            return SNet.Core.GetBotNickname(charId);
         }
     }
 
