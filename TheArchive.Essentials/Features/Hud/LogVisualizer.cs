@@ -37,6 +37,8 @@ namespace TheArchive.Features.Hud
 
         public new static ILocalizationService Localization { get; set; }
         
+        private static LogVisualizer Instance { get; set; }
+        
         [FeatureConfig]
         public static LogVisualizerSettings Settings { get; set; }
 
@@ -89,10 +91,6 @@ namespace TheArchive.Features.Hud
         {
             return !IsPlayingModded;
         }
-
-        //private static string _noLogsAvailableText = "N/A";
-        //private static string _pageObjectives_NoLogsAvailableText = "Logs N/A";
-        //public static string _pageObjectives_Item_LogUnknownText = "???";
 
         public override void Init()
         {
@@ -502,6 +500,13 @@ namespace TheArchive.Features.Hud
         {
             public static void Postfix(Achievement_ReadAllLogs __instance)
             {
+                if (__instance.m_allLogs == null)
+                {
+                    FeatureLogger.Notice($"Achievements are likely disabled, disabling {nameof(LogVisualizer)}!");
+                    Instance?.RequestDisable("Achievements likely disabled");
+                    return;
+                }
+                
                 var allLogsForAchievement = _allLogs.Where(log => __instance.m_allLogs.Contains(log.LogId)).ToList();
                 var allLogsForAchievementDistinct = allLogsForAchievement.Select(log => log.LogId).Distinct().ToArray();
 

@@ -300,6 +300,19 @@ internal class FeatureInternal
             _FILogger.Debug($"Found Localization property \"{staticLocalizationServicePropertyInfo.Name}\" on Feature {_feature.Identifier}. Populating ...");
             staticLocalizationServicePropertyInfo.SetValue(null, _feature.Localization);
         }
+        
+        var staticLInstancePropertyInfo = featureProperties
+            .FirstOrDefault(pi => (pi.Name == "Instance" || pi.Name == "Self" || pi.GetCustomAttribute<SetStaticInstance>() != null)
+                                  && pi.SetMethod != null
+                                  && pi.GetMethod != null
+                                  && pi.GetMethod.IsStatic
+                                  && pi.GetMethod.ReturnType.IsAssignableTo(_featureType));
+
+        if (staticLInstancePropertyInfo != null)
+        {
+            _FILogger.Debug($"Found Instance/Self property \"{staticLInstancePropertyInfo.Name}\" on Feature {_feature.Identifier}. Populating ...");
+            staticLInstancePropertyInfo.SetValue(null, _feature);
+        }
 
         _onGameStateChangedMethodInfo = featureMethods
             .FirstOrDefault(mi => (mi.Name == nameof(Feature.OnGameStateChanged) || mi.GetCustomAttribute<IsGameStateChangedMethod>() != null)
