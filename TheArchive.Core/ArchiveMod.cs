@@ -590,7 +590,8 @@ public static class ArchiveMod
             var archiveLicense = Encoding.UTF8.GetString(LoadFromResource("TheArchive.Resources.LICENSE"));
             Attribution.Add(new Attribution.AttributionInfo("TheArchive License", $"{archiveLicense}")
             {
-                Origin = "TheArchive.Core"
+                Origin = "TheArchive.Core",
+                Comment = "<color=orange><b>Huge thanks to everyone that has contributed!</b> - Check out the repo on GitHub!</color>"
             });
 
             var bepinLicense = Encoding.UTF8.GetString(LoadFromResource("TheArchive.Resources.LICENSE_BepInEx"));
