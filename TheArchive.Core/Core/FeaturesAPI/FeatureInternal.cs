@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using HarmonyLib;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.Exceptions;
@@ -257,7 +258,7 @@ internal class FeatureInternal
             LateUpdateDelegate = (LateUpdate)lateUpdateDelegate;
         }
 
-        var featureProperties = _featureType.GetProperties();
+        var featureProperties = _featureType.GetProperties(AccessTools.allDeclared);
 
         var settingsProps = featureProperties
             .Where(pi => pi.GetCustomAttribute<FeatureConfig>() != null);
