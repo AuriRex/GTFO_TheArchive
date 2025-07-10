@@ -397,11 +397,26 @@ public class LocalFiles
         if (!Directory.Exists(moduleSettingsPath))
         {
             // Make sure settings are carried over when migrating from the AIO build to the split one
-            var oldPath = Path.Combine(FeatureConfigsDirectoryPath, "TheArchive.IL2CPP");
-            if (moduleIdentifier == "TheArchive.Essentials" && Directory.Exists(oldPath))
+            if (moduleIdentifier == "TheArchive.Essentials")
             {
-                ArchiveLogger.Msg(ConsoleColor.Green, $"Migrating old config path from \"{oldPath}\" to \"{moduleSettingsPath}\"");
-                Directory.Move(oldPath, moduleSettingsPath);
+                var oldPath = Path.Combine(FeatureConfigsDirectoryPath, "TheArchive.IL2CPP");
+                if (Directory.Exists(oldPath)) // copy Hikaria build configs
+                {
+                    ArchiveLogger.Msg(ConsoleColor.Green, $"Migrating old config path from \"{oldPath}\" to \"{moduleSettingsPath}\"");
+                    Directory.Move(oldPath, moduleSettingsPath);
+                }
+                else // Copy Legacy Archive build configs lazily
+                {
+                    Directory.CreateDirectory(moduleSettingsPath);
+                    ArchiveLogger.Msg(ConsoleColor.Green, $"Migrating old config files from \"{FeatureConfigsDirectoryPath}\" to \"{moduleSettingsPath}\"");
+                    foreach (var legacyFilePath in Directory.EnumerateFiles(FeatureConfigsDirectoryPath, "*.json",
+                                 SearchOption.TopDirectoryOnly))
+                    {
+                        var newFilePath = Path.Combine(moduleSettingsPath, Path.GetFileName(legacyFilePath));
+                        ArchiveLogger.Debug($"Copying \"{legacyFilePath}\" -> \"{newFilePath}\"");
+                        File.Copy(legacyFilePath, newFilePath);
+                    }
+                }
             }
             else Directory.CreateDirectory(moduleSettingsPath);
         }
