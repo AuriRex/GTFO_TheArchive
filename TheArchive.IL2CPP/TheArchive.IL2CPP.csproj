@@ -14,7 +14,7 @@
 		<NuGetPackageImportStamp>
 		</NuGetPackageImportStamp>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_ML|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)' == 'R_ML'">
 		<TargetFramework>net472</TargetFramework>
 		<DefineConstants>TRACE;IL2CPP</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -23,7 +23,7 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<ErrorReport>prompt</ErrorReport>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'R_BIE|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)' == 'R_BIE'">
 		<TargetFramework>net6.0</TargetFramework>
 		<DefineConstants>TRACE;IL2CPP</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -171,10 +171,16 @@
 		<Folder Include="Properties\" />
 	</ItemGroup>
 
-	<PropertyGroup>
+	<PropertyGroup Condition="!$([MSBuild]::IsOSUnixLike())">
 		<PostBuildEvent>
 			cd $(MSBuildProjectDirectory)
 			copy /y bin\$(Configuration)\TheArchive.IL2CPP.dll ..\TheArchive.Core\Resources\TheArchive.IL2CPP.dll
+		</PostBuildEvent>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([MSBuild]::IsOSUnixLike())">
+		<PostBuildEvent>
+			cd $(MSBuildProjectDirectory)
+			cp bin/$(Configuration)/TheArchive.IL2CPP.dll ../TheArchive.Core/Resources/TheArchive.IL2CPP.dll
 		</PostBuildEvent>
 	</PropertyGroup>
 </Project>
