@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using SNetwork;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
@@ -28,7 +29,7 @@ public class SentryMarkerTweaks : Feature
     public class SentryMarkersSettings
     {
         [FSDisplayName("Show sentry owner name")]
-        [FSDescription("Displayes the name of the sentries owner above it.")]
+        [FSDescription("Displays the name of the sentries owner above it.")]
         public bool DisplayPlayerNameAboveMarker { get; set; } = false;
 
         [FSDisplayName("Name text size")]
@@ -41,12 +42,12 @@ public class SentryMarkerTweaks : Feature
         public bool UsePlayerColorForMarkers { get; set; } = true;
 
         [FSDisplayName("Show Sentry Type")]
-        [FSDescription("Displayes the sentries type below the players name.")]
+        [FSDescription("Displays the sentries type below the players name.")]
         public bool ShowSentryArchetype { get; set; } = true;
 
-        [FSDisplayName("Show Sentry Ammo Percantage")]
-        [FSDescription("Displayes the sentries ammo percentage below the players name.")]
-        public bool ShowSentryAmmoPercentage { get; set; } = true;
+        [FSDisplayName("Show Sentry Ammo Percentage")]
+        [FSDescription("Displays the sentries ammo percentage below the players name.")]
+        public bool ShowSentryAmmoPercentage { get; set; } = false;
 
         [FSHeader("Marker Toggles")]
         [FSDisplayName("Show your own marker")]
@@ -70,7 +71,7 @@ public class SentryMarkerTweaks : Feature
     {
         if (((eGameStateName)CurrentGameState) == _eGameStateName_InLevel)
         {
-            _sentryGunInstances = GameObject.FindObjectsOfType<SentryGunInstance>().ToArray().Where(sgi => sgi.gameObject.name != "SentryGunInstance").ToList();
+            _sentryGunInstances = Object.FindObjectsOfType<SentryGunInstance>().ToArray().Where(sgi => sgi.gameObject.name != "SentryGunInstance").ToList();
         }
 
         UpdateAllKnownMarkers();
@@ -180,33 +181,39 @@ public class SentryMarkerTweaks : Feature
                 name = $"<color=white>{name}</color>";
             }
 
-            var sentryArch = string.Empty;
-            var canShowPercentage = PlayerBackpackManager.TryGetBackpack(snetPlayer, out var backpack);
-            var ammo = backpack.AmmoStorage.GetInventorySlotAmmo(AmmoType.Class);
-
-            if (Settings.ShowSentryArchetype)
-            {
-                if (canShowPercentage && Settings.ShowSentryAmmoPercentage)
-                {
-                    float percentage = ammo.BulletsInPack * ammo.BulletsToRelConv * 100f;
-                    sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%>{__instance.ArchetypeName} <color={GetColorHexString(0, 100, percentage)}>{percentage:N0}%</color></size></color>";
-                }
-                else
-                {
-                    sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%>{__instance.ArchetypeName}</size></color>";
-                }
-            }
-            else if (canShowPercentage && Settings.ShowSentryAmmoPercentage)
-            {
-                float percentage = ammo.BulletsInPack * ammo.BulletsToRelConv * 100f;
-                sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%><color={GetColorHexString(0, 100, percentage)}>{percentage:N0}%</color></size></color>";
-            }
+            var sentryArch = GetSentryArchAndAmmo(__instance, snetPlayer);
 
             navMarkerPlacer.PlaceMarker(null);
             navMarkerPlacer.SetMarkerVisible(true);
 
             navMarkerPlacer.UpdateName(name, sentryArch);
             navMarkerPlacer.UpdatePlayerColor(col);
+        }
+
+        private static string GetSentryArchAndAmmo(SentryGunInstance __instance, SNet_Player snetPlayer)
+        {
+            var sentryArch = string.Empty;
+
+            if (Settings.ShowSentryArchetype)
+            {
+                sentryArch = __instance.ArchetypeName;
+            }
+            
+            var canShowPercentage = PlayerBackpackManager.TryGetBackpack(snetPlayer, out var backpack);
+            
+            if (canShowPercentage && Settings.ShowSentryAmmoPercentage)
+            {
+                var ammo = backpack.AmmoStorage.GetInventorySlotAmmo(AmmoType.Class);
+                var percentage = ammo.BulletsInPack * ammo.BulletsToRelConv * 100f;
+                sentryArch = $"{sentryArch} <color={GetColorHexString(0, 100, percentage)}>{percentage:N0}%</color> ";
+            }
+
+            if (!string.IsNullOrWhiteSpace(sentryArch))
+            {
+                sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%>{sentryArch}</size></color>";
+            }
+
+            return sentryArch;
         }
 
         private static IEnumerator UpdateMarkerInfo(SentryGunInstance __instance)
@@ -272,27 +279,7 @@ public class SentryMarkerTweaks : Feature
                     name = $"<color=white>{name}</color>";
                 }
 
-                var sentryArch = string.Empty;
-                var canShowPercentage = PlayerBackpackManager.TryGetBackpack(snetPlayer, out var backpack);
-                var ammo = backpack.AmmoStorage.GetInventorySlotAmmo(AmmoType.Class);
-
-                if (Settings.ShowSentryArchetype)
-                {
-                    if (canShowPercentage && Settings.ShowSentryAmmoPercentage)
-                    {
-                        float percentage = __instance.m_ammo / ammo.CostOfBullet * ammo.BulletsToRelConv * 100f;
-                        sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%>{__instance.ArchetypeName} <color={GetColorHexString(0, 100, percentage)}>{percentage:N0}%</color></size></color>";
-                    }
-                    else
-                    {
-                        sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%>{__instance.ArchetypeName}</size></color>";
-                    }
-                }
-                else if (canShowPercentage && Settings.ShowSentryAmmoPercentage)
-                {
-                    float percentage = __instance.m_ammo / ammo.CostOfBullet * ammo.BulletsToRelConv * 100f;
-                    sentryArch = $"<color=white><size={Settings.PlayerNameSize * 100f}%><color={GetColorHexString(0, 100, percentage)}>{percentage:N0}%</color></size></color>";
-                }
+                var sentryArch = GetSentryArchAndAmmo(__instance, snetPlayer);
 
                 navMarkerPlacer.UpdateName(name, sentryArch);
                 navMarkerPlacer.UpdatePlayerColor(col);
