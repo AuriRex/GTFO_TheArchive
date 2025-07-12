@@ -199,12 +199,9 @@ public class SentryMarkerTweaks : Feature
                 sentryArch = __instance.ArchetypeName;
             }
             
-            var canShowPercentage = PlayerBackpackManager.TryGetBackpack(snetPlayer, out var backpack);
-            
-            if (canShowPercentage && Settings.ShowSentryAmmoPercentage)
+            if (Settings.ShowSentryAmmoPercentage)
             {
-                var ammo = backpack.AmmoStorage.GetInventorySlotAmmo(AmmoType.Class);
-                var percentage = ammo.BulletsInPack * ammo.BulletsToRelConv * 100f;
+                var percentage = __instance.Ammo / __instance.AmmoMaxCap * 100f;
                 sentryArch = $"{sentryArch} <color={GetColorHexString(0, 100, percentage)}>{percentage:N0}%</color> ";
             }
 
