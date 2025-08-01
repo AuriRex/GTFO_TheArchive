@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using TheArchive.Core;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
@@ -480,6 +481,13 @@ public class LocalFiles
         return LoadFeatureConfig(moduleIdentifier, featureIdentifier, configType, out _, saveIfNonExistent);
     }
 
+    private static readonly FileStreamOptions Options = new()
+    {
+        Access = FileAccess.Write,
+        Mode = FileMode.Create,
+        Options = FileOptions.WriteThrough,
+    };
+    
     internal static void SaveFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, object configInstance)
     {
         if (string.IsNullOrWhiteSpace(featureIdentifier))
@@ -496,6 +504,19 @@ public class LocalFiles
         var path = Path.Combine(moduleSettingsPath, $"{featureIdentifier}_{configType.Name}.json");
 
         ArchiveLogger.Debug($"Saving Feature Setting to: {path}");
-        File.WriteAllText(path, JsonConvert.SerializeObject(configInstance, ArchiveMod.JsonSerializerSettings));
+
+        var json = JsonConvert.SerializeObject(configInstance, ArchiveMod.JsonSerializerSettings);
+
+        try
+        {
+            using var sw = new StreamWriter(path, Encoding.UTF8, Options);
+            sw.Write(json);
+            sw.Flush();
+        }
+        catch (Exception ex)
+        {
+            ArchiveLogger.Error($"Threw an exception while trying to save file '{path}'.");
+            ArchiveLogger.Exception(ex);
+        }
     }
 }

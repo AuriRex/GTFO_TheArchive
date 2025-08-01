@@ -194,6 +194,12 @@ public partial class FeatureSettingsHelper
 
     internal virtual void SetupViaInstanceOnHost(object host, object configInstance)
     {
+        if (configInstance == null)
+        {
+            _logger.Warning($"Config instance ({SettingType.FullName}) is null! This should not happen! Resetting values ... :(");
+            configInstance = Activator.CreateInstance(SettingType);
+        }
+        
         Instance = configInstance;
         Property.SetValue(host, configInstance);
         Settings.Clear();
