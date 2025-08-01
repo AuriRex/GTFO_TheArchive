@@ -57,6 +57,13 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
     {
         Feature.BuildInfo = ArchiveMod.CurrentBuildInfo;
         _enabledFeatures = LocalFiles.LoadConfig<EnabledFeatures>();
+
+        if (_enabledFeatures?.Features == null)
+        {
+            _logger.Warning($"{nameof(EnabledFeatures)} config might have been corrupted since last time! :( Resetting ...");
+            _enabledFeatures = new EnabledFeatures();
+        }
+        
         ArchiveMod.GameStateChanged += OnGameStateChanged;
         ArchiveMod.ApplicationFocusStateChanged += OnApplicationFocusChanged;
 
