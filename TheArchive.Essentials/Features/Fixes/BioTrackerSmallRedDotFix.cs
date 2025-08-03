@@ -23,7 +23,7 @@ internal class BioTrackerSmallRedDotFix : Feature
         public static void Postfix(EnemyAgent __instance)
         {
             __instance.m_hasDirtyScannerColor = true;
-            EnemyScannerDataObject scannerData = __instance.ScannerData;
+            var scannerData = __instance.ScannerData;
             if (__instance.Locomotion.CurrentStateEnum != ES_StateEnum.Hibernate) {
                 scannerData.m_soundIndex = 0;
             }
