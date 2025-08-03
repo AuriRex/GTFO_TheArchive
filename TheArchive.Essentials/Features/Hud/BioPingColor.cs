@@ -85,8 +85,11 @@ internal class BioPingColor : Feature
 
     public static void SetScannerColor(EnemyAgent enemy)
     {
-        var pingColor = _pingColor.Value;
-        var displayColor = _displayColor.Value;
+        if (enemy == null)
+            return;
+        
+        var pingColor = _pingColor!.Value;
+        var displayColor = _displayColor!.Value;
 
         enemy.ScannerColor = Settings.UseSeparateColorForTrackerDisplay ? displayColor : pingColor;
         /*enemy.m_scannerColor = Settings.UseSeparateColorForTrackerDisplay ? displayColor : pingColor;
@@ -99,7 +102,7 @@ internal class BioPingColor : Feature
     {
         public static void Postfix(EnemyAgent __instance)
         {
-            A_EnemyAgent_m_tagMarker.Get(__instance).SetColor(_pingColor.Value);
+            A_EnemyAgent_m_tagMarker.Get(__instance)?.SetColor(_pingColor!.Value);
 
             SetScannerColor(__instance);
         }
