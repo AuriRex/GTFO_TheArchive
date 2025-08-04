@@ -9,6 +9,7 @@ using System.Text;
 using TheArchive.Core;
 using TheArchive.Core.Bootstrap;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Interop;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Core.ModulesAPI;
@@ -389,6 +390,7 @@ public static class ArchiveMod
 
         FeatureManager.Instance.OnDatablocksReady();
         CustomSettingManager.OnGameDataInited();
+        Interop.OnDataBlocksReady();
 
         DataBlocksReady?.Invoke();
     }
