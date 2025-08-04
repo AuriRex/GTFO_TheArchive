@@ -14,11 +14,14 @@ namespace TheArchive.Core.Interop;
 
 internal static class LocaliaCoreInterop
 {
+    
     private const string LOCALIA_CORE_GUID = "Localia.LocaliaCore";
+    private const string LOCALIA_MODLIST_GUID = "Localia.ModList";
 
     private static bool _hasExecuted;
     private static Harmony _harmonyInstance;
     private static Assembly _localiaCoreAssembly;
+    private static Assembly _localiaModlistAssembly;
     private static IArchiveLogger _logger;
     private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateArSubLoggerInstance(nameof(LocaliaCoreInterop));
     
@@ -48,6 +51,24 @@ internal static class LocaliaCoreInterop
                 typeof(LocaliaCoreInterop).GetMethod(nameof(Transpiler), BindingFlags.Static | BindingFlags.NonPublic);
 
             _harmonyInstance.Patch(original: targetMethod, transpiler: new HarmonyMethod(transpilerMethod));
+            
+            
+            _localiaModlistAssembly = IL2CPPChainloader.Instance.Plugins
+                .FirstOrDefault(kvp => kvp.Key == LOCALIA_MODLIST_GUID).Value?.Instance?.GetType().Assembly;
+
+            var Type__ModList_Manager = _localiaModlistAssembly?.GetTypes().FirstOrDefault(t => t.Name == "ModList_Manager");
+            
+            //public static Dictionary<string, string> myModDic = new Dictionary<string, string>();
+            var myModDic = (Dictionary<string, string>) Type__ModList_Manager?.GetField("myModDic", BindingFlags.Public | BindingFlags.Static)?.GetValue(null);
+
+            if (myModDic == null)
+                return;
+            
+            foreach (var (moduleKey, module) in ArchiveModuleChainloader.Instance.Modules)
+            {
+                var key = moduleKey.Replace(';', ' ');
+                myModDic.Add(key, module.Metadata.Name);
+            }
         }
         catch (Exception ex)
         {
@@ -69,8 +90,9 @@ internal static class LocaliaCoreInterop
         
         foreach (var (moduleKey, module) in ArchiveModuleChainloader.Instance.Modules)
         {
-            myModList.Add(moduleKey);
-            stringBuilder.Append($"{moduleKey};");
+            var key = moduleKey.Replace(';', ' ');
+            myModList.Add(key);
+            stringBuilder.Append($"{key};");
         }
         
         return stringBuilder;
