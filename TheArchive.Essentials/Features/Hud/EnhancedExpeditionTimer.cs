@@ -1,6 +1,7 @@
 ﻿using CellMenu;
 using System;
 using System.Diagnostics;
+using SNetwork;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
@@ -28,7 +29,7 @@ public class EnhancedExpeditionTimer : Feature
 
     public override void OnEnable()
     {
-        eGameStateName currentState = (eGameStateName)CurrentGameState;
+        var currentState = (eGameStateName)CurrentGameState;
         if (currentState == _eGameStateName_InLevel
             || currentState == _eGameStateName_ExpeditionFail
             || currentState == _eGameStateName_ExpeditionSuccess)
@@ -57,15 +58,16 @@ public class EnhancedExpeditionTimer : Feature
     private static readonly eGameStateName _eGameStateName_ExpeditionFail = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.ExpeditionFail));
 
     private static readonly Stopwatch _expeditionTimer = new Stopwatch();
+    private static TimeSpan? _stagedLateJoinTimePassed;
+    private static TimeSpan? _lateJoinTimePassed;
     public static bool IsTimerActive => _expeditionTimer.IsRunning;
-    public static TimeSpan ElapsedMissionTime => _expeditionTimer.Elapsed;
+    public static TimeSpan ElapsedMissionTime => _lateJoinTimePassed == null ? _expeditionTimer.Elapsed : _expeditionTimer.Elapsed.Add(_lateJoinTimePassed.Value);
 
     public static string TotalElapsedMissionTimeFormatted => $"{ElapsedMissionTime:hh\\:mm\\:ss\\.ffffff}";
 
     /// <summary>
     /// False if Feature has been enabled mid run.
     /// </summary>
-#warning TODO: Late joins!!
     public static bool IsTimerAccurate { get; private set; }
 
     public void OnGameStateChanged(eGameStateName state)
@@ -83,6 +85,8 @@ public class EnhancedExpeditionTimer : Feature
             }
 
             FeatureLogger.Debug($"New expedition has begun, timer started!");
+            _lateJoinTimePassed = _stagedLateJoinTimePassed;
+            _stagedLateJoinTimePassed = null;
             IsTimerAccurate = true;
             _expeditionTimer.Reset();
             _expeditionTimer.Start();
@@ -143,9 +147,25 @@ public class EnhancedExpeditionTimer : Feature
 
     [RundownConstraint(Utils.RundownFlags.RundownFour, Utils.RundownFlags.Latest)]
     [ArchivePatch(typeof(CM_PageObjectives), nameof(CM_PageObjectives.Setup))]
-    internal static class CM_PageObjectives_Setup_Patch
+    internal static class CM_PageObjectives__Setup__Patch
     {
         public static void Postfix(CM_PageObjectives __instance) => MoveTimer(true, __instance);
+    }
+
+    [RundownConstraint(Utils.RundownFlags.RundownFour, Utils.RundownFlags.Latest)]
+    [ArchivePatch(typeof(SNet_Capture), nameof(SNet_Capture.OnReceiveBufferCompletion))]
+    internal static class SNet_Capture__OnReceiveBufferCompletion__Patch
+    {
+        private static void Postfix(pBufferCompletion completion)
+        {
+            if (completion.type != eBufferType.DropIn)
+            {
+                return;
+            }
+            
+            _stagedLateJoinTimePassed = new TimeSpan((long)(completion.data.progressionTime * 1000) * TimeSpan.TicksPerMillisecond);
+            IsTimerAccurate = true; // (Or at least should be lol)
+        }
     }
 #endif
 }
