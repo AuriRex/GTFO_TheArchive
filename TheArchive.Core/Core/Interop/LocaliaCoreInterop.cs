@@ -43,7 +43,7 @@ internal static class LocaliaCoreInterop
             _harmonyInstance = new Harmony($"{ArchiveMod.GUID}_{nameof(LocaliaCoreInterop)}");
 
             var Type__Patch_DoChangeState =
-                _localiaCoreAssembly.GetTypes().FirstOrDefault(t => t.Name == "Patch_DoChangeState");
+                AccessTools.GetTypesFromAssembly(_localiaCoreAssembly).FirstOrDefault(t => t.Name == "Patch_DoChangeState");
 
             var targetMethod = Type__Patch_DoChangeState?.GetMethod("Postfix");
 
@@ -56,7 +56,10 @@ internal static class LocaliaCoreInterop
             _localiaModlistAssembly = IL2CPPChainloader.Instance.Plugins
                 .FirstOrDefault(kvp => kvp.Key == LOCALIA_MODLIST_GUID).Value?.Instance?.GetType().Assembly;
 
-            var Type__ModList_Manager = _localiaModlistAssembly?.GetTypes().FirstOrDefault(t => t.Name == "ModList_Manager");
+            if (_localiaModlistAssembly == null)
+                return;
+
+            var Type__ModList_Manager = AccessTools.GetTypesFromAssembly(_localiaModlistAssembly).FirstOrDefault(t => t.Name == "ModList_Manager");
             
             //public static Dictionary<string, string> myModDic = new Dictionary<string, string>();
             var myModDic = (Dictionary<string, string>) Type__ModList_Manager?.GetField("myModDic", BindingFlags.Public | BindingFlags.Static)?.GetValue(null);
