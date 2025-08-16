@@ -33,8 +33,8 @@
       },
       "TheArchive.Features.Hud.DetailedExpeditionDisplay+RundownInHeaderSettings.IncludeALTorOGText": {
         "FSDisplayName": {
-          "English": "{ALTText} and {OGText} prefixes",
-          "Chinese": "{ALTText} 和 {OGText} 前缀",
+          "English": "<color=orange>ALT://</color> and <color=orange>OG://</color> prefixes",
+          "Chinese": "<color=orange>ALT://</color> 和 <color=orange>OG://</color> 前缀",
           "French": null,
           "Italian": null,
           "German": null,
@@ -46,8 +46,8 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": "Adds {ALTText} or {OGText} before any mention of the expedition.\n\n{OGText} for the original releases\n{ALTText} for the re-releases",
-          "Chinese": "在任何包含关卡信息的文本中添加{altttext}或{OGText}。\n\n{OGText}表示原始版本\n{ALTText}表示重新发布的版本",
+          "English": "Adds <color=orange>ALT://</color> or <color=orange>OG://</color> before any mention of the expedition.\n\n<color=orange>OG://</color> for the original releases\n<color=orange>ALT://</color> for the re-releases",
+          "Chinese": "在任何包含关卡信息的文本中添加<color=orange>ALT://</color>或<color=orange>OG://</color>。\n\n<color=orange>OG://</color>表示原始版本\n<color=orange>ALT://</color>表示重新发布的版本",
           "French": null,
           "Italian": null,
           "German": null,
