@@ -7,7 +7,7 @@ That one massive GTFO Quality of Life mod.
 ### Loud Volume Override
 
 Lower or mute the game during the intro sequence and while dropping down with the elevator.  
-Also allows you to adjust what happens with audio whenever you tab outside of the game:
+Also allows you to adjust what happens with audio whenever you tab outside the game:
 * Continue playing
 * Lower Volume
 * Mute
@@ -40,7 +40,7 @@ Also shows a marker on whoever is carrying a big pickup.
 ### Glass Liquid System Override
 
 Change the resolution of the system that renders the blood splatters and other liquids on your visor or disable it entirely.  
-Disabling the system entirely prevents/"fixes" the so called "Void Bug" from happening, where sometimes a blob of darkness, the big black blob consumes your entire screen, making you unable to see anything for a few seconds up to minutes at a time.
+Disabling the system entirely prevents/"fixes" the so-called "Void Bug" from happening, where sometimes a blob of darkness, the big black blob consumes your entire screen, making you unable to see anything for a few seconds up to minutes at a time.
 
 <details>
 <summary>📷 Glass Liquid Override Quality Settings Overview:</summary>
@@ -73,7 +73,7 @@ Adds a player colored marker on placed down sentry guns, with who placed it and 
 
 ### Show Weapon Stats
 
-Displayes the weapons stats on the weapon select screen.  
+Displays the weapons stats on the weapon select screen.  
 Damage, clip size, max ammo and more
 
 ![GTFO_ShowWeaponStats](https://github.com/AuriRex/GTFO_TheArchive/assets/37329066/d771eaf2-0d57-4978-ac32-8f44e34e5800)
