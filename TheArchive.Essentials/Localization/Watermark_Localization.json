@@ -46,8 +46,8 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": "Mod: Shows currently installed mod version\n{nameof(WatermarkMode.Positional)}: Shows your current position / XYZ coordinates",
-          "Chinese": "模组: 显示当前安装的模组版本\n{nameof(WatermarkMode.Positional)}: 显示当前位置 / XYZ 坐标",
+          "English": "<color=orange>Mod</color>: Shows currently installed mod version\n<color=orange>Positional</color>: Shows your current position / XYZ coordinates\n<color=orange>Timer</color>: Shows the current expedition time",
+          "Chinese": "模组: 显示当前安装的模组版本\n位置: 显示当前位置 / XYZ 坐标",
           "French": null,
           "Italian": null,
           "German": null,

@@ -89,8 +89,8 @@
           "Korean": null
         },
         "FSDescription": {
-          "English": "Set what happens to audio whenever you tab out.\n\n<color=orange>Default</color> Use the games implementation\n<color=orange>MuteInBackground</color> Mute audio when not focused\n<color=orange>DoNothingInBackground</color> Keep audio on unfocus\n<color=orange>OverrideInBackground</color> Use override volume on unfocus",
-          "Chinese": "设置切换窗口时音频的行为。\n\n使用游戏的实现\n失去焦点时静音\n失去焦点时保持音频\n失去焦点时使用覆盖音量",
+          "English": "The time it takes to transition from the override volume to the game settings volume.\n(Interpolation time)",
+          "Chinese": null,
           "French": null,
           "Italian": null,
           "German": null,

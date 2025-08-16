@@ -15,7 +15,7 @@ public class ProcessPriority : Feature
 
     public override FeatureGroup Group => FeatureGroups.Special;
 
-    public override string Description => $"Set the games process priority.\n\nThis does the same thing as opening up Taskmanager, going into the 'Details' tab and right clicking on GTFO.exe > [Set Priority]\n\nWarning! Your system might lag / stutter while the game is loading if set to {ProcessPrioritySettings.PriorityClass.AboveNormal} or higher!";
+    public override string Description => $"Set the games process priority.\n\nThis does the same thing as opening up <color=orange>Taskmanager</color>, going into the 'Details' tab and right clicking on GTFO.exe > [Set Priority]\n\nWarning! Your system might lag / stutter while the game is loading if set to <color=orange>{ProcessPrioritySettings.PriorityClass.AboveNormal}</color> or higher!";
 
     public class ProcessPrioritySettings
     {
