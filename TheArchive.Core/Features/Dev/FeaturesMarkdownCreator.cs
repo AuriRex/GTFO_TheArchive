@@ -32,6 +32,9 @@ internal class FeaturesMarkdownCreator : Feature
 
     public class ReadmeCreatorSettings
     {
+        [FSDisplayName("Use Localized Texts")]
+        public FButton UseLocalizedTextsButton { get; set; } = new FButton("False", "use_localized_texts");
+        
         [FSDisplayName("Switch Assembly")]
         public FButton NextAssemblyButton { get; set; } = new FButton("Next ASM", "next_asm");
         
@@ -46,6 +49,7 @@ internal class FeaturesMarkdownCreator : Feature
     public const char NEWLINE = '\n';
 
     private static Assembly _selectedAssembly;
+    private static bool _useLocalizedTexts;
 
     public override void OnDatablocksReady()
     {
@@ -56,6 +60,9 @@ internal class FeaturesMarkdownCreator : Feature
     {
         switch (setting.ButtonID)
         {
+            case "use_localized_texts":
+                ToggleUseLocalizedTexts();
+                break;
             case "next_asm":
                 NextAssembly();
                 break;
@@ -63,6 +70,13 @@ internal class FeaturesMarkdownCreator : Feature
                 CreateReadme(_selectedAssembly);
                 break;
         }
+    }
+
+    private void ToggleUseLocalizedTexts()
+    {
+        _useLocalizedTexts = !_useLocalizedTexts;
+        
+        Settings?.UseLocalizedTextsButton?.SecondaryText?.SetText($"[ {(_useLocalizedTexts ? "<color=green>" : "<color=red>")}{_useLocalizedTexts}</color> ]");
     }
 
     private static int _index;
@@ -177,7 +191,7 @@ internal class FeaturesMarkdownCreator : Feature
 
     public static string CreateQuickLink(FeatureGroup group)
     {
-        var name = StripTMPTagsRegex(group.Name);
+        var name = StripTMPTagsRegex(_useLocalizedTexts ? group.DisplayName : group.Name);
 
         var link = $"#{name.ToLower().Replace(" ", "-").Replace("/", string.Empty)}";
 
@@ -187,7 +201,7 @@ internal class FeaturesMarkdownCreator : Feature
     public static string CreateGroupEntry(FeatureGroup group)
     {
         var builder = new StringBuilder();
-        builder.Append($"## {StripTMPTagsRegex(group.Name)}");
+        builder.Append($"## {StripTMPTagsRegex(_useLocalizedTexts ? group.DisplayName : group.Name)}");
         builder.Append(NEWLINE);
         builder.Append(NEWLINE);
 
@@ -199,7 +213,7 @@ internal class FeaturesMarkdownCreator : Feature
     public static string CreateFeatureEntry(Feature feature)
     {
         var builder = new StringBuilder();
-        builder.Append($"### {Utils.StripTMPTagsRegex(feature.Name)}");
+        builder.Append($"### {Utils.StripTMPTagsRegex(_useLocalizedTexts ? feature.FeatureInternal.DisplayName : feature.Name)}");
 
         if(feature.AppliesToRundowns != Utils.RundownFlags.None)
         {
@@ -211,9 +225,9 @@ internal class FeaturesMarkdownCreator : Feature
         builder.Append(NEWLINE);
         builder.Append(NEWLINE);
 
-        if (!string.IsNullOrWhiteSpace(feature.Description))
+        if (!string.IsNullOrWhiteSpace(_useLocalizedTexts ? feature.FeatureInternal.DisplayDescription : feature.Description))
         {
-            builder.Append(Utils.StripTMPTagsRegex(feature.Description));
+            builder.Append(Utils.StripTMPTagsRegex(_useLocalizedTexts ? feature.FeatureInternal.DisplayDescription : feature.Description));
         }
         else
         {
