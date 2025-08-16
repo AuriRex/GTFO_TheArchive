@@ -1,8 +1,11 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace TheArchive.Core.Attributes;
 
+#pragma warning disable CS0436
 [AttributeUsage(AttributeTargets.Class)]
+[MeansImplicitUse(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers | ImplicitUseTargetFlags.WithInheritors)]
 /// <summary>
 /// A custom wrapper for Harmony patches used by the FeaturesAPI
 /// </summary>

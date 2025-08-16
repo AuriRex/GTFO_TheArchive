@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
@@ -15,6 +16,8 @@ namespace TheArchive.Core.FeaturesAPI;
 /// <summary>
 /// An enableable / disableable feature
 /// </summary>
+#pragma warning disable CS0436
+[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithInheritors)]
 public abstract class Feature
 {
     private string _identifier = null;

@@ -6,6 +6,7 @@ using Mono.Cecil;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using JetBrains.Annotations;
 using TheArchive.Utilities;
 using Version = SemanticVersioning.Version;
 
@@ -14,8 +15,10 @@ namespace TheArchive.Core.Attributes;
 /// <summary>
 ///     This attribute denotes that a class is a module, and specifies the required metadata.
 /// </summary>
+#pragma warning disable CS0436
 [AttributeUsage(AttributeTargets.Class)]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[MeansImplicitUse(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
 public class ArchiveModule : Attribute
 {
     /// <summary>

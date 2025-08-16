@@ -608,6 +608,12 @@ public static class ArchiveMod
             {
                 Origin = "TheArchive.Core"
             });
+            
+            var jbaLicense = Encoding.UTF8.GetString(LoadFromResource("TheArchive.Resources.LICENSE_JBA"));
+            Attribution.Add(new Attribution.AttributionInfo("JetBrains.Annotations License", $"{jbaLicense}")
+            {
+                Origin = "TheArchive.Core"
+            });
         }
         catch (Exception ex)
         {
