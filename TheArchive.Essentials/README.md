@@ -1,6 +1,7 @@
 # TheArchive.Essentials
 
-That one massive GTFO Quality of Life mod.
+That one massive GTFO Quality of Life mod.  
+All Features are toggleable in-game, and most of them mid-game.
 
 ## Highlighted Features
 

@@ -9,8 +9,10 @@ The library that handles all the fun things like ...
 > This ***only adds the mod settings menu itself***,  
 > no extra features are included.  
 > If you're looking for all the QoL features:  
-> [TheArchive.Essentials on Thunderstore](#todo)  
-> [TheArchive.Essentials on GitHub](https://github.com/AuriRex/GTFO_TheArchive/blob/main/TheArchive.Essentials/README.md)
+> [TheArchive.Essentials on Thunderstore](https://thunderstore.io/c/gtfo/p/AuriRex/TheArchive_Essentials/) 
+> or [on GitHub](https://github.com/AuriRex/GTFO_TheArchive/blob/main/TheArchive.Essentials/README.md)  
+> or check out all the packages that depend on this one:  
+> [Packages that depend on Archive Core](https://thunderstore.io/c/gtfo/p/AuriRex/TheArchive_Core/dependants/)
 
 ## In Game Mod Settings
 
