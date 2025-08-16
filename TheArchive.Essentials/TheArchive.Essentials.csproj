@@ -13,13 +13,13 @@
 	<PropertyGroup>
 		<TSName>TheArchive_Essentials</TSName>
 		<TSAuthor>AuriRex</TSAuthor>
-		<TSVersion>1.0.0</TSVersion>
+		<TSVersion>2025.1.0</TSVersion>
 		<TSWebsite>https://github.com/AuriRex/GTFO_TheArchive</TSWebsite>
 		<TSDescription>That one massive GTFO Quality of Life mod.</TSDescription>
 	</PropertyGroup>
 	<ItemGroup>
-		<TSDependencyStrings Include="BepInEx-BepInExPack_GTFO-3.2.1" InProject="false" />
-		<TSDependencyStrings Include="AuriRex-TheArchive.Core-0.7.0" InProject="false" />
+		<TSDependencyStrings Include="BepInEx-BepInExPack_GTFO-3.2.2" InProject="false" />
+		<TSDependencyStrings Include="AuriRex-TheArchive.Core-2025.1.0" InProject="false" />
 	</ItemGroup>
 	
 	<ItemGroup>

@@ -21,12 +21,12 @@
 	<PropertyGroup>
 		<TSName>TheArchive_Core</TSName>
 		<TSAuthor>AuriRex</TSAuthor>
-		<!--<TSVersion>0.8.0</TSVersion>--> <!-- TSVersion empty = GitInfo used instead -->
+		<!-- <TSVersion>2025.1.0</TSVersion> --> <!-- TSVersion empty = GitInfo used instead -->
 		<TSWebsite>https://github.com/AuriRex/GTFO_TheArchive</TSWebsite>
 		<TSDescription>The main Archive mod, adds the ModSettings menu.</TSDescription>
 	</PropertyGroup>
 	<ItemGroup>
-		<TSDependencyStrings Include="BepInEx-BepInExPack_GTFO-3.2.1" InProject="false" />
+		<TSDependencyStrings Include="BepInEx-BepInExPack_GTFO-3.2.2" InProject="false" />
 		<TSDependencyStrings Include="AuriRex-Clonesoft_Json-13.0.0" InProject="false" />
 	</ItemGroup>
 	
