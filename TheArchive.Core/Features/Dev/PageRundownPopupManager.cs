@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
 using TheArchive.Loader;

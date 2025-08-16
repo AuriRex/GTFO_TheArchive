@@ -1,4 +1,5 @@
 ﻿using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
 
 namespace TheArchive.Features.QoL;

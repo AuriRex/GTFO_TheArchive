@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Settings;
 using TheArchive.Interfaces;
@@ -557,7 +558,7 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
             return value;
         }
 
-        var shouldEnable = feature.GetType().GetCustomAttribute<Attributes.EnableFeatureByDefault>() != null;
+        var shouldEnable = feature.GetType().GetCustomAttribute<EnableFeatureByDefault>() != null;
 
         SetFeatureEnabledInConfig(feature, shouldEnable);
         return shouldEnable;

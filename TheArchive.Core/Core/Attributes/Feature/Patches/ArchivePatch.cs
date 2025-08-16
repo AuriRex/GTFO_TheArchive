@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace TheArchive.Core.Attributes;
+namespace TheArchive.Core.Attributes.Feature.Patches;
 
 #pragma warning disable CS0436
 [AttributeUsage(AttributeTargets.Class)]

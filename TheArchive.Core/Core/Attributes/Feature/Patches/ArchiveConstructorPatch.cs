@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TheArchive.Core.Attributes;
+namespace TheArchive.Core.Attributes.Feature.Patches;
 
 [AttributeUsage(AttributeTargets.Class)]
 /// <summary>

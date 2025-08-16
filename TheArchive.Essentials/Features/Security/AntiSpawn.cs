@@ -3,6 +3,8 @@ using Il2CppInterop.Runtime.Runtime;
 using SNetwork;
 using System;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature;
+using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;

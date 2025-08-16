@@ -1,6 +1,7 @@
 ﻿using AK;
 using Player;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Utilities;
 using static Player.PlayerLocomotion;

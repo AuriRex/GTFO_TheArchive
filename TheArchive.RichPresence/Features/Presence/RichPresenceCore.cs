@@ -4,6 +4,8 @@ using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature;
+using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
