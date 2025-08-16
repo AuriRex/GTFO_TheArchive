@@ -10,8 +10,7 @@ namespace TheArchive.Features.Dev;
 //[EnableFeatureByDefault]
 [HideInModSettings]
 [DoNotSaveToConfig]
-[ForceDisable]
-#warning TODO: Rework "Special" Features system, include this one.
+[ForceDisable("Needs work.")]
 public class CullingHook : Feature
 {
     public override string Name => nameof(CullingHook);

@@ -37,7 +37,7 @@ public abstract class Feature
     public virtual Type[] LocalizationExternalTypes => Array.Empty<Type>();
 
     /// <summary>
-    /// True if this <see cref="Feature"/> is controled via code<br/>
+    /// True if this <see cref="Feature"/> is controlled via code<br/>
     /// (button disabled in Mod Settings!)
     /// </summary>
     public bool IsAutomated => FeatureInternal.AutomatedFeature;
@@ -102,11 +102,8 @@ public abstract class Feature
     /// </summary>
     public virtual bool RequiresUnityAudioListener => false;
 
-    [Obsolete($"Remove or use {nameof(InlineSettingsIntoParentMenu)} instead if inlining is intended")]
-    public virtual bool PlaceSettingsInSubMenu => false;
-
     /// <summary>
-    /// If this <see cref="Feature"/>s settings should be put inside of its parent menu in the Mod Settings menu
+    /// If this <see cref="Feature"/>s settings should be put inside its parent menu in the Mod Settings menu
     /// </summary>
     public virtual bool InlineSettingsIntoParentMenu => false;
 
@@ -218,6 +215,7 @@ public abstract class Feature
     /// </summary>
     /// <param name="lgArea">LG_Area that is affected</param>
     /// <param name="active">if rendered or not</param>
+    [Obsolete("Has not been implemented properly; does not work!")]
     public virtual void OnAreaCull(object lgArea, bool active)
     {
 
@@ -289,7 +287,7 @@ public abstract class Feature
     /// <summary>
     /// Call this to mark settings as dirty,<br/>
     /// Use for dictionary or other list type settings whenever changed through code!<br/>
-    /// <paramref name="settings"/> must be a <b>nested class</b> inside of your <seealso cref="Feature"/> implementation!<br/>
+    /// <paramref name="settings"/> must be a <b>nested class</b> inside your <seealso cref="Feature"/> implementation!<br/>
     /// Use <see cref="MarkSettingsAsDirty(object, Type)"/> instead if the above is not the case.
     /// </summary>
     /// <typeparam name="T"></typeparam>

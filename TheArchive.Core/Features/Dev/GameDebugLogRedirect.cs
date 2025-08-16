@@ -8,7 +8,7 @@ namespace TheArchive.Features.Dev;
 
 [EnableFeatureByDefault, HideInModSettings]
 #if BepInEx
-[ForceDisable]
+[ForceDisable("Not needed as BepInEx already redirects unity debug logs itself.")]
 #endif
 public class GameDebugLogRedirect : Feature
 {
@@ -22,14 +22,14 @@ public class GameDebugLogRedirect : Feature
 #if IL2CPP
     [ArchivePatch(typeof(Debug), nameof(Debug.Log), new Type[] { typeof(Il2CppSystem.Object) })]
 #else
-        [ArchivePatch(typeof(Debug), nameof(Debug.Log), new Type[] { typeof(object) })]
+    [ArchivePatch(typeof(Debug), nameof(Debug.Log), new Type[] { typeof(object) })]
 #endif
-    internal static class Debug_LogPatch
+    internal static class Debug__Log__Patch
     {
 #if IL2CPP
         public static void Prefix(Il2CppSystem.Object message)
 #else
-            public static void Prefix(object message)
+        public static void Prefix(object message)
 #endif
         {
             GTFOLogger.Log(message.ToString());
@@ -40,14 +40,14 @@ public class GameDebugLogRedirect : Feature
 #if IL2CPP
     [ArchivePatch(typeof(Debug), nameof(Debug.LogWarning), new Type[] { typeof(Il2CppSystem.Object) })]
 #else
-        [ArchivePatch(typeof(Debug), nameof(Debug.LogWarning), new Type[] { typeof(object) })]
+    [ArchivePatch(typeof(Debug), nameof(Debug.LogWarning), new Type[] { typeof(object) })]
 #endif
-    internal static class Debug_LogWarningPatch
+    internal static class Debug__LogWarning__Patch
     {
 #if IL2CPP
         public static void Prefix(Il2CppSystem.Object message)
 #else
-            public static void Prefix(object message)
+        public static void Prefix(object message)
 #endif
         {
             GTFOLogger.Warn(message.ToString());
@@ -58,14 +58,14 @@ public class GameDebugLogRedirect : Feature
 #if IL2CPP
     [ArchivePatch(typeof(Debug), nameof(Debug.LogError), new Type[] { typeof(Il2CppSystem.Object) })]
 #else
-        [ArchivePatch(typeof(Debug), nameof(Debug.LogError), new Type[] { typeof(object) })]
+    [ArchivePatch(typeof(Debug), nameof(Debug.LogError), new Type[] { typeof(object) })]
 #endif
-    internal static class Debug_LogErrorPatch
+    internal static class Debug__LogError__Patch
     {
 #if IL2CPP
         public static void Prefix(Il2CppSystem.Object message)
 #else
-            public static void Prefix(object message)
+        public static void Prefix(object message)
 #endif
         {
             GTFOLogger.Error(message.ToString());

@@ -156,7 +156,6 @@ public partial class ModSettings
         public static void CreateSimpleNumberField(string labelText, float initialValue, Action<float> onValueUpdated, out CM_SettingsItem cm_settingsItem, out CM_SettingsInputField cm_settingsInputField, out CM_SettingScrollReceiver cm_settingScrollReceiver, Func<float, float> getValue = null, FSSlider slider = null, SubMenu placeIntoMenu = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null, bool placeInNoMenu = false)
         {
             // I do not like this method lol
-#warning TODO
             var onValueUpdateStringField = new Action<string>((val) =>
             {
                 if(float.TryParse(val, out var result))

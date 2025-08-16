@@ -6,7 +6,7 @@ using TheArchive.Interfaces;
 namespace TheArchive.Features.Dev;
 
 [HideInModSettings]
-[ForceDisable]
+[ForceDisable("Might be causing overall issues.")]
 public class UnityRandomOverrider : Feature
 {
     public override string Name => "UnityRandomOverrider";
@@ -21,7 +21,7 @@ public class UnityRandomOverrider : Feature
 
     // TODO: doesn't work for producing the same voice lines as I'd have hoped it to ...
     [ArchivePatch(typeof(UnityEngine.Random), nameof(UnityEngine.Random.Range), new Type[] { typeof(float), typeof(float) })]
-    internal static class UnityEngine_Random_Range_Patch
+    internal static class UnityEngine__Random__Range__Patch
     {
         public static void Postfix(ref float __result)
         {
