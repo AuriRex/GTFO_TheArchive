@@ -20,8 +20,13 @@ An in-game mod settings menu for easy feature customization.
 Most Features are toggleable mid-game and some even have extra options to mess with!
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/37329066/190881761-1c0550c3-2d2e-4e74-9904-d0f439b96f24.png" alt="Mod Settings"/>
+  <img width="1920" height="1080" alt="Mod Settings base menu showing different Feature Groups" src="https://github.com/user-attachments/assets/00cd1fc1-32be-48ed-a473-4cc6aa8f010e" />
+  <img width="1920" height="1080" alt="Mod Settings, color picker and settings preview" src="https://github.com/user-attachments/assets/bfe65c76-43b7-493a-b37b-8df1805ff53c" />
+  <img width="1920" height="1080" alt="Mod Settings, button and enum settings preview" src="https://github.com/user-attachments/assets/502c5db0-ac80-4192-83ec-c420f34f5be0" />
 </p>
+
+> [!NOTE]  
+> *The settings shown here are not part of `TheArchive.Core` but instead part of `TheArchive.Essentials` and only here to show off some of the features available in the settings menu.*
 
 ## License
 
