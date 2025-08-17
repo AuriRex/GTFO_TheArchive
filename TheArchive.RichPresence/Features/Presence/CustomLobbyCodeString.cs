@@ -1,7 +1,6 @@
-﻿using CellMenu;
+﻿using System.Runtime.CompilerServices;
+using CellMenu;
 using SNetwork;
-using System.Runtime.CompilerServices;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
@@ -12,14 +11,14 @@ using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.Features.Special;
+namespace TheArchive.Features.Presence;
 
 [EnableFeatureByDefault]
 public class CustomLobbyCodeString : Feature
 {
     public override string Name => "Copy Lobby ID Format";
 
-    public override FeatureGroup Group => FeatureGroups.Special;
+    public override FeatureGroup Group => FeatureGroups.Presence;
 
     public override string Description => "Customize copied lobby code from the 'Copy Lobby ID'-Button on the loadout and settings screens with a custom format.";
 
