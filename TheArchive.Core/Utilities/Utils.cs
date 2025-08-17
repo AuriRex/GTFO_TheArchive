@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using TheArchive.Core;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Managers;
 using TheArchive.Loader;
@@ -385,8 +386,14 @@ public static partial class Utils
     }
 
     /// <summary>
-    /// This is used to identify the game build in a more broad way.
+    /// <c>RundownID</c> is used to identify game builds in a more broad way.<br/>
+    /// They apply to multiple game builds.
     /// </summary>
+    /// <seealso cref="BuildDB"/>
+    /// <seealso cref="RundownFlags"/>
+    /// <remarks>
+    /// Used in combination with <see cref="RundownFlags"/>.
+    /// </remarks>
     public enum RundownID
     {
         Latest = -2,
@@ -418,11 +425,17 @@ public static partial class Utils
     // IMPORTANT VALUE ABOVE
 
     /// <summary>
-    /// <b>Avoid</b> using <seealso cref="RundownFlags.Latest"/> outside of <seealso cref="RundownConstraint"/>, similar Attributes or without using <seealso cref="RundownFlagsExtensions.To(RundownFlags, RundownFlags)"/>
+    /// <c>RundownFlags</c> are used in combination with <c>RundownID</c> to restrict certain features or patches depending on the currently running game version.
     /// </summary>
+    /// <seealso cref="BuildDB"/>
+    /// <seealso cref="RundownID"/>
+    /// <remarks>
+    /// <b>Avoid</b> using <c>RundownFlags.Latest</c> outside of <see cref="RundownConstraint"/>, similar Attributes or without using <see cref="RundownFlagsExtensions.To(RundownFlags, RundownFlags)"/>
+    /// </remarks>
     [Flags]
     public enum RundownFlags
     {
+        /// <summary> <b>Avoid</b> using <c>RundownFlags.Latest</c> outside of <see cref="RundownConstraint"/>, similar Attributes or without using <see cref="RundownFlagsExtensions.To(RundownFlags, RundownFlags)"/> </summary>
         Latest = -2,
 
         None = 0,

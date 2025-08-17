@@ -8,6 +8,9 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Core;
 
+/// <summary>
+/// TODO: This
+/// </summary>
 public static class BuildDB
 {
     private static int _buildNumber = -1;

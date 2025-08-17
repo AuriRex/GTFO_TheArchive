@@ -331,6 +331,7 @@ internal class FeatureInternal
             _FILogger.Debug($"Found {nameof(Feature.OnGameStateChanged)} method \"{_onGameStateChangedMethodInfo.Name}\" on Feature {_feature.Identifier}. (Uses {(_onGameStateChangedMethodUsesGameEnum ? "eGameStateName" : "int")})");
         }
 
+#pragma warning disable CS0618 // Type or member is obsolete
         _onLGAreaCullUpdateMethodInfo = featureMethods
             .FirstOrDefault(mi => (mi.Name == "OnAreaCull" || mi.GetCustomAttribute<IsAreaCullUpdateMethod>() != null)
                                   && !mi.IsStatic
@@ -338,7 +339,8 @@ internal class FeatureInternal
                                   && mi.GetParameters().Length == 2
                                   && (mi.GetParameters()[0].ParameterType == _lgAreaType || mi.GetParameters()[0].ParameterType == typeof(object))
                                   && mi.GetParameters()[1].ParameterType == typeof(bool));
-
+#pragma warning restore CS0618 // Type or member is obsolete
+        
         foreach (var prop in settingsProps)
         {
             if ((!prop.SetMethod?.IsStatic ?? true) || (!prop.GetMethod?.IsStatic ?? true))
