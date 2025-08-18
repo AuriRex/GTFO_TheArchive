@@ -5,5 +5,4 @@ public interface IArchiveModule
     string ModuleGroup { get; }
 
     void Init();
-    void OnLateUpdate();
 }

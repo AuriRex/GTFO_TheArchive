@@ -569,19 +569,6 @@ public static class ArchiveMod
 
     public static void OnLateUpdate()
     {
-        foreach (var module in Modules)
-        {
-            try
-            {
-                module?.OnLateUpdate();
-            }
-            catch (Exception ex)
-            {
-                ArchiveLogger.Error($"Error while trying to run {nameof(IArchiveModule.OnLateUpdate)} in module \"{module?.GetType()?.FullName ?? "Unknown"}\"!");
-                ArchiveLogger.Exception(ex);
-            }
-        }
-
         FeatureManager.Instance.OnLateUpdate();
     }
 
