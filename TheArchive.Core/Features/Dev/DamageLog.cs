@@ -13,7 +13,7 @@ using UnityEngine;
 namespace TheArchive.Features.Dev;
 
 [HideInModSettings]
-public class DamageLog : Feature
+internal class DamageLog : Feature
 {
     // TODO: Fix on R1 build maybe?
     public override string Name => "Damage Log";

@@ -9,7 +9,7 @@ namespace TheArchive.Features.Dev;
 
 [HideInModSettings]
 [ForceDisable("Might be causing overall issues.")]
-public class UnityRandomOverrider : Feature
+internal class UnityRandomOverrider : Feature
 {
     public override string Name => "UnityRandomOverrider";
 

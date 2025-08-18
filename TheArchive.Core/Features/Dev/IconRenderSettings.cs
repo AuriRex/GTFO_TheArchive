@@ -9,7 +9,7 @@ using static GearIconRendering;
 namespace TheArchive.Features.Dev;
 
 [HideInModSettings]
-public class IconRenderSettings : Feature
+internal class IconRenderSettings : Feature
 {
     public override string Name => nameof(IconRenderSettings);
 

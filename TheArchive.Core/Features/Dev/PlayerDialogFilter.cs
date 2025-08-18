@@ -8,19 +8,30 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Features.Dev;
 
+/// <summary>
+/// Manages filters for player voice lines.
+/// </summary>
 [EnableFeatureByDefault]
 [HideInModSettings]
 public class PlayerDialogFilter : Feature
 {
+    /// <inheritdoc />
     public override string Name => "Player Dialog Filter";
 
+    /// <inheritdoc />
     public override FeatureGroup Group => FeatureGroups.Dev;
 
+    /// <inheritdoc />
     public override string Description => "Remove unwanted player sound events.";
 
 
     private static readonly List<uint> _soundEventsToFilter = new List<uint>();
 
+    /// <summary>
+    /// Add a sound event to the filter list.
+    /// </summary>
+    /// <param name="soundEvent">The sound event to filter.</param>
+    /// <returns><c>False</c> if the sound event does not exist.</returns>
     public static bool AddEventToFilter(string soundEvent)
     {
         if (!SoundEventCache.TryResolve(soundEvent, out var soundId))
@@ -33,19 +44,21 @@ public class PlayerDialogFilter : Feature
         return true;
     }
 
+    /// <summary>
+    /// Remove a sound event from the filter list.
+    /// </summary>
+    /// <param name="soundEvent">The sound event to remove from the filter list.</param>
+    /// <returns><c>True</c> if the filter was successfully removed.</returns>
     public static bool RemoveEventFromFilter(string soundEvent)
     {
         if (!SoundEventCache.TryResolve(soundEvent, out var soundId))
             return false;
-
-        if (_soundEventsToFilter.Contains(soundId))
-            return _soundEventsToFilter.Remove(soundId);
-
-        return false;
+        
+        return _soundEventsToFilter.Remove(soundId);
     }
 
     [ArchivePatch(typeof(PlayerVoiceManager), nameof(PlayerVoiceManager.DoSayLine))]
-    public static class PlayerVoiceManager_DoSayLine_Patch
+    internal static class PlayerVoiceManager__DoSayLine__Patch
     {
         public static bool Prefix(PlayerVoiceManager.pSayLine data)
         {

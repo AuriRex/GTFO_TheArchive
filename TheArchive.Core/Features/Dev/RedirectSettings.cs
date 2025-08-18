@@ -10,7 +10,7 @@ using TheArchive.Utilities;
 namespace TheArchive.Features.Dev;
 
 [EnableFeatureByDefault, HideInModSettings]
-public class RedirectSettings : Feature
+internal class RedirectSettings : Feature
 {
     public override string Name => "Redirect Settings";
 

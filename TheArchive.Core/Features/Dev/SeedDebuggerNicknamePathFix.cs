@@ -11,7 +11,7 @@ namespace TheArchive.Features.Dev;
 
 [HideInModSettings]
 [EnableFeatureByDefault]
-public class SeedDebuggerNicknamePathFix : Feature
+internal class SeedDebuggerNicknamePathFix : Feature
 {
     public override string Name => "SeedDebugger-Nickname-Path-Fix";
 

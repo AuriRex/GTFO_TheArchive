@@ -10,7 +10,7 @@ namespace TheArchive.Features.Dev;
 
 [EnableFeatureByDefault, HideInModSettings]
 [RundownConstraint(RundownFlags.RundownOne, RundownFlags.RundownAltSix)]
-public class MaulGavelChecksumPatch : Feature
+internal class MaulGavelChecksumPatch : Feature
 {
     public override string Name => "Maul/Gavel Checksum Patch";
 

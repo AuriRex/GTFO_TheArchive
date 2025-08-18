@@ -13,7 +13,7 @@ namespace TheArchive.Features.Dev;
 [HideInModSettings]
 [DoNotSaveToConfig]
 [ForceDisable("Needs work.")]
-public class CullingHook : Feature
+internal class CullingHook : Feature
 {
     public override string Name => nameof(CullingHook);
 

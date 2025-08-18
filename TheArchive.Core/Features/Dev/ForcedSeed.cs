@@ -10,7 +10,7 @@ using TheArchive.Interfaces;
 namespace TheArchive.Features.Dev;
 
 [HideInModSettings]
-public class ForcedSeed : Feature
+internal class ForcedSeed : Feature
 {
     public override string Name => "Force Expedition Seeds";
 

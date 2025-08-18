@@ -7,7 +7,7 @@ using TheArchive.Core.FeaturesAPI;
 namespace TheArchive.Features.Dev;
 
 [HideInModSettings, DoNotSaveToConfig]
-public class SettingsDebug : Feature
+internal class SettingsDebug : Feature
 {
     public override string Name => nameof(SettingsDebug);
 

@@ -12,7 +12,7 @@ namespace TheArchive.Features.Dev;
 #if BepInEx
 [ForceDisable("Not needed as BepInEx already redirects unity debug logs itself.")]
 #endif
-public class GameDebugLogRedirect : Feature
+internal class GameDebugLogRedirect : Feature
 {
     public override string Name => "Game Logs Redirect";
 

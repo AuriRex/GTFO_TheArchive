@@ -9,7 +9,7 @@ using UnityEngine.Analytics;
 namespace TheArchive.Features.Dev;
 
 [EnableFeatureByDefault, HideInModSettings]
-public class AnalyticsBlocker : Feature
+internal class AnalyticsBlocker : Feature
 {
     public override string Name => "Block Game Analytics";
 

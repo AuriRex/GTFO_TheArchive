@@ -11,7 +11,7 @@ namespace TheArchive.Features.Dev;
 [HideInModSettings]
 [EnableFeatureByDefault]
 [DisallowInGameToggle]
-public class ModLanguage : Feature
+internal class ModLanguage : Feature
 {
     public override string Name => "Mod Language";
 

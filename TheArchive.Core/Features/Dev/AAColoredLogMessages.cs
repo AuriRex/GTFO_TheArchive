@@ -13,7 +13,7 @@ namespace TheArchive.Features.Dev;
 
 [EnableFeatureByDefault]
 [HideInModSettings]
-public class AAColoredLogMessages : Feature
+internal class AAColoredLogMessages : Feature
 {
     public override string Name => "Colored Log Messages";
     
