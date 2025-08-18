@@ -66,6 +66,9 @@ public abstract class Feature
     /// </summary>
     public static GameBuildInfo BuildInfo { get; internal set; }
 
+    /// <summary>
+    /// Default group for features that don't specify a custom one.
+    /// </summary>
     public FeatureGroup ModuleGroup => FeatureGroups.GetOrCreateModuleGroup(FeatureInternal.ArchiveModule.ModuleGroup);
 
     /// <summary>

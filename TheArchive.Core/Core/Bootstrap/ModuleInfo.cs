@@ -44,10 +44,17 @@ public class ModuleInfo : ICacheable
     /// </summary>
     public object Instance { get; internal set; }
 
+    /// <summary>
+    /// Type Name
+    /// </summary>
     public string TypeName { get; internal set; }
 
     internal Version TargetedTheArchiveVersion { get; set; }
 
+    /// <summary>
+    /// Save method for caching.
+    /// </summary>
+    /// <param name="bw">The BinaryWriter to write to.</param>
     public void Save(BinaryWriter bw)
     {
         bw.Write(TypeName);
@@ -74,6 +81,10 @@ public class ModuleInfo : ICacheable
         bw.Write(TargetedTheArchiveVersion.ToString(4));
     }
 
+    /// <summary>
+    /// Load method for caching.
+    /// </summary>
+    /// <param name="br">The BinaryReader to read from.</param>
     public void Load(BinaryReader br)
     {
         TypeName = br.ReadString();

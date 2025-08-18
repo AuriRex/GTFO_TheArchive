@@ -13,7 +13,7 @@ namespace TheArchive;
 [DisallowInGameToggle]
 [DoNotSaveToConfig]
 [EnableFeatureByDefault]
-public class ArchiveBootstrap : Feature
+internal class ArchiveBootstrap : Feature
 {
     public override string Name => nameof(ArchiveBootstrap);
     public override FeatureGroup Group => FeatureGroups.Dev;
@@ -42,7 +42,7 @@ public class ArchiveBootstrap : Feature
     }
 
     [ArchivePatch(typeof(GameDataInit), nameof(GameDataInit.Initialize))]
-    internal static class GameDataInit_Initialize_Patch
+    internal static class GameDataInit__Initialize__Patch
     {
         public static void Postfix()
         {
@@ -50,16 +50,19 @@ public class ArchiveBootstrap : Feature
             {
                 InvokeGameDataInitialized();
             }
-            catch(System.Reflection.ReflectionTypeLoadException rtlex)
+            catch(System.Reflection.ReflectionTypeLoadException typeLoadException)
             {
                 ArchiveLogger.Error($"Exception thrown in {nameof(ArchiveBootstrap)}");
                 ArchiveLogger.Msg(ConsoleColor.Green, "Oh no, seems like someone's referencing game types from an older/newer game version that do not exist anymore! :c");
-                ArchiveLogger.Exception(rtlex);
-                ArchiveLogger.Warning($"{rtlex.Types?.Length} Types loaded.");
+                ArchiveLogger.Exception(typeLoadException);
+                ArchiveLogger.Warning($"{typeLoadException.Types.Length} Types loaded.");
                 ArchiveLogger.Notice("Exceptions:");
-                foreach(var expt in rtlex.LoaderExceptions)
+                foreach(var exception in typeLoadException.LoaderExceptions)
                 {
-                    ArchiveLogger.Error(expt.Message);
+                    if (exception == null)
+                        continue;
+                    
+                    ArchiveLogger.Error(exception.Message);
                 }
             }
             catch (Exception ex)
@@ -74,7 +77,7 @@ public class ArchiveBootstrap : Feature
 
     [RundownConstraint(RundownFlags.RundownSix, RundownFlags.Latest)]
     [ArchivePatch("Setup")]
-    internal static class LocalizationManager_Setup_Patch
+    internal static class LocalizationManager__Setup__Patch
     {
         public static Type Type() => typeof(LocalizationManager);
 
@@ -82,7 +85,7 @@ public class ArchiveBootstrap : Feature
     }
 
     [ArchivePatch(typeof(GameStateManager), nameof(GameStateManager.ChangeState))]
-    internal static class GameStateManager_ChangeState_Patch
+    internal static class GameStateManager__ChangeState__Patch
     {
         public static void Postfix(eGameStateName nextState)
         {
@@ -92,7 +95,7 @@ public class ArchiveBootstrap : Feature
 
     [RundownConstraint(RundownFlags.RundownAltOne, RundownFlags.Latest)]
     [ArchivePatch(nameof(CellMenu.CM_Item.OnBtnPress))]
-    internal static class CM_RundownSelection_OnBtnPress_Patch
+    internal static class CM_RundownSelection__OnBtnPress__Patch
     {
         public static Type Type() => typeof(CM_RundownSelection);
         public static void Postfix(CM_RundownSelection __instance)
@@ -103,7 +106,7 @@ public class ArchiveBootstrap : Feature
 
     [RundownConstraint(RundownFlags.RundownAltOne, RundownFlags.Latest)]
     [ArchivePatch(typeof(CellMenu.CM_PageRundown_New), nameof(CellMenu.CM_PageRundown_New.Setup))]
-    internal static class CM_PageRundown_New_Setup_Patch
+    internal static class CM_PageRundown_New__Setup__Patch
     {
         public static void Postfix(CellMenu.CM_PageRundown_New __instance)
         {
@@ -114,7 +117,7 @@ public class ArchiveBootstrap : Feature
     }
 
     [ArchivePatch(typeof(InControl.InControlManager), UnityMessages.OnApplicationFocus)]
-    internal static class EventSystem_OnApplicationFocus_Patch
+    internal static class EventSystem__OnApplicationFocus__Patch
     {
         public static void Postfix(bool focusState)
         {

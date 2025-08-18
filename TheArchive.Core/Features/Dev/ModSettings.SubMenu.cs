@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TheArchive.Loader;
 using TheArchive.Utilities;
 using UnityEngine;
 
@@ -125,7 +126,7 @@ public partial class ModSettings
 
             ScrollWindow.SetContentItems(list.ToIL2CPPListIfNecessary(), Padding);
 
-            Utils.StartCoroutine(UpdateCellMenuCursorItems());
+            LoaderWrapper.StartCoroutine(UpdateCellMenuCursorItems());
 
             HasBeenBuilt = true;
             return true;

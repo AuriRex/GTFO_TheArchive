@@ -2,8 +2,20 @@
 
 namespace TheArchive.Core.Models;
 
+/// <summary>
+/// The currently running game version
+/// </summary>
+/// <seealso cref="RundownID"/>
+/// <seealso cref="BuildDB"/>
 public struct GameBuildInfo
 {
-    public RundownID Rundown { get; set; }
-    public int BuildNumber { get; set; }
+    /// <summary>
+    /// The currently running game version (<c>RundownID</c>)
+    /// </summary>
+    public RundownID Rundown { get; init; }
+    
+    /// <summary>
+    /// The currently running game build version number.
+    /// </summary>
+    public int BuildNumber { get; init; }
 }

@@ -46,11 +46,19 @@ public class ArchiveIncompatibility : Attribute, ICacheable
         }).ToList();
     }
 
+    /// <summary>
+    /// Save method for caching.
+    /// </summary>
+    /// <param name="bw">The BinaryWriter to write to.</param>
     public void Save(BinaryWriter bw)
     {
         bw.Write(IncompatibilityGUID);
     }
 
+    /// <summary>
+    /// Load method for caching.
+    /// </summary>
+    /// <param name="br">The BinaryReader to read from.</param>
     public void Load(BinaryReader br)
     {
         IncompatibilityGUID = br.ReadString();

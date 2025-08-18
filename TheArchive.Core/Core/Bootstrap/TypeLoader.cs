@@ -39,6 +39,9 @@ public static class TypeLoader
     /// </summary>
     public static readonly ReaderParameters ReaderParameters;
 
+    /// <summary>
+    /// Static directories to search through
+    /// </summary>
     public static HashSet<string> SearchDirectories = new();
 
     private static readonly bool EnableAssemblyCache = true;
@@ -51,6 +54,12 @@ public static class TypeLoader
         CecilResolver.ResolveFailure += CecilResolveOnFailure;
     }
     
+    /// <summary>
+    /// Cecil resolve on failure method
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="reference">Assembly reference to search for.</param>
+    /// <returns></returns>
     public static AssemblyDefinition CecilResolveOnFailure(object sender, AssemblyNameReference reference)
     {
         if (!Utils.TryParseAssemblyName(reference.FullName, out var name))

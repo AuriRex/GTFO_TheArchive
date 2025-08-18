@@ -17,14 +17,20 @@ using Version = SemanticVersioning.Version;
 
 namespace TheArchive.Core.Bootstrap;
 
+/// <summary>
+/// Custom chain-loader for loading archive module assemblies
+/// </summary>
 [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class ArchiveModuleChainloader
 {
+    /// <summary> CurrentAssemblyName </summary>
     protected static readonly string CurrentAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+    /// <summary> CurrentAssemblyVersion </summary>
     protected static readonly System.Version CurrentAssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
+    /// <summary> Instance </summary>
     public static ArchiveModuleChainloader Instance { get; private set; }
     
     private static IArchiveLogger _logger;
@@ -98,6 +104,11 @@ public class ArchiveModuleChainloader
         };
     }
 
+    /// <summary>
+    /// Check for any types implementing <c>IArchiveModule</c> in an assembly.
+    /// </summary>
+    /// <param name="ass">AssemblyDefinition to check</param>
+    /// <returns><c>True</c> if a IArchiveModule was found</returns>
     protected static bool HasArchiveModule(AssemblyDefinition ass)
     {
         if (ass.MainModule.AssemblyReferences.All(r => r.Name != CurrentAssemblyName))
@@ -108,6 +119,11 @@ public class ArchiveModuleChainloader
         return res;
     }
 
+    /// <summary>
+    /// Check archive version requirements.
+    /// </summary>
+    /// <param name="ModuleInfo">Module info to check</param>
+    /// <returns><c>True</c> if all version checks pass</returns>
     protected static bool ModuleTargetsWrongTheArchive(ModuleInfo ModuleInfo)
     {
         var moduleTarget = ModuleInfo.TargetedTheArchiveVersion;
@@ -139,7 +155,7 @@ public class ArchiveModuleChainloader
     /// </summary>
     public event Action Finished;
 
-    public static void Initialize()
+    internal static void Initialize()
     {
         if (Instance != null)
         {
@@ -412,7 +428,7 @@ public class ArchiveModuleChainloader
         }
     }
 
-    public IArchiveModule LoadModule(ModuleInfo moduleInfo, Assembly moduleAssembly)
+    private IArchiveModule LoadModule(ModuleInfo moduleInfo, Assembly moduleAssembly)
     {
         return ArchiveMod.CreateAndInitModule(moduleAssembly.GetType(moduleInfo.TypeName));
     }

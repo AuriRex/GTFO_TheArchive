@@ -82,6 +82,10 @@ public class ArchiveDependency : Attribute, ICacheable
         VersionRange = Range.Parse(version);
     }
 
+    /// <summary>
+    /// Save method for caching.
+    /// </summary>
+    /// <param name="bw">The BinaryWriter to write to.</param>
     public void Save(BinaryWriter bw)
     {
         bw.Write(DependencyGUID);
@@ -89,6 +93,10 @@ public class ArchiveDependency : Attribute, ICacheable
         bw.Write(VersionRange?.ToString() ?? string.Empty);
     }
 
+    /// <summary>
+    /// Load method for caching.
+    /// </summary>
+    /// <param name="br">The BinaryReader to read from.</param>
     public void Load(BinaryReader br)
     {
         DependencyGUID = br.ReadString();

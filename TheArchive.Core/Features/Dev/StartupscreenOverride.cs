@@ -15,14 +15,16 @@ internal class StartupscreenOverride : Feature
     public override FeatureGroup Group => FeatureGroups.Dev;
 
     [ArchivePatch(typeof(PlayFabManager), "TryGetStartupScreenData")]
-    internal class PlayFabManager_TryGetStartupScreenData_Patch
+    internal class PlayFabManager__TryGetStartupScreenData__Patch
     {
         public static bool Prefix(eStartupScreenKey key, out StartupScreenData data, ref bool __result)
         {
             var startupScreenData = new StartupScreenData();
             startupScreenData.AllowedToStartGame = true;
 
+#pragma warning disable CS0618 // Type or member is obsolete
             startupScreenData.IntroText = Utils.GetStartupTextForRundown(BuildInfo.Rundown);
+#pragma warning restore CS0618 // Type or member is obsolete
             startupScreenData.ShowDiscordButton = false;
             startupScreenData.ShowBugReportButton = false;
             startupScreenData.ShowRoadmapButton = false;

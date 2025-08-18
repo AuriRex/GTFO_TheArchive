@@ -368,7 +368,9 @@ public class PresenceManager
         {
             if (ArchiveMod.IsPlayingModded || ArchiveMod.IsOnALTBuild)
                 return $"{Get(nameof(RundownTitleFromDataBlocks))}";
+#pragma warning disable CS0618 // Type or member is obsolete
             return Utils.GetRundownTitle(ArchiveMod.CurrentRundown);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 
