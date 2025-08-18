@@ -3,18 +3,47 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Core.Attributes.Feature.Settings;
 
+/// <summary>
+/// Formats a timestamp into a human-readable string.
+/// </summary>
+/// <remarks>
+/// <list>
+/// <item>Use on a member of a type that's used by the feature settings system. (<c>[FeatureConfig]</c>)</item>
+/// </list>
+/// </remarks>
+/// <example><code>
+/// public class MyFeature : Feature
+/// {
+///     [FeatureConfig]
+///     public static MyCustomSettings Settings { get; set; }
+///
+///     public class MyCustomSettings
+///     {
+///         // Turns the timestamp into something readable by humans.
+///         [FSTimestamp]
+///         public long MyCustomTimeStamp { get; set; } = 0;
+///     }
+/// }
+/// </code></example>
 [AttributeUsage(AttributeTargets.Property)]
 public class FSTimestamp : Attribute
 {
-    public string Format { get; private set; } = "U";
+    /// <summary>
+    /// The custom timestamp format.
+    /// </summary>
+    public string Format { get; } = "U";
 
-    public FSTimestamp(string customFormat = "")
+    /// <summary>
+    /// Formats a timestamp into a readable string.
+    /// </summary>
+    /// <param name="customFormat">A custom format to use.</param>
+    public FSTimestamp(string customFormat = "U")
     {
         try
         {
             Format = customFormat;
 
-            DateTime.Now.ToString(Format);
+            _ = DateTime.Now.ToString(Format);
         }
         catch (Exception)
         {

@@ -191,7 +191,7 @@ public abstract class Feature
     }
 
     /// <summary>
-    /// Called everytime after a setting has been changed via the ingame UI
+    /// Called everytime after a setting has been changed via the mod settings menu.
     /// </summary>
     /// <param name="setting">The changed setting</param>
     public virtual void OnFeatureSettingChanged(FeatureSetting setting)

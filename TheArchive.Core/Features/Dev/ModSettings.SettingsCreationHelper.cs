@@ -954,10 +954,10 @@ public partial class ModSettings
 #endif
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         /// <summary>
         /// Only touch on R5 and later!!
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetSliderFloatDisplayValue(SliderStyle style, out int val)
         {
 #if IL2CPP
@@ -970,10 +970,10 @@ public partial class ModSettings
 #endif
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         /// <summary>
         /// Only touch on R5 and later!!
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void SetSliderFloatDisplayStyle(CM_SettingScrollReceiver cm_settingScrollReceiver, SliderStyle style)
         {
 #if IL2CPP
