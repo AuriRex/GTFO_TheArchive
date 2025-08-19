@@ -15,29 +15,17 @@ namespace TheArchive.Core.Managers;
 /// to keep the code compatible across multiple versions (see boosters R5 vs R6 for example)<br/>
 /// or types that reference newer types that don't exist in previous versions (see Localization in R6)
 /// </summary>
-public class ImplementationManager
+public static class ImplementationManager
 {
     private static Dictionary<string, Type> _gameTypeDictionary = new Dictionary<string, Type>();
     private static Dictionary<Type, object> _implementationInstances = new Dictionary<Type, object>();
-
-    /// <summary>
-    /// Register multiple (game) types
-    /// </summary>
-    /// <param name="dict"></param>
-    public static void RegisterGameTypes(Dictionary<string, Type> dict)
-    {
-        foreach(var kvp in dict)
-        {
-            RegisterGameType(kvp.Key, kvp.Value);
-        }
-    }
 
     /// <summary>
     /// Register a (game) type <paramref name="type"/> using an <paramref name="identifier"/><br/>Can be retrieved using <see cref="GameTypeByIdentifier"/>
     /// </summary>
     /// <param name="identifier"></param>
     /// <param name="type"></param>
-    public static void RegisterGameType(string identifier, Type type)
+    internal static void RegisterGameType(string identifier, Type type)
     {
         if (string.IsNullOrWhiteSpace(identifier)) throw new ArgumentException("Identifier must not be null or whitespace!");
         if (type == null) throw new ArgumentException("Type must not be null!");
@@ -54,7 +42,7 @@ public class ImplementationManager
     /// </summary>
     /// <param name="identifier"></param>
     /// <returns></returns>
-    public static Type GameTypeByIdentifier(string identifier)
+    internal static Type GameTypeByIdentifier(string identifier)
     {
         if (_gameTypeDictionary.TryGetValue(identifier, out var type))
             return type;

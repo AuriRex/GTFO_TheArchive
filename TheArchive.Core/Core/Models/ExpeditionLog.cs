@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 
 namespace TheArchive.Core.Models;
@@ -32,3 +33,4 @@ public class ExpeditionLog
         List<uint> Players { get; set; } = new List<uint>();
     }
 }
+*/

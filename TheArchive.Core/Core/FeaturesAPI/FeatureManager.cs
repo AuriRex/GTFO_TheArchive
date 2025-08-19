@@ -11,17 +11,42 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI;
 
+/// <summary>
+/// Manages all the features.
+/// </summary>
 public class FeatureManager : InitSingletonBase<FeatureManager>
 {
-
-    public HashSet<Feature> RegisteredFeatures { get; private set; } = new HashSet<Feature>();
-    public HashSet<Feature> FeaturesRequestingRestart { get; private set; } = new HashSet<Feature>();
+    /// <summary>
+    /// All registered features.
+    /// </summary>
+    public HashSet<Feature> RegisteredFeatures { get; } = new();
+    
+    /// <summary>
+    /// All features that are requesting a game restart.
+    /// </summary>
+    public HashSet<Feature> FeaturesRequestingRestart { get; } = new();
+    
+    /// <summary>
+    /// If any feature is requesting a game restart.
+    /// </summary>
     public bool AnyFeatureRequestingRestart => FeaturesRequestingRestart.Count > 0;
 
-    public Dictionary<string, HashSet<Feature>> GroupedFeatures { get; private set; } = new Dictionary<string, HashSet<Feature>>();
+    /// <summary>
+    /// All features belonging to groups.
+    /// </summary>
+    public Dictionary<string, HashSet<Feature>> GroupedFeatures { get; } = new();
 
-    public bool InUpdateCycle { get; private set; } = false;
-    public bool InLateUpdateCycle { get; private set; } = false;
+    /// <summary>
+    /// If we are currently in the feature update loop.
+    /// </summary>
+    /// <seealso cref="Feature.Update"/>
+    public bool InUpdateCycle { get; private set; }
+    
+    /// <summary>
+    /// If we are currently in the feature late update loop.
+    /// </summary>
+    /// <seealso cref="Feature.LateUpdate"/>
+    public bool InLateUpdateCycle { get; private set; }
 
     private readonly EnabledFeatures _enabledFeatures;
 
@@ -50,9 +75,9 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
 
     private readonly IArchiveLogger _logger = LoaderWrapper.CreateArSubLoggerInstance(nameof(FeatureManager), ConsoleColor.DarkYellow);
 
-    public event Action<Feature> OnFeatureEnabled;
-    public event Action<Feature> OnFeatureDisabled;
-    public event Action<Feature, bool> OnFeatureRestartRequestChanged;
+    internal event Action<Feature> OnFeatureEnabled;
+    internal event Action<Feature> OnFeatureDisabled;
+    internal event Action<Feature, bool> OnFeatureRestartRequestChanged;
 
     private FeatureManager()
     {
@@ -71,6 +96,11 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         Feature.SetupIs();
     }
 
+    /// <summary>
+    /// Check if a feature is currently enabled.
+    /// </summary>
+    /// <param name="featureId">The ID of the feature to check for.</param>
+    /// <returns><c>True</c> if the feature is currently enabled.</returns>
     public static bool IsFeatureEnabled(string featureId)
     {
         var feature = Instance.RegisteredFeatures.FirstOrDefault(f => f.Identifier == featureId);
@@ -126,7 +156,7 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
 
             _logger.Info($"Saving settings ... ");
 
-            SaveConfig();
+            SaveEnabledFeaturesConfig();
 
             foreach (var feature in RegisteredFeatures)
             {
@@ -254,7 +284,7 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         }
     }
 
-    public void InitFeature(Type type, IArchiveModule module)
+    internal void InitFeature(Type type, IArchiveModule module)
     {
         Feature feature = (Feature) Activator.CreateInstance(type);
         InitFeature(feature, module);
@@ -275,6 +305,11 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         feature.Group.Features.Add(feature);
     }
 
+    /// <summary>
+    /// Enable a given feature.
+    /// </summary>
+    /// <param name="feature">The feature to enable.</param>
+    /// <param name="setConfig">If the enabled state should be written to config.</param>
     public void EnableFeature(Feature feature, bool setConfig = true)
     {
         if (feature == null) return;
@@ -299,6 +334,11 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         OnFeatureEnabled?.Invoke(feature);
     }
 
+    /// <summary>
+    /// Disable a given feature.
+    /// </summary>
+    /// <param name="feature">The feature to disable.</param>
+    /// <param name="setConfig">If the enabled state should be written to config.</param>
     public void DisableFeature(Feature feature, bool setConfig = true)
     {
         if (feature == null) return;
@@ -322,7 +362,7 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         OnFeatureDisabled?.Invoke(feature);
     }
 
-    public void SetAllUpdateMethodsEnabled(Feature feature, bool enable)
+    private void SetAllUpdateMethodsEnabled(Feature feature, bool enable)
     {
         SetUpdateMethodEnabled(feature, enable);
         SetLateUpdateMethodEnabled(feature, enable);
@@ -384,14 +424,14 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         _activeLateUpdateMethods.Remove(update);
     }
 
-    public void CheckSpecialFeatures()
+    internal void CheckSpecialFeatures()
     {
-        var requireAudioListner = RegisteredFeatures.Where(f => f.Enabled && f.RequiresUnityAudioListener);
-        if (requireAudioListner.Count() > 0)
+        var requireAudioListener = RegisteredFeatures.Where(f => f.Enabled && f.RequiresUnityAudioListener).ToArray();
+        if (requireAudioListener.Length > 0)
         {
             if (UnityAudioListenerHelper != null && !UnityAudioListenerHelper.Enabled)
             {
-                _logger.Notice($"Some Features require a UnityEngine AudioListener: [{string.Join("], [", requireAudioListner.Select(f => f.Identifier))}]");
+                _logger.Notice($"Some Features require a UnityEngine AudioListener: [{string.Join("], [", requireAudioListener.Select(f => f.Identifier))}]");
                 EnableFeature(UnityAudioListenerHelper);
             }
         }
@@ -402,6 +442,10 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         }
     }
 
+    /// <summary>
+    /// Enable an automated feature.
+    /// </summary>
+    /// <param name="type">The type of the automated feature.</param>
     public static void EnableAutomatedFeature(Type type)
     {
         var feature = Instance.RegisteredFeatures.FirstOrDefault(x => x.GetType() == type);
@@ -413,6 +457,10 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         Instance.EnableFeature(feature, false);
     }
 
+    /// <summary>
+    /// Disable an automated feature.
+    /// </summary>
+    /// <param name="type">The type of the automated feature.</param>
     public static void DisableAutomatedFeature(Type type)
     {
         var feature = Instance.RegisteredFeatures.FirstOrDefault(x => x.GetType() == type);
@@ -451,13 +499,18 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         return Instance.RegisteredFeatures.FirstOrDefault(f => f.GetType() == type);
     }
 
+    /// <summary>
+    /// Check if a feature <typeparamref name="T"/> is enabled.
+    /// </summary>
+    /// <typeparam name="T">The feature to check.</typeparam>
+    /// <returns><c>True</c> if the feature is enabled.</returns>
     public static bool IsFeatureEnabled<T>() where T : Feature
     {
         var feature = GetByType<T>();
         return feature != null && feature.Enabled;
     }
 
-    public static void SaveFeatureConfig(Feature feature)
+    private static void SaveFeatureConfig(Feature feature)
     {
         feature.FeatureInternal.SaveFeatureSettings();
     }
@@ -467,22 +520,18 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         Instance = new FeatureManager();
     }
 
-    public void DEBUG_DISABLE()
-    {
-        foreach(var f in RegisteredFeatures)
-        {
-            DisableFeature(f);
-        }
-    }
-
+    /// <summary>
+    /// Toggle a features enable state.
+    /// </summary>
+    /// <param name="feature">The feature to toggle.</param>
     public static void ToggleFeature(Feature feature)
     {
         Instance.ToggleFeatureInstance(feature);
     }
 
-    public void ToggleFeatureInstance(Feature feature)
+    private void ToggleFeatureInstance(Feature feature)
     {
-        bool enabled = (feature.IsLoadedAndNotDisabledInternally && !feature.RequiresRestart) ? feature.Enabled : IsEnabledInConfig(feature);
+        var enabled = (feature.IsLoadedAndNotDisabledInternally && !feature.RequiresRestart) ? feature.Enabled : IsEnabledInConfig(feature);
 
         if (feature.RequiresRestart)
         {
@@ -503,15 +552,7 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         }
     }
 
-    public void DEBUG_ENABLE()
-    {
-        foreach (var f in RegisteredFeatures)
-        {
-            EnableFeature(f);
-        }
-    }
-
-    public void SaveConfig()
+    private void SaveEnabledFeaturesConfig()
     {
         LocalFiles.SaveConfig(_enabledFeatures);
     }
@@ -531,14 +572,18 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
             {
                 return;
             }
-            else
-            {
-                _enabledFeatures.Features.Remove(feature.Identifier);
-            }
+
+            _enabledFeatures.Features.Remove(feature.Identifier);
         }
         _enabledFeatures.Features.Add(feature.Identifier, value);
     }
 
+    /// <summary>
+    /// Check if a feature is enabled in the config.<br/>
+    /// (Not the current state of the feature!)
+    /// </summary>
+    /// <param name="feature">The feature to check.</param>
+    /// <returns><c>True</c> if the feature is enabled in the config.</returns>
     public static bool IsEnabledInConfig(Feature feature)
     {
         return Instance.IsFeatureEnabledInConfig(feature);
@@ -584,7 +629,7 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         featureSet.Add(feature);
     }
 
-    public static void InvokeButtonPressed(Feature feature, ButtonSetting setting)
+    internal static void InvokeButtonPressed(Feature feature, ButtonSetting setting)
     {
         if (feature == null || setting == null) return;
 

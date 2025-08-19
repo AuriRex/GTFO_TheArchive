@@ -1,6 +1,6 @@
 ﻿namespace TheArchive.Core.Localization;
 
-public enum FSType
+internal enum FSType
 {
     FName,
     FDescription,

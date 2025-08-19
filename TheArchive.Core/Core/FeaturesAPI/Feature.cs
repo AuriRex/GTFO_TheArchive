@@ -216,9 +216,6 @@ public abstract class Feature
     /// <summary>
     /// Called every time the feature gets disabled.
     /// </summary>
-    /// <remarks>
-    /// Also called whenever the game quits, check <see cref="IsApplicationQuitting"/> and return early if this causes issues for you.
-    /// </remarks>
     public virtual void OnDisable()
     {
 
@@ -321,9 +318,6 @@ public abstract class Feature
     /// <summary>
     /// Called whenever the application quits.
     /// </summary>
-    /// <remarks>
-    /// Gets executed right before <see cref="OnDisable"/> is called.
-    /// </remarks>
     public virtual void OnQuit()
     {
 
