@@ -288,7 +288,7 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
 
         if (feature.Enabled) return;
 
-        if (!feature.AppliesToThisGameBuild) return;
+        if (!feature.IsLoadedAndNotDisabledInternally) return;
 
         _logger.Msg(ConsoleColor.Green, $"Enabling {(feature.IsAutomated ? "automated " : String.Empty)}{nameof(Feature)} {feature.Identifier} ...");
 
@@ -312,7 +312,7 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
 
         if (!feature.Enabled) return;
 
-        if(feature.AppliesToThisGameBuild)
+        if(feature.IsLoadedAndNotDisabledInternally)
             _logger.Msg(ConsoleColor.Red, $"Disabling {nameof(Feature)} {feature.Identifier} ...");
 
         feature.FeatureInternal.Disable();
@@ -482,7 +482,7 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
 
     public void ToggleFeatureInstance(Feature feature)
     {
-        bool enabled = (feature.AppliesToThisGameBuild && !feature.RequiresRestart) ? feature.Enabled : IsEnabledInConfig(feature);
+        bool enabled = (feature.IsLoadedAndNotDisabledInternally && !feature.RequiresRestart) ? feature.Enabled : IsEnabledInConfig(feature);
 
         if (feature.RequiresRestart)
         {

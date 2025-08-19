@@ -2,9 +2,13 @@
 
 namespace TheArchive.Core.FeaturesAPI.Settings;
 
+/// <summary>
+/// A feature setting for managing colors.
+/// </summary>
 public class ColorSetting : FeatureSetting
 {
-    public ColorSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
+    /// <inheritdoc/>
+    public ColorSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debugPath = "") : base(featureSettingsHelper, prop, instance, debugPath)
     {
     }
 }

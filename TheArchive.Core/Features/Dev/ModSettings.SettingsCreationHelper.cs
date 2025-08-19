@@ -1198,7 +1198,7 @@ public partial class ModSettings
                 SharedUtils.ChangeColorCMItem(buttonItem, DISABLED);
                 return;
             }
-            bool enabled = (feature.AppliesToThisGameBuild && !feature.RequiresRestart) ? feature.Enabled : FeatureManager.IsEnabledInConfig(feature);
+            bool enabled = (feature.IsLoadedAndNotDisabledInternally && !feature.RequiresRestart) ? feature.Enabled : FeatureManager.IsEnabledInConfig(feature);
             text.SetText(enabled ? LocalizationCoreService.Get(1, "Enabled") : LocalizationCoreService.Get(2, "Disabled"));
 
             SetFeatureItemColor(feature, buttonItem);
@@ -1208,7 +1208,7 @@ public partial class ModSettings
 
         public static void SetFeatureItemColor(Feature feature, CM_Item item)
         {
-            if (!feature.AppliesToThisGameBuild)
+            if (!feature.IsLoadedAndNotDisabledInternally)
             {
                 SharedUtils.ChangeColorCMItem(item, DISABLED);
                 return;

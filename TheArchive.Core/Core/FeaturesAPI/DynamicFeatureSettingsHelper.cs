@@ -2,8 +2,14 @@
 
 namespace TheArchive.Core.FeaturesAPI;
 
+/// <inheritdoc/>
 public class DynamicFeatureSettingsHelper : FeatureSettingsHelper
 {
+    /// <summary>
+    /// DynamicFeatureSettingsHelper constructor
+    /// </summary>
+    /// <param name="feature">Parent feature</param>
+    /// <param name="parentHelper">Parent settings helper</param>
     public DynamicFeatureSettingsHelper(Feature feature, FeatureSettingsHelper parentHelper = null)
     {
         Feature = feature;
@@ -27,6 +33,7 @@ public class DynamicFeatureSettingsHelper : FeatureSettingsHelper
         throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public override object GetFeatureInstance()
     {
         throw new NotImplementedException();

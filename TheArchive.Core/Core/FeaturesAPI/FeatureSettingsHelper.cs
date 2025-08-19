@@ -13,22 +13,39 @@ using UnityEngine;
 
 namespace TheArchive.Core.FeaturesAPI;
 
-public partial class FeatureSettingsHelper
+/// <summary>
+/// Handles the creation of FeatureSettings objects.<br/>
+/// There is usually no real reason to interact with this directly.
+/// </summary>
+public class FeatureSettingsHelper
 {
-    internal PropertyInfo Property { get; private set; }
+    private PropertyInfo Property { get; }
+    /// <summary>
+    /// Display Name
+    /// </summary>
     public string DisplayName { get; private set; }
     internal string TypeName => SettingType?.Name;
     internal string PropertyName => Property?.Name;
-    internal Type SettingType { get; private set; }
-    internal object Instance { get; set; }
-    public Feature Feature { get; protected set; }
-    internal FeatureSettingsHelper ParentHelper { get; set; }
+    internal Type SettingType { get; }
+    internal object Instance { get; private set; }
+    /// <summary>
+    /// The parent Feature of this settings helper
+    /// </summary>
+    public Feature Feature { get; protected init; }
+    internal FeatureSettingsHelper ParentHelper { get; init; }
 
-    private bool _isDirty = false;
+    private bool _isDirty;
+    /// <summary>
+    /// If this settings helper has any unsaved changes
+    /// </summary>
     public bool IsDirty
     {
         get
         {
+            if(ParentHelper != null)
+            {
+                return ParentHelper.IsDirty;
+            }
             return _isDirty;
         }
         internal set
@@ -45,7 +62,10 @@ public partial class FeatureSettingsHelper
 
     internal static bool ForceEnableDebugLogging { get; set; } = false;
 
-    public HashSet<FeatureSetting> Settings { get; private set; } = new HashSet<FeatureSetting>();
+    /// <summary>
+    /// Set of all the loaded FeatureSettings
+    /// </summary>
+    public HashSet<FeatureSetting> Settings { get; } = new();
 
     internal FeatureSettingsHelper(Feature feature, PropertyInfo settingsProperty)
     {
@@ -55,8 +75,17 @@ public partial class FeatureSettingsHelper
         SetDisplayName(settingsProperty);
     }
 
+    /// <summary>
+    /// Empty constructor
+    /// </summary>
     protected FeatureSettingsHelper() { }
 
+    /// <summary>
+    /// Checks the members of the provided type for compatible types and initializes all found <c>FeatureSetting</c>s.
+    /// </summary>
+    /// <param name="typeToCheck">The type to check.</param>
+    /// <param name="instance">The actual instance of the settings property.</param>
+    /// <param name="path">A debug path.</param>
     protected void PopulateSettings(Type typeToCheck, object instance, string path = "")
     {
         if (typeToCheck.IsValueType) return;
@@ -71,9 +100,9 @@ public partial class FeatureSettingsHelper
         foreach (var prop in typeToCheck.GetProperties())
         {
             var propPath = $"{path}.{prop.Name}";
-            var type = prop?.GetMethod?.ReturnType;
+            var type = prop.GetMethod?.ReturnType;
 
-            if (type == null || prop == null) continue;
+            if (type == null) continue;
 
             if (prop.GetCustomAttribute<FSIgnore>() != null) continue;
 
@@ -82,7 +111,7 @@ public partial class FeatureSettingsHelper
                 continue;
             }
 
-            bool shouldInline = prop.GetCustomAttribute<FSInline>() != null;
+            var shouldInline = prop.GetCustomAttribute<FSInline>() != null;
 
             if (!type.IsValueType
                 && !typeof(IList).IsAssignableFrom(type)
@@ -166,7 +195,11 @@ public partial class FeatureSettingsHelper
         }
     }
 
-    protected void DebugLog(string msg)
+    /// <summary>
+    /// Debug log
+    /// </summary>
+    /// <param name="msg">Message to log.</param>
+    protected static void DebugLog(string msg)
     {
         if(ForceEnableDebugLogging || !Feature.GameDataInited)
             _logger.Debug(msg);
@@ -174,14 +207,17 @@ public partial class FeatureSettingsHelper
 
     private void SetDisplayName(PropertyInfo settingsProperty)
     {
-        DisplayName = settingsProperty?.GetCustomAttribute<FSDisplayName>()?.DisplayName;
-        if (settingsProperty?.GetCustomAttribute<FSDisplayName>(true) != null)
+        var fsDisplayName = settingsProperty.GetCustomAttribute<FSDisplayName>(true);
+        
+        DisplayName = fsDisplayName?.DisplayName ?? settingsProperty.Name;
+        
+        if (fsDisplayName == null)
+            return;
+        
+        var propID = $"{settingsProperty.DeclaringType!.FullName}.{settingsProperty.Name}";
+        if (Localization.TryGetFSText(propID, FSType.FSDisplayName, out var text))
         {
-            string propID = $"{settingsProperty.DeclaringType.FullName}.{settingsProperty.Name}";
-            if (Localization.TryGetFSText(propID, FSType.FSDisplayName, out var text))
-            {
-                DisplayName = text;
-            }
+            DisplayName = text;
         }
     }
 
@@ -206,8 +242,17 @@ public partial class FeatureSettingsHelper
         PopulateSettings(SettingType, Instance, string.Empty);
     }
 
+    /// <summary>
+    /// Get the settings instance from this Feature.
+    /// </summary>
+    /// <returns>The settings properties instance.</returns>
     public virtual object GetFeatureInstance() => GetInstanceOnHost(Feature);
 
+    /// <summary>
+    /// Get the settings instance from an arbitrary host.
+    /// </summary>
+    /// <param name="host">The object whose type contains the settings property.</param>
+    /// <returns>The settings properties instance.</returns>
     public virtual object GetInstanceOnHost(object host)
     {
         return Instance ?? Property.GetValue(host);

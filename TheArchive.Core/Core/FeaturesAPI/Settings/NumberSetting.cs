@@ -5,14 +5,35 @@ using TheArchive.Utilities;
 
 namespace TheArchive.Core.FeaturesAPI.Settings;
 
+/// <summary>
+/// A feature setting that handles all the different kind of numbers, from byte to double.
+/// </summary>
 public class NumberSetting : FeatureSetting
 {
+    /// <summary>
+    /// Do we have a slider?
+    /// </summary>
     public bool HasSlider => Slider != null;
-    public FSSlider Slider { get; private set; } = null;
-    public FSTimestamp Timestamp { get; private set; } = null;
-    public NumberFormat Format { get; private set; }
+    
+    /// <summary>
+    /// Slider to use
+    /// </summary>
+    public FSSlider Slider { get; }
+    
+    /// <summary>
+    /// Timestamp format to use
+    /// </summary>
+    public FSTimestamp Timestamp { get; }
+    
+    /// <summary>
+    /// The type of the reflected number.<br/>
+    /// Depends on the properties type.
+    /// </summary>
+    /// <seealso cref="NumberFormat"/>
+    public NumberFormat Format { get; }
 
-    public NumberSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
+    /// <inheritdoc/>
+    public NumberSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debugPath = "") : base(featureSettingsHelper, prop, instance, debugPath)
     {
         Timestamp = prop.GetCustomAttribute<FSTimestamp>();
         Slider = prop.GetCustomAttribute<FSSlider>();
@@ -54,6 +75,12 @@ public class NumberSetting : FeatureSetting
         }
     }
 
+    /// <summary>
+    /// Convert a number to the selected NumberFormat.
+    /// </summary>
+    /// <param name="value">Value to convert</param>
+    /// <returns>The value converted to NumberFormat</returns>
+    /// <seealso cref="Format"/>
     public object ConvertNumber(object value)
     {
         switch(Format)
@@ -82,6 +109,7 @@ public class NumberSetting : FeatureSetting
         }
     }
 
+    /// <inheritdoc/>
     public override object GetValue()
     {
         var value = base.GetValue();
@@ -94,6 +122,7 @@ public class NumberSetting : FeatureSetting
         return value;
     }
 
+    /// <inheritdoc/>
     public override object SetValue(object value)
     {
         if(Timestamp != null)
@@ -119,17 +148,30 @@ public class NumberSetting : FeatureSetting
         return val;
     }
 
+    /// <summary>
+    /// The type/format of a number setting.
+    /// </summary>
     public enum NumberFormat
     {
+        /// <summary> <see cref="sbyte"/> </summary>
         SByte,
+        /// <summary> <see cref="Int16"/> </summary>
         Int16,
+        /// <summary> <see cref="Int32"/> </summary>
         Int32,
+        /// <summary> <see cref="Int64"/> </summary>
         Int64,
+        /// <summary> <see cref="byte"/> </summary>
         Byte,
+        /// <summary> <see cref="UInt16"/> </summary>
         UInt16,
+        /// <summary> <see cref="UInt32"/> </summary>
         UInt32,
+        /// <summary> <see cref="UInt64"/> </summary>
         UInt64,
+        /// <summary> <see cref="Single"/> </summary>
         Single,
+        /// <summary> <see cref="Double"/> </summary>
         Double,
     }
 }

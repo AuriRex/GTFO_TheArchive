@@ -16,49 +16,114 @@ namespace TheArchive.Core.FeaturesAPI;
 /// <summary>
 /// An enableable / disableable feature
 /// </summary>
+/// <example><code>
+/// public class MyFeature : Feature
+/// {
+///     
+/// }
+/// </code></example>
 #pragma warning disable CS0436
 [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithInheritors)]
 public abstract class Feature
 {
-    private string _identifier = null;
+    private string _identifier;
+    /// <summary>
+    /// This features unique identifier.
+    /// </summary>
     public string Identifier => _identifier ??= GetType().Name;
+    
+    /// <summary>
+    /// If this feature is hidden in the mod settings menu.
+    /// </summary>
     public bool IsHidden => FeatureInternal.HideInModSettings;
+    
+    /// <summary>
+    /// If this feature belongs to a group.
+    /// </summary>
     public bool BelongsToGroup => Group != null;
+    
+    /// <summary>
+    /// If the feature uses any properties decorated with <c>[FeatureConfig]</c>.
+    /// </summary>
     public bool HasAdditionalSettings => FeatureInternal.HasAdditionalSettings;
+    
+    /// <summary>
+    /// If all <c>[FeatureConfig]</c> settings are marked as hidden.
+    /// </summary>
     public bool AllAdditionalSettingsAreHidden => FeatureInternal.AllAdditionalSettingsAreHidden;
+    
+    /// <summary>
+    /// All used top-level settings helpers.
+    /// </summary>
     public IEnumerable<FeatureSettingsHelper> SettingsHelpers => FeatureInternal.Settings;
+    
+    /// <summary>
+    /// Request a game restart.
+    /// </summary>
+    /// <remarks>
+    /// Adds a notice in the mod settings menu that some features are requesting a game restart.
+    /// </remarks>
     public void RequestRestart() => FeatureManager.RequestRestart(this);
+    
+    /// <summary>
+    /// Revoke your game restart request.
+    /// </summary>
     public void RevokeRestartRequest() => FeatureManager.RevokeRestartRequest(this);
 
+    /// <summary>
+    /// Request this feature to be disabled.
+    /// </summary>
+    /// <param name="reason">The disable reason.</param>
+    /// <remarks>
+    /// <list>
+    /// <item>This does not change the config state of your feature.</item>
+    /// <item>The disabled reason is visible in game on the features description panel.</item>
+    /// <item>Useful to add a reason in <see cref="ShouldInit"/>.</item>
+    /// </list>
+    /// </remarks>
     protected void RequestDisable(string reason = null) => FeatureInternal.RequestDisable(reason);
 
+    /// <summary>
+    /// This features localization service.
+    /// </summary>
     public ILocalizationService Localization => FeatureInternal.Localization;
 
+    /// <summary>
+    /// Types that should be localized that aren't nested in your features type.
+    /// </summary>
     public virtual Type[] LocalizationExternalTypes => Array.Empty<Type>();
 
     /// <summary>
-    /// True if this <see cref="Feature"/> is controlled via code<br/>
-    /// (button disabled in Mod Settings!)
+    /// True if this feature is controlled via code.
     /// </summary>
+    /// <remarks>
+    /// Also disables the features button in the in-game mod settings button.
+    /// </remarks>
     public bool IsAutomated => FeatureInternal.AutomatedFeature;
 
     /// <summary>
-    /// Does what it says it does
+    /// Disables the button to toggles this feature in the in-game mod settings menu.
     /// </summary>
     public bool DisableModSettingsButton => FeatureInternal.DisableModSettingsButton;
 
     /// <summary>
-    /// Logging interface for this <see cref="Feature"/>
+    /// Logging interface for this feature.
     /// </summary>
     public IArchiveLogger FeatureLogger => FeatureInternal.FeatureLoggerInstance;
 
     /// <summary>
-    /// If the <see cref="Feature"/> is currently enabled.
+    /// If the feature is currently enabled.
     /// </summary>
     public bool Enabled { get; internal set; } = false;
 
-    public bool AppliesToThisGameBuild => !FeatureInternal.InternalDisabled;
+    /// <summary>
+    /// Feature is loaded and not disabled internally.
+    /// </summary>
+    public bool IsLoadedAndNotDisabledInternally => !FeatureInternal.InternalDisabled;
 
+    /// <summary>
+    /// The feature applies to those rundown game versions.
+    /// </summary>
     public RundownFlags AppliesToRundowns => FeatureInternal.Rundowns;
 
     /// <summary>
@@ -69,28 +134,29 @@ public abstract class Feature
     /// <summary>
     /// Default group for features that don't specify a custom one.
     /// </summary>
-    public FeatureGroup ModuleGroup => FeatureGroups.GetOrCreateModuleGroup(FeatureInternal.ArchiveModule.ModuleGroup);
+    private FeatureGroup ModuleGroup => FeatureGroups.GetOrCreateModuleGroup(FeatureInternal.ArchiveModule.ModuleGroup);
 
     /// <summary>
-    /// The <see cref="Feature"/>s Name<br/>
-    /// used in Mod Settings
+    /// The features name.
     /// </summary>
     public abstract string Name { get; }
 
     /// <summary>
-    /// A text describing this <see cref="Feature"/><br/>
-    /// used in Mod Settings
+    /// A text describing this feature.
     /// </summary>
+    /// <remarks>Can be multi-line using '\n'</remarks>
     public virtual string Description => string.Empty;
 
     /// <summary>
-    /// Used to group multiple settings together under one header<br/>
-    /// used in Mod Settings
+    /// The group to put your feature into.
     /// </summary>
+    /// <remarks>
+    /// By default, the module default feature group is used.
+    /// </remarks>
     public virtual FeatureGroup Group => ModuleGroup;
 
     /// <summary>
-    /// If set, prevents calling of <see cref="OnEnable"/> and <see cref="OnDisable"/> methods and only switches the config state of this <see cref="Feature"/>.
+    /// If set, prevents calling of <see cref="OnEnable"/> and <see cref="OnDisable"/> methods and instead only switches the config state of this feature.
     /// </summary>
     public virtual bool RequiresRestart => false;
 
@@ -101,35 +167,35 @@ public abstract class Feature
     public virtual bool SkipInitialOnEnable => false;
 
     /// <summary>
-    /// If the <see cref="Feature"/> requires a UnityEngine AudioListener Component setup on the LocalPlayer GameObject
+    /// If the feature requires a UnityEngine AudioListener Component setup on the LocalPlayer GameObject.
     /// </summary>
     public virtual bool RequiresUnityAudioListener => false;
 
     /// <summary>
-    /// If this <see cref="Feature"/>s settings should be put inside its parent menu in the Mod Settings menu
+    /// If this features settings should be put inside its parent menu in the mod settings menu.
     /// </summary>
     public virtual bool InlineSettingsIntoParentMenu => false;
 
     /// <summary>
-    /// Called once upon application start before <see cref="Init"/> and before any patches have been loaded
+    /// Called once upon application start before <see cref="Init"/>, before any patches have been loaded.
     /// </summary>
-    /// <returns>If the <see cref="Feature"/> should be inited</returns>
+    /// <returns>If the feature should be initialized.</returns>
     public virtual bool ShouldInit()
     {
         return true;
     }
 
     /// <summary>
-    /// Called once upon application start before <see cref="Init"/> after all patches and settings have been loaded
+    /// Called once upon application start before <see cref="Init"/>, after all patches and settings have been loaded.
     /// </summary>
-    /// <returns>If the <see cref="Feature"/> should be inited</returns>
+    /// <returns>If the feature should be initialized.</returns>
     public virtual bool LateShouldInit()
     {
         return true;
     }
 
     /// <summary>
-    /// Called once upon application start and after all patches have been loaded
+    /// Called once upon application start, after all patches and settings have been loaded.
     /// </summary>
     public virtual void Init()
     {
@@ -137,23 +203,29 @@ public abstract class Feature
     }
 
     /// <summary>
-    /// Called every time the feature gets enabled
+    /// Called every time the feature gets enabled.
     /// </summary>
+    /// <remarks>
+    /// This won't be called the first time if <see cref="SkipInitialOnEnable"/> is set to true.
+    /// </remarks>
     public virtual void OnEnable()
     {
 
     }
 
     /// <summary>
-    /// Called every time the feature gets disabled
+    /// Called every time the feature gets disabled.
     /// </summary>
+    /// <remarks>
+    /// Also called whenever the game quits, check <see cref="IsApplicationQuitting"/> and return early if this causes issues for you.
+    /// </remarks>
     public virtual void OnDisable()
     {
 
     }
 
     /// <summary>
-    /// Called once after the game data has initialized
+    /// Called once after the game data has been initialized.
     /// </summary>
     public virtual void OnGameDataInitialized()
     {
@@ -161,24 +233,27 @@ public abstract class Feature
     }
 
     /// <summary>
-    /// Called everytime the game is focused or unfocused
+    /// Called everytime the game is focused or unfocused.
     /// </summary>
-    /// <param name="focus"></param>
+    /// <param name="focus">The current application focus state of the game.</param>
     public virtual void OnApplicationFocusChanged(bool focus)
     {
             
     }
 
     /// <summary>
-    /// Called once after datablocks have been loaded
+    /// Called once after datablocks have been loaded.
     /// </summary>
+    /// <remarks>
+    /// It is safe to call/use any game localization methods.
+    /// </remarks>
     public virtual void OnDatablocksReady()
     {
 
     }
 
     /// <summary>
-    /// Called once every frame whenever the feature is enabled
+    /// Called once every frame whenever the feature is enabled.
     /// </summary>
     public virtual void Update()
     {
@@ -186,7 +261,7 @@ public abstract class Feature
     }
 
     /// <summary>
-    /// Called once every frame whenever the feature is enabled after all <see cref="Update"/>s have been called
+    /// Called once every frame whenever the feature is enabled after all <see cref="Update"/>s have been called.
     /// </summary>
     public virtual void LateUpdate()
     {
@@ -196,28 +271,32 @@ public abstract class Feature
     /// <summary>
     /// Called everytime after a setting has been changed via the mod settings menu.
     /// </summary>
-    /// <param name="setting">The changed setting</param>
+    /// <param name="setting">The changed setting.</param>
     public virtual void OnFeatureSettingChanged(FeatureSetting setting)
     {
             
     }
 
     /// <summary>
-    /// Called everytime the gamestate changes<br/>
-    /// Cast to <c>eGameStateName</c> or define a new instance method <c>OnGameStateChanged(eGameStateName state)</c>
+    /// Called everytime the game state changes.
     /// </summary>
-    /// <param name="state">The state</param>
+    /// <param name="state">The new game state.</param>
+    /// <remarks>
+    /// Cast state value to <c>eGameStateName</c> or define a new instance method <c>OnGameStateChanged(eGameStateName state)</c>.
+    /// </remarks>
     public virtual void OnGameStateChanged(int state)
     {
 
     }
 
     /// <summary>
-    /// Called whenever an area is culled / unculled<br />
-    /// Cast to the first parameter to <c>LG_Area</c> or define a new instance method <c>OnAreaCull(LG_Area area, bool active)</c>
+    /// Called whenever an area is culled / unculled.
     /// </summary>
     /// <param name="lgArea">LG_Area that is affected</param>
-    /// <param name="active">if rendered or not</param>
+    /// <param name="active">If rendered or not</param>
+    /// <remarks>
+    /// Cast to the first parameter to <c>LG_Area</c> or define a new instance method <c>OnAreaCull(LG_Area area, bool active)</c>.
+    /// </remarks>
     [Obsolete("Has not been implemented properly; does not work!")]
     public virtual void OnAreaCull(object lgArea, bool active)
     {
@@ -225,40 +304,52 @@ public abstract class Feature
     }
 
     /// <summary>
-    /// Called whenever a <see cref="FButton"/> from this <see cref="Feature"/>s mod settings menu has been pressed.
+    /// Called whenever a FButton from this features mod settings menu has been pressed.
     /// </summary>
-    /// <param name="setting"></param>
+    /// <param name="setting">The <c>ButtonSetting</c> corresponding to the <c>FButton</c> that was pressed.</param>
+    /// <remarks>
+    /// <list>
+    /// <item><b>Is only called if the feature is enabled!</b></item>
+    /// </list>
+    /// </remarks>
+    /// <seealso cref="FButton"/>
     public virtual void OnButtonPressed(ButtonSetting setting)
     {
 
     }
 
     /// <summary>
-    /// Called whenever the application quits
-    /// <br/>
-    /// Gets executed right before <seealso cref="OnDisable"/> is called
+    /// Called whenever the application quits.
     /// </summary>
+    /// <remarks>
+    /// Gets executed right before <see cref="OnDisable"/> is called.
+    /// </remarks>
     public virtual void OnQuit()
     {
 
     }
 
     /// <summary>
-    /// Call this to mark settings as dirty,<br/>
+    /// Call this to mark settings as dirty.<br/>
     /// Use for dictionary or other list type settings whenever changed through code!
     /// </summary>
-    /// <param name="settings">The instance of the settings to mark dirty</param>
+    /// <param name="settings">The instance of the settings to mark dirty.</param>
     public bool MarkSettingsDirty(object settings) => FeatureInternal.MarkSettingsDirty(settings);
 
     /// <summary>
-    /// Call this to mark settings as dirty,<br/>
-    /// Use for dictionary or other list type settings whenever changed through code!<br/>
-    /// Not specifying <paramref name="featureType"/> will try to resolve it via a <seealso cref="StackTrace"/>!
+    /// Call this to mark settings as dirty.<br/>
+    /// Use for dictionary or other list type settings whenever changed through code!
     /// </summary>
-    /// <param name="settings">The instance of the settings object</param>
-    /// <param name="featureType">The Feature type the setting is implemented on</param>
-    /// <returns>Whether the setting was able to be set as dirty</returns>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <param name="settings">The instance of the settings object.</param>
+    /// <param name="featureType">The Feature type the setting is implemented on.</param>
+    /// <returns>Whether the setting was able to be set as dirty.</returns>
+    /// <exception cref="InvalidOperationException">If no valid featureType was provided or found.</exception>
+    /// <remarks>
+    /// <list>
+    /// <item>Only call from within a Feature class or provide the correct type!</item>
+    /// <item>Not specifying <paramref name="featureType"/> will try to resolve it via a <see cref="StackTrace"/>!</item>
+    /// </list>
+    /// </remarks>
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static bool MarkSettingsAsDirty(object settings, Type featureType = null)
     {
@@ -288,15 +379,20 @@ public abstract class Feature
     }
 
     /// <summary>
-    /// Call this to mark settings as dirty,<br/>
+    /// Call this to mark settings as dirty.<br/>
     /// Use for dictionary or other list type settings whenever changed through code!<br/>
-    /// <paramref name="settings"/> must be a <b>nested class</b> inside your <seealso cref="Feature"/> implementation!<br/>
+    /// <paramref name="settings"/> must be a <b>nested class</b> inside your feature implementation!<br/>
     /// Use <see cref="MarkSettingsAsDirty(object, Type)"/> instead if the above is not the case.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="settings">The instance of the settings object</param>
-    /// <returns>Whether the setting was able to be set as dirty</returns>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <typeparam name="T">A <b>nested class</b> inside your feature implementation</typeparam>
+    /// <param name="settings">The instance of the settings object.</param>
+    /// <returns>Whether the setting was able to be set as dirty.</returns>
+    /// <exception cref="InvalidOperationException">If no valid featureType was provided or found.</exception>
+    /// <remarks>
+    /// <list>
+    /// <item>Type <typeparamref name="T"/> must be a <b>nested class</b> inside your feature implementation!</item>
+    /// </list>
+    /// </remarks>
     public static bool MarkSettingsAsDirty<T>(T settings)
     {
         if (!typeof(T).IsNested)
@@ -308,16 +404,44 @@ public abstract class Feature
     }
 
     internal FeatureInternal FeatureInternal { get; set; }
+    
+    /// <inheritdoc cref="ArchiveMod.IsPlayingModded"/>
     public static bool IsPlayingModded => ArchiveMod.IsPlayingModded;
+    
+    /// <summary>
+    /// If dev mode is enabled.
+    /// </summary>
     public static bool DevMode => ArchiveMod.Settings.FeatureDevMode;
-    public static bool GameDataInited { get; internal set; } = false;
-    public static bool IsApplicationFocused { get; internal set; } = false;
-    public static bool IsApplicationQuitting { get; internal set; } = false;
-    public static bool DataBlocksReady { get; internal set; } = false;
-    /// <summary>Cast to eGameStateName</summary>
-    public static int CurrentGameState { get; internal set; } = 0;
-    /// <summary>Cast to eGameStateName</summary>
-    public static int PreviousGameState { get; internal set; } = 0;
+    
+    /// <summary>
+    /// Has game data been initialized yet?
+    /// </summary>
+    public static bool GameDataInited { get; internal set; }
+    
+    /// <summary>
+    /// Is the game currently in focus?
+    /// </summary>
+    public static bool IsApplicationFocused { get; internal set; }
+    
+    /// <summary>
+    /// Is the game currently in the process of quitting?
+    /// </summary>
+    public static bool IsApplicationQuitting { get; internal set; }
+    
+    /// <summary>
+    /// Have data blocks been initialized yet?
+    /// </summary>
+    public static bool DataBlocksReady { get; internal set; }
+    
+    /// <summary>
+    /// Cast to <c>eGameStateName</c>.
+    /// </summary>
+    public static int CurrentGameState { get; internal set; }
+    
+    /// <summary>
+    /// Cast to <c>eGameStateName</c>.
+    /// </summary>
+    public static int PreviousGameState { get; internal set; }
 
     internal static void SetupIs()
     {
@@ -352,10 +476,14 @@ public abstract class Feature
     }
 
     /// <summary>
-    /// If the current game version is [...]
+    /// If the currently running game version is [...]
     /// </summary>
+    /// <remarks>
+    /// Mostly unused now.
+    /// </remarks>
     public static class Is
     {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public static bool R1 { get; internal set; }
         public static bool R1OrLater { get; internal set; }
         public static bool R2 { get; internal set; }
@@ -384,5 +512,6 @@ public abstract class Feature
         public static bool A6OrLater { get; internal set; }
         public static bool R8 { get; internal set; }
         public static bool R8OrLater { get; internal set; }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }
