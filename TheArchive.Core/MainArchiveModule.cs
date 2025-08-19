@@ -12,7 +12,7 @@ using UnityEngine.CrashReportHandler;
 namespace TheArchive;
 
 [ArchiveModule(ArchiveMod.GUID, ArchiveMod.MOD_NAME, ArchiveMod.VERSION_STRING)]
-public class MainArchiveModule : IArchiveModule
+internal class MainArchiveModule : IArchiveModule
 {
     static MainArchiveModule()
     {
@@ -25,21 +25,10 @@ public class MainArchiveModule : IArchiveModule
     }
     
     public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
-
-    public Dictionary<Language, string> ModuleGroupLanguages => new()
-    {
-        { Language.English, "Archive Core" },
-        { Language.Chinese, "Archive 核心" }
-    };
     
     public void Init()
     {
         CrashReportHandler.SetUserMetadata("Modded", "true");
         CrashReportHandler.enableCaptureExceptions = false;
-    }
-
-    public void OnLateUpdate()
-    {
-        
     }
 }

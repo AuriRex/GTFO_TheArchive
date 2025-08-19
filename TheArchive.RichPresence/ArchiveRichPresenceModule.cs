@@ -46,7 +46,7 @@ public class ArchiveRichPresenceModule : IArchiveModule
         }
     }
 
-    private void OnGameDataInitialized(Utils.RundownID obj)
+    private void OnGameDataInitialized(Utils.RundownID _)
     {
         try
         {
@@ -57,10 +57,5 @@ public class ArchiveRichPresenceModule : IArchiveModule
         {
             _logger.Exception(ex);
         }
-    }
-
-    public void OnLateUpdate()
-    {
-        
     }
 }

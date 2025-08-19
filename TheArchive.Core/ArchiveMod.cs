@@ -537,6 +537,16 @@ public static class ArchiveMod
         ArchiveLogger.Info($"Initializing module \"{moduleType.FullName}\" ...");
         var module = (IArchiveModule) Activator.CreateInstance(moduleType)!;
 
+        try
+        {
+            module.Init();
+        }
+        catch(Exception ex)
+        {
+            ArchiveLogger.Error($"Error while trying to init \"{moduleType.FullName}\"!");
+            ArchiveLogger.Exception(ex);
+        }
+        
         if (string.IsNullOrWhiteSpace(module.ModuleGroup))
             throw new Exception($"ArchiveModule: {module.GetType().FullName}, {nameof(IArchiveModule.ModuleGroup)} can not be null!");
 
@@ -548,16 +558,6 @@ public static class ArchiveMod
         }
 
         _moduleAssemblies.Add(moduleType.Assembly);
-
-        try
-        {
-            module.Init();
-        }
-        catch(Exception ex)
-        {
-            ArchiveLogger.Error($"Error while trying to init \"{moduleType.FullName}\"!");
-            ArchiveLogger.Exception(ex);
-        }
 
         Modules.Add(module);
 

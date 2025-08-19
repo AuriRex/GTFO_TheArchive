@@ -21,9 +21,4 @@ public class ArchiveEssentialsModule : IArchiveModule
     {
             
     }
-
-    public void OnLateUpdate()
-    {
-
-    }
 }
