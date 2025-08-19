@@ -8,34 +8,68 @@ namespace TheArchive.Loader;
 public static partial class LoaderWrapper
 {
 #if BepInEx
+    /// <summary>
+    /// The directory the game executable resides in.
+    /// </summary>
     public static string GameDirectory => BepInEx.Paths.GameRootPath;
 
-    public static string UserDataDirectory => System.IO.Path.Combine(GameDirectory, "UserData");
-
+    /// <summary>
+    /// Is the game IL2CPP
+    /// </summary>
+    /// <returns></returns>
     public static bool IsGameIL2CPP() => true;
 
+    /// <summary>
+    /// Creates a new logger instance.
+    /// </summary>
+    /// <param name="name">The loggers name.</param>
+    /// <param name="col">The color to use for the name.</param>
+    /// <returns>The newly created logger.</returns>
     public static IArchiveLogger CreateLoggerInstance(string name, ConsoleColor col = ConsoleColor.White)
     {
         return new BIE_LogWrapper(new ArManualLogSource(name, col));
     }
 
+    /// <summary>
+    /// Creates a new archive sub-logger instance.<br/>
+    /// (name is prefixed by <c>Ar::</c>)
+    /// </summary>
+    /// <param name="name">The loggers name.</param>
+    /// <param name="col">The color to use for the name.</param>
+    /// <returns>The newly created logger.</returns>
     public static IArchiveLogger CreateArSubLoggerInstance(string name, ConsoleColor col = ConsoleColor.White) => CreateLoggerInstance($"{ArchiveMod.ABBREVIATION}::{name}", col);
 
+    /// <summary>
+    /// Creates a new logger based on an already existing one.
+    /// </summary>
+    /// <param name="loggerInstance">The existing logger whose name to copy.</param>
+    /// <param name="col">The color to use for the name.</param>
+    /// <returns>The newly created logger.</returns>
     public static IArchiveLogger WrapLogger(BepInEx.Logging.ManualLogSource loggerInstance, ConsoleColor? col = null)
     {
         return new BIE_LogWrapper(new ArManualLogSource(loggerInstance.SourceName, col));
     }
 
+    /// <summary>
+    /// Start a new coroutine.
+    /// </summary>
+    /// <param name="routine">The coroutine to start.</param>
+    /// <returns>A coroutine token representing the started routine.</returns>
     public static object StartCoroutine(System.Collections.IEnumerator routine)
     {
         return BepInEx.Unity.IL2CPP.Utils.MonoBehaviourExtensions.StartCoroutine(BIE_ArchiveMod.MainComponent, routine);
     }
 
+    /// <summary>
+    /// Stops a running coroutine that was started with <see cref="StartCoroutine"/>.
+    /// </summary>
+    /// <param name="coroutineToken">The coroutine token of the running coroutine.</param>
     public static void StopCoroutine(object coroutineToken)
     {
         BIE_ArchiveMod.MainComponent.StopCoroutine((UnityEngine.Coroutine)coroutineToken);
     }
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public static unsafe void* GetIl2CppMethod<T>(string methodName, string returnTypeName, bool isGeneric, params string[] argTypes) where T : Il2CppInterop.Runtime.InteropTypes.Il2CppObjectBase
     {
         void** ppMethod = (void**)Il2CppInterop.Runtime.IL2CPP.GetIl2CppMethod(Il2CppInterop.Runtime.Il2CppClassPointerStore<T>.NativeClassPtr, isGeneric, methodName, returnTypeName, argTypes).ToPointer();
@@ -84,7 +118,13 @@ public static partial class LoaderWrapper
 
         return BepInEx.Unity.IL2CPP.Hook.INativeDetour.CreateAndApply(il2cppMethodInfo.MethodPointer, to, out original);
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
+    /// <summary>
+    /// Checks if a specific mod is installed.
+    /// </summary>
+    /// <param name="guid">The GUID of the mod to check for.</param>
+    /// <returns><c>True</c> if a mod with the given GUID is installed.</returns>
     public static bool IsModInstalled(string guid)
     {
         BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Plugins.TryGetValue(guid, out var plugin);
@@ -92,8 +132,12 @@ public static partial class LoaderWrapper
         return plugin != null;
     }
 
+    /// <summary>
+    /// Wrapper class for the Il2Cpp Class Injector
+    /// </summary>
     public static class ClassInjector
     {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public static IntPtr DerivedConstructorPointer<T>()
         {
             return Il2CppInterop.Runtime.Injection.ClassInjector.DerivedConstructorPointer<T>();
@@ -120,6 +164,7 @@ public static partial class LoaderWrapper
                 LogSuccess = logSuccess
             });
         }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 #endif
 }

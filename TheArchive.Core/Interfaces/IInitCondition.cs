@@ -1,5 +1,8 @@
 ﻿namespace TheArchive.Interfaces;
 
+/// <summary>
+/// Conditionally prevent an <see cref="IInitializable"/> from initializing.
+/// </summary>
 public interface IInitCondition
 {
     /// <summary>

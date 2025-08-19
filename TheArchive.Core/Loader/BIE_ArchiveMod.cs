@@ -2,17 +2,23 @@
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace TheArchive.Loader;
 
+/// <summary>
+/// BepInEx entry point.
+/// </summary>
 [BepInPlugin(ArchiveMod.GUID, ArchiveMod.MOD_NAME, ArchiveMod.VERSION_STRING)]
 [BepInDependency("dev.gtfomodding.gtfo-api", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency(ArchiveMod.MTFO_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+[UsedImplicitly]
 public class BIE_ArchiveMod : BasePlugin
 {
-    public static MonoBehaviour MainComponent { get; private set; }
+    internal static MonoBehaviour MainComponent { get; private set; }
 
+    /// <inheritdoc/>
     public override void Load()
     {
         var harmony = new HarmonyLib.Harmony(ArchiveMod.GUID);
@@ -23,6 +29,7 @@ public class BIE_ArchiveMod : BasePlugin
         MainComponent = AddComponent<TheArchive_BIE_Controller>();
     }
 
+    /// <inheritdoc/>
     public override bool Unload()
     {
         ArchiveMod.OnApplicationQuit();
@@ -30,14 +37,14 @@ public class BIE_ArchiveMod : BasePlugin
         return base.Unload();
     }
 
-    public class TheArchive_BIE_Controller : UnityEngine.MonoBehaviour
+    internal class TheArchive_BIE_Controller : MonoBehaviour
     {
         public TheArchive_BIE_Controller(IntPtr ptr) : base(ptr) { }
 
         public void Awake()
         {
             DontDestroyOnLoad(this);
-            hideFlags = UnityEngine.HideFlags.HideAndDontSave;
+            hideFlags = HideFlags.HideAndDontSave;
         }
 
         public void Update()

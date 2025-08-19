@@ -2,11 +2,9 @@
 using System;
 using BepInEx;
 using BepInEx.Logging;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Interfaces;
 using TheArchive.Loader;
 
 namespace TheArchive.Features.Dev;
@@ -55,7 +53,7 @@ internal class AAColoredLogMessages : Feature
                 return true;
             }
             
-            if (!BIE_LogSourceColorLookup.GetColor(arLogSource, out var color))
+            if (!BIE_LogSourceColorLookup.TryGetColor(arLogSource, out var color))
             {
                 return true;
             }
