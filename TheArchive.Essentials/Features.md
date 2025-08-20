@@ -119,7 +119,7 @@ Maul, Gavel, Sledge and Mallet
 
 ### Glowsticks! - `[A1-RL]`
 
-Costomize your glow-y little friends!
+Customize your glow-y little friends!
 
 Allows you to change the built in glowstick type and/or customize the color to your liking, or color it based on the player who threw the glowstick.
 
@@ -146,6 +146,12 @@ Stops the tagging progress sound after unwielding the tracker, just in case the 
 ### Bio Tracker Small Red Dots - `[R6-RL]`
 
 Fixes tiny red dots on the bio tracker.
+
+### Decay IRF NRE Fix
+
+Fixes enemies with invalid IRFs spamming the console on death.
+
+Specifically 'tank_boss'
 
 ### Interaction Fix
 
@@ -234,7 +240,7 @@ Force disable ALL HUD layers unless re-enabled via the submenu.
 
 Main purpose is for video production
 
-### Hud Toggle (F1)
+### Hud Toggle
 
 Keybind to toggle parts of the HUD
 
@@ -267,7 +273,7 @@ Adds weapon statistics such as damage, clip size and reload speed (and more if a
 Configurable to either show your current position, a timer or the mod version in the bottom right:
 - X:24 Y:2 Z:-46
 - Timer showing elapsed mission time
-- TheArchive v0.7.202
+- TheArchive v2025.1.0
 
 ### Weapon Picker Tweaks - `[R6-RL]`
 
@@ -282,11 +288,7 @@ Removes the Den of Wolves button from the rundown screen.
 
 ### Alt Tab Counter
 
-Counts the ammount of times that the game went out of focus. (ALT + TAB)
-
-### Copy Lobby ID Format
-
-Customize copied lobby code from the 'Copy Lobby ID'-Button on the loadout and settings screens with a custom format.
+Counts the amount of times that the game went out of focus. (ALT + TAB)
 
 ### Mute Speak - `[R6-RL]`
 
@@ -310,9 +312,10 @@ Allows the usage of '>' and '<' characters in chat.
 
 (Also enables TextMeshPro RichText tags to be used in chat, don't do stupid things!)
 
-### Weapon Model Toggle (F2)
+### Weapon Model Toggle
 
 Forces the held item to be hidden.
+Intended for taking pictures.
 (Warning! This makes you unable to use or switch items until unhidden!)
 
 
@@ -340,7 +343,7 @@ Select which gear to randomize via the settings below.
 
 ### No Magazine Drop Sound - `[R7-RL]`
 
-Removes the globalally audible sound whenever a magazine drops on the floor after a reload.
+Removes the globally audible sound whenever a magazine drops on the floor after a reload.
 
 ### Prioritize Resource Pings - `[R1-A5]`
 
