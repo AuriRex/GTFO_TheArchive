@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using TheArchive.Loader;
 
 namespace TheArchive.Features.Dev;
@@ -6,7 +7,7 @@ namespace TheArchive.Features.Dev;
 public partial class ModSettings
 {
 #if IL2CPP
-    public static void RegisterReceiverTypesInIL2CPP()
+    private static void RegisterReceiverTypesInIL2CPP()
     {
         LoaderWrapper.ClassInjector.RegisterTypeInIl2CppWithInterfaces<CustomStringReceiver>(true, typeof(iStringInputReceiver));
         LoaderWrapper.ClassInjector.RegisterTypeInIl2CppWithInterfaces<CustomIntReceiver>(true, typeof(iIntInputReceiver));
@@ -14,6 +15,10 @@ public partial class ModSettings
     }
 #endif
 
+    /// <summary>
+    /// Implements the games <see cref="iStringInputReceiver"/> interface.
+    /// </summary>
+    [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
     public class CustomStringReceiver
 #if MONO
             : iStringInputReceiver
@@ -26,10 +31,19 @@ public partial class ModSettings
 #else
         : Il2CppSystem.Object
     {
+        /// <summary>
+        /// Il2Cpp object constructor.
+        /// </summary>
+        /// <param name="ptr">Instance pointer.</param>
         public CustomStringReceiver(IntPtr ptr) : base(ptr)
         {
         }
 
+        /// <summary>
+        /// Creates a custom string receiver.
+        /// </summary>
+        /// <param name="getFunc">Get func.</param>
+        /// <param name="setAction">Set action.</param>
         public CustomStringReceiver(Func<string> getFunc, Action<string> setAction) : base(LoaderWrapper.ClassInjector.DerivedConstructorPointer<CustomStringReceiver>())
         {
             LoaderWrapper.ClassInjector.DerivedConstructorBody(this);
@@ -42,7 +56,7 @@ public partial class ModSettings
         private readonly Func<string> _getValue;
         private readonly Action<string> _setValue;
 
-        string
+        private string
 #if MONO
                 iStringInputReceiver.
 #endif
@@ -51,7 +65,7 @@ public partial class ModSettings
             return _getValue?.Invoke() ?? string.Empty;
         }
 
-        string
+        private string
 #if MONO
                 iStringInputReceiver.
 #endif
@@ -60,9 +74,12 @@ public partial class ModSettings
             _setValue.Invoke(value);
             return value;
         }
-
     }
 
+    /// <summary>
+    /// Implements the games <see cref="iIntInputReceiver"/> interface.
+    /// </summary>
+    [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
     public class CustomIntReceiver
 #if MONO
             : iIntInputReceiver
@@ -75,10 +92,19 @@ public partial class ModSettings
 #else
         : Il2CppSystem.Object
     {
+        /// <summary>
+        /// Il2Cpp object constructor.
+        /// </summary>
+        /// <param name="ptr">Instance pointer.</param>
         public CustomIntReceiver(IntPtr ptr) : base(ptr)
         {
         }
 
+        /// <summary>
+        /// Creates a custom int receiver.
+        /// </summary>
+        /// <param name="getFunc">Get func.</param>
+        /// <param name="setAction">Set action.</param>
         public CustomIntReceiver(Func<int> getFunc, Action<int> setAction) : base(LoaderWrapper.ClassInjector.DerivedConstructorPointer<CustomIntReceiver>())
         {
             LoaderWrapper.ClassInjector.DerivedConstructorBody(this);
@@ -91,7 +117,7 @@ public partial class ModSettings
         private readonly Func<int> _getValue;
         private readonly Action<int> _setValue;
 
-        int
+        private int
 #if MONO
                 iIntInputReceiver.
 #endif
@@ -100,7 +126,7 @@ public partial class ModSettings
             return _getValue?.Invoke() ?? 0;
         }
 
-        int
+        private int
 #if MONO
                 iIntInputReceiver.
 #endif
@@ -109,9 +135,12 @@ public partial class ModSettings
             _setValue.Invoke(value);
             return value;
         }
-
     }
 
+    /// <summary>
+    /// Implements the games <see cref="iFloatInputReceiver"/> interface.
+    /// </summary>
+    [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
     public class CustomFloatReceiver
 #if MONO
             : iFloatInputReceiver
@@ -124,10 +153,19 @@ public partial class ModSettings
 #else
         : Il2CppSystem.Object
     {
+        /// <summary>
+        /// Il2Cpp object constructor.
+        /// </summary>
+        /// <param name="ptr">Instance pointer.</param>
         public CustomFloatReceiver(IntPtr ptr) : base(ptr)
         {
         }
 
+        /// <summary>
+        /// Creates a custom float receiver.
+        /// </summary>
+        /// <param name="getFunc">Get func.</param>
+        /// <param name="setAction">Set action.</param>
         public CustomFloatReceiver(Func<float> getFunc, Action<float> setAction) : base(LoaderWrapper.ClassInjector.DerivedConstructorPointer<CustomFloatReceiver>())
         {
             LoaderWrapper.ClassInjector.DerivedConstructorBody(this);
@@ -140,7 +178,7 @@ public partial class ModSettings
         private readonly Func<float> _getValue;
         private readonly Action<float> _setValue;
 
-        float
+        private float
 #if MONO
                 iFloatInputReceiver.
 #endif
@@ -149,7 +187,7 @@ public partial class ModSettings
             return _getValue?.Invoke() ?? 0f;
         }
 
-        float
+        private float
 #if MONO
                 iFloatInputReceiver.
 #endif
@@ -158,6 +196,5 @@ public partial class ModSettings
             _setValue.Invoke(value);
             return value;
         }
-
     }
 }

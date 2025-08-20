@@ -11,10 +11,10 @@ namespace TheArchive.Features.Dev;
 
 public partial class ModSettings
 {
-    public class SearchMainPage : IDisposable
+    internal class SearchMainPage : IDisposable
     {
-        private SubMenu _searchMainSubmenu;
-        private DynamicSubMenu _resultsMenu;
+        private readonly SubMenu _searchMainSubmenu;
+        private readonly DynamicSubMenu _resultsMenu;
 
         public SearchQuery Query { get; set; } = new SearchQuery();
 
@@ -60,7 +60,7 @@ public partial class ModSettings
 
             CreateHeader(LocalizationCoreService.Get(15, "Search is WIP, Toggling settings here does not visually update the normal buttons currently!"), DISABLED, subMenu: _searchMainSubmenu);
 
-            using(_resultsMenu.GetPersistentContenAdditionToken())
+            using(_resultsMenu.GetPersistentContentAdditionToken())
             {
                 CreateHeader(LocalizationCoreService.Get(15, "Search is WIP, Toggling settings here does not visually update the normal buttons currently!"), DISABLED, subMenu: _resultsMenu);
             }
@@ -127,7 +127,7 @@ public partial class ModSettings
 
             foreach(var feature in features)
             {
-                CM_PageSettings_Setup_Patch.SetupEntriesForFeature(feature, menu);
+                CM_PageSettings__Setup__Patch.SetupEntriesForFeature(feature, menu);
             }
         }
 

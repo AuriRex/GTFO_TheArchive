@@ -12,6 +12,7 @@ using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
 using static TheArchive.Utilities.SColorExtensions;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
+using Object = UnityEngine.Object;
 
 #if Unhollower
 using UnhollowerBaseLib.Attributes;
@@ -24,20 +25,37 @@ namespace TheArchive.Features.Dev;
 
 public partial class ModSettings
 {
+    /// <summary>
+    /// Listens for 
+    /// </summary>
     [SuppressMessage("ReSharper", "Unity.PerformanceCriticalCodeInvocation")]
     public class KeyListener : MonoBehaviour
     {
+        /// <summary>
+        /// An array containing all available KeyCodes.
+        /// </summary>
         public static readonly KeyCode[] allKeys = (KeyCode[])Enum.GetValues(typeof(KeyCode));
 
 #if IL2CPP
+        /// <summary>
+        /// Il2Cpp object constructor.
+        /// </summary>
+        /// <param name="ptr">Instance pointer.</param>
         public KeyListener(IntPtr ptr) : base(ptr) { }
 #endif
 
+        /// <summary>
+        /// The currently active KeySetting that is being listened for.
+        /// </summary>
 #if IL2CPP
         [HideFromIl2Cpp]
 #endif
-        public KeySetting ActiveKeySetting { get; private set; } = null;
+        public KeySetting ActiveKeySetting { get; private set; }
 
+        /// <summary>
+        /// Start listening for a key input.
+        /// </summary>
+        /// <param name="setting">The setting to listen for.</param>
 #if IL2CPP
         [HideFromIl2Cpp]
 #endif
@@ -50,6 +68,9 @@ public partial class ModSettings
             enabled = true;
         }
 
+        /// <summary>
+        /// Stop listening for a key input.
+        /// </summary>
         public void StopListening()
         {
             KeyCode currentOrNone = KeyCode.None;
@@ -61,9 +82,9 @@ public partial class ModSettings
 
             OnKeyFound(currentOrNone);
         }
-
+        
         // ReSharper disable Unity.PerformanceAnalysis
-        public void OnKeyFound(KeyCode key)
+        private void OnKeyFound(KeyCode key)
         {
             if (key == KeyCode.Escape)
             {
@@ -82,6 +103,9 @@ public partial class ModSettings
             enabled = false;
         }
 
+        /// <summary>
+        /// Unity update event.
+        /// </summary>
         public void Update()
         {
             if (ActiveKeySetting == null)
@@ -100,11 +124,17 @@ public partial class ModSettings
             }
         }
 
+        /// <summary>
+        /// Unity on disable event.
+        /// </summary>
         public void OnDisable()
         {
             StopListening();
         }
 
+        /// <summary>
+        /// Unity on destroy event.
+        /// </summary>
         public void OnDestroy()
         {
             if (IsApplicationQuitting)
@@ -113,7 +143,7 @@ public partial class ModSettings
             StopListening();
         }
 
-        public static void ActivateKeyListener(KeySetting setting)
+        internal static void ActivateKeyListener(KeySetting setting)
         {
             var settingsGO = PageSettingsData.SettingsPageInstance.gameObject;
 
@@ -123,45 +153,92 @@ public partial class ModSettings
         }
     }
 
+    /// <summary>
+    /// Calls an action whenever the gameobject it is attached to gets disabled.
+    /// </summary>
+    /// <seealso cref="OnEnabledListener"/>
     public class OnDisabledListener : MonoBehaviour
     {
 #if IL2CPP
+        /// <summary>
+        /// Il2Cpp object constructor.
+        /// </summary>
+        /// <param name="ptr">Instance pointer.</param>
         public OnDisabledListener(IntPtr ptr) : base(ptr) { }
 #endif
 
+        /// <summary>
+        /// The action that gets called on disable.
+        /// </summary>
         public Action<GameObject> OnDisabledSelf;
 
+        /// <summary>
+        /// Unity on disable event.
+        /// </summary>
         public void OnDisable()
         {
             OnDisabledSelf?.Invoke(gameObject);
         }
     }
 
+    /// <summary>
+    /// Calls an action whenever the gameobject it is attached to gets enabled.
+    /// </summary>
+    /// <seealso cref="OnDisabledListener"/>
     public class OnEnabledListener : MonoBehaviour
     {
 #if IL2CPP
+        /// <summary>
+        /// Il2Cpp object constructor.
+        /// </summary>
+        /// <param name="ptr">Instance pointer.</param>
         public OnEnabledListener(IntPtr ptr) : base(ptr) { }
 #endif
 
+        /// <summary>
+        /// The action that gets called on enable.
+        /// </summary>
         public Action<GameObject> OnEnabledSelf;
 
+        /// <summary>
+        /// Unity on enable event.
+        /// </summary>
         public void OnEnable()
         {
             OnEnabledSelf?.Invoke(gameObject);
         }
     }
 
+    /// <summary>
+    /// Avoid using this.<br/>
+    /// If attached to a gameobject, gets the attached TextMeshPro object and force updates its text on Awake (if on OG R4 or OG R5), then destroys itself.
+    /// </summary>
+    /// <remarks>
+    /// Legacy component - avoid using.
+    /// </remarks>
     public class JankTextMeshProUpdaterOnce : MonoBehaviour
     {
 #if IL2CPP
+        /// <summary>
+        /// Il2Cpp object constructor.
+        /// </summary>
+        /// <param name="ptr">Instance pointer.</param>
         public JankTextMeshProUpdaterOnce(IntPtr ptr) : base(ptr) { }
 #endif
+        
+        /// <summary>
+        /// Unity awake event.
+        /// </summary>
         public void Awake()
         {
             UpdateMesh(this.GetComponent<TMPro.TextMeshPro>());
             Destroy(this);
         }
 
+        /// <summary>
+        /// Force update the TextMeshPro mesh only if on OG R4 or OG R5 game versions.
+        /// </summary>
+        /// <param name="textMesh">The TMP object to force update.</param>
         public static void UpdateMesh(TMPro.TextMeshPro textMesh)
         {
             if (Is.R4 || Is.R5)
@@ -170,6 +247,10 @@ public partial class ModSettings
             }
         }
 
+        /// <summary>
+        /// Force update a TextMeshPro components text mesh.
+        /// </summary>
+        /// <param name="textMesh">The TMP object to force update.</param>
         public static void ForceUpdateMesh(TMPro.TextMeshPro textMesh)
         {
             if (textMesh == null)
@@ -185,6 +266,11 @@ public partial class ModSettings
             }
         }
 
+        /// <summary>
+        /// Adds a <c>JankTextMeshProUpdaterOnce</c> onto the passed TextMeshPros gameobject.
+        /// </summary>
+        /// <param name="tmp">The TextMeshPro to attach to.</param>
+        /// <returns>The newly created instance.</returns>
 #if IL2CPP
         [HideFromIl2Cpp]
 #endif
@@ -198,7 +284,7 @@ public partial class ModSettings
         }
     }
 
-    public class ColorPicker : IDisposable
+    internal class ColorPicker : IDisposable
     {
         public bool IsActive => _backgroundPanel?.gameObject?.activeInHierarchy ?? false;
 
@@ -244,7 +330,7 @@ public partial class ModSettings
             _backgroundPanel.transform.localPosition = _backgroundPanel.transform.localPosition + new Vector3(1050, 0, 0);
 
 
-            var headerItemGO = GameObject.Instantiate(SettingsItemPrefab, _backgroundPanel.transform);
+            var headerItemGO = Object.Instantiate(SettingsItemPrefab, _backgroundPanel.transform);
 
             _headerText = headerItemGO.GetComponentInChildren<CM_SettingsItem>().transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
 
@@ -339,10 +425,7 @@ public partial class ModSettings
                 UpdatePreviewColor();
             });
 
-            var getValueHexCode = new Func<string, string>((oldValOrZero) =>
-            {
-                return CurrentColor.ToHexString();
-            });
+            var getValueHexCode = new Func<string, string>((oldValOrZero) => CurrentColor.ToHexString());
 
             CreateSimpleTextField(LocalizationCoreService.Get(46, "Hex Code"), "#COLORS", onValueUpdated: setValueHexCode, out var settingsItemHexField, out _hexField, getValue: getValueHexCode, maxLength: 7, null, null, placeInNoMenu: true);
 
@@ -495,18 +578,40 @@ public partial class ModSettings
         }
     }
 
-    public class DescriptionPanel : IDisposable
+    /// <summary>
+    /// Data to be shown on the description panel.
+    /// </summary>
+    public class DescriptionPanelData
     {
-        public class DescriptionPanelData
-        {
-            public string Title;
-            public string Description;
-            public string CriticalInfo;
-            public string FeatureOrigin;
+        /// <summary>
+        /// The title to show.
+        /// </summary>
+        public string Title;
+        
+        /// <summary>
+        /// The description to show.
+        /// </summary>
+        public string Description;
+        
+        /// <summary>
+        /// Critical info shown at the bottom of the panel, usually in red.
+        /// </summary>
+        public string CriticalInfo;
+        
+        /// <summary>
+        /// The origin of the data, shown at the very bottom of the panel.<br/>
+        /// Usually the module containing a feature.
+        /// </summary>
+        public string FeatureOrigin;
 
-            public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
-        }
-
+        /// <summary>
+        /// Do we have valid description data?
+        /// </summary>
+        public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
+    }
+    
+    internal class DescriptionPanel : IDisposable
+    {
         private CM_ScrollWindow _backgroundPanel;
         private TMPro.TextMeshPro _headerText;
         private TMPro.TextMeshPro _contentText;
@@ -546,7 +651,7 @@ public partial class ModSettings
 
         private static void CreateItem(string text, Color col, Transform parent, out iScrollWindowContent scrollWindowContent, out RectTransform rectTrans, out TMPro.TextMeshPro tmp)
         {
-            var settingsItemGO = GameObject.Instantiate(SettingsItemPrefab, parent);
+            var settingsItemGO = Object.Instantiate(SettingsItemPrefab, parent);
 
             tmp = settingsItemGO.GetComponentInChildren<CM_SettingsItem>().transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TMPro.TextMeshPro>();
 
@@ -592,6 +697,9 @@ public partial class ModSettings
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class PageSettingsData
     {
         internal static GameObject SettingsItemPrefab { get; set; }
@@ -599,6 +707,10 @@ public partial class ModSettings
         internal static List<iScrollWindowContent> ScrollWindowContentElements { get; set; } = new List<iScrollWindowContent>();
         internal static List<CM_ScrollWindow> AllSubmenuScrollWindows { get; set; } = new List<CM_ScrollWindow>();
         internal static Transform MainScrollWindowTransform { get; set; }
+        /// <summary>
+        /// Popup window prefab.
+        /// </summary>
+        /// <seealso cref="UIHelper.PopupItemPrefab"/>
         public static CM_ScrollWindow PopupWindow { get; internal set; }
         internal static CM_PageSettings SettingsPageInstance { get; set; }
         internal static DescriptionPanel TheDescriptionPanel { get; set; }
@@ -609,31 +721,51 @@ public partial class ModSettings
         internal static CM_Item MainModSettingsButton { get; set; }
         internal static GameObject SubMenuButtonPrefab { get; set; }
 
-        public static HashSet<CM_SettingsInputField> TheStaticSettingsInputFieldJankRemoverHashSet2000 { get; private set; } = new HashSet<CM_SettingsInputField>();
+        // I forgot what this was for specifically ... oh well ...
+        // ReSharper disable once CollectionNeverQueried.Global
+        internal static HashSet<CM_SettingsInputField> TheStaticSettingsInputFieldJankRemoverHashSet2000 { get; private set; } = new HashSet<CM_SettingsInputField>();
 
+        /// <summary>
+        /// Main menu gui layer
+        /// </summary>
         public static MainMenuGuiLayer MMGuiLayer { get; internal set; }
+        
+        /// <summary>
+        /// Scroll window prefab.
+        /// </summary>
         public static GameObject ScrollWindowPrefab { get; internal set; }
+        
+        /// <summary>
+        /// Page settings moving content holder.
+        /// </summary>
         public static RectTransform MovingContentHolder { get; internal set; }
     }
 
+    /// <summary>
+    /// UI helper.
+    /// </summary>
     public static class UIHelper
     {
         internal static void Setup()
         {
-            var settingsItemGameObject = GameObject.Instantiate(ModSettings.PageSettingsData.SettingsItemPrefab);
+            var settingsItemGameObject = Object.Instantiate(SettingsItemPrefab);
 
             var settingsItem = settingsItemGameObject.GetComponentInChildren<CM_SettingsItem>();
 
             var enumDropdown = GOUtil.SpawnChildAndGetComp<CM_SettingsEnumDropdownButton>(settingsItem.m_enumDropdownInputPrefab, settingsItemGameObject.transform);
 
-            PopupItemPrefab = GameObject.Instantiate(enumDropdown.m_popupItemPrefab);
-            GameObject.DontDestroyOnLoad(PopupItemPrefab);
+            PopupItemPrefab = Object.Instantiate(enumDropdown.m_popupItemPrefab);
+            Object.DontDestroyOnLoad(PopupItemPrefab);
             PopupItemPrefab.hideFlags = HideFlags.HideAndDontSave;
             PopupItemPrefab.transform.position = new Vector3(-3000, -3000, 0);
 
-            GameObject.Destroy(settingsItemGameObject);
+            Object.Destroy(settingsItemGameObject);
         }
 
+        /// <summary>
+        /// Popup window item prefab.
+        /// </summary>
+        /// <seealso cref="PageSettingsData.PopupWindow"/>
         public static GameObject PopupItemPrefab { get; private set; } //iScrollWindowContent
     }
 

@@ -9,6 +9,10 @@
 		<PluginOutputPath>../output/TheArchive.Core/plugins/</PluginOutputPath>
 		<LocalizationFileDir>./Localization/</LocalizationFileDir>
 		<CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
+
+		<NoWarn>CS0436</NoWarn> <!-- Type conflicts with imported type -->
+
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>

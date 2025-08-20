@@ -19,7 +19,7 @@ namespace TheArchive.Features.Dev;
 
 public partial class ModSettings
 {
-    public static class SettingsCreationHelper
+    internal static class SettingsCreationHelper
     {
         public static void SetupItemsForSettingsHelper(FeatureSettingsHelper settingsHelper, SubMenu placeIntoMenu = null)
         {
@@ -86,7 +86,7 @@ public partial class ModSettings
                             subMenu = new SubMenu(ss.DisplayName);
                         }
 
-                        var data = new DescriptionPanel.DescriptionPanelData() {
+                        var data = new DescriptionPanelData() {
                             Title = ss.DisplayName,
                             Description = ss.Description,
                             CriticalInfo = ss.Helper.Feature.FeatureInternal.CriticalInfo,
@@ -148,12 +148,12 @@ public partial class ModSettings
             return scrollWindow;
         }
 
-        public static void CreateSimpleNumberField(string labelText, float initialValue, Action<float> onValueUpdated, Func<float, float> getValue = null, FSSlider slider = null, SubMenu placeIntoMenu = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null, bool placeInNoMenu = false)
+        public static void CreateSimpleNumberField(string labelText, float initialValue, Action<float> onValueUpdated, Func<float, float> getValue = null, FSSlider slider = null, SubMenu placeIntoMenu = null, DescriptionPanelData descriptionPanelData = null, bool placeInNoMenu = false)
         {
             CreateSimpleNumberField(labelText, initialValue, onValueUpdated, out _, out _, out _, getValue, slider, placeIntoMenu, descriptionPanelData, placeInNoMenu);
         }
             
-        public static void CreateSimpleNumberField(string labelText, float initialValue, Action<float> onValueUpdated, out CM_SettingsItem cm_settingsItem, out CM_SettingsInputField cm_settingsInputField, out CM_SettingScrollReceiver cm_settingScrollReceiver, Func<float, float> getValue = null, FSSlider slider = null, SubMenu placeIntoMenu = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null, bool placeInNoMenu = false)
+        public static void CreateSimpleNumberField(string labelText, float initialValue, Action<float> onValueUpdated, out CM_SettingsItem cm_settingsItem, out CM_SettingsInputField cm_settingsInputField, out CM_SettingScrollReceiver cm_settingScrollReceiver, Func<float, float> getValue = null, FSSlider slider = null, SubMenu placeIntoMenu = null, DescriptionPanelData descriptionPanelData = null, bool placeInNoMenu = false)
         {
             // I do not like this method lol
             var onValueUpdateStringField = new Action<string>((val) =>
@@ -243,12 +243,12 @@ public partial class ModSettings
             cm_settingsItem.ForcePopupLayer(true);
         }
 
-        public static void CreateSimpleTextField(string labelText, string initialValue, Action<string> onValueUpdated, Func<string, string> getValue = null, int maxLength = 32, SubMenu placeIntoMenu = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null)
+        public static void CreateSimpleTextField(string labelText, string initialValue, Action<string> onValueUpdated, Func<string, string> getValue = null, int maxLength = 32, SubMenu placeIntoMenu = null, DescriptionPanelData descriptionPanelData = null)
         {
             CreateSimpleTextField(labelText, initialValue, onValueUpdated, out _, out _, getValue, maxLength, placeIntoMenu, descriptionPanelData);
         }
 
-        public static void CreateSimpleTextField(string labelText, string initialValue, Action<string> onValueUpdated, out CM_SettingsItem cm_settingsItem, out CM_SettingsInputField cm_settingsInputField, Func<string, string> getValue = null, int maxLength = 32, SubMenu placeIntoMenu = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null, bool placeInNoMenu = false)
+        public static void CreateSimpleTextField(string labelText, string initialValue, Action<string> onValueUpdated, out CM_SettingsItem cm_settingsItem, out CM_SettingsInputField cm_settingsInputField, Func<string, string> getValue = null, int maxLength = 32, SubMenu placeIntoMenu = null, DescriptionPanelData descriptionPanelData = null, bool placeInNoMenu = false)
         {
             CreateSettingsItem(labelText, out cm_settingsItem, subMenu: placeIntoMenu, placeInNoMenu: placeInNoMenu);
 
@@ -452,7 +452,7 @@ public partial class ModSettings
             collider.offset = new Vector2(250, -25);
         }
 
-        public static void CreateSubMenuControls(SubMenu subMenu, Color? entryItemColor = null, string menuEntryLabelText = "> Settings", SubMenu placeIntoMenu = null, string headerText = null, DescriptionPanel.DescriptionPanelData descriptionPanelData = null, string backButtonText = "<<< Back <<<", string enterButtonText = "> ENTER <")
+        public static void CreateSubMenuControls(SubMenu subMenu, Color? entryItemColor = null, string menuEntryLabelText = "> Settings", SubMenu placeIntoMenu = null, string headerText = null, DescriptionPanelData descriptionPanelData = null, string backButtonText = "<<< Back <<<", string enterButtonText = "> ENTER <")
         {
             if (subMenu == null) return;
 
@@ -463,7 +463,7 @@ public partial class ModSettings
             if (enterButtonText == "> ENTER <")
                 enterButtonText = LocalizationCoreService.Get(39, enterButtonText);
 
-            using var _ = subMenu.GetPersistentContenAdditionToken();
+            using var _ = subMenu.GetPersistentContentAdditionToken();
 
             CreateSettingsItem(backButtonText, out var outof_sub_cm_settingsItem, RED, subMenu);
             CreateSpacer(subMenu);
@@ -1161,7 +1161,7 @@ public partial class ModSettings
 
         public static void CreateFSHoverAndSetButtonAction(FeatureSetting setting, CM_SettingsItem cm_settingsItem, CM_Item toggleButton_cm_item, Action<int> buttonAction = null)
         {
-            var data = new DescriptionPanel.DescriptionPanelData() {
+            var data = new DescriptionPanelData() {
                 Title = setting.DisplayName,
                 Description = setting.Description,
                 CriticalInfo = setting.Helper.Feature.FeatureInternal.CriticalInfo,
@@ -1171,7 +1171,7 @@ public partial class ModSettings
             CreateFSHoverAndSetButtonAction(data, cm_settingsItem, toggleButton_cm_item, buttonAction);
         }
 
-        public static void CreateFSHoverAndSetButtonAction(DescriptionPanel.DescriptionPanelData data, CM_SettingsItem cm_settingsItem, CM_Item toggleButton_cm_item, Action<int> buttonAction = null)
+        public static void CreateFSHoverAndSetButtonAction(DescriptionPanelData data, CM_SettingsItem cm_settingsItem, CM_Item toggleButton_cm_item, Action<int> buttonAction = null)
         {
             var delHover = delegate (int id, bool hovering)
             {

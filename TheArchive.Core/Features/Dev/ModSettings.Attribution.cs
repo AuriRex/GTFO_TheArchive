@@ -17,7 +17,7 @@ public partial class ModSettings
         {
             _submenu = new DynamicSubMenu(LocalizationCoreService.Get(60, "Attribution & Licenses"), BuildSubMenu);
             
-            using var _ = _submenu.GetPersistentContenAdditionToken();
+            using var _ = _submenu.GetPersistentContentAdditionToken();
 
             CreateSettingsItem(LocalizationCoreService.Get(38, "<<< Back <<<"), out var outof_sub_cm_settingsItem, RED, _submenu);
             outof_sub_cm_settingsItem.ForcePopupLayer(true);
@@ -32,7 +32,7 @@ public partial class ModSettings
             {
                 CreateHeader(info.Name, out var cm_settingsItem, ORANGE, subMenu: subMenu);
                 
-                var data = new DescriptionPanel.DescriptionPanelData() {
+                var data = new DescriptionPanelData {
                     Title = info.Name,
                     Description = info.Content,
                     CriticalInfo = $"<#FFF>{info.Comment}</color>",

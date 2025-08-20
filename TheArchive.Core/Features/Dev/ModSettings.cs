@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JetBrains.Annotations;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
@@ -16,26 +17,36 @@ using TheArchive.Utilities;
 using UnityEngine;
 using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
+using Object = UnityEngine.Object;
 
 namespace TheArchive.Features.Dev;
 
+/// <summary>
+/// The mod settings menu implementation.
+/// </summary>
 [EnableFeatureByDefault, HideInModSettings]
 public partial class ModSettings : Feature
 {
+    /// <inheritdoc/>
     public override string Name => "Mod Settings (this)";
 
+    /// <inheritdoc/>
     public override FeatureGroup Group => FeatureGroups.Dev;
 
+    /// <inheritdoc/>
     public override string Description => "<color=red>WARNING!</color> Disabling this makes you unable to change settings in game via this very menu after a restart!";
 
+    /// <inheritdoc/>
     public override bool RequiresRestart => true;
 
+    /// <inheritdoc cref="Feature.FeatureLogger"/>
     public new static IArchiveLogger FeatureLogger { get; set; }
 
     [FeatureConfig]
-    public static ModSettingsSettings Settings { get; set; }
+    internal static ModSettingsSettings Settings { get; set; }
 
-    public class ModSettingsSettings
+    [UsedImplicitly]
+    internal class ModSettingsSettings
     {
         [FSDisplayName("Search Option")]
         public SearchOptions Search { get; set; } = new SearchOptions();
@@ -54,28 +65,35 @@ public partial class ModSettings : Feature
     }
 
 #if MONO
-        private static readonly FieldAccessor<CM_PageSettings, eSettingsSubMenuId> A_CM_PageSettings_m_currentSubMenuId = FieldAccessor<CM_PageSettings, eSettingsSubMenuId>.GetAccessor("m_currentSubMenuId");
-        private static readonly MethodAccessor<CM_PageSettings> A_CM_PageSettings_ResetAllValueHolders = MethodAccessor<CM_PageSettings>.GetAccessor("ResetAllValueHolders");
-        private static readonly MethodAccessor<CM_PageSettings> A_CM_PageSettings_ShowSettingsWindow = MethodAccessor<CM_PageSettings>.GetAccessor("ShowSettingsWindow");
-        private static readonly FieldAccessor<CM_SettingsEnumDropdownButton, CM_ScrollWindow> A_CM_SettingsEnumDropdownButton_m_popupWindow = FieldAccessor<CM_SettingsEnumDropdownButton, CM_ScrollWindow>.GetAccessor("m_popupWindow");
-        private static readonly FieldAccessor<CM_SettingsInputField, int> A_CM_SettingsInputField_m_maxLen = FieldAccessor<CM_SettingsInputField, int>.GetAccessor("m_maxLen");
-        private static readonly FieldAccessor<CM_SettingsInputField, iStringInputReceiver> A_CM_SettingsInputField_m_stringReceiver = FieldAccessor<CM_SettingsInputField, iStringInputReceiver>.GetAccessor("m_stringReceiver");
-        private static readonly FieldAccessor<TMPro.TMP_Text, float> A_TMP_Text_m_marginWidth = FieldAccessor<TMPro.TMP_Text, float>.GetAccessor("m_marginWidth");
-        
-        private static readonly FieldAccessor<CM_PageSettings, List<CM_ScrollWindow>> A_CM_PageSettings_m_allSettingsWindows = FieldAccessor<CM_PageSettings, List<CM_ScrollWindow>>.GetAccessor("m_allSettingsWindows");
+    private static readonly FieldAccessor<CM_PageSettings, eSettingsSubMenuId> A_CM_PageSettings_m_currentSubMenuId = FieldAccessor<CM_PageSettings, eSettingsSubMenuId>.GetAccessor("m_currentSubMenuId");
+    private static readonly MethodAccessor<CM_PageSettings> A_CM_PageSettings_ResetAllValueHolders = MethodAccessor<CM_PageSettings>.GetAccessor("ResetAllValueHolders");
+    private static readonly MethodAccessor<CM_PageSettings> A_CM_PageSettings_ShowSettingsWindow = MethodAccessor<CM_PageSettings>.GetAccessor("ShowSettingsWindow");
+    private static readonly FieldAccessor<CM_SettingsEnumDropdownButton, CM_ScrollWindow> A_CM_SettingsEnumDropdownButton_m_popupWindow = FieldAccessor<CM_SettingsEnumDropdownButton, CM_ScrollWindow>.GetAccessor("m_popupWindow");
+    private static readonly FieldAccessor<CM_SettingsInputField, int> A_CM_SettingsInputField_m_maxLen = FieldAccessor<CM_SettingsInputField, int>.GetAccessor("m_maxLen");
+    private static readonly FieldAccessor<CM_SettingsInputField, iStringInputReceiver> A_CM_SettingsInputField_m_stringReceiver = FieldAccessor<CM_SettingsInputField, iStringInputReceiver>.GetAccessor("m_stringReceiver");
+    private static readonly FieldAccessor<TMPro.TMP_Text, float> A_TMP_Text_m_marginWidth = FieldAccessor<TMPro.TMP_Text, float>.GetAccessor("m_marginWidth");
+    
+    private static readonly FieldAccessor<CM_PageSettings, List<CM_ScrollWindow>> A_CM_PageSettings_m_allSettingsWindows = FieldAccessor<CM_PageSettings, List<CM_ScrollWindow>>.GetAccessor("m_allSettingsWindows");
 #endif
     private static MethodAccessor<TMPro.TextMeshPro> A_TextMeshPro_ForceMeshUpdate;
 
     private static readonly MethodAccessor<CM_SettingsInputField> _A_CM_SettingsInputField_SetReadingActive = MethodAccessor<CM_SettingsInputField>.GetAccessor("SetReadingActive", new Type[] { typeof(bool) });
     private static readonly IValueAccessor<CM_SettingsInputField, bool> _A_CM_SettingsInputField_m_readingActive = AccessorBase.GetValueAccessor<CM_SettingsInputField, bool>("m_readingActive");
 
+    /// <summary> Light orange </summary>
     public static Color ORANGE_WHITE = new Color(1f, 0.85f, 0.75f, 0.8f);
+    /// <summary> Orange </summary>
     public static Color ORANGE = new Color(1f, 0.5f, 0.05f, 0.8f);
+    /// <summary> Light gray </summary>
     public static Color WHITE_GRAY = new Color(0.7358f, 0.7358f, 0.7358f, 0.7686f);
+    /// <summary> Red </summary>
     public static Color RED = new Color(0.8f, 0.1f, 0.1f, 0.8f);
+    /// <summary> Green </summary>
     public static Color GREEN = new Color(0.1f, 0.8f, 0.1f, 0.8f);
+    /// <summary> Dark gray </summary>
     public static Color DISABLED = new Color(0.3f, 0.3f, 0.3f, 0.8f);
 
+    /// <inheritdoc/>
     public override void Init()
     {
 #if IL2CPP
@@ -97,11 +115,13 @@ public partial class ModSettings : Feature
         }
     }
 
+    /// <inheritdoc/>
     public override void OnEnable()
     {
         FeatureManager.Instance.OnFeatureRestartRequestChanged += OnFeatureRestartRequestChanged;
     }
 
+    /// <inheritdoc/>
     public override void OnDisable()
     {
         FeatureManager.Instance.OnFeatureRestartRequestChanged -= OnFeatureRestartRequestChanged;
@@ -109,35 +129,52 @@ public partial class ModSettings : Feature
 
     private void OnFeatureRestartRequestChanged(Feature feature, bool restartRequested)
     {
-        CM_PageSettings_Setup_Patch.SetRestartInfoText(FeatureManager.Instance.AnyFeatureRequestingRestart);
+        CM_PageSettings__Setup__Patch.SetRestartInfoText(FeatureManager.Instance.AnyFeatureRequestingRestart);
     }
 
+    /// <summary>
+    /// Show the main mod settings window.
+    /// </summary>
+    /// <param name="_">Unused.</param>
     public static void ShowMainModSettingsWindow(int _)
     {
         ShowScrollWindow(MainModSettingsScrollWindow);
     }
 
+    /// <summary>
+    /// Add a scroll window to the windows handled by mod settings.<br/>
+    /// (Scroll window gets hidden if another is opened etc.)
+    /// </summary>
+    /// <param name="scrollWindow">The scroll window to add.</param>
     public static void AddToAllSettingsWindows(CM_ScrollWindow scrollWindow)
     {
         AllSubmenuScrollWindows.Add(scrollWindow);
 #if IL2CPP
         SettingsPageInstance.m_allSettingsWindows.Add(scrollWindow);
 #else
-            A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Add(scrollWindow);
+        A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Add(scrollWindow);
 #endif
         AddToClickAnywhereListeners(scrollWindow.Cast<iCellMenuCursorInputAnywhereItem>());
     }
 
+    /// <summary>
+    /// Remove a scroll window to the windows handled by mod settings.
+    /// </summary>
+    /// <param name="scrollWindow"></param>
     public static void RemoveFromAllSettingsWindows(CM_ScrollWindow scrollWindow)
     {
 #if IL2CPP
         SettingsPageInstance.m_allSettingsWindows.Remove(scrollWindow);
 #else
-            A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Remove(scrollWindow);
+        A_CM_PageSettings_m_allSettingsWindows.Get(SettingsPageInstance).Remove(scrollWindow);
 #endif
         RemoveFromClickAnywhereListeners(scrollWindow.Cast<iCellMenuCursorInputAnywhereItem>());
     }
 
+    /// <summary>
+    /// Add an item to the settings pages click-anywhere-listeners list.
+    /// </summary>
+    /// <param name="item">The item to add.</param>
     public static void AddToClickAnywhereListeners(iCellMenuCursorInputAnywhereItem item)
     {
 #if IL2CPP
@@ -148,6 +185,10 @@ public partial class ModSettings : Feature
 #endif
     }
 
+    /// <summary>
+    /// Remove an item to the settings pages click-anywhere-listeners list.
+    /// </summary>
+    /// <param name="item">The item to remove.</param>
     public static void RemoveFromClickAnywhereListeners(iCellMenuCursorInputAnywhereItem item)
     {
 #if IL2CPP
@@ -155,17 +196,24 @@ public partial class ModSettings : Feature
 #endif
     }
 
+    /// <summary>
+    /// Destroy the current mod settings page and create a new one.
+    /// </summary>
     public static void RegenerateModSettingsPage()
     {
         if (MainModSettingsScrollWindow == null)
         {
             return;
         }
-        CM_PageSettings_Setup_Patch.DestroyModSettingsPage();
-        CM_PageSettings_Setup_Patch.SetupMainModSettingsPage();
+        CM_PageSettings__Setup__Patch.DestroyModSettingsPage();
+        CM_PageSettings__Setup__Patch.SetupMainModSettingsPage();
         SettingsPageInstance.UpdateCellMenuCursorItems();
     }
 
+    /// <summary>
+    /// Show a specific scroll window.
+    /// </summary>
+    /// <param name="window">The window to show.</param>
     public static void ShowScrollWindow(CM_ScrollWindow window)
     {
         if (window == MainModSettingsScrollWindow)
@@ -180,18 +228,18 @@ public partial class ModSettings : Feature
         SettingsPageInstance.m_currentSubMenuId = eSettingsSubMenuId.None;
         SettingsPageInstance.ShowSettingsWindow(window);
 #else
-            A_CM_PageSettings_ResetAllValueHolders.Invoke(SettingsPageInstance);
-            A_CM_PageSettings_m_currentSubMenuId.Set(SettingsPageInstance, eSettingsSubMenuId.None);
-            A_CM_PageSettings_ShowSettingsWindow.Invoke(SettingsPageInstance, window);
+        A_CM_PageSettings_ResetAllValueHolders.Invoke(SettingsPageInstance);
+        A_CM_PageSettings_m_currentSubMenuId.Set(SettingsPageInstance, eSettingsSubMenuId.None);
+        A_CM_PageSettings_ShowSettingsWindow.Invoke(SettingsPageInstance, window);
 #endif
     }
 
 #if IL2CPP && !BepInEx // TODO: Remove this BepInEx check later
-        [RundownConstraint(RundownFlags.RundownFive, RundownFlags.Latest)]
-        [ArchivePatch(typeof(CM_SettingScrollReceiver), nameof(CM_SettingScrollReceiver.GetFloatDisplayText))]
+    [RundownConstraint(RundownFlags.RundownFive, RundownFlags.Latest)]
+    [ArchivePatch(typeof(CM_SettingScrollReceiver), nameof(CM_SettingScrollReceiver.GetFloatDisplayText))]
 #endif
 #warning TODO: Reintroduce patch later - If patched, this crashes on latest GTFO thunderstore BepInEx release; works on newest Bleeding Edge builds.
-    public static class CM_SettingScrollReceiver_GetFloatDisplayText_Patch
+    internal static class CM_SettingScrollReceiver_GetFloatDisplayText_Patch
     {
         public static bool OverrideDisplayValue { get; set; } = false;
         public static float Value { get; set; } = 0f;
@@ -338,7 +386,7 @@ public partial class ModSettings : Feature
 
     //Setup(MainMenuGuiLayer guiLayer)
     [ArchivePatch(typeof(CM_PageSettings), "Setup")]
-    public static class CM_PageSettings_Setup_Patch
+    internal static class CM_PageSettings__Setup__Patch
     {
         private static Stopwatch _setupStopwatch = new Stopwatch();
 
@@ -464,14 +512,14 @@ public partial class ModSettings : Feature
 
             SharedUtils.ChangeColorCMItem(MainModSettingsButton, Color.magenta);
 
-            MainModSettingsScrollWindow = SettingsCreationHelper.CreateScrollWindow(title);
+            MainModSettingsScrollWindow = CreateScrollWindow(title);
 
             MainScrollWindowTransform = MainModSettingsScrollWindow.transform;
 
 
             TMPro.TextMeshPro scrollWindowHeaderTextTMP = MainModSettingsScrollWindow.GetComponentInChildren<TMPro.TextMeshPro>();
 
-            _restartInfoText = GameObject.Instantiate(scrollWindowHeaderTextTMP, scrollWindowHeaderTextTMP.transform.parent);
+            _restartInfoText = Object.Instantiate(scrollWindowHeaderTextTMP, scrollWindowHeaderTextTMP.transform.parent);
 
             _restartInfoText.name = "ModSettings_RestartInfoText";
             _restartInfoText.transform.localPosition += new Vector3(300, 0, 0);
@@ -507,7 +555,7 @@ public partial class ModSettings : Feature
             BuildFeatureGroup(FeatureGroups.ModuleGroups);
 
             IEnumerable<Feature> features;
-            if (Feature.DevMode)
+            if (DevMode)
             {
                 features = FeatureManager.Instance.RegisteredFeatures;
             }
@@ -526,14 +574,14 @@ public partial class ModSettings : Feature
             CreateHeader(LocalizationCoreService.Get(26, "Info"));
 
             CreateSimpleButton(LocalizationCoreService.Get(27, "Open saves folder"), LocalizationCoreService.Get(28, "Open"), () => {
-                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
+                ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     Arguments = System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath),
                     UseShellExecute = true,
                     FileName = "explorer.exe"
                 };
 
-                System.Diagnostics.Process.Start(startInfo);
+                Process.Start(startInfo);
             });
 
             CreateHeader($"> {System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath)}", WHITE_GRAY, false);
@@ -549,7 +597,7 @@ public partial class ModSettings : Feature
                 CreateHeader(LocalizationCoreService.Get(30, "Built with uncommitted changes | <color=red>Git is dirty</color>"), ORANGE, false);
             }
 
-            if (Feature.DevMode)
+            if (DevMode)
             {
                 CreateHeader(LocalizationCoreService.Format(32, "Last Commit Hash: {0}", ArchiveMod.GIT_COMMIT_SHORT_HASH), WHITE_GRAY, false);
                 CreateHeader(LocalizationCoreService.Format(33, "Last Commit Date: {0}", ArchiveMod.GIT_COMMIT_DATE), WHITE_GRAY, false);
@@ -563,7 +611,7 @@ public partial class ModSettings : Feature
 
             MainModSettingsButton.SetCMItemEvents(ShowMainModSettingsWindow);
 
-            MainModSettingsScrollWindow.SetContentItems(PageSettingsData.ScrollWindowContentElements.ToIL2CPPListIfNecessary(), 5);
+            MainModSettingsScrollWindow.SetContentItems(ScrollWindowContentElements.ToIL2CPPListIfNecessary(), 5);
 
             _setupStopwatch.Stop();
             FeatureLogger.Debug($"It took {_setupStopwatch.Elapsed:ss\\.fff} seconds to run {nameof(SetupMainModSettingsPage)}!");
@@ -571,13 +619,13 @@ public partial class ModSettings : Feature
 
         private static void BuildFeatureGroup(HashSet<FeatureGroup> groups, SubMenu parentMenu = null)
         {
-            var orderedGroups = groups.OrderBy(kvp => kvp.Name);
+            var orderedGroups = groups.OrderBy(kvp => kvp.Name).ToArray();
             var count = 0;
             foreach (var group in orderedGroups)
             {
                 count++;
                 var groupName = group.Name;
-                var featureSet = group.Features.OrderBy(fs => fs.Name);
+                var featureSet = group.Features.OrderBy(fs => fs.Name).ToArray();
 
                 if (group.IsHidden && !Feature.DevMode)
                     continue;
@@ -592,8 +640,8 @@ public partial class ModSettings : Feature
 
                 SubMenu groupSubMenu = new SubMenu(group.DisplayName);
 
-                var featuresCount = featureSet.Where(f => !f.IsHidden || DevMode).Count();
-                var subGroupsCount = group.SubGroups.Where(g => (!g.IsHidden || DevMode) && g.Features.Any(f => !f.IsHidden || DevMode)).Count();
+                var featuresCount = featureSet.Count(f => !f.IsHidden || DevMode);
+                var subGroupsCount = group.SubGroups.Count(g => (!g.IsHidden || DevMode) && g.Features.Any(f => !f.IsHidden || DevMode));
                 string featureText = LocalizationCoreService.Format(24, "{0} Feature{1}", featuresCount, featuresCount == 1 ? string.Empty : "s");
                 string subGroupText = LocalizationCoreService.Format(57, "{0} Subgroup{1}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
                 string menuEntryLabelText = string.Empty;
@@ -626,8 +674,8 @@ public partial class ModSettings : Feature
                 CreateSpacer();
         }
 
-        private static int _versionClickedCounter = 0;
-        private static float _lastVersionClickedTime = 0;
+        private static int _versionClickedCounter;
+        private static float _lastVersionClickedTime;
         private const int VERSION_CLICK_MIN = 3; // = 5 times because janky code lmao
         private const float VERSION_CLICK_TIME = 1.5f;
         private static void VersionClicked(int _)
@@ -733,7 +781,7 @@ public partial class ModSettings : Feature
                             SetFeatureItemTextAndColor(feature, sub_toggleButton_cm_item, sub_toggleButtonText);
                     };
 
-                    var descriptionData = new DescriptionPanel.DescriptionPanelData
+                    var descriptionData = new DescriptionPanelData
                     {
                         Title = feature.FeatureInternal.DisplayName,
                         Description = feature.FeatureInternal.DisplayDescription,
