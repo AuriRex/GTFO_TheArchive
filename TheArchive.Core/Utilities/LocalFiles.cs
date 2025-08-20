@@ -8,13 +8,28 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Utilities;
 
+/// <summary>
+/// Paths and Files.
+/// </summary>
 public static class LocalFiles
 {
+    /// <summary>
+    /// GTFO settings file name (but .json)
+    /// </summary>
     public const string GTFO_SETTINGS_JSON = "GTFO_Settings.json";
+    /// <summary>
+    /// GTFO player favorites file name (but .json)
+    /// </summary>
     public const string GTFO_FAVORITES_JSON = "GTFO_Favorites.json";
+    /// <summary>
+    /// GTFO bot favorites file name (but .json)
+    /// </summary>
     public const string GTFO_BOT_FAVORITES_JSON = "GTFO_BotFavorites.json";
 
     private static string _modLocalLowPath;
+    /// <summary>
+    /// Path to <c>User/AppData/LocalLow/GTFO_TheArchive</c>.
+    /// </summary>
     public static string ModLocalLowPath
     {
         get
@@ -32,6 +47,9 @@ public static class LocalFiles
     }
 
     private static string _modDefaultGameLogsAndCachePath;
+    /// <summary>
+    /// The default logs and other cache file directory path.
+    /// </summary>
     public static string ModDefaultGameLogsAndCachePath
     {
         get
@@ -49,6 +67,9 @@ public static class LocalFiles
     }
 
     private static string _modDefaultSaveDataPath;
+    /// <summary>
+    /// The default <c>SaveData</c> path (inside <see cref="ModLocalLowPath"/>)
+    /// </summary>
     public static string ModDefaultSaveDataPath
     {
         get
@@ -66,6 +87,9 @@ public static class LocalFiles
     }
 
     private static string _dataBlockDumpPath;
+    /// <summary>
+    /// Path for the datablock dumping functionality.
+    /// </summary>
     public static string DataBlockDumpPath
     {
         get
@@ -84,7 +108,7 @@ public static class LocalFiles
 
     private static string _savePath;
     /// <summary>
-    /// Default is <see cref="ModDefaultSaveDataPath"/> (LocalLow/GTFO_TheArchive/), can be overridden by using <see cref="ArchiveSettings.CustomFileSaveLocation"/>
+    /// Default is <see cref="ModDefaultSaveDataPath"/> (<c>LocalLow/GTFO_TheArchive/</c>), can be overridden by using <see cref="ArchiveSettings.CustomFileSaveLocation"/>
     /// </summary>
     public static string SaveDirectoryPath
     {
@@ -103,6 +127,9 @@ public static class LocalFiles
     }
 
     private static string _gameLogsAndCacheSavePath;
+    /// <summary>
+    /// The real logs and other cache file directory path.
+    /// </summary>
     public static string GameLogsAndCachePath
     {
         get
@@ -120,6 +147,9 @@ public static class LocalFiles
     }
 
     private static string _versionSpecificLogsAndCachePath;
+    /// <summary>
+    /// A more specific logs and other cache file directory path depending on game version.
+    /// </summary>
     public static string VersionSpecificLogsAndCachePath
     {
         get
@@ -137,6 +167,9 @@ public static class LocalFiles
     }
 
     private static string _versionSpecificSavePath;
+    /// <summary>
+    /// Path to game version specific file save directory.
+    /// </summary>
     public static string VersionSpecificSaveDirectoryPath
     {
         get
@@ -247,12 +280,20 @@ public static class LocalFiles
         return true;
     }
 
+    /// <summary>
+    /// Get the save directory for a specific rundown ID game version.
+    /// </summary>
+    /// <param name="rundown">The rundown to get the save path for.</param>
+    /// <returns>The path to the version specific save folder.</returns>
     public static string GetVersionSpecificSaveDirectoryPath(RundownID rundown)
     {
         return Path.Combine(SaveDirectoryPath, $"{((int)rundown).ToString().PadLeft(2, '0')}_{rundown}_Data");
     }
 
     private static string _otherConfigsPath;
+    /// <summary>
+    /// The path where misc config files go to.
+    /// </summary>
     public static string OtherConfigsDirectoryPath
     {
         get
@@ -270,6 +311,9 @@ public static class LocalFiles
     }
 
     private static string _featureConfigsPath;
+    /// <summary>
+    /// The base path for feature config files.
+    /// </summary>
     public static string FeatureConfigsDirectoryPath
     {
         get
@@ -287,6 +331,10 @@ public static class LocalFiles
     }
 
     private static string _filesPath;
+    /// <summary>
+    /// A files folder (version specific).
+    /// </summary>
+    [Obsolete("Legacy path.")]
     public static string FilesDirectoryPath
     {
         get
@@ -304,6 +352,9 @@ public static class LocalFiles
     }
 
     private static string _settingsPath;
+    /// <summary>
+    /// The custom path to the version specific game settings file.
+    /// </summary>
     public static string SettingsPath
     {
         get
@@ -319,9 +370,17 @@ public static class LocalFiles
         }
     }
 
+    /// <summary>
+    /// Get the settings file for another rundown game version.
+    /// </summary>
+    /// <param name="rundown">The rundown to get the path for.</param>
+    /// <returns>The game settings file path for a specific game version.</returns>
     public static string GetSettingsPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_SETTINGS_JSON);
 
     private static string _favoritesPath;
+    /// <summary>
+    /// GTFO player favorites file path.
+    /// </summary>
     public static string FavoritesPath
     {
         get
@@ -332,10 +391,18 @@ public static class LocalFiles
         }
     }
 
+    /// <summary>
+    /// Get the player favorites file for another rundown game version.
+    /// </summary>
+    /// <param name="rundown">The rundown to get the path for.</param>
+    /// <returns>The player favorites file path for a specific game version.</returns>
     public static string GetFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_FAVORITES_JSON);
 
 
     private static string _botFavoritesPath;
+    /// <summary>
+    /// GTFO bot favorites file path.
+    /// </summary>
     public static string BotFavoritesPath
     {
         get
@@ -346,8 +413,20 @@ public static class LocalFiles
         }
     }
 
+    /// <summary>
+    /// Get the bot favorites file for another rundown game version.
+    /// </summary>
+    /// <param name="rundown">The rundown to get the path for.</param>
+    /// <returns>The bot favorites file path for a specific game version.</returns>
     public static string GetBotFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_BOT_FAVORITES_JSON);
     
+    /// <summary>
+    /// Load a miscellaneous config file from the <see cref="OtherConfigsDirectoryPath"/>.
+    /// </summary>
+    /// <param name="fileExists"><c>False</c> if the file was just created.</param>
+    /// <param name="saveIfNonExistent">Save an empty config immediately if the file doesn't exist yet.</param>
+    /// <typeparam name="T">The config file type.</typeparam>
+    /// <returns>The loaded config file instance.</returns>
     public static T LoadConfig<T>(out bool fileExists, bool saveIfNonExistent = true) where T : new()
     {
         var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
@@ -378,11 +457,23 @@ public static class LocalFiles
         fileExists = false;
         return new T();
     }
+    
+    /// <summary>
+    /// Load a miscellaneous config file from the <see cref="OtherConfigsDirectoryPath"/>.
+    /// </summary>
+    /// <param name="saveIfNonExistent">Save an empty config immediately if the file doesn't exist yet.</param>
+    /// <typeparam name="T">The config file type.</typeparam>
+    /// <returns>The loaded config file instance.</returns>
     public static T LoadConfig<T>(bool saveIfNonExistent = true) where T : new()
     {
         return LoadConfig<T>(out _, saveIfNonExistent);
     }
 
+    /// <summary>
+    /// Save a miscellaneous config file to the <see cref="OtherConfigsDirectoryPath"/>.
+    /// </summary>
+    /// <param name="config">The config instance to save.</param>
+    /// <typeparam name="T">The config file type.</typeparam>
     public static void SaveConfig<T>(T config)
     {
         try

@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 
 namespace TheArchive.Utilities;
 
+/// <summary>
+/// Maps all sound event ids to their string representation and vice versa.
+/// </summary>
 public class SoundEventCache : IInitAfterGameDataInitialized
 {
+    /// <summary>
+    /// If setup has executed.
+    /// </summary>
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static bool IsReady { get; private set; }
 
@@ -18,12 +25,25 @@ public class SoundEventCache : IInitAfterGameDataInitialized
     private static IArchiveLogger _logger;
     private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateLoggerInstance(nameof(SoundEventCache), ConsoleColor.DarkGreen);
 
+    /// <summary>
+    /// Tries to resolve the sound id from a sound event string.
+    /// </summary>
+    /// <param name="soundEvent">The sound event to resolve.</param>
+    /// <param name="soundId">The sound event id</param>
+    /// <returns><c>True</c> if the event could be resolved.</returns>
     public static bool TryResolve(string soundEvent, out uint soundId)
     {
         soundId = Resolve(soundEvent);
         return soundId != 0;
     }
 
+    /// <summary>
+    /// Tries to resolve the sound id from a sound event string.
+    /// </summary>
+    /// <param name="soundEvent">The sound event to resolve.</param>
+    /// <param name="throwIfNotFound">Should an exception be thrown if the event is not found?</param>
+    /// <returns>The sound event id or zero.</returns>
+    /// <exception cref="SoundEventNotFoundException">If the sound event wasn't found.</exception>
     public static uint Resolve(string soundEvent, bool throwIfNotFound = false)
     {
         if(!IsReady)
@@ -45,12 +65,25 @@ public class SoundEventCache : IInitAfterGameDataInitialized
         return 0;
     }
 
+    /// <summary>
+    /// Tries to resolve the sound event name from a sound id.
+    /// </summary>
+    /// <param name="id">The sound event id to resolve.</param>
+    /// <param name="eventName">The resolved sound event name.</param>
+    /// <returns><c>True</c> if the event was resolved.</returns>
     public static bool TryReverseResolve(uint id, out string eventName)
     {
         eventName = ReverseResolve(id);
         return !string.IsNullOrEmpty(eventName);
     }
 
+    /// <summary>
+    /// Tries to resolve the sound event name from a sound id.
+    /// </summary>
+    /// <param name="soundId">The sound id to resolve.</param>
+    /// <param name="throwIfNotFound">Should an exception be thrown if the event is not found?</param>
+    /// <returns>The resolved event name or null.</returns>
+    /// <exception cref="SoundEventNotFoundException">If the sound event wasn't found.</exception>
     public static string ReverseResolve(uint soundId, bool throwIfNotFound = false)
     {
         if (!IsReady)
@@ -72,6 +105,10 @@ public class SoundEventCache : IInitAfterGameDataInitialized
         return null;
     }
 
+    /// <summary>
+    /// Initializes the sound event cache.<br/>
+    /// Do not call.
+    /// </summary>
     public void Init()
     {
         try
@@ -104,15 +141,19 @@ public class SoundEventCache : IInitAfterGameDataInitialized
         IsReady = true;
     }
 
+    /// <summary>
+    /// Thrown whenever a sound event could not be found.
+    /// </summary>
     public class SoundEventNotFoundException : Exception
     {
+        /// <inheritdoc/>
         public SoundEventNotFoundException(string message) : base(message) { }
     }
 
     /// <summary>
-    /// Prints all cached sound events to the supplied <paramref name="logger"/>
+    /// Prints all cached sound events to the supplied <paramref name="logger"/>.
     /// </summary>
-    /// <param name="logger"></param>
+    /// <param name="logger">The logger to print to.</param>
     public static void DebugLog(IArchiveLogger logger)
     {
         logger.Notice($"Logging all cached sound events! ({_soundIdCache.Count})");

@@ -3,7 +3,7 @@ using TheArchive.Core.Managers;
 
 namespace TheArchive.Utilities;
 
-public static class ImplementationManagerExtensions
+internal static class ImplementationManagerExtensions
 {
 
     public static void RegisterForIdentifier(this Type type, string identifier)

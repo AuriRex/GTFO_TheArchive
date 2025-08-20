@@ -5,6 +5,9 @@ using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Utilities;
 
+/// <summary>
+/// Extensions for <c>RundownFlags</c> and <c>RundownID</c>.
+/// </summary>
 public static class RundownFlagsExtensions
 {
     /// <summary>
@@ -44,7 +47,11 @@ public static class RundownFlagsExtensions
     }
 
     private static IEnumerable<RundownFlags> _allFlagsOrdered;
-    // https://stackoverflow.com/a/2344594
+    /// <summary>
+    /// All valid flags ordered.<br/>
+    /// Not included flags: <c>RundownFlags.Latest</c> and <c>RundownFlags.None</c>.
+    /// </summary>
+    /// <seealso href="https://stackoverflow.com/a/2344594"/>
     public static IEnumerable<RundownFlags> AllFlagsOrdered
     {
         get

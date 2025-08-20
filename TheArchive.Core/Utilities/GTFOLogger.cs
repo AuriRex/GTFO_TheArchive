@@ -4,7 +4,10 @@ using TheArchive.Interfaces;
 
 namespace TheArchive.Utilities;
 
-public static class GTFOLogger
+/// <summary>
+/// Filtered Unity/GTFO game log logger.
+/// </summary>
+internal static class GTFOLogger
 {
     internal static IArchiveLogger Logger { private get; set; }
 

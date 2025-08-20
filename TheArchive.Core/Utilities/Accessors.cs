@@ -6,9 +6,21 @@ using System.Reflection;
 
 namespace TheArchive.Utilities;
 
+/// <summary>
+/// Accessor related extension methods.
+/// </summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public static class AccessorExtensions
 {
+    /// <summary>
+    /// Provides an alternative source for an accessor in case the primary one is not valid.
+    /// </summary>
+    /// <param name="self">The primary accessor.</param>
+    /// <param name="func">A function providing a replacement in case the primary did not find its target.</param>
+    /// <typeparam name="T">Type</typeparam>
+    /// <typeparam name="MT">Member type.</typeparam>
+    /// <returns>The primary accessor if it's valid, else the fallback one provided by <paramref name="func"/>.</returns>
+    /// <exception cref="NullReferenceException"><paramref name="func"/> must not be null.</exception>
     public static IValueAccessor<T, MT> OrAlternative<T, MT>(this IValueAccessor<T, MT> self, Func<IValueAccessor<T, MT>> func)
     {
         if (self != null && self.HasMember)
@@ -92,9 +104,19 @@ public interface IStaticValueAccessor<T, MT> : IValueAccessor<T, MT>
 [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
 public abstract class AccessorBase
 {
+    /// <summary>
+    /// An empty object array.
+    /// </summary>
     protected static object[] NoParams { get; } = Array.Empty<object>();
+    
+    /// <summary>
+    /// Any binding flags.
+    /// </summary>
     protected static BindingFlags AnyBindingFlags => Utils.AnyBindingFlagss;
-
+    
+    /// <summary>
+    /// Cache of already existing accessors.
+    /// </summary>
     protected static readonly Dictionary<string, AccessorBase> Accessors = new();
 
     /// <summary>
@@ -102,10 +124,21 @@ public abstract class AccessorBase
     /// </summary>
     public string Identifier { get; private set; }
 
+    /// <summary>
+    /// Should errors be ignored?
+    /// </summary>
     public bool IgnoreErrors { get; private set; }
 
+    /// <summary>
+    /// If the reflected member has been found.
+    /// </summary>
     public abstract bool HasMemberBeenFound { get; }
 
+    /// <summary>
+    /// AccessorBase constructor.
+    /// </summary>
+    /// <param name="identifier">This accessors identifier - used for caching.</param>
+    /// <param name="ignoreErrors">Should errors be ignored?</param>
     protected AccessorBase(string identifier, bool ignoreErrors)
     {
         Identifier = identifier;
@@ -119,9 +152,9 @@ public abstract class AccessorBase
     /// </summary>
     /// <typeparam name="T">The Type that the member belongs to</typeparam>
     /// <typeparam name="MT">The Type of the member itself</typeparam>
-    /// <param name="memberName"></param>
-    /// <param name="throwOnError"></param>
-    /// <returns></returns>
+    /// <param name="memberName">The name of the member.</param>
+    /// <param name="throwOnError">Should an exception be thrown on error?</param>
+    /// <returns>The value accessor for a given member.</returns>
     /// <exception cref="ArgumentException"></exception>
     public static IValueAccessor<T, MT> GetValueAccessor<T, MT>(string memberName, bool throwOnError = false)
     {
@@ -154,9 +187,9 @@ public abstract class AccessorBase
     /// </summary>
     /// <typeparam name="T">The Type that the member belongs to</typeparam>
     /// <typeparam name="MT">The Type of the member itself</typeparam>
-    /// <param name="memberName"></param>
-    /// <param name="throwOnError"></param>
-    /// <returns></returns>
+    /// <param name="memberName">The name of the member.</param>
+    /// <param name="throwOnError">Should an exception be thrown on error?</param>
+    /// <returns>The value accessor for a given member.</returns>
     /// <exception cref="ArgumentException"></exception>
     public static IStaticValueAccessor<T, MT> GetStaticValueAccessor<T, MT>(string memberName, bool throwOnError = false)
     {
@@ -206,16 +239,27 @@ public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>, IStatic
 
     private readonly FieldInfo _field;
 
+    /// <inheritdoc/>
     public override bool HasMemberBeenFound => _field != null;
 
+    /// <inheritdoc/>
     public bool CanGet => true;
 
+    /// <inheritdoc/>
     public bool CanSet => true;
 
+    /// <inheritdoc/>
     public bool HasMember => HasMemberBeenFound;
 
+    /// <inheritdoc/>
     public bool IsStatic => _field?.IsStatic ?? false;
 
+    /// <summary>
+    /// Creates a new instance of a FieldAccessor.
+    /// </summary>
+    /// <param name="identifier">This accessors identifier - used for caching.</param>
+    /// <param name="fieldName">The name of the field.</param>
+    /// <param name="ignoreErrors">Should errors be ignored?</param>
     private FieldAccessor(string identifier, string fieldName, bool ignoreErrors = false) : base(identifier, ignoreErrors)
     {
         _field = typeof(T).GetField(fieldName, AnyBindingFlags);
@@ -224,8 +268,8 @@ public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>, IStatic
     /// <summary>
     /// Get the value of the reflected field from an <paramref name="instance"/>.
     /// </summary>
-    /// <param name="instance">An object instance to get the value from</param>
-    /// <returns></returns>
+    /// <param name="instance">An object instance to get the value from.</param>
+    /// <returns>The value of the field.</returns>
     public FT Get(T instance)
     {
         try
@@ -257,8 +301,8 @@ public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>, IStatic
     /// <summary>
     /// Set the <paramref name="value"/> of the reflected field on an <paramref name="instance"/>. 
     /// </summary>
-    /// <param name="instance">An object instance to set the value of</param>
-    /// <param name="value">The new value</param>
+    /// <param name="instance">An object instance to set the value of.</param>
+    /// <param name="value">The new value.</param>
     public void Set(T instance, FT value)
     {
         try
@@ -286,11 +330,19 @@ public class FieldAccessor<T, FT> : AccessorBase, IValueAccessor<T, FT>, IStatic
         }
     }
 
+    /// <summary>
+    /// Get the value of a static field.
+    /// </summary>
+    /// <returns>The fields value.</returns>
     public FT GetStaticValue()
     {
         return Get(default);
     }
 
+    /// <summary>
+    /// Set the value of a static field.
+    /// </summary>
+    /// <param name="value">The new value.</param>
     public void SetStaticValue(FT value)
     {
         Set(default, value);
@@ -327,16 +379,27 @@ public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>, ISta
 
     private readonly PropertyInfo _property;
 
+    /// <inheritdoc/>
     public override bool HasMemberBeenFound => _property != null;
 
+    /// <inheritdoc/>
     public bool CanGet => _property?.GetGetMethod(true) != null;
 
+    /// <inheritdoc/>
     public bool CanSet => _property?.GetSetMethod(true) != null;
 
+    /// <inheritdoc/>
     public bool HasMember => HasMemberBeenFound;
 
+    /// <inheritdoc/>
     public bool IsStatic => (_property?.GetGetMethod(true) ?? _property?.GetSetMethod(true))?.IsStatic ?? false;
-
+    
+    /// <summary>
+    /// Creates a new instance of a PropertyAccessor.
+    /// </summary>
+    /// <param name="identifier">This accessors identifier - used for caching.</param>
+    /// <param name="propertyName">The name of the property.</param>
+    /// <param name="ignoreErrors">Should errors be ignored?</param>
     private PropertyAccessor(string identifier, string propertyName, bool ignoreErrors = false) : base(identifier, ignoreErrors)
     {
         _property = typeof(T).GetProperty(propertyName, AnyBindingFlags);
@@ -345,8 +408,8 @@ public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>, ISta
     /// <summary>
     /// Get the value of the reflected property from an <paramref name="instance"/>.
     /// </summary>
-    /// <param name="instance">An object instance to get the value from</param>
-    /// <returns></returns>
+    /// <param name="instance">An object instance to get the value from.</param>
+    /// <returns>The properties value.</returns>
     public PT Get(T instance)
     {
         try
@@ -378,8 +441,8 @@ public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>, ISta
     /// <summary>
     /// Set the <paramref name="value"/> of the reflected property on an <paramref name="instance"/>. 
     /// </summary>
-    /// <param name="instance">An object instance to set the value of</param>
-    /// <param name="value">The new value</param>
+    /// <param name="instance">An object instance to set the value of.</param>
+    /// <param name="value">The new value.</param>
     public void Set(T instance, PT value)
     {
         try
@@ -407,11 +470,19 @@ public class PropertyAccessor<T, PT> : AccessorBase, IValueAccessor<T, PT>, ISta
         }
     }
 
+    /// <summary>
+    /// Get a static properties value.
+    /// </summary>
+    /// <returns>The properties value.</returns>
     public PT GetStaticValue()
     {
         return Get(default);
     }
 
+    /// <summary>
+    /// Set a static properties value.
+    /// </summary>
+    /// <param name="value">The new value.</param>
     public void SetStaticValue(PT value)
     {
         Set(default, value);
@@ -430,8 +501,8 @@ public class MethodAccessor<T, RT> : AccessorBase
     /// <summary>
     /// Gets a <see cref="MethodAccessor{T, RT}"/> from the global cache or creates a new instance if there is none and adds it to the cache.
     /// </summary>
-    /// <param name="methodName">The name of the method</param>
-    /// <param name="parameterTypes">Parameter Types of the method (leave null if there are none)</param>
+    /// <param name="methodName">The name of the method.</param>
+    /// <param name="parameterTypes">Parameter Types of the method (leave null if there are none).</param>
     /// <returns><see cref="MethodAccessor{T, RT}"/></returns>
     public static MethodAccessor<T, RT> GetAccessor(string methodName, Type[] parameterTypes = null, bool ignoreErrors = false)
     {
@@ -452,9 +523,22 @@ public class MethodAccessor<T, RT> : AccessorBase
     }
 
     private readonly MethodInfo _method;
+    
+    /// <summary>
+    /// Is the reflected method static?
+    /// </summary>
     public bool IsMethodStatic => _method.IsStatic;
+    
+    /// <inheritdoc/>
     public override bool HasMemberBeenFound => _method != null;
 
+    /// <summary>
+    /// Creates a new instance of a MethodAccessor.
+    /// </summary>
+    /// <param name="identifier">This accessors identifier - used for caching.</param>
+    /// <param name="methodName">The name of the method.</param>
+    /// <param name="parameterTypes">Parameter types for distinguishing between overloads. (this may be null)</param>
+    /// <param name="ignoreErrors">Should errors be ignored?</param>
     private MethodAccessor(string identifier, string methodName, Type[] parameterTypes, bool ignoreErrors = false) : base(identifier, ignoreErrors)
     {
         try
@@ -533,7 +617,8 @@ public class MethodAccessor<T> : AccessorBase
     /// Gets a <see cref="MethodAccessor{T}"/> from the global cache or creates a new instance if there is none and adds it to the cache.
     /// </summary>
     /// <param name="methodName">The name of the method</param>
-    /// <param name="parameterTypes">Parameter Types of the method (leave null if there are none)</param>
+    /// <param name="parameterTypes">Parameter Types of the method (leave null if there are none).</param>
+    /// <param name="ignoreErrors">Should errors be ignored?</param>
     /// <returns><see cref="MethodAccessor{T}"/></returns>
     public static MethodAccessor<T> GetAccessor(string methodName, Type[] parameterTypes = null, bool ignoreErrors = false)
     {
@@ -554,10 +639,26 @@ public class MethodAccessor<T> : AccessorBase
     }
 
     private readonly MethodInfo _method;
+    
+    /// <inheritdoc cref="MethodAccessor{T,RT}.IsMethodStatic"/>
     public bool IsMethodStatic => _method.IsStatic;
+    
+    /// <inheritdoc cref="MethodAccessor{T,RT}.HasMemberBeenFound"/>
     public override bool HasMemberBeenFound => _method != null;
+    
+    /// <summary>
+    /// The parameter count of the reflected method.
+    /// </summary>
     public int ParameterCount { get; private set; }
 
+    /// <summary>
+    /// Creates a new instance of a MethodAccessor.
+    /// </summary>
+    /// <param name="identifier">This accessors identifier - used for caching.</param>
+    /// <param name="methodName">The name of the method.</param>
+    /// <param name="parameterTypes">Parameter types for distinguishing between overloads. (this may be null)</param>
+    /// <param name="ignoreErrors">Should errors be ignored?</param>
+    /// <exception cref="Exception"></exception>
     private MethodAccessor(string identifier, string methodName, Type[] parameterTypes, bool ignoreErrors = false) : base(identifier, ignoreErrors)
     {
         try

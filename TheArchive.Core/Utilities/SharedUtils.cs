@@ -23,6 +23,9 @@ using IL2ColGen = Il2CppSystem.Collections.Generic;
 
 namespace TheArchive.Utilities;
 
+/// <summary>
+/// Random utility methods related to Il2Cpp/Mono things.
+/// </summary>
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public static class SharedUtils
@@ -39,6 +42,12 @@ public static class SharedUtils
 #endif
 
 #if IL2CPP
+    /// <summary>
+    /// Turns an Il2Cpp list into a managed one.
+    /// </summary>
+    /// <param name="il2List">The Il2Cpp list to convert.</param>
+    /// <typeparam name="T">The list type.</typeparam>
+    /// <returns>A managed representation of the list.</returns>
     public static List<T> ToSystemList<T>(this IL2ColGen.List<T> il2List)
     {
         var list = new List<T>();
@@ -51,6 +60,15 @@ public static class SharedUtils
         return list;
     }
 
+    /// <summary>
+    /// Turns a managed list into an Il2Cpp one.
+    /// </summary>
+    /// <param name="list">The managed list to convert.</param>
+    /// <typeparam name="T">The list type.</typeparam>
+    /// <returns>An Il2Cpp representation of the list.</returns>
+    /// <remarks>
+    /// Mostly a legacy method - check legacy branch.
+    /// </remarks>
     public static IL2ColGen.List<T> ToIL2CPPListIfNecessary<T>(this List<T> list)
     {
         var il2List = new IL2ColGen.List<T>();
@@ -61,6 +79,14 @@ public static class SharedUtils
         return il2List;
     }
 
+    /// <summary>
+    /// Creates a new Il2Cpp list of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The list type.</typeparam>
+    /// <returns>A new Il2Cpp list.</returns>
+    /// <remarks>
+    /// Mostly a legacy method - check legacy branch.
+    /// </remarks>
     public static IL2ColGen.List<T> NewListForGame<T>()
     {
         return new IL2ColGen.List<T>();
@@ -74,8 +100,19 @@ public static class SharedUtils
     }
 #endif
 
+    /// <summary>
+    /// Change the color of the <c>CM_TimedButton</c> texts and sprite renderers.
+    /// </summary>
+    /// <param name="button">The button to recolor.</param>
+    /// <param name="col">The new color.</param>
     public static void ChangeColorTimedExpeditionButton(CM_TimedButton button, Color col) => ChangeColorOnAllChildren(button.transform, col, new[] { "ProgressFill" });
 
+    /// <summary>
+    /// Change the colors of a <c>CM_Item</c>.
+    /// </summary>
+    /// <param name="item">The <c>CM_Item</c> to recolor.</param>
+    /// <param name="idleColor">The idle color.</param>
+    /// <param name="hoverColor">The color used while the item is hovered over.</param>
     public static void ChangeColorCMItem(CM_Item item, Color idleColor, Color? hoverColor = null)
     {
         ChangeColorOnSelfAndAllChildren(item.transform, idleColor);
@@ -113,12 +150,24 @@ public static class SharedUtils
 #endif
     }
 
+    /// <summary>
+    /// Change the colors of all <c>TextMeshPro</c> and <c>SpriteRenderer</c>s on self and on all children.
+    /// </summary>
+    /// <param name="trans">The transform to recolor.</param>
+    /// <param name="col">The new color.</param>
+    /// <param name="excludeNames">A list of transform names to ignore.</param>
+    /// <param name="mode">The check mode of how to apply the <paramref name="excludeNames"/> list.</param>
+    /// <param name="extraModificationForEachChild">Custom code ran on each child.</param>
     public static void ChangeColorOnSelfAndAllChildren(Transform trans, Color col, IList<string> excludeNames = null, IgnoreMode mode = IgnoreMode.StartsWith, Action<Transform> extraModificationForEachChild = null)
     {
         ChangeColor(trans, col, excludeNames, mode, extraModificationForEachChild);
         ChangeColorOnAllChildren(trans, col, excludeNames, mode, extraModificationForEachChild);
     }
 
+    /// <inheritdoc cref="ChangeColorOnSelfAndAllChildren"/>
+    /// <summary>
+    /// Change the colors of all <c>TextMeshPro</c> and <c>SpriteRenderer</c>s on all children.
+    /// </summary>
     public static void ChangeColorOnAllChildren(Transform trans, Color col, IList<string> excludeNames = null, IgnoreMode mode = IgnoreMode.StartsWith, Action<Transform> extraModificationForEachChild = null)
     {
         if (trans == null) return;
@@ -127,6 +176,10 @@ public static class SharedUtils
         });
     }
 
+    /// <inheritdoc cref="ChangeColorOnSelfAndAllChildren"/>
+    /// <summary>
+    /// Change the colors of all <c>TextMeshPro</c> and <c>SpriteRenderer</c>s on this transforms' gameobject.
+    /// </summary>
     public static void ChangeColor(Transform trans, Color col, IList<string> excludeNames = null, IgnoreMode mode = IgnoreMode.StartsWith, Action<Transform> extraModificationForEachChild = null)
     {
         if (trans == null) return;
@@ -161,6 +214,12 @@ public static class SharedUtils
         extraModificationForEachChild?.Invoke(trans);
     }
 
+    /// <summary>
+    /// Clear all subscribers on an event.
+    /// </summary>
+    /// <param name="eventFieldName">The name of the event member.</param>
+    /// <param name="instance">The object instance containing the event action or null if static.</param>
+    /// <typeparam name="T">The type containing the event member.</typeparam>
     public static void RemoveAllEventHandlers<T>(string eventFieldName, object instance = null)
     {
 #if IL2CPP
@@ -170,8 +229,18 @@ public static class SharedUtils
 #endif
     }
 
+    /// <summary>
+    /// Add events to a <c>CM_Item</c>.
+    /// </summary>
+    /// <param name="item">The <c>CM_Item</c> to subscribe to.</param>
+    /// <param name="onButtonPress">On button press action to add.</param>
+    /// <param name="onButtonHover">On button hover action to add.</param>
+    /// <returns>The same <c>CM_Item</c>.</returns>
+    /// <exception cref="ArgumentNullException">Item can't be null.</exception>
     public static CM_Item AddCMItemEvents(this CM_Item item, Action<int> onButtonPress, Action<int, bool> onButtonHover = null)
     {
+        if (item == null) throw new ArgumentNullException(nameof(item));
+        
         if (onButtonPress != null)
             item.OnBtnPressCallback += onButtonPress;
         if (onButtonHover != null)
@@ -180,6 +249,10 @@ public static class SharedUtils
         return item;
     }
 
+    /// <summary>
+    /// Set events of a <c>CM_Item</c>.
+    /// </summary>
+    /// <inheritdoc cref="AddCMItemEvents"/>
     public static CM_Item SetCMItemEvents(this CM_Item item, Action<int> onButtonPress, Action<int, bool> onButtonHover = null)
     {
         if (item == null) throw new ArgumentNullException(nameof(item));
@@ -205,6 +278,12 @@ public static class SharedUtils
         return item;
     }
 
+    /// <summary>
+    /// Remove all events on a <c>CM_Item</c>.
+    /// </summary>
+    /// <param name="item">The <c>CM_Item</c> to clear all events on.</param>
+    /// <param name="keepHover">Should hover events be kept?</param>
+    /// <returns>The same <c>CM_Item</c>.</returns>
     public static CM_Item RemoveCMItemEvents(this CM_Item item, bool keepHover = false)
     {
         RemoveAllEventHandlers<CM_Item>(nameof(CM_Item.OnBtnPressCallback), item);
@@ -214,6 +293,11 @@ public static class SharedUtils
         return item;
     }
 
+    /// <summary>
+    /// Sets a <c>CM_TimedButton</c> hold duration.
+    /// </summary>
+    /// <param name="button">The button to set the duration for.</param>
+    /// <param name="duration">The new hold duration.</param>
     public static void SetHoldDuration(this CM_TimedButton button, float duration)
     {
 #if IL2CPP
@@ -261,6 +345,11 @@ public static class SharedUtils
         }
     }
 
+    /// <summary>
+    /// Get all direct children of this transform.
+    /// </summary>
+    /// <param name="trans">The transform to get the children from.</param>
+    /// <returns><c>IEnumerable&lt;Transform&gt;</c> of all direct children.</returns>
     public static IEnumerable<Transform> DirectChildren(this Transform trans)
     {
         for (var i = 0; i < trans.childCount; i++)
@@ -269,6 +358,12 @@ public static class SharedUtils
         }
     }
 
+    /// <summary>
+    /// Get a direct child with an exact name match.
+    /// </summary>
+    /// <param name="trans">The transform containing the child.</param>
+    /// <param name="name">The name of the child to match.</param>
+    /// <returns>The found child or null.</returns>
     public static Transform GetChildWithExactName(this Transform trans, string name)
     {
         for (var i = 0; i < trans.childCount; i++)
@@ -279,10 +374,19 @@ public static class SharedUtils
         return null;
     }
 
+    /// <summary>
+    /// Destroy a gameobject but null-checked.
+    /// </summary>
+    /// <param name="go">The gameobject to destroy.</param>
     public static void SafeDestroyGO(this GameObject go) => go.SafeDestroy();
 
+    /// <summary>
+    /// Destroy a gameobject but null-checked.
+    /// </summary>
+    /// <param name="comp">Destroys the gameobject this component is attached to.</param>
     public static void SafeDestroyGO(this Component comp) => comp?.gameObject.SafeDestroy();
 
+    /// <inheritdoc cref="SafeDestroyGO(GameObject)"/>
     public static void SafeDestroy(this GameObject go)
     {
         if (go == null)
@@ -290,6 +394,10 @@ public static class SharedUtils
         UnityEngine.Object.Destroy(go);
     }
 
+    /// <summary>
+    /// Destroy a component but null-checked.
+    /// </summary>
+    /// <param name="comp">The component to destroy.</param>
     public static void SafeDestroy(this Component comp)
     {
         if (comp == null)
@@ -297,40 +405,16 @@ public static class SharedUtils
         UnityEngine.Object.Destroy(comp);
     }
 
-    public static T GetComponentOnSelfOrParents<T>(this Transform trans) where T : Component
-    {
-        if (trans == null) return null;
-
-        var component = trans.GetComponent<T>();
-
-        if (component != null)
-        {
-            return component;
-        }
-
-        return trans.GetComponentOnParents<T>();
-    }
-
-    public static T GetComponentOnParents<T>(this Transform trans) where T : Component
-    {
-        if (trans == null) return null;
-
-        var parent = trans.parent;
-
-        var component = parent.GetComponent<T>();
-
-        if (component != null)
-        {
-            return component;
-        }
-
-        return parent.parent?.GetComponentOnParents<T>();
-    }
-
+    /// <summary>
+    /// Ignore mode
+    /// </summary>
     public enum IgnoreMode
     {
+        /// <summary> Has to match exactly. </summary>
         Match,
+        /// <summary> Has to start with. </summary>
         StartsWith,
+        /// <summary> Has to end with. </summary>
         EndsWith
     }
 
@@ -339,17 +423,34 @@ public static class SharedUtils
     private static readonly IValueAccessor<CM_PlayerLobbyBar, int> _A_CM_PlayerLobbyBar_m_playerIndex = AccessorBase.GetValueAccessor<CM_PlayerLobbyBar, int>("m_playerIndex"); // Used in older versions
     private static readonly IValueAccessor<CM_PlayerLobbyBar, SNet_Player> _A_CM_PlayerLobbyBar_m_player = AccessorBase.GetValueAccessor<CM_PlayerLobbyBar, SNet_Player>("m_player");
 
+    /// <summary>
+    /// Get the index of a given <c>CM_PlayerLobbyBar</c>.
+    /// </summary>
+    /// <param name="plb">The player lobby bar to get the index of.</param>
+    /// <param name="index">The index of the player lobby bar.</param>
+    /// <returns></returns>
     public static bool TryGetPlayerLobbyBarIndex(CM_PlayerLobbyBar plb, out int index)
     {
         index = GetPlayerLobbyBarIndex(plb);
         return index >= 0;
     }
 
+    /// <summary>
+    /// Get the index of a given <c>CM_PlayerLobbyBar</c>.
+    /// </summary>
+    /// <param name="plb">The player lobby bar to get the index of.</param>
+    /// <returns>The index of the player lobby bar or -1.</returns>
     public static int GetPlayerLobbyBarIndex(CM_PlayerLobbyBar plb)
     {
         return _A_CM_PlayerLobbyBar_m_playerSlotIndex?.Get(plb) ?? _A_CM_PlayerLobbyBar_m_playerIndex?.Get(plb) ?? -1;
     }
 
+    /// <summary>
+    /// Get the <c>SNet_Player</c> from a given <c>CM_PlayerLobbyBar</c> index.
+    /// </summary>
+    /// <param name="index">The index of the <c>CM_PlayerLobbyBar</c>.</param>
+    /// <param name="player">The found player.</param>
+    /// <returns><c>True</c> if found.</returns>
     public static bool TryGetPlayerByPlayerLobbyBarIndex(int index, out SNet_Player player)
     {
 #if IL2CPP
@@ -370,6 +471,12 @@ public static class SharedUtils
         return player != null;
     }
 
+    /// <summary>
+    /// Get the first <c>SNet_Player</c> matching a given character index.
+    /// </summary>
+    /// <param name="id">The character index.</param>
+    /// <param name="player">The found player.</param>
+    /// <returns><c>True</c> if found.</returns>
     public static bool TryGetPlayerByCharacterIndex(int id, out SNet_Player player)
     {
         try
@@ -390,7 +497,12 @@ public static class SharedUtils
         return false;
     }
 
-    // https://gamedev.stackexchange.com/a/183962
+    /// <summary>
+    /// Get the bounds of all active renderers of the given gameobject.
+    /// </summary>
+    /// <param name="go">The gameobject to check.</param>
+    /// <returns>The bounds of all active renderers.</returns>
+    /// <seealso href="https://gamedev.stackexchange.com/a/183962"/>
     public static Bounds GetMaxBounds(this GameObject go)
     {
         var renderers = go.GetComponentsInChildren<Renderer>();
@@ -403,6 +515,14 @@ public static class SharedUtils
         return bounds;
     }
 
+    /// <summary>
+    /// Check if a list contains a given item Il2Cpp type safe.<br/>
+    /// If the list type is an Il2Cpp type it checks the Il2Cpp object pointer instead.
+    /// </summary>
+    /// <param name="list">The list.</param>
+    /// <param name="item">The item to check.</param>
+    /// <typeparam name="T">The type of the list item.</typeparam>
+    /// <returns><c>True</c> if the item is contained in the list.</returns>
     public static bool SafeContains<T>(this IList<T> list, T item) where T : class, new()
     {
         if (LoaderWrapper.IsIL2CPPType(typeof(T)))
@@ -423,6 +543,15 @@ public static class SharedUtils
         return list.Contains(item);
     }
 
+    /// <summary>
+    /// Safely check if a <c>SNet_Player</c> is a bot.
+    /// </summary>
+    /// <param name="player">The player to check.</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// Legacy method - was used to safely check across different game versions.<br/>
+    /// Not needed anymore.
+    /// </remarks>
     public static bool SafeIsBot(this SNet_Player player)
     {
         if (player == null)
@@ -432,6 +561,11 @@ public static class SharedUtils
         return false;
     }
 
+    /// <summary>
+    /// Check if a <c>SNet_Player</c> is your steam friend.
+    /// </summary>
+    /// <param name="player">The player to check.</param>
+    /// <returns><c>True</c> if the given player is your steam friend.</returns>
     public static bool IsFriend(this SNet_Player player)
     {
         if (player == null)
@@ -451,6 +585,16 @@ public static class SharedUtils
 
     private static readonly MethodAccessor<CellSoundPlayer> A_CellSoundPlayer_Post_sub_R5 = MethodAccessor<CellSoundPlayer>.GetAccessor("Post", new[] { typeof(uint) }, ignoreErrors: true);
 
+    /// <summary>
+    /// Post a sound event.
+    /// </summary>
+    /// <param name="player">The sound player to use.</param>
+    /// <param name="eventId">The sound event to play.</param>
+    /// <param name="isGlobal">Is global?</param>
+    /// <remarks>
+    /// Legacy method - was used to safely post sounds across different game versions.<br/>
+    /// Not needed anymore.
+    /// </remarks>
     public static void SafePost(this CellSoundPlayer player, uint eventId, bool isGlobal = true)
     {
         if (Is.R6OrLater)
@@ -475,6 +619,11 @@ public static class SharedUtils
     private static GameSetupDataBlock _setupBlock;
 #endif
 
+    /// <summary>
+    /// Get the currently active rundown datablock.
+    /// </summary>
+    /// <param name="block">The active rundown datablock.</param>
+    /// <returns><c>True</c> if a valid rundown datablock is active.</returns>
     public static bool TryGetRundownDataBlock(out RundownDataBlock block)
     {
         uint blockToLoad;
@@ -510,6 +659,10 @@ public static class SharedUtils
         return false;
     }
 
+    /// <summary>
+    /// Get the title of the currently active rundown datablock.
+    /// </summary>
+    /// <returns>The rundowns title or <c>"Unknown"</c></returns>
     public static string GetDataBlockRundownTitle()
     {
         string text = null;
@@ -550,13 +703,19 @@ public static class SharedUtils
     private static readonly eFocusState eFocusState_InElevator = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.InElevator));
     private static readonly eFocusState eFocusState_Hacking = Utils.GetEnumFromName<eFocusState>(nameof(eFocusState.Hacking));
 
+    /// <summary> If the local player is interacting with a terminal. </summary>
     public static bool LocalPlayerIsInTerminal => FocusStateManager.CurrentState == eFocusState_ComputerTerminal;
+    
+    /// <summary> If the local player is looking at the map. </summary>
     public static bool LocalPlayerIsInMap => FocusStateManager.CurrentState == eFocusState_Map;
+    /// <summary> If the local player is currently dead. </summary>
     public static bool LocalPlayerIsDead => FocusStateManager.CurrentState == eFocusState_Dead;
+    /// <summary> If the local player is currently in the elevator. </summary>
     public static bool LocalPlayerIsInElevator => FocusStateManager.CurrentState == eFocusState_InElevator;
+    /// <summary> If the local player is currently in the hacking minigame. </summary>
     public static bool LocalPlayerIsHacking => FocusStateManager.CurrentState == eFocusState_Hacking;
 
-    public static readonly eGameStateName eGameStateName_InLevel = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.InLevel));
+    private static readonly eGameStateName eGameStateName_InLevel = Utils.GetEnumFromName<eGameStateName>(nameof(eGameStateName.InLevel));
 
 #if IL2CPP
     private static IValueAccessor<LG_Floor, IL2ColGen.List<LG_Layer>> _A_LG_Floor_m_layers;
@@ -635,6 +794,10 @@ public static class SharedUtils
     }
 #endif
 
+    /// <summary>
+    /// Get the currently active gamestate.
+    /// </summary>
+    /// <returns>The current gamestate.</returns>
     public static eGameStateName GetGameState() => (eGameStateName) ArchiveMod.CurrentGameState;
 
     /// <summary>
@@ -686,16 +849,35 @@ public static class SharedUtils
     }
 
 #if IL2CPP
+    /// <summary>
+    /// Cast an Il2Cpp type to another.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static T CastTo<T>(this Il2CppObjectBase value) where T : Il2CppObjectBase
     {
         return value.Cast<T>();
     }
 
+    /// <summary>
+    /// Try cast an Il2Cpp type to another.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static T TryCastTo<T>(this Il2CppObjectBase value) where T : Il2CppObjectBase
     {
         return value.TryCast<T>();
     }
 
+    /// <summary>
+    /// Try cast an Il2Cpp type to another.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="castedValue"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static bool TryCastTo<T>(this Il2CppObjectBase value, out T castedValue) where T : Il2CppObjectBase
     {
         castedValue = value.TryCastTo<T>();
