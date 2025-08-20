@@ -20,9 +20,13 @@ An in-game mod settings menu for easy feature customization.
 Most Features are toggleable mid-game and some even have extra options to mess with!
 
 <p align="center">
-  <img width="1920" height="1080" alt="Mod Settings base menu showing different Feature Groups" src="https://github.com/user-attachments/assets/00cd1fc1-32be-48ed-a473-4cc6aa8f010e" />
-  <img width="1920" height="1080" alt="Mod Settings, color picker and settings preview" src="https://github.com/user-attachments/assets/bfe65c76-43b7-493a-b37b-8df1805ff53c" />
-  <img width="1920" height="1080" alt="Mod Settings, button and enum settings preview" src="https://github.com/user-attachments/assets/502c5db0-ac80-4192-83ec-c420f34f5be0" />
+  <img alt="Mod Settings base menu showing different Feature Groups" src="https://github.com/user-attachments/assets/00cd1fc1-32be-48ed-a473-4cc6aa8f010e" />
+</p>
+<p align="center">
+  <img alt="Mod Settings, color picker and settings preview" src="https://github.com/user-attachments/assets/bfe65c76-43b7-493a-b37b-8df1805ff53c" />
+</p>
+<p align="center">
+  <img alt="Mod Settings, button and enum settings preview" src="https://github.com/user-attachments/assets/502c5db0-ac80-4192-83ec-c420f34f5be0" />
 </p>
 
 > [!NOTE]  
