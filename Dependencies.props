@@ -41,6 +41,8 @@
 		<Message Text="Copying Assembly to Ouput Folder..." />
 		<Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll"
 			  DestinationFiles="$(PluginOutputPath)\$(AssemblyName).dll"/>
+		<Copy SourceFiles="$(OutputPath)\$(AssemblyName).xml"
+			  DestinationFiles="$(PluginOutputPath)\$(AssemblyName).xml" Condition="Exists('$(OutputPath)\$(AssemblyName).xml')"/>
 
 		<Message Text="Assembly has been copied to Ouput Folder!" Importance="High"/>
 	</Target>
