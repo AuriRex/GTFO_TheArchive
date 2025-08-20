@@ -3,66 +3,115 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace TheArchive.Core.FeaturesAPI.Settings
+namespace TheArchive.Core.FeaturesAPI.Settings;
+
+/// <summary>
+/// A feature setting for handling generic lists.
+/// </summary>
+public class GenericListSetting : FeatureSetting
 {
-    public class GenericListSetting : FeatureSetting
+    /// <summary>
+    /// The generic list type.
+    /// </summary>
+    public Type ListType { get; }
+
+    /// <inheritdoc/>
+    public GenericListSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debugPath = "") : base(featureSettingsHelper, prop, instance, debugPath)
     {
-        public Type ListType { get; }
+        ListType = Type.GenericTypeArguments[0];
+    }
 
-        public GenericListSetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debug_path = "") : base(featureSettingsHelper, prop, instance, debug_path)
+    /// <summary>
+    /// Get the list instance.
+    /// </summary>
+    /// <returns>The list instance.</returns>
+    public IList GetList()
+    {
+        return GetValue() as IList;
+    }
+
+    /// <summary>
+    /// Remove an entry from the list.
+    /// </summary>
+    /// <param name="entry">The entry to remove.</param>
+    public void RemoveEntry(object entry)
+    {
+        GetList().Remove(entry);
+        Helper.IsDirty = true;
+    }
+
+    /// <summary>
+    /// Add an entry to the list.
+    /// </summary>
+    /// <param name="entry">The entry to add.</param>
+    public void AddEntry(object entry)
+    {
+        if (!ListType.IsAssignableFrom(entry.GetType())) return;
+        GetList().Add(entry);
+        Helper.IsDirty = true;
+    }
+
+    /// <summary>
+    /// Get all list entries.
+    /// </summary>
+    /// <returns><c>IEnumerable&lt;ListEntry&gt;</c></returns>
+    public IEnumerable<ListEntry> GetEntries()
+    {
+        var list = new List<ListEntry>();
+        foreach(var obj in GetList())
         {
-            ListType = Type.GenericTypeArguments[0];
+            list.Add(new ListEntry(this, ListType, obj));
         }
 
-        public IList GetList()
+        return list;
+    }
+
+    /// <summary>
+    /// A single list entry.
+    /// </summary>
+    public class ListEntry
+    {
+        /// <summary>
+        /// The parent list setting.
+        /// </summary>
+        public GenericListSetting Parent { get; }
+        
+        /// <summary>
+        /// The type of this entry.
+        /// </summary>
+        public Type EntryType { get; private set; }
+        
+        /// <summary>
+        /// The instance of this entry.
+        /// </summary>
+        public object Instance { get; }
+        
+        /// <summary>
+        /// The settings helper responsible for populating any submenus.
+        /// </summary>
+        public DynamicFeatureSettingsHelper Helper { get; private set; }
+
+        /// <summary>
+        /// List entry constructor.
+        /// </summary>
+        /// <param name="gls">The parent <c>GenericListSetting</c>.</param>
+        /// <param name="entryType">The type of this entry.</param>
+        /// <param name="instance">The instance of this entry.</param>
+        public ListEntry(GenericListSetting gls, Type entryType, object instance)
         {
-            return GetValue() as IList;
+            Parent = gls;
+            EntryType = entryType;
+            Instance = instance;
+
+            Helper = new DynamicFeatureSettingsHelper(Parent.Helper.Feature, Parent.Helper).Initialize(entryType, instance);
         }
 
-        public void RemoveEntry(object entry)
+        /// <summary>
+        /// Remove this entry from its parent list.
+        /// </summary>
+        public void RemoveFromList()
         {
-            GetList().Remove(entry);
-            Helper.IsDirty = true;
-        }
-
-        public void AddEntry(object entry)
-        {
-            if (!ListType.IsAssignableFrom(entry.GetType())) return;
-            GetList().Add(entry);
-            Helper.IsDirty = true;
-        }
-
-        public IEnumerable<ListEntry> GetEntries()
-        {
-            var list = new List<ListEntry>();
-            foreach(var obj in GetList())
-            {
-                list.Add(new ListEntry(this, ListType, obj));
-            }
-
-            return list;
-        }
-
-        public class ListEntry
-        {
-            public GenericListSetting Parent { get; private set; }
-            public Type EntryType { get; private set; }
-            public object Instance { get; private set; }
-            public DynamicFeatureSettingsHelper Helper { get; private set; }
-
-            public ListEntry(GenericListSetting gls, Type entryType, object instance)
-            {
-                Parent = gls;
-                EntryType = entryType;
-                Instance = instance;
-
-                Helper = new DynamicFeatureSettingsHelper(Parent.Helper.Feature, Parent.Helper).Initialize(entryType, instance);
-            }
-
-            public void RemoveFromList()
-            {
-                Parent.RemoveEntry(Instance);
-            }
+            Parent.RemoveEntry(Instance);
         }
     }
 }

@@ -1,0 +1,126 @@
+﻿<Project InitialTargets="ValidateGamePath">
+	<Import Project="$(MSBuildThisFileDirectory)\GameFolder.props" Condition="Exists('$(MSBuildThisFileDirectory)\GameFolder.props')" />
+  
+	<Target Name="ValidateGamePath">
+		<Error Text="The GameFolder property must be set to the GTFO game folder." Condition="'$(GameFolder)' == '' or !Exists('$(GameFolder)')" />
+	</Target>
+
+	<PropertyGroup>
+		<BIELibsFolder>$(GameFolder)\BepInEx\core</BIELibsFolder>
+		<CorLibsFolder>$(GameFolder)\dotnet</CorLibsFolder>
+		<InteropLibsFolder>$(GameFolder)\BepInEx\interop</InteropLibsFolder>
+		<PluginsFolder>$(GameFolder)\BepInEx\plugins</PluginsFolder>
+		<CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
+	</PropertyGroup>
+
+	<!-- BepInEx libs -->
+	<ItemGroup>
+		<Reference Include="$(BIELibsFolder)\BepInEx.*.dll" Private="false" />
+		<Reference Include="$(BIELibsFolder)\0Harmony.dll" Private="false" />
+		<Reference Include="$(BIELibsFolder)\MonoMod.RuntimeDetour.dll" Private="false" />
+		<Reference Include="$(BIELibsFolder)\Il2CppInterop.*.dll" Private="false" />
+	</ItemGroup>
+	
+	<!-- Interop -->
+	<ItemGroup>
+		<Reference Include="$(InteropLibsFolder)/*.dll" Private="false" />
+		<Reference Remove="$(InteropLibsFolder)/netstandard.dll" />
+		<Reference Remove="$(InteropLibsFolder)/Newtonsoft.Json.dll" />
+	</ItemGroup>
+
+	<!-- Other Dependencies -->
+	<ItemGroup>
+		<Reference Include="$(PluginsFolder)/GTFO-API.dll" Private="false" />
+		<Reference Include="$(PluginsFolder)/**/UnityExplorer.BIE.IL2CPP.CoreCLR.dll" Private="false" />
+		<Reference Include="$(PluginsFolder)/**/Clonesoft.Json.dll" Private="false" />
+	</ItemGroup>
+
+	<!-- MSBuild Actions -->
+	<Target Name="CopyAssemblyAfterBuild" AfterTargets="Build" Condition="'$(PluginOutputPath)' != ''">
+		<MakeDir Directories="$(PluginOutputPath)" Condition="!Exists('$(PluginOutputPath)')"  />
+		<Message Text="Copying Assembly to Ouput Folder..." />
+		<Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll"
+			  DestinationFiles="$(PluginOutputPath)\$(AssemblyName).dll"/>
+		<Copy SourceFiles="$(OutputPath)\$(AssemblyName).xml"
+			  DestinationFiles="$(PluginOutputPath)\$(AssemblyName).xml" Condition="Exists('$(OutputPath)\$(AssemblyName).xml')"/>
+
+		<Message Text="Assembly has been copied to Ouput Folder!" Importance="High"/>
+	</Target>
+	
+	<Target Name="CopyLocalizationFilesAfterBuild" AfterTargets="CopyAssemblyAfterBuild"  Condition="'$(LocalizationFileDir)' != ''">
+		<Message Text="Copying Localization files to Output Folder ..." />
+		<ItemGroup>
+			<LocalizationFilesToCopy Include="$(LocalizationFileDir)\**\*.*" />
+		</ItemGroup>
+		<Copy
+				SourceFiles="@(LocalizationFilesToCopy)"
+				DestinationFolder="$(PluginOutputPath)\Localization\%(RecursiveDir)"
+				SkipUnchangedFiles="true"
+				OverwriteReadOnlyFiles="true"
+				Retries="3"
+				RetryDelayMilliseconds="300"/>
+		<Message Text="Localization files copied!" Importance="High" />
+	</Target>
+
+	<Target Name="CopyOutputFilesToPluginFolder" AfterTargets="CopyAssemblyAfterBuild;CopyLocalizationFilesAfterBuild" Condition="$(CopyBuildToPluginFolder) == 'true'">
+		<Message Text="Copying Output to Plugins Folder..." />
+		<MakeDir Directories="$(PluginsFolder)\$(AssemblyName)" Condition="!Exists('$(PluginsFolder)\$(AssemblyName)')"  />
+		<ItemGroup>
+			<OutputFilesToCopy Include="$(PluginOutputPath)\**\*.*" />
+		</ItemGroup>
+		<Copy
+				SourceFiles="@(OutputFilesToCopy)"
+				DestinationFolder="$(PluginsFolder)\$(AssemblyName)\%(RecursiveDir)"
+				SkipUnchangedFiles="true"
+				OverwriteReadOnlyFiles="true"
+				Retries="3"
+				RetryDelayMilliseconds="300"/>
+
+		<Message Text="Output has been copied to Plugins Folder!" Importance="High"/>
+	</Target>
+
+	<Target Name="CopyMiscFilesToOutputFolder" AfterTargets="CopyAssemblyAfterBuild">
+		<Message Text="Copying Misc files to Output Folder..." />
+		<ItemGroup Condition="Exists('$(MSBuildProjectDirectory)\icon.png')">
+			<MiscFilesToCopy Include="$(MSBuildProjectDirectory)\icon.png" />
+		</ItemGroup>
+		<ItemGroup Condition="Exists('$(MSBuildProjectDirectory)\README.md')">
+			<MiscFilesToCopy Include="$(MSBuildProjectDirectory)\README.md" />
+		</ItemGroup>
+		<ItemGroup Condition="Exists('$(MSBuildProjectDirectory)\CHANGELOG.md')">
+			<MiscFilesToCopy Include="$(MSBuildProjectDirectory)\CHANGELOG.md" />
+		</ItemGroup>
+		<Copy
+				SourceFiles="@(MiscFilesToCopy)"
+				DestinationFolder="$(PluginOutputPath)\..\"
+				SkipUnchangedFiles="true"
+				OverwriteReadOnlyFiles="true"
+				Retries="3"
+				RetryDelayMilliseconds="300" Condition="'@(MiscFilesToCopy)' != ''" />
+
+		<Message Text="Misc files have been copied to Output Folder!" Importance="High"/>
+	</Target>
+
+	<ItemGroup>
+		<ProjectReference Include="$(MSBuildThisFileDirectory)\ManifestInfoSourceGenerator\ManifestInfoSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true"  />
+	</ItemGroup>
+
+	<UsingTask TaskName="ManifestGenerator.ManifestGeneratorTask" AssemblyFile="$(MSBuildThisFileDirectory)\BuildTasks\Tasks\ManifestGenerator.dll"/>
+
+	<Target Name="GenerateManifestFile" AfterTargets="CopyAssemblyAfterBuild" Condition="'$(TSName)' != ''">
+		<PropertyGroup Condition="'$(TSVersion)' == '' And '$(GitSemVerMajor)' != ''">
+			<TSVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</TSVersion>
+		</PropertyGroup>
+		<ManifestGeneratorTask Name="$(TSName)" Author="$(TSAuthor)" Version="$(TSVersion)" WebsiteURL="$(TSWebsite)" Description="$(TSDescription)" Dependencies="@(TSDependencyStrings)" OutputPath="$(PluginOutputPath)\..\" />
+	</Target>
+	
+	<Target Name="ZipOutputPath" AfterTargets="CopyAssemblyAfterBuild;CopyLocalizationFilesAfterBuild;CopyMiscFilesToOutputFolder;GenerateManifestFile" Condition="'$(Configuration)' == 'Release'">
+		<PropertyGroup Condition="'$(TSVersion)' == '' And '$(GitSemVerMajor)' != ''">
+			<TSVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</TSVersion>
+		</PropertyGroup>
+		<ZipDirectory
+				SourceDirectory="$(PluginOutputPath)\..\"
+				DestinationFile="$(PluginOutputPath)\..\..\$(AssemblyName)_v$(TSVersion).zip"
+				Overwrite="true" />
+	</Target>
+</Project>

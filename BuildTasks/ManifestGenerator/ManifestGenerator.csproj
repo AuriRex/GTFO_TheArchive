@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <LangVersion>10.0</LangVersion>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <CopyTaskAssembliesTo>$(MSBuildThisFileDirectory)\..\Tasks\</CopyTaskAssembliesTo>
+    </PropertyGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="Costura.Fody" Version="6.0.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Fody" Version="6.9.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.13.9" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    </ItemGroup>
+
+    <Target Name="CopyAssemblyAfterBuild" AfterTargets="Build" Condition="'$(CopyTaskAssembliesTo)' != ''">
+        <MakeDir Directories="$(CopyTaskAssembliesTo)" Condition="!Exists('$(CopyTaskAssembliesTo)')"  />
+        <Message Text="Copying Assembly to Ouput Folder..." Importance="High"/>
+        <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll"
+              DestinationFiles="$(CopyTaskAssembliesTo)\$(AssemblyName).dll"/>
+
+        <Message Text="Assembly has been copied to Ouput Folder!" Importance="High"/>
+    </Target>
+    
+</Project>

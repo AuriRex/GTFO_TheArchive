@@ -6,10 +6,10 @@ using System.Linq;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
-namespace TheArchive.Loader
+namespace TheArchive.Loader;
+
+public static partial class LoaderWrapper
 {
-    public static partial class LoaderWrapper
-    {
 #if MelonLoader
         public static string GameDirectory => MelonUtils.GameDirectory;
 
@@ -72,5 +72,4 @@ namespace TheArchive.Loader
             }
         }
 #endif
-    }
 }

@@ -1,14 +1,19 @@
-﻿namespace TheArchive.Core
-{
-    public interface IArchiveModule
-    {
-        bool ApplyHarmonyPatches { get; }
-        bool UsesLegacyPatches { get; }
-        ArchiveLegacyPatcher Patcher { get; set; }
+﻿using TheArchive.Core.Bootstrap;
 
-        void Init();
-        void OnSceneWasLoaded(int buildIndex, string sceneName);
-        void OnLateUpdate();
-        void OnExit();
-    }
+namespace TheArchive.Core;
+
+/// <summary>
+/// Defines an archive module and makes an assembly eligible for loading via the <see cref="ArchiveModuleChainloader"/>.
+/// </summary>
+public interface IArchiveModule
+{
+    /// <summary>
+    /// The modules default feature group.
+    /// </summary>
+    string ModuleGroup { get; }
+
+    /// <summary>
+    /// Called once after the module has been loaded.
+    /// </summary>
+    void Init();
 }

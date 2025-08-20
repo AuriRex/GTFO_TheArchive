@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Fixes.BioTrackerStuckSoundFix.Name": {
+        "FName": {
+          "English": "Bio Stuck Sound Fix",
+          "Chinese": "生物追踪器卡声音修复",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Fixes.BioTrackerStuckSoundFix.Description": {
+        "FDescription": {
+          "English": "Stops the tagging progress sound <u>after unwielding the tracker</u>, just in case the sound gets stuck.",
+          "Chinese": "<u>在解除装备追踪器后</u>停止标记进度声音，以防声音卡住。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

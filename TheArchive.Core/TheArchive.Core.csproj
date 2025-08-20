@@ -1,103 +1,46 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="../Dependencies.props" />
+	<Import Project="../Shared.props" />
+	
 	<PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">R_ML</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-
 		<RootNamespace>TheArchive</RootNamespace>
 		<AssemblyName>TheArchive.Core</AssemblyName>
 
-		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-		
-		<NuGetPackageImportStamp>
-		</NuGetPackageImportStamp>
+		<PluginOutputPath>../output/TheArchive.Core/plugins/</PluginOutputPath>
+		<LocalizationFileDir>./Localization/</LocalizationFileDir>
+		<CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
+
+		<NoWarn>CS0436</NoWarn> <!-- Type conflicts with imported type -->
+
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
-	
-	<PropertyGroup Condition="'$(Configuration)' == 'R_ML'">
-		<TargetFramework>net472</TargetFramework>
-		<DefineConstants>TRACE</DefineConstants>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<ErrorReport>prompt</ErrorReport>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)' == 'R_BIE'">
-		<TargetFramework>net6.0</TargetFramework>
-		<DefineConstants>TRACE</DefineConstants>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Optimize>true</Optimize>
-		<DebugType>pdbonly</DebugType>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-	</PropertyGroup>
-	<!-- -->
-	<Import Project="../Loader.props" />
+
+	<ItemGroup>
+		<EmbeddedResource Include="..\README.md" Link="Resources\README.md" />
+		<EmbeddedResource Include="..\LICENSE" Link="Resources\LICENSE" />
+		<EmbeddedResource Include="..\LICENSE_BepInEx" Link="Resources\LICENSE_BepInEx" />
+		<EmbeddedResource Include="Resources\LICENSE_JBA" Link="Resources\LICENSE_JBA" />
+	</ItemGroup>
+
 	<PropertyGroup>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<TSName>TheArchive_Core</TSName>
+		<TSAuthor>AuriRex</TSAuthor>
+		<!-- <TSVersion>2025.1.0</TSVersion> --> <!-- TSVersion empty = GitInfo used instead -->
+		<TSWebsite>https://github.com/AuriRex/GTFO_TheArchive</TSWebsite>
+		<TSDescription>The main Archive mod, adds the ModSettings menu.</TSDescription>
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Include="..\GlobalUsings.cs" Link="GlobalUsings.cs" />
+		<TSDependencyStrings Include="BepInEx-BepInExPack_GTFO-3.2.2" InProject="false" />
+		<TSDependencyStrings Include="AuriRex-Clonesoft_Json-13.0.0" InProject="false" />
 	</ItemGroup>
-	<!-- -->
-	<ItemGroup>
-		<EmbeddedResource Include="Resources\TheArchive.IL2CPP.dll" />
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="Resources\TheArchive.MONO.dll" />
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="Resources\discord_game_sdk.dll" />
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="..\README.md">
-			<Link>Resources\README.md</Link>
-		</EmbeddedResource>
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="..\LICENSE">
-			<Link>Resources\LICENSE</Link>
-		</EmbeddedResource>
-	</ItemGroup>
+	
 	<ItemGroup>
 		<None Include="packages.config" />
 	</ItemGroup>
 
-	<PropertyGroup Condition="!$([MSBuild]::IsOSUnixLike())">
-		<PreBuildEvent>
-			cd $(MSBuildProjectDirectory)\Resources\
-			if exist TheArchive.IL2CPP.dll (
-			ECHO Not generating IL2CPP dummy dll
-			) else (
-			ECHO Generating IL2CPP dummy dll ...
-			ECHO DUMMY &gt; TheArchive.IL2CPP.dll
-				)
-				if exist TheArchive.MONO.dll (
-				ECHO Not generating MONO dummy dll
-				) else (
-				ECHO Generating MONO dummy dll ...
-				ECHO DUMMY &gt; TheArchive.MONO.dll
-			)
-		</PreBuildEvent>
-	</PropertyGroup>
-	<PropertyGroup Condition="$([MSBuild]::IsOSUnixLike())">
-		<PreBuildEvent>
-			cd "$(MSBuildProjectDirectory)/Resources"
-			if [ -f "TheArchive.IL2CPP.dll" ]; then
-			    echo "Not generating IL2CPP dummy dll"
-			else
-			    echo "Generating IL2CPP dummy dll ..."
-			    echo "DUMMY" > TheArchive.IL2CPP.dll
-			fi
-			if [ -f "TheArchive.MONO.dll" ]; then
-			    echo "Not generating MONO dummy dll"
-			else
-			    echo "Generating MONO dummy dll ..."
-			    echo "DUMMY" > TheArchive.MONO.dll
-			fi
-		</PreBuildEvent>
-	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="GitInfo" Version="2.2.0" />
+		<PackageReference Include="GitInfo" Version="2.3.0" />
+		<PackageReference Include="Mono.Cecil" Version="0.11.5" />
+		<PackageReference Include="SemanticVersioning" Version="2.0.2" />
 	</ItemGroup>
 </Project>

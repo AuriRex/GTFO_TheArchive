@@ -1,415 +1,438 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using TheArchive.Core;
-using TheArchive.Loader;
+using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.Localization;
 using static TheArchive.Utilities.Utils;
 
-namespace TheArchive.Utilities
+namespace TheArchive.Utilities;
+
+/// <summary>
+/// Paths and Files.
+/// </summary>
+public static class LocalFiles
 {
-    public class LocalFiles
+    /// <summary>
+    /// GTFO settings file name (but .json)
+    /// </summary>
+    public const string GTFO_SETTINGS_JSON = "GTFO_Settings.json";
+    /// <summary>
+    /// GTFO player favorites file name (but .json)
+    /// </summary>
+    public const string GTFO_FAVORITES_JSON = "GTFO_Favorites.json";
+    /// <summary>
+    /// GTFO bot favorites file name (but .json)
+    /// </summary>
+    public const string GTFO_BOT_FAVORITES_JSON = "GTFO_BotFavorites.json";
+
+    private static string _modLocalLowPath;
+    /// <summary>
+    /// Path to <c>User/AppData/LocalLow/GTFO_TheArchive</c>.
+    /// </summary>
+    public static string ModLocalLowPath
     {
-
-        public const string GTFO_SETTINGS_JSON = "GTFO_Settings.json";
-        public const string GTFO_FAVORITES_JSON = "GTFO_Favorites.json";
-        public const string GTFO_BOT_FAVORITES_JSON = "GTFO_BotFavorites.json";
-
-
-        private static string _modLocalLowPath = null;
-        public static string ModLocalLowPath
+        get
         {
-            get
-            {
-                if(_modLocalLowPath == null)
-                {
-                    
-                    _modLocalLowPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "GTFO_TheArchive");
-                    if (!Directory.Exists(_modLocalLowPath))
-                        Directory.CreateDirectory(_modLocalLowPath);
-                }
+            if (_modLocalLowPath != null)
                 return _modLocalLowPath;
-            }
+            
+            _modLocalLowPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "GTFO_TheArchive");
+            
+            if (!Directory.Exists(_modLocalLowPath))
+                Directory.CreateDirectory(_modLocalLowPath);
+            
+            return _modLocalLowPath;
         }
+    }
 
-        private static string _modDefaultGameLogsAndCachePath = null;
-        public static string ModDefaultGameLogsAndCachePath
+    private static string _modDefaultGameLogsAndCachePath;
+    /// <summary>
+    /// The default logs and other cache file directory path.
+    /// </summary>
+    public static string ModDefaultGameLogsAndCachePath
+    {
+        get
         {
-            get
-            {
-                if (_modDefaultGameLogsAndCachePath == null)
-                {
-                    _modDefaultGameLogsAndCachePath = Path.Combine(ModLocalLowPath, "GameLogsAndCache");
-                    if (!Directory.Exists(_modDefaultGameLogsAndCachePath))
-                        Directory.CreateDirectory(_modDefaultGameLogsAndCachePath);
-                }
+            if (_modDefaultGameLogsAndCachePath != null)
                 return _modDefaultGameLogsAndCachePath;
-            }
+            
+            _modDefaultGameLogsAndCachePath = Path.Combine(ModLocalLowPath, "GameLogsAndCache");
+            
+            if (!Directory.Exists(_modDefaultGameLogsAndCachePath))
+                Directory.CreateDirectory(_modDefaultGameLogsAndCachePath);
+            
+            return _modDefaultGameLogsAndCachePath;
         }
+    }
 
-        private static string _modDefaultSaveDataPath = null;
-        public static string ModDefaultSaveDataPath
+    private static string _modDefaultSaveDataPath;
+    /// <summary>
+    /// The default <c>SaveData</c> path (inside <see cref="ModLocalLowPath"/>)
+    /// </summary>
+    public static string ModDefaultSaveDataPath
+    {
+        get
         {
-            get
-            {
-                if (_modDefaultSaveDataPath == null)
-                {
-                    _modDefaultSaveDataPath = Path.Combine(ModLocalLowPath, "SaveData");
-                    if (!Directory.Exists(_modLocalLowPath))
-                        Directory.CreateDirectory(_modLocalLowPath);
-                }
+            if (_modDefaultSaveDataPath != null)
                 return _modDefaultSaveDataPath;
-            }
+            
+            _modDefaultSaveDataPath = Path.Combine(ModLocalLowPath, "SaveData");
+            
+            if (!Directory.Exists(_modLocalLowPath))
+                Directory.CreateDirectory(_modLocalLowPath);
+            
+            return _modDefaultSaveDataPath;
         }
+    }
 
-        private static string _dataBlockDumpPath = null;
-        public static string DataBlockDumpPath
+    private static string _dataBlockDumpPath;
+    /// <summary>
+    /// Path for the datablock dumping functionality.
+    /// </summary>
+    public static string DataBlockDumpPath
+    {
+        get
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_dataBlockDumpPath))
-                {
-                    _dataBlockDumpPath = Path.Combine(SaveDirectoryPath, "DataBlocks", $"Build_{BuildDB.BuildNumber}_{ArchiveMod.CurrentRundown}");
-                    if (!Directory.Exists(_dataBlockDumpPath))
-                        Directory.CreateDirectory(_dataBlockDumpPath);
-                }
+            if (!string.IsNullOrEmpty(_dataBlockDumpPath))
                 return _dataBlockDumpPath;
-            }
+            
+            _dataBlockDumpPath = Path.Combine(SaveDirectoryPath, "DataBlocks", $"Build_{BuildDB.BuildNumber}_{ArchiveMod.CurrentRundown}");
+            
+            if (!Directory.Exists(_dataBlockDumpPath))
+                Directory.CreateDirectory(_dataBlockDumpPath);
+            
+            return _dataBlockDumpPath;
         }
+    }
 
-        private static string _savePath = null;
-        /// <summary>
-        /// Default is <see cref="ModDefaultSaveDataPath"/> (LocalLow/GTFO_TheArchive/), can be overridden by using <see cref="ArchiveSettings.CustomFileSaveLocation"/>
-        /// </summary>
-        public static string SaveDirectoryPath
+    private static string _savePath;
+    /// <summary>
+    /// Default is <see cref="ModDefaultSaveDataPath"/> (<c>LocalLow/GTFO_TheArchive/</c>), can be overridden by using <see cref="ArchiveSettings.CustomFileSaveLocation"/>
+    /// </summary>
+    public static string SaveDirectoryPath
+    {
+        get
         {
-            get
-            {
-                if(string.IsNullOrEmpty(_savePath))
-                {
-                    _savePath = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? ModDefaultSaveDataPath : ArchiveMod.Settings.CustomFileSaveLocation;
-                    if (!Directory.Exists(_savePath))
-                        Directory.CreateDirectory(_savePath);
-                }
+            if (!string.IsNullOrEmpty(_savePath))
                 return _savePath;
-            }
+            
+            _savePath = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomFileSaveLocation) ? ModDefaultSaveDataPath : ArchiveMod.Settings.CustomFileSaveLocation;
+            
+            if (!Directory.Exists(_savePath))
+                Directory.CreateDirectory(_savePath);
+            
+            return _savePath;
         }
+    }
 
-        private static string _gameLogsAndCacheSavePath = null;
-        public static string GameLogsAndCachePath
+    private static string _gameLogsAndCacheSavePath;
+    /// <summary>
+    /// The real logs and other cache file directory path.
+    /// </summary>
+    public static string GameLogsAndCachePath
+    {
+        get
         {
-            get
-            {
-                if (_gameLogsAndCacheSavePath == null)
-                {
-                    _gameLogsAndCacheSavePath = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomLogsAndCacheLocation) ? ModDefaultGameLogsAndCachePath : ArchiveMod.Settings.CustomLogsAndCacheLocation;
-                    if (!Directory.Exists(_gameLogsAndCacheSavePath))
-                        Directory.CreateDirectory(_gameLogsAndCacheSavePath);
-                }
+            if (_gameLogsAndCacheSavePath != null)
                 return _gameLogsAndCacheSavePath;
-            }
+            
+            _gameLogsAndCacheSavePath = string.IsNullOrWhiteSpace(ArchiveMod.Settings.CustomLogsAndCacheLocation) ? ModDefaultGameLogsAndCachePath : ArchiveMod.Settings.CustomLogsAndCacheLocation;
+            
+            if (!Directory.Exists(_gameLogsAndCacheSavePath))
+                Directory.CreateDirectory(_gameLogsAndCacheSavePath);
+            
+            return _gameLogsAndCacheSavePath;
         }
+    }
 
-        private static string _versionSpecificLogsAndCachePath = null;
-        public static string VersionSpecificLogsAndCachePath
+    private static string _versionSpecificLogsAndCachePath;
+    /// <summary>
+    /// A more specific logs and other cache file directory path depending on game version.
+    /// </summary>
+    public static string VersionSpecificLogsAndCachePath
+    {
+        get
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_versionSpecificLogsAndCachePath))
-                {
-                    _versionSpecificLogsAndCachePath = Path.Combine(LocalFiles.GameLogsAndCachePath, $"{((int)ArchiveMod.CurrentRundown).ToString().PadLeft(2, '0')}_{ArchiveMod.CurrentRundown}_Data", "appdata");
-                    if (!Directory.Exists(_versionSpecificLogsAndCachePath))
-                        Directory.CreateDirectory(_versionSpecificLogsAndCachePath);
-                }
+            if (!string.IsNullOrEmpty(_versionSpecificLogsAndCachePath))
                 return _versionSpecificLogsAndCachePath;
-            }
+            
+            _versionSpecificLogsAndCachePath = Path.Combine(LocalFiles.GameLogsAndCachePath, $"{((int)ArchiveMod.CurrentRundown).ToString().PadLeft(2, '0')}_{ArchiveMod.CurrentRundown}_Data", "appdata");
+            
+            if (!Directory.Exists(_versionSpecificLogsAndCachePath))
+                Directory.CreateDirectory(_versionSpecificLogsAndCachePath);
+            
+            return _versionSpecificLogsAndCachePath;
         }
+    }
 
-        private static string _versionSpecificSavePath = null;
-        public static string VersionSpecificSaveDirectoryPath
+    private static string _versionSpecificSavePath;
+    /// <summary>
+    /// Path to game version specific file save directory.
+    /// </summary>
+    public static string VersionSpecificSaveDirectoryPath
+    {
+        get
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_versionSpecificSavePath))
-                {
-                    if(LoaderWrapper.IsModInstalled(ArchiveMod.MTFO_GUID))
-                    {
-#warning TODO: Not this
-                        _versionSpecificSavePath = Path.Combine(SaveDirectoryPath, "Modded", $"TODO_USE_MTFO_FOLDER_HERE_Data");
-                    }
-                    else
-                    {
-                        _versionSpecificSavePath = GetVersionSpecificSaveDirectoryPath(ArchiveMod.CurrentRundown);
-                    }
-
-                    if (!Directory.Exists(_versionSpecificSavePath))
-                    {
-                        Directory.CreateDirectory(_versionSpecificSavePath);
-                        try
-                        {
-                            if(!CopyMostRecentSaveFiles(ArchiveMod.CurrentRundown - 1, ArchiveMod.CurrentRundown))
-                            {
-                                ArchiveLogger.Notice("Creating new game settings file(s)!");
-                            }
-                        }
-                        catch(Exception ex)
-                        {
-                            ArchiveLogger.Warning($"Caught an exception while trying to copy over older settings files: {ex}: {ex.Message}");
-                            ArchiveLogger.Debug(ex.StackTrace);
-                        }
-                    }
-                }
-
+            if (!string.IsNullOrEmpty(_versionSpecificSavePath))
                 return _versionSpecificSavePath;
-            }
-        }
+            
+            _versionSpecificSavePath = GetVersionSpecificSaveDirectoryPath(ArchiveMod.CurrentRundown);
 
-        internal static bool CopyFromBaseGameLocation(RundownID copyTo)
-        {
-            var defaultBasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "10 Chambers Collective", "GTFO");
-
-            var baseSettings = Path.Combine(defaultBasePath, "GTFO_Settings.txt");
-            var baseFavorites = Path.Combine(defaultBasePath, "GTFO_Favorites.txt");
-            var baseBotFavorites = Path.Combine(defaultBasePath, "GTFO_BotFavorites.txt");
-
-            if (File.Exists(baseSettings))
+            if (Directory.Exists(_versionSpecificSavePath))
+                return _versionSpecificSavePath;
+            
+            Directory.CreateDirectory(_versionSpecificSavePath);
+            
+            try
             {
-                var newSettingsFile = GetSettingsPath(copyTo);
-                ArchiveLogger.Debug($"Copying vanilla game settings file! (\"{baseSettings}\" -> \"{newSettingsFile}\")");
-                File.Copy(baseSettings, newSettingsFile);
-
-                var newFavs = GetFavoritesPath(copyTo);
-                var newBotFavs = GetBotFavoritesPath(copyTo);
-
-                if (File.Exists(baseFavorites))
+                if (!CopyMostRecentSaveFiles(ArchiveMod.CurrentRundown - 1, ArchiveMod.CurrentRundown))
                 {
-                    ArchiveLogger.Debug($"Copying vanilla game favorites file! (\"{baseFavorites}\" -> \"{newFavs}\")");
-                    File.Copy(baseFavorites, newFavs);
+                    ArchiveLogger.Notice("Creating new game settings file(s)!");
                 }
-
-                if (File.Exists(baseBotFavorites))
-                {
-                    ArchiveLogger.Debug($"Copying vanilla game bot favorites file! (\"{baseBotFavorites}\" -> \"{newBotFavs}\")");
-                    File.Copy(baseBotFavorites, newBotFavs);
-                }
-
-                return true;
+            }
+            catch (Exception ex)
+            {
+                ArchiveLogger.Warning($"Caught an exception while trying to copy over older settings files: {ex}: {ex.Message}");
+                ArchiveLogger.Debug(ex.StackTrace);
             }
 
+            return _versionSpecificSavePath;
+        }
+    }
+
+    private static bool CopyFromBaseGameLocation(RundownID copyTo)
+    {
+        var defaultBasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "10 Chambers Collective", "GTFO");
+
+        var baseSettings = Path.Combine(defaultBasePath, "GTFO_Settings.txt");
+        var baseFavorites = Path.Combine(defaultBasePath, "GTFO_Favorites.txt");
+        var baseBotFavorites = Path.Combine(defaultBasePath, "GTFO_BotFavorites.txt");
+
+        if (!File.Exists(baseSettings))
             return false;
+        
+        var newSettingsFile = GetSettingsPath(copyTo);
+        ArchiveLogger.Debug($"Copying vanilla game settings file! (\"{baseSettings}\" -> \"{newSettingsFile}\")");
+        File.Copy(baseSettings, newSettingsFile);
+
+        var newFavs = GetFavoritesPath(copyTo);
+        var newBotFavs = GetBotFavoritesPath(copyTo);
+
+        if (File.Exists(baseFavorites))
+        {
+            ArchiveLogger.Debug($"Copying vanilla game favorites file! (\"{baseFavorites}\" -> \"{newFavs}\")");
+            File.Copy(baseFavorites, newFavs);
         }
 
-        internal static bool CopyMostRecentSaveFiles(RundownID copyFrom, RundownID copyTo, int maxStep = 3)
+        if (File.Exists(baseBotFavorites))
         {
-            if (copyFrom < RundownID.RundownOne)
+            ArchiveLogger.Debug($"Copying vanilla game bot favorites file! (\"{baseBotFavorites}\" -> \"{newBotFavs}\")");
+            File.Copy(baseBotFavorites, newBotFavs);
+        }
+
+        return true;
+
+    }
+
+    private static bool CopyMostRecentSaveFiles(RundownID copyFrom, RundownID copyTo, int maxStep = 3)
+    {
+        if (copyFrom < RundownID.RundownOne)
+            return CopyFromBaseGameLocation(copyTo);
+
+        var olderSettingsFile = GetSettingsPath(copyFrom);
+
+        if (!File.Exists(olderSettingsFile))
+        {
+            if (maxStep <= 1)
+            {
                 return CopyFromBaseGameLocation(copyTo);
-
-            var olderSettingsFile = GetSettingsPath(copyFrom);
-
-            if (!File.Exists(olderSettingsFile))
-            {
-                if (maxStep <= 1)
-                {
-                    return CopyFromBaseGameLocation(copyTo);
-                }
-
-                return CopyMostRecentSaveFiles(copyFrom - 1, copyTo, maxStep - 1);
             }
 
-            var newSettingsFile = GetSettingsPath(copyTo);
-            ArchiveLogger.Debug($"Copying most recent settings file! (\"{olderSettingsFile}\" -> \"{newSettingsFile}\")");
-            File.Copy(olderSettingsFile, newSettingsFile);
+            return CopyMostRecentSaveFiles(copyFrom - 1, copyTo, maxStep - 1);
+        }
 
-            if (!ArchiveMod.IsPlayingModded)
-            {
-                var newFavs = GetFavoritesPath(copyTo);
-                var oldFavs = GetFavoritesPath(copyFrom);
+        var newSettingsFile = GetSettingsPath(copyTo);
+        ArchiveLogger.Debug($"Copying most recent settings file! (\"{olderSettingsFile}\" -> \"{newSettingsFile}\")");
+        File.Copy(olderSettingsFile, newSettingsFile);
 
-                if (File.Exists(oldFavs))
-                {
-                    ArchiveLogger.Debug($"Copying most recent favorites file! (\"{oldFavs}\" -> \"{newFavs}\")");
-                    File.Copy(oldFavs, newFavs);
-                }
-
-                var newBotFavs = GetBotFavoritesPath(copyTo);
-                var oldBotFavs = GetBotFavoritesPath(copyFrom);
-
-                if (File.Exists(oldBotFavs))
-                {
-                    ArchiveLogger.Debug($"Copying most recent bot favorites file! (\"{oldBotFavs}\" -> \"{newBotFavs}\")");
-                    File.Copy(oldBotFavs, newBotFavs);
-                }
-            }
-
+        if (ArchiveMod.IsPlayingModded)
             return true;
+        
+        var newFavs = GetFavoritesPath(copyTo);
+        var oldFavs = GetFavoritesPath(copyFrom);
+
+        if (File.Exists(oldFavs))
+        {
+            ArchiveLogger.Debug($"Copying most recent favorites file! (\"{oldFavs}\" -> \"{newFavs}\")");
+            File.Copy(oldFavs, newFavs);
         }
 
-        public static string GetVersionSpecificSaveDirectoryPath(RundownID rundown)
+        var newBotFavs = GetBotFavoritesPath(copyTo);
+        var oldBotFavs = GetBotFavoritesPath(copyFrom);
+
+        if (File.Exists(oldBotFavs))
         {
-            return Path.Combine(SaveDirectoryPath, $"{((int)rundown).ToString().PadLeft(2, '0')}_{rundown}_Data");
+            ArchiveLogger.Debug($"Copying most recent bot favorites file! (\"{oldBotFavs}\" -> \"{newBotFavs}\")");
+            File.Copy(oldBotFavs, newBotFavs);
         }
 
-        private static string _otherConfigsPath = null;
-        public static string OtherConfigsDirectoryPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_otherConfigsPath))
-                {
-                    _otherConfigsPath = Path.Combine(SaveDirectoryPath, "OtherConfigs");
+        return true;
+    }
 
-                    if (!Directory.Exists(_otherConfigsPath))
-                        Directory.CreateDirectory(_otherConfigsPath);
-                }
+    /// <summary>
+    /// Get the save directory for a specific rundown ID game version.
+    /// </summary>
+    /// <param name="rundown">The rundown to get the save path for.</param>
+    /// <returns>The path to the version specific save folder.</returns>
+    public static string GetVersionSpecificSaveDirectoryPath(RundownID rundown)
+    {
+        return Path.Combine(SaveDirectoryPath, $"{((int)rundown).ToString().PadLeft(2, '0')}_{rundown}_Data");
+    }
+
+    private static string _otherConfigsPath;
+    /// <summary>
+    /// The path where misc config files go to.
+    /// </summary>
+    public static string OtherConfigsDirectoryPath
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(_otherConfigsPath))
                 return _otherConfigsPath;
-            }
+            
+            _otherConfigsPath = Path.Combine(SaveDirectoryPath, "OtherConfigs");
+
+            if (!Directory.Exists(_otherConfigsPath))
+                Directory.CreateDirectory(_otherConfigsPath);
+            
+            return _otherConfigsPath;
         }
+    }
 
-        private static string _featureConfigsPath = null;
-        public static string FeatureConfigsDirectoryPath
+    private static string _featureConfigsPath;
+    /// <summary>
+    /// The base path for feature config files.
+    /// </summary>
+    public static string FeatureConfigsDirectoryPath
+    {
+        get
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_featureConfigsPath))
-                {
-                    _featureConfigsPath = Path.Combine(SaveDirectoryPath, "FeatureSettings");
-
-                    if (!Directory.Exists(_featureConfigsPath))
-                        Directory.CreateDirectory(_featureConfigsPath);
-                }
+            if (!string.IsNullOrEmpty(_featureConfigsPath))
                 return _featureConfigsPath;
-            }
-        }
+            
+            _featureConfigsPath = Path.Combine(SaveDirectoryPath, "FeatureSettings");
 
-        private static string _filesPath = null;
-        public static string FilesDirectoryPath
+            if (!Directory.Exists(_featureConfigsPath))
+                Directory.CreateDirectory(_featureConfigsPath);
+            
+            return _featureConfigsPath;
+        }
+    }
+
+    private static string _filesPath;
+    /// <summary>
+    /// A files folder (version specific).
+    /// </summary>
+    [Obsolete("Legacy path.")]
+    public static string FilesDirectoryPath
+    {
+        get
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_filesPath))
-                {
-                    _filesPath = Path.Combine(VersionSpecificSaveDirectoryPath, "Files");
-                    if (!Directory.Exists(_filesPath))
-                        Directory.CreateDirectory(_filesPath);
-                }
+            if (!string.IsNullOrEmpty(_filesPath))
                 return _filesPath;
-            }
+            
+            _filesPath = Path.Combine(VersionSpecificSaveDirectoryPath, "Files");
+            
+            if (!Directory.Exists(_filesPath))
+                Directory.CreateDirectory(_filesPath);
+            
+            return _filesPath;
         }
+    }
 
-        private static string _settingsPath = null;
-        public static string SettingsPath
+    private static string _settingsPath;
+    /// <summary>
+    /// The custom path to the version specific game settings file.
+    /// </summary>
+    public static string SettingsPath
+    {
+        get
         {
-            get
+            if (!string.IsNullOrEmpty(_settingsPath))
             {
-                if (string.IsNullOrEmpty(_settingsPath))
-                    _settingsPath = Path.Combine(VersionSpecificSaveDirectoryPath, GTFO_SETTINGS_JSON);
                 return _settingsPath;
             }
+            
+            _settingsPath = Path.Combine(VersionSpecificSaveDirectoryPath, GTFO_SETTINGS_JSON);
+
+            return _settingsPath;
         }
+    }
 
-        public static string GetSettingsPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_SETTINGS_JSON);
+    /// <summary>
+    /// Get the settings file for another rundown game version.
+    /// </summary>
+    /// <param name="rundown">The rundown to get the path for.</param>
+    /// <returns>The game settings file path for a specific game version.</returns>
+    public static string GetSettingsPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_SETTINGS_JSON);
 
-        private static string _favoritesPath = null;
-        public static string FavoritesPath
+    private static string _favoritesPath;
+    /// <summary>
+    /// GTFO player favorites file path.
+    /// </summary>
+    public static string FavoritesPath
+    {
+        get
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_favoritesPath))
-                    _favoritesPath = Path.Combine(VersionSpecificSaveDirectoryPath, GTFO_FAVORITES_JSON);
-                return _favoritesPath;
-            }
+            if (string.IsNullOrEmpty(_favoritesPath))
+                _favoritesPath = Path.Combine(VersionSpecificSaveDirectoryPath, GTFO_FAVORITES_JSON);
+            return _favoritesPath;
         }
+    }
 
-        public static string GetFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_FAVORITES_JSON);
+    /// <summary>
+    /// Get the player favorites file for another rundown game version.
+    /// </summary>
+    /// <param name="rundown">The rundown to get the path for.</param>
+    /// <returns>The player favorites file path for a specific game version.</returns>
+    public static string GetFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_FAVORITES_JSON);
 
 
-        private static string _botFavoritesPath = null;
-        public static string BotFavoritesPath
+    private static string _botFavoritesPath;
+    /// <summary>
+    /// GTFO bot favorites file path.
+    /// </summary>
+    public static string BotFavoritesPath
+    {
+        get
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_botFavoritesPath))
-                    _botFavoritesPath = Path.Combine(VersionSpecificSaveDirectoryPath, GTFO_BOT_FAVORITES_JSON);
-                return _botFavoritesPath;
-            }
+            if (string.IsNullOrEmpty(_botFavoritesPath))
+                _botFavoritesPath = Path.Combine(VersionSpecificSaveDirectoryPath, GTFO_BOT_FAVORITES_JSON);
+            return _botFavoritesPath;
         }
+    }
 
-        public static string GetBotFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_BOT_FAVORITES_JSON);
-
-
-        private static string _boostersPath = null;
-        public static string BoostersPath
+    /// <summary>
+    /// Get the bot favorites file for another rundown game version.
+    /// </summary>
+    /// <param name="rundown">The rundown to get the path for.</param>
+    /// <returns>The bot favorites file path for a specific game version.</returns>
+    public static string GetBotFavoritesPath(RundownID rundown) => Path.Combine(GetVersionSpecificSaveDirectoryPath(rundown), GTFO_BOT_FAVORITES_JSON);
+    
+    /// <summary>
+    /// Load a miscellaneous config file from the <see cref="OtherConfigsDirectoryPath"/>.
+    /// </summary>
+    /// <param name="fileExists"><c>False</c> if the file was just created.</param>
+    /// <param name="saveIfNonExistent">Save an empty config immediately if the file doesn't exist yet.</param>
+    /// <typeparam name="T">The config file type.</typeparam>
+    /// <returns>The loaded config file instance.</returns>
+    public static T LoadConfig<T>(out bool fileExists, bool saveIfNonExistent = true) where T : new()
+    {
+        var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
+        
+        try
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_boostersPath))
-                    _boostersPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"Booster_Data.json");
-                return _boostersPath;
-            }
-        }
-
-        private static string _vanityItemsPath = null;
-        public static string VanityItemsPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_vanityItemsPath))
-                    _vanityItemsPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"VanityItems_Data.json");
-                return _vanityItemsPath;
-            }
-        }
-
-        private static string _vanityItemsLayerDropsPath = null;
-        public static string VanityItemsLayerDropsPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_vanityItemsLayerDropsPath))
-                    _vanityItemsLayerDropsPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"VanityItemsLayerDrops_Data.json");
-                return _vanityItemsLayerDropsPath;
-            }
-        }
-
-        private static string _progressionPath = null;
-        private static string LocalProgressionBasePathNoExtension
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_progressionPath))
-                    _progressionPath = Path.Combine(VersionSpecificSaveDirectoryPath, $"RundownProgression_Data");
-                return _progressionPath;
-            }
-        }
-
-        public static string GetLocalProgressionPathForKey(string rundownKey)
-        {
-            return $"{LocalProgressionBasePathNoExtension}_{rundownKey}.json";
-        }
-
-        public static void SaveToFilesDir(string filename, string jsonOrSomething)
-        {
-
-            string path = Path.Combine(FilesDirectoryPath, filename);
-            if (string.IsNullOrEmpty(jsonOrSomething))
-            {
-                ArchiveLogger.Msg(ConsoleColor.DarkRed, $"Saving \"{filename}\" to disk failed because the data is null or empty! Path: {path}");
-                return;
-            }
-            ArchiveLogger.Msg(ConsoleColor.Blue, $"Saving \"{filename}\" to disk at: {path}");
-            File.WriteAllText(path, jsonOrSomething);
-        }
-
-        public static string LoadFromFilesDir(string filename, bool isJson = true)
-        {
-            string path = Path.Combine(FilesDirectoryPath, filename);
-            ArchiveLogger.Msg(ConsoleColor.Green, $"Loading \"{filename}\" from disk at: {path}");
-            if (!File.Exists(path))
-                return isJson ? "{}" : string.Empty;
-            return File.ReadAllText(path);
-        }
-
-        public static T LoadConfig<T>(out bool fileExists, bool saveIfNonExistent = true) where T : new()
-        {
-            var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
-
             if (!File.Exists(path))
             {
                 var newT = new T();
@@ -417,6 +440,7 @@ namespace TheArchive.Utilities
                 {
                     SaveConfig(newT);
                 }
+
                 fileExists = false;
                 return newT;
             }
@@ -424,55 +448,186 @@ namespace TheArchive.Utilities
             fileExists = true;
             return JsonConvert.DeserializeObject<T>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
         }
-        public static T LoadConfig<T>(bool saveIfNonExistent = true) where T : new()
+        catch (Exception ex)
         {
-            return LoadConfig<T>(out _, saveIfNonExistent);
+            ArchiveLogger.Error($"An error occured while loading config file {typeof(T).Name}.json");
+            ArchiveLogger.Exception(ex);
         }
 
-        public static void SaveConfig<T>(T config)
+        fileExists = false;
+        return new T();
+    }
+    
+    /// <summary>
+    /// Load a miscellaneous config file from the <see cref="OtherConfigsDirectoryPath"/>.
+    /// </summary>
+    /// <param name="saveIfNonExistent">Save an empty config immediately if the file doesn't exist yet.</param>
+    /// <typeparam name="T">The config file type.</typeparam>
+    /// <returns>The loaded config file instance.</returns>
+    public static T LoadConfig<T>(bool saveIfNonExistent = true) where T : new()
+    {
+        return LoadConfig<T>(out _, saveIfNonExistent);
+    }
+
+    /// <summary>
+    /// Save a miscellaneous config file to the <see cref="OtherConfigsDirectoryPath"/>.
+    /// </summary>
+    /// <param name="config">The config instance to save.</param>
+    /// <typeparam name="T">The config file type.</typeparam>
+    public static void SaveConfig<T>(T config)
+    {
+        try
         {
             var path = Path.Combine(OtherConfigsDirectoryPath, $"{typeof(T).Name}.json");
 
             File.WriteAllText(path, JsonConvert.SerializeObject(config, ArchiveMod.JsonSerializerSettings));
         }
-
-        internal static object LoadFeatureConfig(string featureIdentifier, Type configType, out bool fileExists, bool saveIfNonExistent = true)
+        catch (Exception ex)
         {
-            if (string.IsNullOrWhiteSpace(featureIdentifier)) throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
-            if (configType == null) throw new ArgumentNullException($"Parameter {nameof(configType)} may not be null.");
+            ArchiveLogger.Error($"An error occured while saving config file {typeof(T).Name}.json");
+            ArchiveLogger.Exception(ex);
+        }
+    }
 
-            var path = Path.Combine(FeatureConfigsDirectoryPath, $"{featureIdentifier}_{configType.Name}.json");
+    private static object LoadFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, out bool fileExists, bool saveIfNonExistent = true)
+    {
+        if (string.IsNullOrWhiteSpace(featureIdentifier))
+            throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
+        if (configType == null)
+            throw new ArgumentNullException(nameof(configType));
 
-            if (!File.Exists(path))
+        var moduleSettingsPath = Path.Combine(FeatureConfigsDirectoryPath, moduleIdentifier);
+        if (!Directory.Exists(moduleSettingsPath))
+        {
+            // Make sure settings are carried over when migrating from the AIO build to the split one
+            if (moduleIdentifier == "TheArchive.Essentials")
             {
-                var newT = Activator.CreateInstance(configType);
-                if (saveIfNonExistent)
+                var oldPath = Path.Combine(FeatureConfigsDirectoryPath, "TheArchive.IL2CPP");
+                if (Directory.Exists(oldPath)) // copy Hikaria build configs
                 {
-                    SaveFeatureConfig(featureIdentifier, configType, newT);
+                    ArchiveLogger.Msg(ConsoleColor.Green, $"Migrating old config path from \"{oldPath}\" to \"{moduleSettingsPath}\"");
+                    Directory.Move(oldPath, moduleSettingsPath);
                 }
-                fileExists = false;
-                return newT;
+                else // Copy Legacy Archive build configs lazily
+                {
+                    Directory.CreateDirectory(moduleSettingsPath);
+                    ArchiveLogger.Msg(ConsoleColor.Green, $"Migrating old config files from \"{FeatureConfigsDirectoryPath}\" to \"{moduleSettingsPath}\"");
+                    foreach (var legacyFilePath in Directory.EnumerateFiles(FeatureConfigsDirectoryPath, "*.json",
+                                 SearchOption.TopDirectoryOnly))
+                    {
+                        var newFilePath = Path.Combine(moduleSettingsPath, Path.GetFileName(legacyFilePath));
+                        ArchiveLogger.Debug($"Copying \"{legacyFilePath}\" -> \"{newFilePath}\"");
+                        File.Copy(legacyFilePath, newFilePath);
+                    }
+                }
             }
+            else Directory.CreateDirectory(moduleSettingsPath);
+        }
 
-            fileExists = true;
+        var path = Path.Combine(moduleSettingsPath, $"{featureIdentifier}_{configType.Name}.json");
+
+        if (!File.Exists(path))
+        {
+            var newT = Activator.CreateInstance(configType);
+            if (saveIfNonExistent)
+            {
+                SaveFeatureConfig(moduleIdentifier, featureIdentifier, configType, newT);
+            }
+            fileExists = false;
+            return newT;
+        }
+
+        fileExists = true;
+        try
+        {
             return JsonConvert.DeserializeObject(File.ReadAllText(path), configType, ArchiveMod.JsonSerializerSettings);
         }
-
-        internal static object LoadFeatureConfig(string featureIdentifier, Type configType, bool saveIfNonExistent = true)
+        catch
         {
-            return LoadFeatureConfig(featureIdentifier, configType, out _, saveIfNonExistent);
+            var newT = Activator.CreateInstance(configType);
+            if (saveIfNonExistent)
+            {
+                SaveFeatureConfig(moduleIdentifier, featureIdentifier, configType, newT);
+            }
+            fileExists = false;
+            return newT;
+        }
+    }
+
+    internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature)
+    {
+        var asmLocation = feature.FeatureInternal.OriginAssembly.Location;
+
+        if (string.IsNullOrWhiteSpace(asmLocation))
+        {
+            ArchiveLogger.Warning($"Feature \"{feature.Name}\"'s OriginAssembly.Location is null or whitespace. (ID:{feature.Identifier})");
+            ArchiveLogger.Warning("Localization on dynamic assemblies is not supported currently!");
+            return new();
+        }
+        
+        var dir = Path.Combine(Path.GetDirectoryName(asmLocation)!, "Localization");
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        var path = Path.Combine(dir, $"{feature.Identifier}_Localization.json");
+        if (!File.Exists(path))
+        {
+            var newData = FeatureInternal.GenerateFeatureLocalization(feature);
+            File.WriteAllText(path, JsonConvert.SerializeObject(newData, ArchiveMod.JsonSerializerSettings));
+            return newData;
         }
 
-        internal static void SaveFeatureConfig(string featureIdentifier, Type configType, object configInstance)
+        var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
+        var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
+        var rdata = FeatureInternal.GenerateFeatureLocalization(feature, data);
+        var rjson = JsonConvert.SerializeObject(rdata, ArchiveMod.JsonSerializerSettings);
+        if (rjson.HashString() != json.HashString())
+            File.WriteAllText(path, rjson);
+        return rdata;
+    }
+
+    internal static object LoadFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, bool saveIfNonExistent = true)
+    {
+        return LoadFeatureConfig(moduleIdentifier, featureIdentifier, configType, out _, saveIfNonExistent);
+    }
+
+    private static readonly FileStreamOptions Options = new()
+    {
+        Access = FileAccess.Write,
+        Mode = FileMode.Create,
+        Options = FileOptions.WriteThrough,
+    };
+    
+    internal static void SaveFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, object configInstance)
+    {
+        if (string.IsNullOrWhiteSpace(featureIdentifier))
+            throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
+        if (configType == null)
+            throw new ArgumentNullException(nameof(configType));
+        if (configInstance == null)
+            throw new ArgumentNullException(nameof(configInstance));
+
+        var moduleSettingsPath = Path.Combine(FeatureConfigsDirectoryPath, moduleIdentifier);
+        if (!Directory.Exists(moduleSettingsPath))
+            Directory.CreateDirectory(moduleSettingsPath);
+
+        var path = Path.Combine(moduleSettingsPath, $"{featureIdentifier}_{configType.Name}.json");
+
+        ArchiveLogger.Debug($"Saving Feature Setting to: {path}");
+
+        var json = JsonConvert.SerializeObject(configInstance, ArchiveMod.JsonSerializerSettings);
+
+        try
         {
-            if (string.IsNullOrWhiteSpace(featureIdentifier)) throw new ArgumentException($"Parameter {nameof(featureIdentifier)} may not be null or whitespace.");
-            if (configType == null) throw new ArgumentNullException($"Parameter {nameof(configType)} may not be null.");
-            if (configInstance == null) throw new ArgumentNullException($"Parameter {nameof(configInstance)} may not be null.");
-
-            var path = Path.Combine(FeatureConfigsDirectoryPath, $"{featureIdentifier}_{configType.Name}.json");
-
-            ArchiveLogger.Debug($"Saving Feature Setting to: {path}");
-            File.WriteAllText(path, JsonConvert.SerializeObject(configInstance, ArchiveMod.JsonSerializerSettings));
+            using var sw = new StreamWriter(path, Encoding.UTF8, Options);
+            sw.Write(json);
+            sw.Flush();
+        }
+        catch (Exception ex)
+        {
+            ArchiveLogger.Error($"Threw an exception while trying to save file '{path}'.");
+            ArchiveLogger.Exception(ex);
         }
     }
 }

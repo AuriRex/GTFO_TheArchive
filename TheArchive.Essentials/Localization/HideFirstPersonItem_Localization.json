@@ -1,0 +1,70 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Special.HideFirstPersonItem.Name": {
+        "FName": {
+          "English": "Weapon Model Toggle",
+          "Chinese": "武器模型切换",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Special.HideFirstPersonItem.Description": {
+        "FDescription": {
+          "English": "Forces the held item to be hidden.\nIntended for taking pictures.\n<color=orange>(Warning! This makes you unable to use or switch items until unhidden!)</color>",
+          "Chinese": "强制隐藏手持物品。\n(警告！这会导致你无法使用或切换物品直到取消隐藏！)",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Special.HideFirstPersonItem+HideFirstPersonItemSettings.Key": {
+        "FSDisplayName": {
+          "English": "Model Toggle Key",
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Key used to toggle the model.",
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

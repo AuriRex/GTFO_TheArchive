@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="../Dependencies.props" />
+	<Import Project="../Shared.props" />
+	
+	<PropertyGroup>
+		<RootNamespace>TheArchive</RootNamespace>
+
+		<PluginOutputPath>../output/TheArchive.Essentials/plugins/</PluginOutputPath>
+		<LocalizationFileDir>./Localization/</LocalizationFileDir>
+		<CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TSName>TheArchive_Essentials</TSName>
+		<TSAuthor>AuriRex</TSAuthor>
+		<TSVersion>2025.1.0</TSVersion>
+		<TSWebsite>https://github.com/AuriRex/GTFO_TheArchive</TSWebsite>
+		<TSDescription>That one massive GTFO Quality of Life mod.</TSDescription>
+	</PropertyGroup>
+	<ItemGroup>
+		<TSDependencyStrings Include="BepInEx-BepInExPack_GTFO-3.2.2" InProject="false" />
+		<TSDependencyStrings Include="AuriRex-TheArchive.Core-2025.1.0" InProject="false" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<EmbeddedResource Include="./Resources/RundownFiveBoosterTemplates.json" Link="Resources/RundownFiveBoosterTemplates.json" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
+			<Project>{7bb66dc5-d29d-4cdd-bb82-d228abe35bda}</Project>
+			<Name>TheArchive.Core</Name>
+			<Private>False</Private>
+			<CopyLocal>False</CopyLocal>
+		</ProjectReference>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="Utilities\" />
+	</ItemGroup>
+</Project>

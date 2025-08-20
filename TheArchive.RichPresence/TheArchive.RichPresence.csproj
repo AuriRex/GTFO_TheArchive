@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="../Dependencies.props" />
+    <Import Project="../Shared.props" />
+
+    <PropertyGroup>
+        <RootNamespace>TheArchive</RootNamespace>
+
+        <PluginOutputPath>../output/TheArchive.RichPresence/plugins/</PluginOutputPath>
+        <LocalizationFileDir>./Localization/</LocalizationFileDir>
+        <CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TSName>TheArchive_RichPresence</TSName>
+        <TSAuthor>AuriRex</TSAuthor>
+        <TSVersion>2025.1.0</TSVersion>
+        <TSWebsite>https://github.com/AuriRex/GTFO_TheArchive</TSWebsite>
+        <TSDescription>Custom Discord Rich Presence Add-on for TheArchive.</TSDescription>
+    </PropertyGroup>
+    <ItemGroup>
+        <TSDependencyStrings Include="BepInEx-BepInExPack_GTFO-3.2.2" InProject="false" />
+        <TSDependencyStrings Include="AuriRex-TheArchive.Core-2025.1.0" InProject="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="./DiscordGameSDK/DiscordRPC.dll" Private="false" />
+    </ItemGroup>
+    
+    <Target Name="CopyDiscordDLLToOutput" AfterTargets="CopyAssemblyAfterBuild" BeforeTargets="ZipOutputPath">
+        <Message Text="Copying Discord SDK to Ouput Folder..." Importance="High"/>
+        <Copy SourceFiles=".\DiscordGameSDK\DiscordRPC.dll"
+              DestinationFiles="$(PluginOutputPath)\DiscordRPC.dll"/>
+
+        <Message Text="Discord SDK has been copied to Ouput Folder!" Importance="High"/>
+    </Target>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\TheArchive.Core\TheArchive.Core.csproj">
+            <Project>{7bb66dc5-d29d-4cdd-bb82-d228abe35bda}</Project>
+            <Name>TheArchive.Core</Name>
+            <Private>False</Private>
+            <CopyLocal>False</CopyLocal>
+        </ProjectReference>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <None Remove="DiscordGameSDK\LICENSE_DiscordRPC" />
+      <EmbeddedResource Include="DiscordGameSDK\LICENSE_DiscordRPC" />
+    </ItemGroup>
+</Project>

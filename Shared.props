@@ -1,0 +1,31 @@
+<Project>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<LangVersion>10.0</LangVersion>
+		<DefineConstants>$(DefineConstants);BepInEx;UseClonesoft;IL2CPP;Il2CppInterop</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+		
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+		<Configurations>Debug;Release</Configurations>
+		<Platforms>AnyCPU</Platforms>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="..\GlobalUsings.cs" Link="GlobalUsings.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Mark the property as compiler aware, so it's added to the editor config-->
+		<CompilerVisibleProperty Include="TSName" />
+		<CompilerVisibleProperty Include="TSAuthor" />
+		<CompilerVisibleProperty Include="TSVersion" />
+		<CompilerVisibleProperty Include="TSWebsite" />
+		<CompilerVisibleProperty Include="TSDescription" />
+	</ItemGroup>
+</Project>

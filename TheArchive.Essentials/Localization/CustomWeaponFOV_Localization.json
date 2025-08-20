@@ -1,0 +1,132 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Cosmetic.CustomWeaponFOV.Name": {
+        "FName": {
+          "English": "Weapon FOV Adjustments",
+          "Chinese": "调整武器FOV",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.CustomWeaponFOV.Description": {
+        "FDescription": {
+          "English": "Adjust the Field of View of weapons, consumables and big items.",
+          "Chinese": "调整武器、消耗品和大型物品的FOV。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.CustomWeaponFOV+WeaponFOVSettings.IgnoreSightSettings": {
+        "FSDisplayName": {
+          "English": "Override Sights Settings",
+          "Chinese": "覆盖瞄准设置",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.CustomWeaponFOV+WeaponFOVSettings.ItemFPSSettings": {
+        "FSDisplayName": {
+          "English": "Item FPS Settings",
+          "Chinese": "物品第一人称视角设置",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.CustomWeaponFOV+WeaponFOVSettings.IGNORE_EMPTY": {
+        "FSHeader": {
+          "English": "Add to all",
+          "Chinese": "应用到所有",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.CustomWeaponFOV+CustomItemFPSSettingsEntry.ItemCameraFOVDefault": {
+        "FSDisplayName": {
+          "English": "Item FOV Default",
+          "Chinese": "物品默认FOV",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.CustomWeaponFOV+CustomItemFPSSettingsEntry.ItemCameraFOVZoom": {
+        "FSDisplayName": {
+          "English": "Item FOV ADS",
+          "Chinese": "物品瞄准时FOV",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Cosmetic.CustomWeaponFOV+CustomItemFPSSettingsEntry.LookCameraFOVZoom": {
+        "FSDisplayName": {
+          "English": "Camera FOV ADS",
+          "Chinese": "相机瞄准时FOV",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

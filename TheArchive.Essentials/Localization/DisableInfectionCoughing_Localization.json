@@ -1,0 +1,42 @@
+{
+  "Internal": {
+    "FeatureSettingsTexts": {
+      "TheArchive.Features.Accessibility.DisableInfectionCoughing.Name": {
+        "FName": {
+          "English": "Disable Coughing (<#1F835F>Infection</color>)",
+          "Chinese": "禁用咳嗽（<#1F835F>感染</color>）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.DisableInfectionCoughing.Description": {
+        "FDescription": {
+          "English": "Disables the cough sound effect whenever a player looses HP due to infection.\n\n<size=70%>(SoundEvent=\"PLAY_COUGHSOFT01\")</size>",
+          "Chinese": "在玩家因感染而失去生命值时禁用咳嗽音效。\n\n<size=70%>(声音事件：\"PLAY_COUGHSOFT01\")</size>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "FeatureSettingsEnumTexts": {},
+    "ExtraTexts": []
+  },
+  "External": {
+    "ExternalFeatureSettingsTexts": {},
+    "ExternalEnumTexts": {}
+  }
+}

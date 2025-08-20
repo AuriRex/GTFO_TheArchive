@@ -1,9 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace TheArchive.Core.Settings
+namespace TheArchive.Core.Settings;
+
+/// <summary>
+/// Enabled features config.
+/// </summary>
+public class EnabledFeatures
 {
-    public class EnabledFeatures
-    {
-        public Dictionary<string, bool> Features { get; set; } = new Dictionary<string, bool>();
-    }
+    /// <summary>
+    /// A dictionary of all features and their enabled state.
+    /// </summary>
+    public Dictionary<string, bool> Features { get; set; } = new();
 }
