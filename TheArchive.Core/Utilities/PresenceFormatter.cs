@@ -27,6 +27,9 @@ public static class PresenceFormatter
     private static IArchiveLogger _logger;
     private static IArchiveLogger Logger => _logger ??= LoaderWrapper.CreateArSubLoggerInstance(nameof(PresenceFormatter), ConsoleColor.DarkMagenta);
 
+    /// <summary>
+    /// TODO: Not have this public :)
+    /// </summary>
     public static void Setup()
     {
         Logger.Debug($"Setting up providers ...");

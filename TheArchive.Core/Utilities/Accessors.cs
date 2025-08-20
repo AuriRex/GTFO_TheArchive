@@ -503,6 +503,7 @@ public class MethodAccessor<T, RT> : AccessorBase
     /// </summary>
     /// <param name="methodName">The name of the method.</param>
     /// <param name="parameterTypes">Parameter Types of the method (leave null if there are none).</param>
+    /// <param name="ignoreErrors">Should errors be ignored?</param>
     /// <returns><see cref="MethodAccessor{T, RT}"/></returns>
     public static MethodAccessor<T, RT> GetAccessor(string methodName, Type[] parameterTypes = null, bool ignoreErrors = false)
     {

@@ -59,6 +59,7 @@ public static partial class Utils
     /// </summary>
     /// <param name="assemblyName">Name of the assembly, of the type <see cref="AssemblyName" />.</param>
     /// <param name="directory">Directory to search the assembly from.</param>
+    /// <param name="loader">Assembly loader.</param>
     /// <param name="assembly">The loaded assembly.</param>
     /// <returns>True, if the assembly was found and loaded. Otherwise, false.</returns>
     public static bool TryResolveDllAssembly<T>(AssemblyName assemblyName, string directory, Func<string, T> loader, out T assembly) where T : class

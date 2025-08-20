@@ -13,6 +13,7 @@ namespace TheArchive.Loader;
 [BepInPlugin(ArchiveMod.GUID, ArchiveMod.MOD_NAME, ArchiveMod.VERSION_STRING)]
 [BepInDependency("dev.gtfomodding.gtfo-api", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency(ArchiveMod.MTFO_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+#pragma warning disable CS0436 // Type conflicts with imported type
 [UsedImplicitly]
 public class BIE_ArchiveMod : BasePlugin
 {
