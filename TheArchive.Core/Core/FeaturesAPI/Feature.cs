@@ -22,7 +22,6 @@ namespace TheArchive.Core.FeaturesAPI;
 ///     
 /// }
 /// </code></example>
-#pragma warning disable CS0436
 [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithInheritors)]
 public abstract class Feature
 {

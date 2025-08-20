@@ -28,7 +28,6 @@ namespace TheArchive.Core.Attributes.Feature.Patches;
 ///     }
 /// }
 /// </code></example>
-#pragma warning disable CS0436
 [AttributeUsage(AttributeTargets.Class)]
 [MeansImplicitUse(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers | ImplicitUseTargetFlags.WithInheritors)]
 public class ArchivePatch : Attribute
