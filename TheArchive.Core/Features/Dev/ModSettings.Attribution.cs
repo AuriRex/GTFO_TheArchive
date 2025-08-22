@@ -15,7 +15,7 @@ public partial class ModSettings
 
         internal Attribution()
         {
-            _submenu = new DynamicSubMenu(LocalizationCoreService.Get(60, "Attribution & Licenses"), BuildSubMenu);
+            _submenu = new DynamicSubMenu(LocalizationCoreService.Get(60, "Attribution & Licenses"), BuildSubMenu, identifier: "Attribution and Licenses Menu");
             
             using var _ = _submenu.GetPersistentContentAdditionToken();
 

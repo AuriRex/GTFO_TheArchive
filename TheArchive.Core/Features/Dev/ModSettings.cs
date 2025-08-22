@@ -649,7 +649,7 @@ public partial class ModSettings : Feature
                 }
                 
 
-                SubMenu groupSubMenu = new SubMenu(group.DisplayName);
+                SubMenu groupSubMenu = new SubMenu(group.DisplayName, group.Identifier);
 
                 var featuresCount = featureSet.Count(f => !f.IsHidden || DevMode);
                 var subGroupsCount = group.SubGroups.Count(g => (!g.IsHidden || DevMode) && g.Features.Any(f => !f.IsHidden || DevMode));
@@ -746,7 +746,7 @@ public partial class ModSettings : Feature
                 SubMenu subMenu = null;
                 if (!feature.InlineSettingsIntoParentMenu && feature.HasAdditionalSettings && !feature.AllAdditionalSettingsAreHidden)
                 {
-                    subMenu = new SubMenu(featureName);
+                    subMenu = new SubMenu(featureName, feature.Identifier);
                     featureName = $"<u>{featureName}</u>";
                 }
 

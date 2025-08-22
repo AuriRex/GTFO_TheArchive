@@ -24,7 +24,8 @@ public partial class ModSettings
         /// </summary>
         /// <param name="title">The submenus title.</param>
         /// <param name="buildMenuAction">Menu build action - add your content here.</param>
-        public DynamicSubMenu(string title, Action<DynamicSubMenu> buildMenuAction) : base(title)
+        /// <param name="identifier">Identifier for this submenu.</param>
+        public DynamicSubMenu(string title, Action<DynamicSubMenu> buildMenuAction, string identifier) : base(title, identifier)
         {
             _buildMenuAction = buildMenuAction;
         }
@@ -71,14 +72,17 @@ public partial class ModSettings
     /// </summary>
     public class SubMenu : IDisposable
     {
+        internal readonly string Identifier;
         internal static readonly Stack<SubMenu> openMenus = new();
 
         /// <summary>
         /// Creates a new submenu and adds it to the mod settings page.
         /// </summary>
         /// <param name="title">The submenu title.</param>
-        public SubMenu(string title)
+        /// <param name="identifier">Identifier for this submenu.</param>
+        public SubMenu(string title, string identifier)
         {
+            Identifier = identifier ?? title;
             Title = title;
             ScrollWindow = SettingsCreationHelper.CreateScrollWindow(title);
 
@@ -201,7 +205,7 @@ public partial class ModSettings
         /// </summary>
         public virtual void Show()
         {
-            FeatureLogger.Debug($"Opening SubMenu \"{Title}\" ...");
+            FeatureLogger.Debug($"Opening SubMenu \"{Identifier}\" (Title: {Title}) ...");
             ShowScrollWindow(ScrollWindow);
             openMenus.Push(this);
         }

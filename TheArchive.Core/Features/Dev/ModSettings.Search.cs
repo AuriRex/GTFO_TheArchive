@@ -31,7 +31,7 @@ public partial class ModSettings
 
         internal SearchMainPage()
         {
-            _searchMainSubmenu = new SubMenu(LocalizationCoreService.Get(9, "Search"));
+            _searchMainSubmenu = new SubMenu(LocalizationCoreService.Get(9, "Search"), identifier: "Feature Search Menu");
 
             Query.TitleContains = Settings.Search.SearchTitles;
             Query.DesciptionContains = Settings.Search.SearchDescriptions;
@@ -54,7 +54,7 @@ public partial class ModSettings
 
             CreateSpacer(_searchMainSubmenu);
 
-            _resultsMenu = new DynamicSubMenu(LocalizationCoreService.Get(13, "Search Results"), BuildSearchResultsMenu);
+            _resultsMenu = new DynamicSubMenu(LocalizationCoreService.Get(13, "Search Results"), BuildSearchResultsMenu, identifier: "Search Results Menu");
 
             CreateSubMenuControls(_resultsMenu, null, menuEntryLabelText: LocalizationCoreService.Get(14, "Start Search"), placeIntoMenu: _searchMainSubmenu, headerText: LocalizationCoreService.Get(13, "Search Results"), enterButtonText: LocalizationCoreService.Get(36, "> Search! <"));
 
