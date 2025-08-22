@@ -52,6 +52,37 @@ internal class ModuleLocalizationService : BaseLocalizationService
         moduleGroup.SetLanguage(_localizationData.ModuleGroup);
         
         LocalizationCoreService.RegisterLocalizationService(this);
+
+        // Underscore at the beginning so it shows up on top if sorted by file name.
+        var groupDefinitionsFileName = $"_{ModuleType.Name}_GroupDefinitions.json";
+        
+        try
+        {
+            var groupDefinitionsFilePath = Path.Combine(localizationFolderPath, groupDefinitionsFileName);
+
+            if (!File.Exists(groupDefinitionsFilePath))
+            {
+                File.WriteAllText(groupDefinitionsFilePath,
+                    JsonConvert.SerializeObject(new GroupDefinitions(), ArchiveMod.JsonSerializerSettings));
+            }
+
+            var groupDefinitions =
+                JsonConvert.DeserializeObject<GroupDefinitions>(File.ReadAllText(groupDefinitionsFilePath),
+                    ArchiveMod.JsonSerializerSettings);
+
+            foreach (var groupDefinition in groupDefinitions.Groups)
+            {
+                if (groupDefinition == null || string.IsNullOrWhiteSpace(groupDefinition.Id))
+                    continue;
+                
+                FeatureGroups.GetOrCreateTopLevelGroup(groupDefinition.Id, localizationData: groupDefinition.LocalizationData);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Failed to load group localization file: \"{groupDefinitionsFileName}\".");
+            Logger.Exception(ex);
+        }
     }
     
     public override string Get(uint id)
