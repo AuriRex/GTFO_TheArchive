@@ -2,25 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Interfaces;
 
 namespace TheArchive.Core.Localization;
 
-internal class FeatureLocalizationService : ILocalizationService
+internal class FeatureLocalizationService : BaseLocalizationService
 {
-    public Feature Feature { get; internal set; }
+    public Feature Feature { get; }
 
-    public Language CurrentLanguage { get; private set; }
-
-    public void SetCurrentLanguage(Language language)
-    {
-        CurrentLanguage = language;
-        UpdateAllTexts();
-    }
-
-    public void Setup(Feature feature, FeatureLocalizationData data)
+    private readonly FeatureLocalizationData _localizationData;
+    private readonly Dictionary<uint, Dictionary<Language, string>> _extraTexts = new();
+    private readonly Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> _featureSettingsTexts = new();
+    private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> _featureSettingsEnumTexts = new();
+    private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> _externalEnumTexts = new();
+    
+    public FeatureLocalizationService(Feature feature, FeatureLocalizationData data, IArchiveLogger logger) : base(logger, feature.Name)
     {
         Feature = feature;
         _localizationData = data;
+        
+        Setup(data);
+    }
+
+    private void Setup(FeatureLocalizationData data)
+    {
         LocalizationCoreService.RegisterLocalizationService(this);
 
         _featureSettingsTexts.Clear();
@@ -112,7 +117,7 @@ internal class FeatureLocalizationService : ILocalizationService
         return true;
     }
 
-    public string Get(uint id)
+    public override string Get(uint id)
     {
         if (!_extraTexts.TryGetValue(id, out var language) || !language.TryGetValue(CurrentLanguage, out var text))
         {
@@ -121,13 +126,7 @@ internal class FeatureLocalizationService : ILocalizationService
         return text;
     }
 
-
-    public string Get<T>(T value) where T : Enum
-    {
-        return Get(typeof(T), value);
-    }
-
-    public string Get(Type type, object value)
+    public override string Get(Type type, object value)
     {
         if (type.IsEnum)
         {
@@ -139,63 +138,4 @@ internal class FeatureLocalizationService : ILocalizationService
         }
         return value.ToString();
     }
-
-    public string Format(uint id, params object[] args)
-    {
-        try
-        {
-            return string.Format(Get(id), args);
-        }
-        catch (FormatException ex)
-        {
-            var message = $"{nameof(FormatException)} thrown in {nameof(Format)} for id {id}!";
-            Feature.FeatureLogger.Error(message);
-            Feature.FeatureLogger.Exception(ex);
-            return message;
-        }
-    }
-
-    public void AddTextSetter(ILocalizedTextSetter textSetter, uint textId)
-    {
-        textSetter.SetText(Get(textId));
-        _textSetters.Add(textSetter, textId);
-    }
-
-    public void SetTextSetter(ILocalizedTextSetter textSetter, uint textId)
-    {
-        textSetter.SetText(Get(textId));
-        _textSetters[textSetter] = textId;
-    }
-
-    public void AddTextUpdater(ILocalizedTextUpdater textUpdater)
-    {
-        textUpdater.UpdateText();
-        _textUpdaters.Add(textUpdater);
-    }
-
-    public void UpdateAllTexts()
-    {
-        foreach (KeyValuePair<ILocalizedTextSetter, uint> keyValuePair in _textSetters)
-        {
-            keyValuePair.Key.SetText(Get(keyValuePair.Value));
-        }
-        foreach (ILocalizedTextUpdater localizedTextUpdater in _textUpdaters)
-        {
-            localizedTextUpdater.UpdateText();
-        }
-    }
-
-    private FeatureLocalizationData _localizationData { get; set; }
-
-    private Dictionary<uint, Dictionary<Language, string>> _extraTexts { get; set; } = new();
-
-    private Dictionary<string, Dictionary<FSType, Dictionary<Language, string>>> _featureSettingsTexts { get; set; } = new();
-
-    private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> _featureSettingsEnumTexts { get; set; } = new();
-
-    private Dictionary<string, Dictionary<Language, Dictionary<string, string>>> _externalEnumTexts { get; set; } = new();
-
-    private Dictionary<ILocalizedTextSetter, uint> _textSetters { get; } = new();
-
-    private HashSet<ILocalizedTextUpdater> _textUpdaters { get; } = new();
 }

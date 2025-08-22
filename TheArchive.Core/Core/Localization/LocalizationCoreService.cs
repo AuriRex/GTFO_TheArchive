@@ -25,7 +25,7 @@ internal class LocalizationCoreService
             }
             catch (Exception ex)
             {
-                Logger.Error($"Exception has been thrown in Feature {service.Feature.Name}-->SetCurrentLanguage. {ex}: {ex.Message}");
+                Logger.Error($"Exception has been thrown in Feature {service.Identifier}-->SetCurrentLanguage. {ex}: {ex.Message}");
                 Logger.Exception(ex);
             }
         }
@@ -106,14 +106,9 @@ internal class LocalizationCoreService
         return string.Format(Get(id, defaultValue), args);
     }
 
-    public static void RegisterLocalizationService(FeatureLocalizationService service)
+    public static void RegisterLocalizationService(BaseLocalizationService service)
     {
         _localizationServices.Add(service);
-    }
-
-    public static void RegisterInLocalizaion(Type type)
-    {
-        _typesToCheck.Add(type);
     }
 
     public static void Init()
@@ -215,11 +210,9 @@ internal class LocalizationCoreService
 
     private static HashSet<ILocalizedTextUpdater> _textUpdaters = new();
 
-    private static HashSet<FeatureLocalizationService> _localizationServices = new();
+    private static HashSet<BaseLocalizationService> _localizationServices = new();
 
     private static Dictionary<uint, Dictionary<Language, string>> _texts = new();
-
-    private static HashSet<Type> _typesToCheck = new();
 
     private static Dictionary<string, Dictionary<Language, Dictionary<string, string>>> _enumTexts = new();
 }

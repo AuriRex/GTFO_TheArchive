@@ -23,7 +23,8 @@ namespace TheArchive.Core.FeaturesAPI;
 
 internal class FeatureInternal
 {
-    internal FeatureLocalizationService Localization { get; } = new();
+    internal FeatureGroup ModuleGroup { get; private set; }
+    internal FeatureLocalizationService Localization { get; private set; }
     private static GameBuildInfo BuildInfo => Feature.BuildInfo;
     internal bool InternalDisabled { get; private set; }
     private InternalDisabledReason DisabledReason { get; set; }
@@ -96,7 +97,7 @@ internal class FeatureInternal
             {
                 return string.Empty;
             }
-            
+
             return $"<#F00>{LocalizationCoreService.Get(2, "DISABLED")}</color>: {LocalizationCoreService.Get(DisabledReason)}";
         }
     }
@@ -161,7 +162,8 @@ internal class FeatureInternal
         _featureType = _feature.GetType();
         OriginAssembly = _featureType.Assembly;
 
-        feature.FeatureInternal.Localization.Setup(feature, LocalFiles.LoadFeatureLocalizationText(feature));
+        ModuleGroup = FeatureGroups.GetOrCreateModuleGroup($"{ArchiveModule.GetType().FullName}.ModuleGroup");
+        Localization = new(feature, LocalFiles.LoadFeatureLocalizationText(feature), feature.FeatureLogger);
 
         _FILogger.Msg(ConsoleColor.Black, "-");
         _FILogger.Msg(ConsoleColor.Green, $"Initializing {_feature.Identifier} ...");

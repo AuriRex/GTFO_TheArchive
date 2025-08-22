@@ -19,8 +19,6 @@ internal class ModLanguageLegacy : Feature
 
     public override string Description => "Change Language of ModSettings for OG Rundowns 1 to 5";
 
-    public override FeatureGroup Group => FeatureGroups.ArchiveCore;
-
     public override bool InlineSettingsIntoParentMenu => true;
 
     public override Type[] LocalizationExternalTypes => new Type[] { typeof(Language) };

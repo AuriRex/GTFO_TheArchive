@@ -619,12 +619,12 @@ public partial class ModSettings : Feature
 
         private static void BuildFeatureGroup(HashSet<FeatureGroup> groups, SubMenu parentMenu = null)
         {
-            var orderedGroups = groups.OrderBy(kvp => kvp.Name).ToArray();
+            var orderedGroups = groups.OrderBy(kvp => kvp.Identifier).ToArray();
             var count = 0;
             foreach (var group in orderedGroups)
             {
                 count++;
-                var groupName = group.Name;
+                var groupName = group.Identifier;
                 var featureSet = group.Features.OrderBy(fs => fs.Name).ToArray();
 
                 if (group.IsHidden && !Feature.DevMode)
@@ -636,7 +636,18 @@ public partial class ModSettings : Feature
                 if (!Feature.DevMode && featureSet.All(f => f.IsHidden) && !group.SubGroups.Any())
                     continue;
 
-                CreateHeader(group.DisplayName, subMenu: parentMenu);
+                CreateHeader(group.DisplayName,  out CM_SettingsItem groupSettingsItem, subMenu: parentMenu);
+
+                if (!string.IsNullOrWhiteSpace(group.Description))
+                {
+                    CreateFSHoverAndSetButtonAction(new DescriptionPanelData()
+                    {
+                        Title = group.DisplayName,
+                        Description = group.Description,
+                        FeatureOrigin = group.Identifier
+                    }, groupSettingsItem, null);
+                }
+                
 
                 SubMenu groupSubMenu = new SubMenu(group.DisplayName);
 

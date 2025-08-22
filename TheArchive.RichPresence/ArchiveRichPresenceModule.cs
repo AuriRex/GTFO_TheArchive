@@ -2,6 +2,7 @@
 using System.Reflection;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
@@ -23,7 +24,10 @@ public class ArchiveRichPresenceModule : IArchiveModule
     private IArchiveLogger _logger = LoaderWrapper.CreateLoggerInstance(MOD_NAME);
     
     public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
-    
+
+    public ILocalizationService LocalizationService { get; set; }
+    public IArchiveLogger Logger { get; set; }
+
     public void Init()
     {
         ArchiveMod.GameDataInitialized += OnGameDataInitialized;

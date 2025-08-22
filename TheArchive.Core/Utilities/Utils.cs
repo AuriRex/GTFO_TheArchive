@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Managers;
 using TheArchive.Loader;
 
@@ -733,5 +734,56 @@ public static partial class Utils
         }
 
         return uint.TryParse(parts[1], out rundownID);
+    }
+
+    /// <summary>
+    /// Creates a new <c>Dictionary&lt;Language, string&gt;</c> with all Language enum values as keys and the values set to null.
+    /// </summary>
+    /// <returns>A new <c>Dictionary&lt;Language, string&gt;</c>.</returns>
+    public static Dictionary<Language, string> GetEmptyLanguageDictionary()
+    {
+        var dict = new Dictionary<Language, string>();
+        
+        foreach (var lang in Enum.GetValues<Language>())
+        {
+            dict[lang] = null;
+        }
+
+        return dict;
+    }
+    
+    /// <summary>
+    /// Creates a new <c>Dictionary&lt;Language, T&gt;</c> with all Language enum values as keys and the values set to the output of the <paramref name="generator"/>.
+    /// </summary>
+    /// <param name="generator">The generator func to populate values.</param>
+    /// <typeparam name="T">Generator output type.</typeparam>
+    /// <returns></returns>
+    public static Dictionary<Language, T> GetEmptyLanguageDictionary<T>(Func<T> generator)
+    {
+        var dict = new Dictionary<Language, T>();
+        
+        foreach (var lang in Enum.GetValues<Language>())
+        {
+            dict[lang] = generator.Invoke();
+        }
+
+        return dict;
+    }
+    
+    /// <summary>
+    /// Creates a new <c>Dictionary&lt;string, string&gt;</c> with all keys set to the enum values and the values all set to null.
+    /// </summary>
+    /// <typeparam name="T">The enum type to use.</typeparam>
+    /// <returns>A new <c>Dictionary&lt;string, string&gt;</c>.</returns>
+    public static Dictionary<string, string> GetEmptyEnumDictionary<T>() where T : struct, Enum
+    {
+        var dict = new Dictionary<string, string>();
+
+        foreach (var value in Enum.GetValues<T>())
+        {
+            dict[value.ToString()] = null;
+        }
+
+        return dict;
     }
 }
