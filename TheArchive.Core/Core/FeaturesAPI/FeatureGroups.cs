@@ -75,7 +75,7 @@ public static class FeatureGroups
     /// A feature group for features related to local progression functionality.<br/>
     /// <i>Mostly unused now.</i>
     /// </summary>
-    public static FeatureGroup LocalProgression { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.LocalProgression"); // , group => group.InlineSettings = true
+    internal static FeatureGroup LocalProgression { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.LocalProgression"); // , group => group.InlineSettings = true
     /// <summary> A feature group for any special or miscellaneous features that don't fit anywhere else. </summary>
     public static FeatureGroup Special { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.Misc");
     /// <summary> A feature group for steam/discord rich presence related features. </summary>
