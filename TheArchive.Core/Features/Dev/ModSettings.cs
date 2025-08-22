@@ -544,15 +544,17 @@ public partial class ModSettings : Feature
 
             AttributionPage = new Attribution();
 
-            BuildFeatureGroup(FeatureGroups.ArchiveCoreGroups);
+            BuildFeatureGroup(FeatureGroups.TopLevelGroups);
 
-            if (FeatureGroups.ModuleGroups.Count > 1)
+            var allHidden = FeatureGroups.AddonGroups.All(g => g.IsHidden || g.Features.Count == 0 || g.Features.All(f => f.IsHidden));
+
+            if (FeatureGroups.AddonGroups.Count > 1 && !allHidden)
             {
                 CreateSpacer();
                 CreateHeader(LocalizationCoreService.Get(58, "Add-ons"), GREEN);
             }
 
-            BuildFeatureGroup(FeatureGroups.ModuleGroups);
+            BuildFeatureGroup(FeatureGroups.AddonGroups);
 
             IEnumerable<Feature> features;
             if (DevMode)
