@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace TheArchive.Core.Localization;
 
 /// <summary>
-/// Defines groups & their localization data.
+/// Defines groups and their localization data.
 /// </summary>
 public class GroupDefinitions
 {
