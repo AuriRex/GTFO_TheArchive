@@ -23,6 +23,7 @@ namespace TheArchive.Core.FeaturesAPI;
 
 internal class FeatureInternal
 {
+    internal string ModuleGroupId { get; set; }
     internal FeatureGroup ModuleGroup { get; private set; }
     internal FeatureLocalizationService Localization { get; private set; }
     private static GameBuildInfo BuildInfo => Feature.BuildInfo;
@@ -162,7 +163,8 @@ internal class FeatureInternal
         _featureType = _feature.GetType();
         OriginAssembly = _featureType.Assembly;
 
-        ModuleGroup = FeatureGroups.GetOrCreateModuleGroup($"{ArchiveModule.GetType().FullName}.ModuleGroup");
+        ModuleGroupId = $"{ArchiveModule.GetType().Assembly.GetName().Name}.ModuleGroup";
+        ModuleGroup = FeatureGroups.GetOrCreateModuleGroup(ModuleGroupId);
         Localization = new(feature, LocalFiles.LoadFeatureLocalizationText(feature), feature.FeatureLogger);
 
         _FILogger.Msg(ConsoleColor.Black, "-");

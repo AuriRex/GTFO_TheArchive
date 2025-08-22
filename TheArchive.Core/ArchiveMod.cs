@@ -538,7 +538,7 @@ public static class ArchiveMod
         ArchiveLogger.Info($"Initializing module \"{moduleType.FullName}\" ...");
         var module = (IArchiveModule) Activator.CreateInstance(moduleType)!;
 
-        var logger = module.Logger = LoaderWrapper.CreateLoggerInstance(moduleType.Name, ConsoleColor.DarkMagenta);
+        var logger = module.Logger = LoaderWrapper.CreateLoggerInstance(moduleType.Assembly.GetName().Name, ConsoleColor.DarkMagenta);
         
         var localizationService = new ModuleLocalizationService(module, moduleType, logger);
         module.LocalizationService = localizationService;
@@ -563,7 +563,7 @@ public static class ArchiveMod
             ArchiveLogger.Exception(ex);
         }
 
-        var moduleGroupId = $"{moduleType.FullName}.ModuleGroup";
+        var moduleGroupId = $"{moduleType.Assembly.GetName().Name}.ModuleGroup";
 
         FeatureGroups.GetOrCreateModuleGroup(moduleGroupId);
 

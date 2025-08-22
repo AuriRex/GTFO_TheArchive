@@ -35,8 +35,10 @@ internal class ModuleLocalizationService : BaseLocalizationService
         if (!Directory.Exists(localizationFolderPath))
             Directory.CreateDirectory(localizationFolderPath);
 
+        var asmName = ModuleType.Assembly.GetName().Name;
+        
         // Underscore at the beginning so it shows up on top if sorted by file name.
-        var localizationFileName = $"_{ModuleType.Name}_ModuleLocalization.json";
+        var localizationFileName = $"_{asmName}_ModuleLocalization.json";
         
         var filePath = Path.Combine(localizationFolderPath, localizationFileName);
 
@@ -47,23 +49,27 @@ internal class ModuleLocalizationService : BaseLocalizationService
         
         _localizationData = JsonConvert.DeserializeObject<ModuleLocalizationData>(File.ReadAllText(filePath), ArchiveMod.JsonSerializerSettings);
         
-        var moduleGroup = FeatureGroups.GetOrCreateModuleGroup($"{ModuleType.FullName}.ModuleGroup");
+        var moduleGroup = FeatureGroups.GetOrCreateModuleGroup($"{asmName}.ModuleGroup");
         
         moduleGroup.SetLanguage(_localizationData.ModuleGroup);
         
         LocalizationCoreService.RegisterLocalizationService(this);
 
+        ReadGroupDefinitionsFile(localizationFolderPath, asmName);
+    }
+
+    private void ReadGroupDefinitionsFile(string localizationFolderPath, string asmName)
+    {
         // Underscore at the beginning so it shows up on top if sorted by file name.
-        var groupDefinitionsFileName = $"_{ModuleType.Name}_GroupDefinitions.json";
-        
+        var groupDefinitionsFileName = $"_{asmName}_GroupDefinitions.json";
+
         try
         {
             var groupDefinitionsFilePath = Path.Combine(localizationFolderPath, groupDefinitionsFileName);
 
             if (!File.Exists(groupDefinitionsFilePath))
             {
-                File.WriteAllText(groupDefinitionsFilePath,
-                    JsonConvert.SerializeObject(new GroupDefinitions(), ArchiveMod.JsonSerializerSettings));
+                return;
             }
 
             var groupDefinitions =
@@ -84,7 +90,7 @@ internal class ModuleLocalizationService : BaseLocalizationService
             Logger.Exception(ex);
         }
     }
-    
+
     public override string Get(uint id)
     {
         if (!_localizationData.TryGetGenericText(id, CurrentLanguage, out var text))

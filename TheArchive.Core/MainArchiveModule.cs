@@ -24,10 +24,9 @@ internal class MainArchiveModule : IArchiveModule
         typeof(LG_Area).RegisterSelf();
         typeof(Il2CppSystem.Collections.Generic.List<>).RegisterForIdentifier("GenericList");
     }
-    
-    public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
 
     public ILocalizationService LocalizationService { get; set; }
+    
     public IArchiveLogger Logger { get; set; }
 
     public void Init()
