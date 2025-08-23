@@ -14,12 +14,42 @@ using static TheArchive.Utilities.Utils;
 namespace TheArchive.Core.FeaturesAPI;
 
 /// <summary>
-/// An enableable / disableable feature
+/// A toggleable feature.
 /// </summary>
+/// <seealso cref="TheArchive.Core.Attributes.Feature.EnableFeatureByDefault"/>
+/// <seealso cref="TheArchive.Core.Attributes.Feature.Patches.ArchivePatch"/>
+/// <seealso cref="TheArchive.Core.Attributes.Feature.Members.FeatureConfig"/>
 /// <example><code>
+/// // Decorate your feature class with `TheArchive.Core.Attributes.Features` Attributes.
+/// [EnableFeatureByDefault]
 /// public class MyFeature : Feature
 /// {
-///     
+///     public override string Name => "My Cool Feature";
+///     public override string Description => "Your Description here!\nNew lines are also ok!";
+///  
+///     // This gets set automatically so you can log things from within your patches!
+///     public new static IArchiveLogger FeatureLogger { get; set; }
+///  
+///     [FeatureConfig] // Automatically saves and loads your settings.
+///     public static MyCustomSettings Settings { get; set; }
+///  
+///     public class MyCustomSettings
+///     {
+///         // Use `TheArchive.Core.Attributes.Feature.Settings` Attributes for your settings.
+///         [FSDisplayName("My Cool Setting")]
+///         public string MySetting { get; set; } = "Default Value";
+///     }
+///   
+///     // An archive patch class, essentially a harmony patch but attached to your feature.
+///     // Unlike regular harmony patches, archive patches get toggled on/off with your feature.
+///     [ArchivePatch(typeof(SomeTypeToPatch), nameof(SomeTypeToPatch.TheMethodToPatch))]
+///     internal static class SomeTypeToPatch__TheMethodToPatch__Patch
+///     {
+///         public static void Postfix()
+///         {
+///             FeatureLogger.Notice("Postfix patch method is running!");
+///         }
+///     }
 /// }
 /// </code></example>
 [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithInheritors)]
