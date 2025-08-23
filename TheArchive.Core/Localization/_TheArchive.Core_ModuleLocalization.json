@@ -1,0 +1,32 @@
+{
+  "ModuleGroup": {
+    "DisplayName": {
+      "English": "Archive Core",
+      "Chinese": "核心",
+      "French": null,
+      "Italian": null,
+      "German": null,
+      "Spanish": null,
+      "Russian": null,
+      "Portuguese_Brazil": null,
+      "Polish": null,
+      "Japanese": null,
+      "Korean": null
+    },
+    "Description": {
+      "English": null,
+      "Chinese": null,
+      "French": null,
+      "Italian": null,
+      "German": null,
+      "Spanish": null,
+      "Russian": null,
+      "Portuguese_Brazil": null,
+      "Polish": null,
+      "Japanese": null,
+      "Korean": null
+    }
+  },
+  "GenericTexts": {},
+  "EnumTexts": {}
+}

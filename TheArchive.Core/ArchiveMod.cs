@@ -10,6 +10,7 @@ using TheArchive.Core;
 using TheArchive.Core.Bootstrap;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Interop;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Core.ModulesAPI;
@@ -537,6 +538,21 @@ public static class ArchiveMod
         ArchiveLogger.Info($"Initializing module \"{moduleType.FullName}\" ...");
         var module = (IArchiveModule) Activator.CreateInstance(moduleType)!;
 
+        var logger = module.Logger = LoaderWrapper.CreateLoggerInstance(moduleType.Assembly.GetName().Name, ConsoleColor.DarkMagenta);
+        
+        var localizationService = new ModuleLocalizationService(module, moduleType, logger);
+        module.LocalizationService = localizationService;
+        
+        try
+        {
+            localizationService.Setup();
+        }
+        catch(Exception ex)
+        {
+            ArchiveLogger.Error($"Error while trying to setup module localization for \"{moduleType.FullName}\"!");
+            ArchiveLogger.Exception(ex);
+        }
+        
         try
         {
             module.Init();
@@ -546,11 +562,10 @@ public static class ArchiveMod
             ArchiveLogger.Error($"Error while trying to init \"{moduleType.FullName}\"!");
             ArchiveLogger.Exception(ex);
         }
-        
-        if (string.IsNullOrWhiteSpace(module.ModuleGroup))
-            throw new Exception($"ArchiveModule: {module.GetType().FullName}, {nameof(IArchiveModule.ModuleGroup)} can not be null!");
 
-        FeatureGroups.GetOrCreateModuleGroup(module.ModuleGroup);
+        var moduleGroupId = $"{moduleType.Assembly.GetName().Name}.ModuleGroup";
+
+        FeatureGroups.GetOrCreateModuleGroup(moduleGroupId);
 
         foreach(var type in moduleType.Assembly.GetTypes())
         {

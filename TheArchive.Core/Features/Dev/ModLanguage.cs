@@ -17,8 +17,8 @@ internal class ModLanguage : Feature
 
     public override string Description => "Change Language of ModSettings";
 
-    public override FeatureGroup Group => FeatureGroups.ArchiveCore;
-
+    public override FeatureGroup Group => FeatureGroups.Dev;
+    
     public new static IArchiveLogger FeatureLogger { get; set; }
 
     public override void Init()

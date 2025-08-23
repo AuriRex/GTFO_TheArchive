@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Localization;
+using TheArchive.Interfaces;
 
 [assembly: AssemblyVersion(TheArchive.ArchiveEssentialsModule.VERSION)]
 [assembly: AssemblyFileVersion(TheArchive.ArchiveEssentialsModule.VERSION)]
@@ -15,10 +17,12 @@ public class ArchiveEssentialsModule : IArchiveModule
     public const string MOD_NAME = ManifestInfo.TSName;
     public const string VERSION = ManifestInfo.TSVersion;
 
-    public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
+    public ILocalizationService LocalizationService { get; set; }
+    
+    public IArchiveLogger Logger { get; set; }
 
     public void Init()
     {
-            
+        
     }
 }

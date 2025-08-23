@@ -9,119 +9,87 @@ namespace TheArchive.Core.FeaturesAPI;
 /// </summary>
 public static class FeatureGroups
 {
-    #region Setup
-    static FeatureGroups()
+    /// <summary>
+    /// Gets an existing or creates a new top level feature group.
+    /// </summary>
+    /// <param name="identifier">The identifier of the group.</param>
+    /// <param name="localizationData">Optional group localization. (Usually provided via localization files!)</param>
+    /// <returns>The existing or newly created group.</returns>
+    public static FeatureGroup GetOrCreateTopLevelGroup(string identifier, GroupLocalization localizationData = null) =>
+        GetOrCreateTopLevelGroupInternal(identifier, dev: false, localizationData);
+
+    private static FeatureGroup GetOrCreateTopLevelGroupInternal(string identifier, bool dev = false, GroupLocalization localizationData = null)
     {
-        Accessibility.SetLanguage(Language.English, "Accessibility");
-        Accessibility.SetLanguage(Language.Chinese, "辅助功能");
-
-        ArchiveCore.SetLanguage(Language.English, "Archive Core");
-        ArchiveCore.SetLanguage(Language.Chinese, "核心");
-
-        Audio.SetLanguage(Language.English, "Audio");
-        Audio.SetLanguage(Language.Chinese, "音频");
-
-        Backport.SetLanguage(Language.English, "Backport");
-        Backport.SetLanguage(Language.Chinese, "反向移植");
-
-        Cosmetic.SetLanguage(Language.English, "Cosmetic");
-        Cosmetic.SetLanguage(Language.Chinese, "美化");
-
-        Dev.SetLanguage(Language.English, "Developer");
-        Dev.SetLanguage(Language.Chinese, "开发者");
-
-        Fixes.SetLanguage(Language.English, "Fixes");
-        Fixes.SetLanguage(Language.Chinese, "修复");
-
-        Hud.SetLanguage(Language.English, "HUD / UI");
-        Hud.SetLanguage(Language.Chinese, "界面");
-
-        LocalProgression.SetLanguage(Language.English, "Local Progression");
-        LocalProgression.SetLanguage(Language.Chinese, "本地进度");
-
-        Special.SetLanguage(Language.English, "Misc");
-        Special.SetLanguage(Language.Chinese, "杂项");
-
-        Presence.SetLanguage(Language.English, "Discord / Steam Presence");
-        Presence.SetLanguage(Language.Chinese, "Discord / Steam 在线状态");
-
-        Security.SetLanguage(Language.English, "Security / Anti Cheat");
-        Security.SetLanguage(Language.Chinese, "安全 / 反作弊");
-
-        QualityOfLife.SetLanguage(Language.English, "Quality of Life");
-        QualityOfLife.SetLanguage(Language.Chinese, "生活质量");
-    }
-    #endregion
-
-
-    private static FeatureGroup GetOrCreateArchiveGroup(string name, bool dev = false)
-    {
-        var group = ArchiveCoreGroups.FirstOrDefault(g => g.Name == name, null);
+        var group = TopLevelGroups.FirstOrDefault(g => g.Identifier == identifier, null);
 
         if (group != null)
             group.IsNewlyCreated = false;
 
-        group ??= new FeatureGroup(name, false, null, dev);
+        group ??= new FeatureGroup(identifier, false, null, dev);
 
-        ArchiveCoreGroups.Add(group);
+        if (localizationData != null)
+            group.SetLanguage(localizationData);
+        
+        TopLevelGroups.Add(group);
 
         return group;
     }
 
-    internal static FeatureGroup GetOrCreateModuleGroup(string name, Dictionary<Language, string> groupLanguages = null)
+    /// <summary>
+    /// Gets an existing or creates a new module/add-on feature group.
+    /// </summary>
+    /// <param name="identifier">The identifier of the group.</param>
+    /// <param name="localizationData">Optional group localization. (Usually provided via localization files!)</param>
+    /// <returns>The existing or newly created group.</returns>
+    public static FeatureGroup GetOrCreateModuleGroup(string identifier, GroupLocalization localizationData = null)
     {
-        var group = ModuleGroups.FirstOrDefault(g => g.Name == name, null);
+        var group = AddonGroups.FirstOrDefault(g => g.Identifier == identifier, null);
 
         if (group != null)
             group.IsNewlyCreated = false;
 
-        group ??= new FeatureGroup(name, true, null);
+        group ??= new FeatureGroup(identifier, true, null);
 
-        if (groupLanguages != null)
-            group.SetLanguage(groupLanguages);
+        if (localizationData != null)
+            group.SetLanguage(localizationData);
 
         return group;
     }
 
-    internal static FeatureGroup GetGroup(string name) => AllGroups.FirstOrDefault(g => g.Name == name);
-    internal static FeatureGroup GetModuleGroup(string name) => ModuleGroups.FirstOrDefault(g => g.Name == name);
-    internal static HashSet<FeatureGroup> ArchiveCoreGroups { get; private set; } = new();
-    internal static HashSet<FeatureGroup> ModuleGroups { get; private set; } = new();
+    internal static FeatureGroup GetGroup(string identifier) => AllGroups.FirstOrDefault(g => g.Identifier == identifier);
+    internal static FeatureGroup GetModuleGroup(string identifier) => AddonGroups.FirstOrDefault(g => g.Identifier == identifier);
+    internal static HashSet<FeatureGroup> TopLevelGroups { get; private set; } = new();
+    internal static HashSet<FeatureGroup> AddonGroups { get; private set; } = new();
     internal static HashSet<FeatureGroup> AllGroups { get; private set; } = new();
 
     #region Archive Groups
-    internal static FeatureGroup ArchiveCore { get; private set; } = GetOrCreateArchiveGroup(ArchiveMod.ARCHIVE_CORE_FEATUREGROUP);
+    internal static FeatureGroup ArchiveCore { get; private set; } = GetOrCreateTopLevelGroupInternal(ArchiveMod.ARCHIVE_CORE_FEATUREGROUP);
     /// <summary> A feature group for accessibility and ease-of-use features. </summary>
-    public static FeatureGroup Accessibility { get; private set; } = GetOrCreateArchiveGroup("Accessibility");
+    public static FeatureGroup Accessibility { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.Accessibility");
     /// <summary> A feature group for audio related features. </summary>
-    public static FeatureGroup Audio { get; private set; } = GetOrCreateArchiveGroup("Audio");
-    /// <summary>
-    /// A feature group for things related to backporting functionalities to older versions.<br/>
-    /// <i>Mostly unused now.</i>
-    /// </summary>
-    public static FeatureGroup Backport { get; private set; } = GetOrCreateArchiveGroup("Backport");
+    public static FeatureGroup Audio { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.Audio");
     /// <summary> A feature group for cosmetic features. </summary>
-    public static FeatureGroup Cosmetic { get; private set; } = GetOrCreateArchiveGroup("Cosmetic");
+    public static FeatureGroup Cosmetic { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.Cosmetic");
     /// <summary> A feature group for developer tools and similar. </summary>
     /// <remarks> This group is hidden by default! </remarks>
-    public static FeatureGroup Dev { get; private set; } = GetOrCreateArchiveGroup("Developer", true);
+    public static FeatureGroup Dev { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.Developer", true);
     /// <summary> A feature group for features that fix things. </summary>
-    public static FeatureGroup Fixes { get; private set; } = GetOrCreateArchiveGroup("Fixes");
+    public static FeatureGroup Fixes { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.Fixes");
     /// <summary> A feature group for HUD altering features. </summary>
-    public static FeatureGroup Hud { get; private set; } = GetOrCreateArchiveGroup("HUD / UI");
+    public static FeatureGroup Hud { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.HUD");
     /// <summary>
     /// A feature group for features related to local progression functionality.<br/>
     /// <i>Mostly unused now.</i>
     /// </summary>
-    public static FeatureGroup LocalProgression { get; private set; } = GetOrCreateArchiveGroup("Local Progression"); // , group => group.InlineSettings = true
+    internal static FeatureGroup LocalProgression { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.LocalProgression"); // , group => group.InlineSettings = true
     /// <summary> A feature group for any special or miscellaneous features that don't fit anywhere else. </summary>
-    public static FeatureGroup Special { get; private set; } = GetOrCreateArchiveGroup("Misc");
+    public static FeatureGroup Special { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.Misc");
     /// <summary> A feature group for steam/discord rich presence related features. </summary>
-    public static FeatureGroup Presence { get; private set; } = GetOrCreateArchiveGroup("Discord / Steam Presence");
+    public static FeatureGroup Presence { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.Presence");
     /// <summary> A feature group for security related features. </summary>
-    public static FeatureGroup Security { get; private set; } = GetOrCreateArchiveGroup("Security / Anti Cheat");
+    public static FeatureGroup Security { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.Security");
     /// <summary> A feature group for QoL features. </summary>
-    public static FeatureGroup QualityOfLife { get; private set; } = GetOrCreateArchiveGroup("Quality of Life");
+    public static FeatureGroup QualityOfLife { get; private set; } = GetOrCreateTopLevelGroupInternal("Core.QoL");
     #endregion
 }
 
@@ -130,9 +98,14 @@ public static class FeatureGroups
 /// </summary>
 public class FeatureGroup
 {
+    internal string DisplayName =>
+        _localization?.GetLocalizedDisplayName(LocalizationCoreService.CurrentLanguage, Identifier) ?? Identifier;
+
+    internal string Description =>
+        _localization?.GetLocalizedDescription(LocalizationCoreService.CurrentLanguage, string.Empty) ?? string.Empty;
+    
     /// <summary> The name of this feature group. </summary>
-    public string Name { get; private set; } = string.Empty;
-    internal string DisplayName => _languages.GetValueOrDefault(LocalizationCoreService.CurrentLanguage, Name);
+    public string Identifier { get; private set; } = string.Empty;
     /// <summary> If this feature group has been newly created. </summary>
     public bool IsNewlyCreated { get; internal set; } = true;
     /// <summary> If this feature group is a default module group. </summary>
@@ -144,8 +117,8 @@ public class FeatureGroup
     /// <summary> Set of subgroups. </summary>
     public HashSet<FeatureGroup> SubGroups { get; } = new();
     internal HashSet<Feature> Features { get; } = new();
-
-    private readonly Dictionary<Language, string> _languages = new();
+    
+    private GroupLocalization _localization;
 
     /// <summary>
     /// Gets or creates a new subgroup inside of this feature group.
@@ -155,7 +128,7 @@ public class FeatureGroup
     /// <returns>The already existing subgroup with the provided name or a newly created one if no existing one was found.</returns>
     public FeatureGroup GetOrCreateSubGroup(string name, bool isHidden = false)
     {
-        var subGroup = SubGroups.FirstOrDefault(g => g.Name == name);
+        var subGroup = SubGroups.FirstOrDefault(g => g.Identifier == name);
 
         if (subGroup != null)
             IsNewlyCreated = false;
@@ -168,33 +141,20 @@ public class FeatureGroup
     /// <summary>
     /// Set the groups language translation values using a translation dictionary.
     /// </summary>
-    /// <param name="languages">Language dictionary</param>
-    public void SetLanguage(Dictionary<Language, string> languages)
+    /// <param name="localizationData">Localization data.</param>
+    public void SetLanguage(GroupLocalization localizationData)
     {
-        foreach (var lang in languages)
-        {
-            _languages[lang.Key] = lang.Value;
-        }
+        _localization = localizationData;
     }
 
-    /// <summary>
-    /// Set a single languages translation value.
-    /// </summary>
-    /// <param name="language">The language to set.</param>
-    /// <param name="text">Translated value.</param>
-    public void SetLanguage(Language language, string text)
+    internal FeatureGroup(string identifier, bool moduleGroup = false, FeatureGroup parentGroup = null, bool isHidden = false)
     {
-        _languages[language] = text;
-    }
-
-    internal FeatureGroup(string name, bool moduleGroup = false, FeatureGroup parentGroup = null, bool isHidden = false)
-    {
-        Name = name;
+        Identifier = identifier;
         IsHidden = isHidden;
         if (moduleGroup)
         {
             IsModuleGroup = true;
-            FeatureGroups.ModuleGroups.Add(this);
+            FeatureGroups.AddonGroups.Add(this);
         }
         else if (parentGroup != null)
         {
@@ -209,7 +169,7 @@ public class FeatureGroup
     /// <inheritdoc/>
     public override string ToString()
     {
-        return Name;
+        return Identifier;
     }
 
     /// <summary>
@@ -217,5 +177,13 @@ public class FeatureGroup
     /// </summary>
     /// <param name="g">The feature group.</param>
     /// <returns>A string that represents this feature group.</returns>
-    public static implicit operator string(FeatureGroup g) => g?.Name;
+    public static implicit operator string(FeatureGroup g) => g?.Identifier;
+
+    /// <summary>
+    /// Gets or creates a new top level feature group.
+    /// </summary>
+    /// <param name="identifier">The identifier of the group.</param>
+    /// <returns>The existing or newly created group.</returns>
+    public static implicit operator FeatureGroup(string identifier) =>
+        FeatureGroups.GetOrCreateTopLevelGroup(identifier);
 }

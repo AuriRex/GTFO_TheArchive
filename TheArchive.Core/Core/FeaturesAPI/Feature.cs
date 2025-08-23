@@ -129,12 +129,7 @@ public abstract class Feature
     /// Information about the current game build.
     /// </summary>
     public static GameBuildInfo BuildInfo { get; internal set; }
-
-    /// <summary>
-    /// Default group for features that don't specify a custom one.
-    /// </summary>
-    private FeatureGroup ModuleGroup => FeatureGroups.GetOrCreateModuleGroup(FeatureInternal.ArchiveModule.ModuleGroup);
-
+    
     /// <summary>
     /// The features name.
     /// </summary>
@@ -154,6 +149,11 @@ public abstract class Feature
     /// </remarks>
     public virtual FeatureGroup Group => ModuleGroup;
 
+    /// <summary>
+    /// Default group for features that don't specify a custom one.
+    /// </summary>
+    protected FeatureGroup ModuleGroup => FeatureInternal.ModuleGroup;
+    
     /// <summary>
     /// If set, prevents calling of <see cref="OnEnable"/> and <see cref="OnDisable"/> methods and instead only switches the config state of this feature.
     /// </summary>

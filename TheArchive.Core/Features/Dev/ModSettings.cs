@@ -544,15 +544,17 @@ public partial class ModSettings : Feature
 
             AttributionPage = new Attribution();
 
-            BuildFeatureGroup(FeatureGroups.ArchiveCoreGroups);
+            BuildFeatureGroup(FeatureGroups.TopLevelGroups);
 
-            if (FeatureGroups.ModuleGroups.Count > 1)
+            var allHidden = FeatureGroups.AddonGroups.All(g => g.IsHidden || g.Features.Count == 0 || g.Features.All(f => f.IsHidden));
+
+            if (FeatureGroups.AddonGroups.Count > 1 && !allHidden)
             {
                 CreateSpacer();
                 CreateHeader(LocalizationCoreService.Get(58, "Add-ons"), GREEN);
             }
 
-            BuildFeatureGroup(FeatureGroups.ModuleGroups);
+            BuildFeatureGroup(FeatureGroups.AddonGroups);
 
             IEnumerable<Feature> features;
             if (DevMode)
@@ -619,12 +621,12 @@ public partial class ModSettings : Feature
 
         private static void BuildFeatureGroup(HashSet<FeatureGroup> groups, SubMenu parentMenu = null)
         {
-            var orderedGroups = groups.OrderBy(kvp => kvp.Name).ToArray();
+            var orderedGroups = groups.OrderBy(kvp => kvp.Identifier).ToArray();
             var count = 0;
             foreach (var group in orderedGroups)
             {
                 count++;
-                var groupName = group.Name;
+                var groupName = group.Identifier;
                 var featureSet = group.Features.OrderBy(fs => fs.Name).ToArray();
 
                 if (group.IsHidden && !Feature.DevMode)
@@ -636,9 +638,20 @@ public partial class ModSettings : Feature
                 if (!Feature.DevMode && featureSet.All(f => f.IsHidden) && !group.SubGroups.Any())
                     continue;
 
-                CreateHeader(group.DisplayName, subMenu: parentMenu);
+                CreateHeader(group.DisplayName,  out CM_SettingsItem groupSettingsItem, subMenu: parentMenu);
 
-                SubMenu groupSubMenu = new SubMenu(group.DisplayName);
+                if (!string.IsNullOrWhiteSpace(group.Description))
+                {
+                    CreateFSHoverAndSetButtonAction(new DescriptionPanelData()
+                    {
+                        Title = group.DisplayName,
+                        Description = group.Description,
+                        FeatureOrigin = group.Identifier
+                    }, groupSettingsItem, null);
+                }
+                
+
+                SubMenu groupSubMenu = new SubMenu(group.DisplayName, group.Identifier);
 
                 var featuresCount = featureSet.Count(f => !f.IsHidden || DevMode);
                 var subGroupsCount = group.SubGroups.Count(g => (!g.IsHidden || DevMode) && g.Features.Any(f => !f.IsHidden || DevMode));
@@ -735,7 +748,7 @@ public partial class ModSettings : Feature
                 SubMenu subMenu = null;
                 if (!feature.InlineSettingsIntoParentMenu && feature.HasAdditionalSettings && !feature.AllAdditionalSettingsAreHidden)
                 {
-                    subMenu = new SubMenu(featureName);
+                    subMenu = new SubMenu(featureName, feature.Identifier);
                     featureName = $"<u>{featureName}</u>";
                 }
 

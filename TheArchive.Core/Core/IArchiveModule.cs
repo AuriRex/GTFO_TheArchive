@@ -1,4 +1,6 @@
 ﻿using TheArchive.Core.Bootstrap;
+using TheArchive.Core.Localization;
+using TheArchive.Interfaces;
 
 namespace TheArchive.Core;
 
@@ -8,9 +10,14 @@ namespace TheArchive.Core;
 public interface IArchiveModule
 {
     /// <summary>
-    /// The modules default feature group.
+    /// This modules localization service.
     /// </summary>
-    string ModuleGroup { get; }
+    ILocalizationService LocalizationService { get; set; }
+    
+    /// <summary>
+    /// A default logger instance.
+    /// </summary>
+    IArchiveLogger Logger { get; set; }
 
     /// <summary>
     /// Called once after the module has been loaded.

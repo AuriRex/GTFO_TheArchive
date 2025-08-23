@@ -79,11 +79,11 @@ public partial class ModSettings
                             subMenu = new DynamicSubMenu(ss.DisplayName, (dsm) =>
                             {
                                 SetupItemsForSettingsHelper(ss.SettingsHelper, dsm);
-                            });
+                            }, ss.Identifier);
                         }
                         else
                         {
-                            subMenu = new SubMenu(ss.DisplayName);
+                            subMenu = new SubMenu(ss.DisplayName, ss.Identifier);
                         }
 
                         var data = new DescriptionPanelData() {
@@ -911,7 +911,7 @@ public partial class ModSettings
                 {
                     SetupItemsForSettingsHelper(entry.Helper, dynamicMenu);
                 }
-            });
+            }, identifier: setting.Identifier);
 
             CreateSubMenuControls(dynamicSubMenu, menuEntryLabelText: setting.DisplayName, headerText: setting.DisplayName, placeIntoMenu: subMenu);
         }
@@ -932,7 +932,7 @@ public partial class ModSettings
                     }
                     SetupItemsForSettingsHelper(entry.Helper, dynamicMenu);
                 }
-            });
+            }, identifier: setting.Identifier);
 
             CreateSubMenuControls(dynamicSubMenu, menuEntryLabelText: setting.DisplayName, headerText: setting.DisplayName, placeIntoMenu: subMenu);
         }

@@ -157,7 +157,7 @@ internal class FeaturesMarkdownCreator : Feature
             }
         }
 
-        var orderedGroups = groups.OrderBy(kvp => StripTMPTagsRegex(kvp.Key.Name)).ToArray();
+        var orderedGroups = groups.OrderBy(kvp => StripTMPTagsRegex(kvp.Key.Identifier)).ToArray();
 
         foreach(var entry in orderedGroups)
         {
@@ -193,7 +193,7 @@ internal class FeaturesMarkdownCreator : Feature
 
     public static string CreateQuickLink(FeatureGroup group)
     {
-        var name = StripTMPTagsRegex(_useLocalizedTexts ? group.DisplayName : group.Name);
+        var name = StripTMPTagsRegex(_useLocalizedTexts ? group.DisplayName : group.Identifier);
 
         var link = $"#{name.ToLower().Replace(" ", "-").Replace("/", string.Empty)}";
 
@@ -203,7 +203,7 @@ internal class FeaturesMarkdownCreator : Feature
     public static string CreateGroupEntry(FeatureGroup group)
     {
         var builder = new StringBuilder();
-        builder.Append($"## {StripTMPTagsRegex(_useLocalizedTexts ? group.DisplayName : group.Name)}");
+        builder.Append($"## {StripTMPTagsRegex(_useLocalizedTexts ? group.DisplayName : group.Identifier)}");
         builder.Append(NEWLINE);
         builder.Append(NEWLINE);
 

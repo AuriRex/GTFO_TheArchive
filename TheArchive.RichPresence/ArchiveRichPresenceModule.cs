@@ -2,6 +2,7 @@
 using System.Reflection;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
+using TheArchive.Core.Localization;
 using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
@@ -20,10 +21,10 @@ public class ArchiveRichPresenceModule : IArchiveModule
     public const string MOD_NAME = ManifestInfo.TSName;
     public const string VERSION = ManifestInfo.TSVersion;
 
-    private IArchiveLogger _logger = LoaderWrapper.CreateLoggerInstance(MOD_NAME);
+    public ILocalizationService LocalizationService { get; set; }
     
-    public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
-    
+    public IArchiveLogger Logger { get; set; }
+
     public void Init()
     {
         ArchiveMod.GameDataInitialized += OnGameDataInitialized;
@@ -41,8 +42,8 @@ public class ArchiveRichPresenceModule : IArchiveModule
         }
         catch (Exception ex)
         {
-            _logger.Error("Something went wrong while trying to add Attribution.");
-            _logger.Exception(ex);
+            Logger.Error("Something went wrong while trying to add Attribution.");
+            Logger.Exception(ex);
         }
     }
 
@@ -55,7 +56,7 @@ public class ArchiveRichPresenceModule : IArchiveModule
         }
         catch (Exception ex)
         {
-            _logger.Exception(ex);
+            Logger.Exception(ex);
         }
     }
 }

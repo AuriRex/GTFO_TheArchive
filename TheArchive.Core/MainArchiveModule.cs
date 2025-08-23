@@ -4,6 +4,7 @@ using LevelGeneration;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Localization;
+using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine.CrashReportHandler;
 
@@ -23,9 +24,11 @@ internal class MainArchiveModule : IArchiveModule
         typeof(LG_Area).RegisterSelf();
         typeof(Il2CppSystem.Collections.Generic.List<>).RegisterForIdentifier("GenericList");
     }
+
+    public ILocalizationService LocalizationService { get; set; }
     
-    public string ModuleGroup => ArchiveMod.ARCHIVE_CORE_FEATUREGROUP;
-    
+    public IArchiveLogger Logger { get; set; }
+
     public void Init()
     {
         CrashReportHandler.SetUserMetadata("Modded", "true");
