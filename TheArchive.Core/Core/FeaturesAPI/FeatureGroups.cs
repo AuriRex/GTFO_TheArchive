@@ -35,7 +35,13 @@ public static class FeatureGroups
         return group;
     }
 
-    internal static FeatureGroup GetOrCreateModuleGroup(string identifier, GroupLocalization localizationData = null)
+    /// <summary>
+    /// Gets an existing or creates a new module/add-on feature group.
+    /// </summary>
+    /// <param name="identifier">The identifier of the group.</param>
+    /// <param name="localizationData">Optional group localization. (Usually provided via localization files!)</param>
+    /// <returns>The existing or newly created group.</returns>
+    public static FeatureGroup GetOrCreateModuleGroup(string identifier, GroupLocalization localizationData = null)
     {
         var group = AddonGroups.FirstOrDefault(g => g.Identifier == identifier, null);
 
