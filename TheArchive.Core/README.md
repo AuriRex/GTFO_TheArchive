@@ -30,7 +30,7 @@ Most Features are toggleable mid-game and some even have extra options to mess w
 </p>
 
 > [!NOTE]  
-> *The settings shown here are not part of `TheArchive.Core` but instead part of `TheArchive.Essentials` and only here to show off some of the features available in the settings menu.*
+> *The settings shown here are not part of `TheArchive.Core` but instead part of `TheArchive.Essentials` and only here to show off some of the neat things you can do with the mod settings menu.*
 
 ## License
 

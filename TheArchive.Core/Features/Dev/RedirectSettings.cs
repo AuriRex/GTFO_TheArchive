@@ -42,12 +42,21 @@ internal class RedirectSettings : Feature
                 case "GTFO_Settings.txt":
                     __result = LocalFiles.SettingsPath;
                     return ArchivePatch.SKIP_OG;
+                
                 case "GTFO_Favorites.txt":
+                    if (IsPlayingModded)
+                        return ArchivePatch.RUN_OG;
+                    
                     __result = LocalFiles.FavoritesPath;
                     return ArchivePatch.SKIP_OG;
+                
                 case "GTFO_BotFavorites.txt":
+                    if (IsPlayingModded)
+                        return ArchivePatch.RUN_OG;
+                    
                     __result = LocalFiles.BotFavoritesPath;
                     return ArchivePatch.SKIP_OG;
+                
                 default:
                     return ArchivePatch.RUN_OG;
             }
