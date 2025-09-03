@@ -57,16 +57,20 @@ internal abstract class BaseLocalizationService : ILocalizationService
         _textSetters.Add(textSetter, textId);
     }
 
-    public virtual void SetTextSetter(ILocalizedTextSetter textSetter, uint textId)
-    {
-        textSetter.SetText(Get(textId));
-        _textSetters[textSetter] = textId;
-    }
-
     public virtual void AddTextUpdater(ILocalizedTextUpdater textUpdater)
     {
         textUpdater.UpdateText();
         _textUpdaters.Add(textUpdater);
+    }
+
+    public virtual void RemoveTextSetter(ILocalizedTextSetter textSetter)
+    {
+        _textSetters.Remove(textSetter);
+    }
+    
+    public virtual void RemoveTextUpdater(ILocalizedTextUpdater textUpdater)
+    {
+        _textUpdaters.Remove(textUpdater);
     }
 
     public virtual void UpdateAllTexts()

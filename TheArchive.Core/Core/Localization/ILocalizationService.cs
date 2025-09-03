@@ -44,16 +44,20 @@ public interface ILocalizationService
     void AddTextSetter(ILocalizedTextSetter textSetter, uint textId);
 
     /// <summary>
-    /// Registers a text setter.<br/>
-    /// (Overwrites any already registered ones)
-    /// </summary>
-    /// <param name="textSetter">The text setter to register.</param>
-    /// <param name="textId">The localization ID.</param>
-    void SetTextSetter(ILocalizedTextSetter textSetter, uint textId);
-
-    /// <summary>
     /// Registers a text updater.
     /// </summary>
     /// <param name="textUpdater">The text updater to register.</param>
     void AddTextUpdater(ILocalizedTextUpdater textUpdater);
+
+    /// <summary>
+    /// Removes an already registered text setter.
+    /// </summary>
+    /// <param name="textSetter">The text setter to remove.</param>
+    void RemoveTextSetter(ILocalizedTextSetter textSetter);
+
+    /// <summary>
+    /// Removes an already registered text updater.
+    /// </summary>
+    /// <param name="textUpdater">The text updater to remove.</param>
+    void RemoveTextUpdater(ILocalizedTextUpdater textUpdater);
 }

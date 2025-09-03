@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TheArchive.Core.FeaturesAPI;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 
@@ -11,7 +12,8 @@ internal static class CustomSettingManager
 
     public static void RegisterModuleSetting(ICustomSetting setting)
     {
-        if (setting.LoadingTime == LoadingTime.Immediately)
+        if (setting.LoadingTime == LoadingTime.Immediately
+            || (setting.LoadingTime == LoadingTime.AfterGameDataInited && Feature.GameDataInited))
         {
             try
             {

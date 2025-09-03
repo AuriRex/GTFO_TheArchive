@@ -36,18 +36,18 @@ public class ModuleLocalizationData
     {
         value = fallback;
         
-        if (!GenericTexts.TryGetValue(id, out var genericLocalization))
+        if (!GenericTexts.TryGetValue(id, out var genericLocalization) || genericLocalization == null)
         {
             return false;
         }
 
-        if (genericLocalization.TryGet(language, out var text) && string.IsNullOrWhiteSpace(text))
+        if (genericLocalization.TryGet(language, out var text) && !string.IsNullOrWhiteSpace(text))
         {
             value = text;
             return true;
         }
         
-        if (genericLocalization.TryGet(Language.English, out text) && string.IsNullOrWhiteSpace(text))
+        if (genericLocalization.TryGet(Language.English, out text) && !string.IsNullOrWhiteSpace(text))
         {
             value = text;
             return true;
