@@ -241,13 +241,8 @@ internal class KillIndicatorFix : Feature
             t.timestamp = now;
 
             fullDamageData.damage.Set(dam, __instance.DamageMax);
-            float num = AgentModifierManager.ApplyModifier(owner, AgentModifier.MeleeResistance, fullDamageData.damage.Get(__instance.DamageMax));
-            if (__instance.Owner.Locomotion.CurrentStateEnum == ES_StateEnum.Hibernate)
-            {
-                fullDamageData.sleeperMulti.Set(sleeperMulti, 10);
-                num *= fullDamageData.sleeperMulti.Get(10);
-            }
-            t.health -= num;
+			float num = AgentModifierManager.ApplyModifier(owner, AgentModifier.MeleeResistance, Dam_EnemyDamageBase.RoundDamage(fullDamageData.damage.Get(__instance.DamageMax)));
+			t.health -= num;
 
             // Show indicator when tracked health assumes enemy is dead
             if (t.health <= 0 && !__instance.DeathIndicatorShown) 
