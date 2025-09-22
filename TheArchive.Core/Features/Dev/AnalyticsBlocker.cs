@@ -1,9 +1,9 @@
 ﻿using GameEvent;
 using System;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using UnityEngine.Analytics;
 
 namespace TheArchive.Features.Dev;
@@ -13,7 +13,7 @@ internal class AnalyticsBlocker : Feature
 {
     public override string Name => "Block Game Analytics";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public override string Description => "Prevent analytics data from being sent.\n(Recommended to keep enabled)";
 

@@ -2,15 +2,14 @@
 using Gear;
 using Player;
 using SNetwork;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
-using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Core.Localization;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
@@ -23,38 +22,23 @@ public class AntiGearHack : Feature
 
     public override string Description => "Prevents clients from using modified gear.";
 
-    public override FeatureGroup Group => FeatureGroups.Security;
+    public override GroupBase Group => GroupManager.Security;
+
+    public override Type[] ExternalLocalizedTypes => new Type[] { typeof(BasicPunishmentSettings) };
 
     public new static IArchiveLogger FeatureLogger { get; set; }
 
     [FeatureConfig]
-    public static AntiGearHackSettings Settings { get; set; }
+    public static BasicPunishmentSettings Settings { get; set; }
 
-    public class AntiGearHackSettings
-    {
-        [FSDisplayName("Punish Friends")]
-        [FSDescription("If (Steam) Friends should be affected as well.")]
-        public bool PunishFriends { get; set; } = false;
-
-        [FSDisplayName("Punishment")]
-        [FSDescription("What to do with griefers that are using modified gears.")]
-        public PunishmentMode Punishment { get; set; } = PunishmentMode.Kick;
-
-        [Localized]
-        public enum PunishmentMode
-        {
-            NoneAndLog,
-            Kick,
-            KickAndBan
-        }
-    }
-
-    public override void Init()
+    public override bool ShouldInit()
     {
         if (ArchiveMod.IsPlayingModded)
         {
             RequestDisable("Playing Modded");
+            return false;
         }
+        return true;
     }
 
     public override void OnGameDataInitialized()
@@ -104,14 +88,14 @@ public class AntiGearHack : Feature
 
         switch (Settings.Punishment)
         {
-            case AntiGearHackSettings.PunishmentMode.KickAndBan:
+            case BasicPunishmentSettings.PunishmentMode.KickAndBan:
                 PlayerLobbyManagement.BanPlayer(player);
                 goto default;
-            case AntiGearHackSettings.PunishmentMode.Kick:
+            case BasicPunishmentSettings.PunishmentMode.Kick:
                 PlayerLobbyManagement.KickPlayer(player);
                 goto default;
             default:
-            case AntiGearHackSettings.PunishmentMode.NoneAndLog:
+            case BasicPunishmentSettings.PunishmentMode.NoneAndLog:
                 FeatureLogger.Notice($"Player \"{player.NickName}\" \"{player.Lookup}\" is using modified gears! ({Settings.Punishment})");
                 return true;
         }

@@ -1,0 +1,251 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Accessibility.DynamicVolumeOverride.Name": {
+        "FName": {
+          "English": "Loud Volume Override",
+          "Chinese": "音量调整",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.DynamicVolumeOverride.Description": {
+        "FDescription": {
+          "English": "Lower the game volume during loud sections:\n - game intro\n - elevator drop\n\nAdjust alt-tab sound behavior.",
+          "Chinese": "在游戏中的响亮部分降低音量：\n - 游戏介绍\n - 电梯下降\n\n调整切换窗口时的声音行为。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.DynamicVolumeOverride+DynamicVolumeSettings.VolumeOverrideValue": {
+        "FSDisplayName": {
+          "English": "Volume Override",
+          "Chinese": "音量覆盖",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Volume percent to use during the games' intro and elevator ride sequences.",
+          "Chinese": "在游戏开头和电梯下降等场景中使用的音量百分比。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.DynamicVolumeOverride+DynamicVolumeSettings.VolumeOverride": {
+        "FSDisplayName": {
+          "English": "Volume Override",
+          "Chinese": "音量覆盖",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.DynamicVolumeOverride+DynamicVolumeSettings.LerpTime": {
+        "FSDisplayName": {
+          "English": "Volume Interpolation (Seconds)",
+          "Chinese": "音量篡改延时（秒）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "The time it takes to transition from the override volume to the game settings volume.\n(Interpolation time)",
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.DynamicVolumeOverride+DynamicVolumeSettings.FocusChangeBehaviour": {
+        "FSDisplayName": {
+          "English": "Focus Change Behaviour",
+          "Chinese": "焦点变化行为",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Set what happens to audio whenever you tab out.\n\n<color=orange>Default</color> Use the games implementation\n<color=orange>MuteInBackground</color> Mute audio when not focused\n<color=orange>DoNothingInBackground</color> Keep audio on unfocus\n<color=orange>OverrideInBackground</color> Use override volume on unfocus",
+          "Chinese": "设置切换窗口时音频的行为。\n\n<color=orange>默认</color> 使用游戏的实现\n<color=orange>后台时静音</color> 失去焦点时静音\n<color=orange>后台时不做任何操作</color> 失去焦点时保持音频\n<color=orange>后台时覆盖</color> 失去焦点时使用覆盖音量",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.DynamicVolumeOverride+DynamicVolumeSettings.OopsMySoundSomehowBrokePleaseReset": {
+        "FSDisplayName": {
+          "English": "Reset Game Volume",
+          "Chinese": "重置游戏音量",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Press if for some reason the audio volume settings don't seem to be back at their default values even though they should be.",
+          "Chinese": "如果由于某种原因，音量设置似乎没有恢复到默认值，请按下此按钮。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSButtonText": {
+          "English": "Reset Volume",
+          "Chinese": "重置音量",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {
+      "TheArchive.Features.Accessibility.DynamicVolumeOverride+DynamicVolumeSettings+FocusChangeMode": {
+        "English": {
+          "Default": "Default",
+          "MuteInBackground": "Mute In Background",
+          "DoNothingInBackground": "Do Nothing In Background",
+          "OverrideInBackground": "Override In Background"
+        },
+        "Chinese": {
+          "Default": "默认",
+          "MuteInBackground": "后台时静音",
+          "DoNothingInBackground": "后台时不做任何操作",
+          "OverrideInBackground": "后台时覆盖"
+        },
+        "French": {
+          "Default": null,
+          "MuteInBackground": null,
+          "DoNothingInBackground": null,
+          "OverrideInBackground": null
+        },
+        "Italian": {
+          "Default": null,
+          "MuteInBackground": null,
+          "DoNothingInBackground": null,
+          "OverrideInBackground": null
+        },
+        "German": {
+          "Default": null,
+          "MuteInBackground": null,
+          "DoNothingInBackground": null,
+          "OverrideInBackground": null
+        },
+        "Spanish": {
+          "Default": null,
+          "MuteInBackground": null,
+          "DoNothingInBackground": null,
+          "OverrideInBackground": null
+        },
+        "Russian": {
+          "Default": null,
+          "MuteInBackground": null,
+          "DoNothingInBackground": null,
+          "OverrideInBackground": null
+        },
+        "Portuguese_Brazil": {
+          "Default": null,
+          "MuteInBackground": null,
+          "DoNothingInBackground": null,
+          "OverrideInBackground": null
+        },
+        "Polish": {
+          "Default": null,
+          "MuteInBackground": null,
+          "DoNothingInBackground": null,
+          "OverrideInBackground": null
+        },
+        "Japanese": {
+          "Default": null,
+          "MuteInBackground": null,
+          "DoNothingInBackground": null,
+          "OverrideInBackground": null
+        },
+        "Korean": {
+          "Default": null,
+          "MuteInBackground": null,
+          "DoNothingInBackground": null,
+          "OverrideInBackground": null
+        }
+      }
+    }
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

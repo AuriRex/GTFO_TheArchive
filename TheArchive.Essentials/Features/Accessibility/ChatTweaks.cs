@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using UnityEngine;
 
@@ -12,7 +12,7 @@ public class ChatTweaks : Feature
 {
     public override string Name => "Chat Tweaks";
 
-    public override FeatureGroup Group => FeatureGroups.Accessibility;
+    public override GroupBase Group => GroupManager.Accessibility;
 
     public override string Description => "Use (Up/Down) arrow keys to cycle through the last sent messages.\nCTRL+C copies and CTRL+V pastes into the chat box";
 

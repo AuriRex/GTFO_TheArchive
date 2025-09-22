@@ -6,6 +6,7 @@ using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
+using TheArchive.Core.Localization.Services;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Loader;

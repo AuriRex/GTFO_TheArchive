@@ -1,7 +1,7 @@
-﻿using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature;
+﻿using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 
 namespace TheArchive.Features.QoL;
 
@@ -10,7 +10,7 @@ public class NoNavMarkerHideInChat : Feature
 {
 	public override string Name => "See NavMarkers in Chat";
 
-	public override FeatureGroup Group => FeatureGroups.QualityOfLife;
+	public override GroupBase Group => GroupManager.QualityOfLife;
 
 	public override string Description => "Prevent enemy pings from hiding whenever the chat is open.";
 

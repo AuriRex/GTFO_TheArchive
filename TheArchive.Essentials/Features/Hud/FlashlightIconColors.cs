@@ -5,6 +5,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
@@ -17,7 +18,7 @@ internal class FlashlightIconColors : Feature
 {
     public override string Name => "Flashlight Icon Colors";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Customize the flashlight on/off indicator colors.";
 

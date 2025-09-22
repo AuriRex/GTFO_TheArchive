@@ -4,6 +4,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using UnityEngine;
 using static TheArchive.Utilities.Utils;
@@ -15,7 +16,7 @@ public class VanityDirtControl : Feature
 {
     public override string Name => "Vanity Dirt Control";
 
-    public override FeatureGroup Group => FeatureGroups.Cosmetic;
+    public override GroupBase Group => GroupManager.Cosmetic;
 
     public override string Description => "Set all vanity items (clothes) dirt amount.";
 

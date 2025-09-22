@@ -6,6 +6,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -18,7 +19,7 @@ internal class DamageLog : Feature
     // TODO: Fix on R1 build maybe?
     public override string Name => "Damage Log";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override Core.FeaturesAPI.Groups.GroupBase Group => GroupManager.Dev;
 
     public override string Description => "Log what all hitboxes/enemies were hit by your shot to console.\n\n(Probably only works correctly as master)\n(Disable for normal gameplay)";
 

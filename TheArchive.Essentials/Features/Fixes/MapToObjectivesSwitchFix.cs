@@ -4,6 +4,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Loader;
 using TheArchive.Utilities;
 
@@ -15,7 +16,7 @@ public class MapToObjectivesSwitchFix : Feature
 {
     public override string Name => "Map Chat Abduction Fix";
 
-    public override FeatureGroup Group => FeatureGroups.Fixes;
+    public override GroupBase Group => GroupManager.Fixes;
 
     public override string Description => "Prevent a switch to the Objectives Screen whenever the chat is open and the 'o' key is pressed.\n\n(Thanks for fixing this in A6 Alex! <3)";
 

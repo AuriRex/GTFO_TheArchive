@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TheArchive.Core.Localization;
 using TheArchive.Utilities;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
@@ -15,11 +15,11 @@ public partial class ModSettings
 
         internal Attribution()
         {
-            _submenu = new DynamicSubMenu(LocalizationCoreService.Get(60, "Attribution & Licenses"), BuildSubMenu, identifier: "Attribution and Licenses Menu");
+            _submenu = new DynamicSubMenu(ArchiveLocalizationService.GetById(60, "Attribution & Licenses"), BuildSubMenu, identifier: "Attribution and Licenses Menu");
             
             using var _ = _submenu.GetPersistentContentAdditionToken();
 
-            CreateSettingsItem(LocalizationCoreService.Get(38, "<<< Back <<<"), out var outof_sub_cm_settingsItem, RED, _submenu);
+            CreateSettingsItem($"<<< {ArchiveLocalizationService.GetById(38, "Back")} <<<", out var outof_sub_cm_settingsItem, titleColor: RED, subMenu: _submenu);
             outof_sub_cm_settingsItem.ForcePopupLayer(true);
             outof_sub_cm_settingsItem.SetCMItemEvents((_) => _submenu.Close());
             
@@ -45,7 +45,7 @@ public partial class ModSettings
 
         internal void InsertMenuButton()
         {
-            CreateSimpleButton(LocalizationCoreService.Get(60, "Attribution & Licenses"), LocalizationCoreService.Get(28, "Open"), () =>
+            CreateSimpleButton(ArchiveLocalizationService.GetById(60, "Attribution & Licenses"), ArchiveLocalizationService.GetById(28, "Open"), () =>
             {
                 _submenu.Show();
             });

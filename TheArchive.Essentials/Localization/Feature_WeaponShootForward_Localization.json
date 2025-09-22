@@ -1,0 +1,42 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Fixes.WeaponShootForward.Name": {
+        "FName": {
+          "English": "Weapons shoot forward",
+          "Chinese": "武器向前射击",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Fixes.WeaponShootForward.Description": {
+        "FDescription": {
+          "English": "Patches weapons to always shoot into the center of your crosshair.\nMakes shotgun draw & insta-shoot not shoot the floor",
+          "Chinese": "修补武器，使其始终射向准星中心。\n使霰弹枪的绘制和快速射击不会射向地面。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

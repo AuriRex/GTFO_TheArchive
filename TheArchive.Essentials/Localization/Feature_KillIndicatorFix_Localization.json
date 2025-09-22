@@ -1,0 +1,85 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Fixes.KillIndicatorFix.Name": {
+        "FName": {
+          "English": "Kill Indicator Fix",
+          "Chinese": "击杀指示器修复",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Fixes.KillIndicatorFix.Description": {
+        "FDescription": {
+          "English": "Fixes orange kill indicators not being consistent for clients.",
+          "Chinese": "修复客户端的橙色击杀标不一致问题。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Fixes.KillIndicatorFix+KillIndicatorFixSettings.TagBufferPeriod": {
+        "FSDisplayName": {
+          "English": "Tag Buffer Period",
+          "Chinese": "标记缓冲间隔",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Determines how long (in ms) an enemy is tracked for after getting shot at.",
+          "Chinese": "决定命中敌人后多久开始追踪敌人。单位: 毫秒ms",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Fixes.KillIndicatorFix+KillIndicatorFixSettings.DebugLog": {
+        "FSDescription": {
+          "English": "Prints debug info to console.",
+          "Chinese": "打印调试信息到控制台",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

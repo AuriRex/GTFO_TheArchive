@@ -6,6 +6,7 @@
 		<RootNamespace>TheArchive</RootNamespace>
 
 		<PluginOutputPath>../output/TheArchive.Essentials/plugins/</PluginOutputPath>
+		<DefinitionFileDir>./Definitions/</DefinitionFileDir>
 		<LocalizationFileDir>./Localization/</LocalizationFileDir>
 		<CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
 	</PropertyGroup>
@@ -17,6 +18,12 @@
 		<TSWebsite>https://github.com/AuriRex/GTFO_TheArchive</TSWebsite>
 		<TSDescription>That one massive GTFO Quality of Life mod.</TSDescription>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Utilities\**" />
+	  <EmbeddedResource Remove="Utilities\**" />
+	  <None Remove="Utilities\**" />
+	</ItemGroup>
 	<ItemGroup>
 		<TSDependencyStrings Include="BepInEx-BepInExPack_GTFO-3.2.2" InProject="false" />
 		<TSDependencyStrings Include="AuriRex-TheArchive_Core-2025.2.0" InProject="false" />
@@ -33,9 +40,5 @@
 			<Private>False</Private>
 			<CopyLocal>False</CopyLocal>
 		</ProjectReference>
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <Folder Include="Utilities\" />
 	</ItemGroup>
 </Project>

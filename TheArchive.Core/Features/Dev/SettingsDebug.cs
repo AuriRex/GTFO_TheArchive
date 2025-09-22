@@ -1,8 +1,8 @@
-﻿using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature;
+﻿using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 
 namespace TheArchive.Features.Dev;
 
@@ -11,7 +11,7 @@ internal class SettingsDebug : Feature
 {
     public override string Name => nameof(SettingsDebug);
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     [FeatureConfig]
     public static SettingsDebugSettings Settings { get; set; }

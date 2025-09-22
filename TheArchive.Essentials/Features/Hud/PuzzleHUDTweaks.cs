@@ -5,6 +5,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Hud;
@@ -14,7 +15,7 @@ public class PuzzleHUDTweaks : Feature
 {
     public override string Name => "Scan HUD Tweaks";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Adds an overall alarm class counter to the HUD message for door alarms etc";
 

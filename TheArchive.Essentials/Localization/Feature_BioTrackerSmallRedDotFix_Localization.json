@@ -1,0 +1,42 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Fixes.BioTrackerSmallRedDotFix.Name": {
+        "FName": {
+          "English": "Bio Tracker Small Red Dot Fix",
+          "Chinese": "生物追踪器小红点修复",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Fixes.BioTrackerSmallRedDotFix.Description": {
+        "FDescription": {
+          "English": "Fixes tiny red dots on the bio tracker.",
+          "Chinese": "修复生物追踪器中显示的小红点",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

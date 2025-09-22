@@ -100,10 +100,11 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
     /// Check if a feature is currently enabled.
     /// </summary>
     /// <param name="featureId">The ID of the feature to check for.</param>
+    /// <param name="useGuid">The ID is Guid.</param>
     /// <returns><c>True</c> if the feature is currently enabled.</returns>
-    public static bool IsFeatureEnabled(string featureId)
+    public static bool IsFeatureEnabled(string featureId, bool useGuid = false)
     {
-        var feature = Instance.RegisteredFeatures.FirstOrDefault(f => f.Identifier == featureId);
+        var feature = Instance.RegisteredFeatures.FirstOrDefault(f => useGuid ? f.GUID == featureId : f.Identifier == featureId);
 
         if (feature == null)
             return false;
@@ -303,6 +304,7 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         }
         RegisteredFeatures.Add(feature);
         feature.Group.Features.Add(feature);
+        feature.TopLevelGroup?.Features.Add(feature);
     }
 
     /// <summary>
@@ -489,6 +491,11 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
         return Instance.RegisteredFeatures.FirstOrDefault(f => f.Identifier == featureIdentifier);
     }
 
+    internal static Feature GetByGuid(string featureGuid)
+    {
+        return Instance.RegisteredFeatures.FirstOrDefault(f => f.GUID == featureGuid);
+    }
+
     internal static Feature GetByType<T>() where T : Feature
     {
         return GetByType(typeof(T));
@@ -566,16 +573,16 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
     {
         if (feature.FeatureInternal.DoNotSaveToConfig) return;
 
-        if (_enabledFeatures.Features.TryGetValue(feature.Identifier, out var currentValue))
+        if (_enabledFeatures.Features.TryGetValue(feature.GUID, out var currentValue))
         {
             if(currentValue == value)
             {
                 return;
             }
 
-            _enabledFeatures.Features.Remove(feature.Identifier);
+            _enabledFeatures.Features.Remove(feature.GUID);
         }
-        _enabledFeatures.Features.Add(feature.Identifier, value);
+        _enabledFeatures.Features.Add(feature.GUID, value);
     }
 
     /// <summary>
@@ -598,7 +605,7 @@ public class FeatureManager : InitSingletonBase<FeatureManager>
             return true;
         }
 
-        if (_enabledFeatures.Features.TryGetValue(feature.Identifier, out var value))
+        if (_enabledFeatures.Features.TryGetValue(feature.GUID, out var value))
         {
             return value;
         }

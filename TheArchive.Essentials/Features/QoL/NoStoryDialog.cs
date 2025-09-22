@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
@@ -18,7 +19,7 @@ public class NoStoryDialog : Feature
 {
     public override string Name => "Remove Story Dialog";
 
-    public override FeatureGroup Group => FeatureGroups.QualityOfLife;
+    public override GroupBase Group => GroupManager.QualityOfLife;
 
     public override string Description => "Removes all level-based voice events that come with subtitles.\naka Schaeffer-be-gone";
 

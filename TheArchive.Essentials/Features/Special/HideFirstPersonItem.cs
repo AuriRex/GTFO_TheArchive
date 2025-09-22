@@ -1,7 +1,7 @@
-﻿using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature.Members;
+﻿using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using UnityEngine;
 
 namespace TheArchive.Features.Special;
@@ -10,7 +10,7 @@ public class HideFirstPersonItem : Feature
 {
     public override string Name => "Weapon Model Toggle";
 
-    public override FeatureGroup Group => FeatureGroups.Special;
+    public override GroupBase Group => GroupManager.Special;
 
     public override string Description => "Forces the held item to be hidden.\nIntended for taking pictures.\n<color=orange>(Warning! This makes you unable to use or switch items until unhidden!)</color>";
 

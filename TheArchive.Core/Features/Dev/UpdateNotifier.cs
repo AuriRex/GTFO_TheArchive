@@ -21,7 +21,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Update Notifier";
 
-        public override FeatureGroup Group => FeatureGroups.ArchiveCore;
+        public override GroupBase Group => GroupManager.ArchiveCore;
 
         public override string Description => "Shows a popup whenever a new version is available.";
 
@@ -141,7 +141,7 @@ namespace TheArchive.Features.Dev
             {
                 Settings.FirstEverPopup = false;
                 MarkSettingsAsDirty(Settings);
-                updateText = $"{updateText}\n\n<size=80%><color=orange>(This can be turned off in mod settings!)</color>\n[Mod Settings] > [{FeatureGroups.ArchiveCore.Name}] > [{nameof(UpdateNotifier)}]</size>";
+                updateText = $"{updateText}\n\n<size=80%><color=orange>(This can be turned off in mod settings!)</color>\n[Mod Settings] > [{GroupManager.ArchiveCore.Name}] > [{nameof(UpdateNotifier)}]</size>";
             }
 
             PageRundownPopupManager.ShowPopup(new PopupMessage()

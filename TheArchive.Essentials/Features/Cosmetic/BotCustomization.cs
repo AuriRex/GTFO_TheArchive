@@ -8,6 +8,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -20,7 +21,7 @@ public class BotCustomization : Feature
 {
     public override string Name => "Bot Customization";
 
-    public override FeatureGroup Group => FeatureGroups.Cosmetic;
+    public override GroupBase Group => GroupManager.Cosmetic;
 
     public override string Description => "Customize your bots - Change their name and Vanity\n\nAdds the Apparel button to bots if you're host.\n(Bot clothing only works if dropping from lobby atm!)";
 

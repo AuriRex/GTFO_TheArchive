@@ -11,6 +11,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -33,7 +34,7 @@ public class WeaponPickerTweaks : Feature
 {
     public override string Name => "Weapon Picker Tweaks";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Allows you to Favorite and Hide Gear in the weapon picker.";
 

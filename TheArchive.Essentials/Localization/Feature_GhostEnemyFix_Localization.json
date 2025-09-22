@@ -1,0 +1,42 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Fixes.GhostEnemyFix.Name": {
+        "FName": {
+          "English": "Ghost Enemy Fix",
+          "Chinese": "敌人幽灵尸体修复",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Fixes.GhostEnemyFix.Description": {
+        "FDescription": {
+          "English": "Preventing the issue where enemies are killed immediately after spawning, causing their corpses to not be properly disposed of.",
+          "Chinese": "避免敌人出生后立刻被杀死导致尸体不被销毁的问题",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

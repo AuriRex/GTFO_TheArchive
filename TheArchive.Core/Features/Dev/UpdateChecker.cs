@@ -16,7 +16,7 @@ namespace TheArchive.Features.Dev
     {
         public override string Name => "Update Checker";
 
-        public override FeatureGroup Group => FeatureGroups.ArchiveCore;
+        public override GroupBase Group => GroupManager.ArchiveCore;
 
         public override string Description => "Checks if a new version of the mod is available via github.";
 

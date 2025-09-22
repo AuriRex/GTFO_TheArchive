@@ -9,6 +9,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
@@ -22,7 +23,7 @@ public class PlayerColorOverride : Feature
 {
     public override string Name => "Player Color Override";
 
-    public override FeatureGroup Group => FeatureGroups.Accessibility;
+    public override GroupBase Group => GroupManager.Accessibility;
 
     public override string Description => "Override the built in player colors.";
 

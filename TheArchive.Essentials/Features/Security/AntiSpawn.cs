@@ -5,9 +5,8 @@ using System;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
-using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Core.Localization;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
@@ -20,35 +19,18 @@ public class AntiSpawn : Feature
 {
     public override string Name => "Anti Spawn";
 
-    public override FeatureGroup Group => FeatureGroups.Security;
-
     public override string Description => "Prevents clients from spawning in enemies.";
+
+    public override Core.FeaturesAPI.Groups.GroupBase Group => GroupManager.Security;
+
+    public override Type[] ExternalLocalizedTypes => new Type[] { typeof(BasicPunishmentSettings) };
 
     public new static IArchiveLogger FeatureLogger { get; set; }
 
     public static bool IsEnabled { get; set; }
 
     [FeatureConfig]
-    public static AntiSpawnSettings Settings { get; set; }
-
-    public class AntiSpawnSettings
-    {
-        [FSDisplayName("Punish Friends")]
-        [FSDescription("If (Steam) Friends should be affected as well.")]
-        public bool PunishFriends { get; set; } = false;
-
-        [FSDisplayName("Punishment")]
-        [FSDescription("What to do with griefers that are trying to spawn in enemies.")]
-        public PunishmentMode Punishment { get; set; } = PunishmentMode.Kick;
-
-        [Localized]
-        public enum PunishmentMode
-        {
-            NoneAndLog,
-            Kick,
-            KickAndBan
-        }
-    }
+    public static BasicPunishmentSettings Settings { get; set; }
 
     public override void OnEnable()
     {
@@ -129,14 +111,14 @@ public class AntiSpawn : Feature
 
         switch (Settings.Punishment)
         {
-            case AntiSpawnSettings.PunishmentMode.KickAndBan:
+            case BasicPunishmentSettings.PunishmentMode.KickAndBan:
                 PlayerLobbyManagement.BanPlayer(player);
                 goto default;
-            case AntiSpawnSettings.PunishmentMode.Kick:
+            case BasicPunishmentSettings.PunishmentMode.Kick:
                 PlayerLobbyManagement.KickPlayer(player);
                 goto default;
             default:
-            case AntiSpawnSettings.PunishmentMode.NoneAndLog:
+            case BasicPunishmentSettings.PunishmentMode.NoneAndLog:
                 FeatureLogger.Notice($"Player \"{player.NickName}\" tried to spawn something! ({Settings.Punishment})");
                 return true;
         }

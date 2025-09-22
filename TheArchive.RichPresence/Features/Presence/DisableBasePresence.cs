@@ -1,5 +1,6 @@
 ﻿using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Presence;
@@ -9,7 +10,7 @@ public class DisableBasePresence : Feature
 {
     public override string Name => "Disable Built-in Rich Presence";
 
-    public override FeatureGroup Group => FeatureGroups.Presence;
+    public override GroupBase Group => GroupManager.Presence;
 
     public override string Description => "Disables the Discord Rich Presence added to the game in Rundown 8.";
 

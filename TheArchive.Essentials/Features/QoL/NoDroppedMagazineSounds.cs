@@ -2,6 +2,7 @@
 using Gear;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.QoL;
@@ -11,7 +12,7 @@ internal class NoDroppedMagazineSounds : Feature
 {
     public override string Name => "No Magazine Drop Sound";
 
-    public override FeatureGroup Group => FeatureGroups.QualityOfLife;
+    public override GroupBase Group => GroupManager.QualityOfLife;
 
     public override string Description => "Removes the <i>globally audible</i> sound whenever a magazine drops on the floor after a reload.";
 

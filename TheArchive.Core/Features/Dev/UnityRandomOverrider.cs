@@ -1,8 +1,8 @@
 ﻿using System;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 
 namespace TheArchive.Features.Dev;
@@ -13,7 +13,7 @@ internal class UnityRandomOverrider : Feature
 {
     public override string Name => "UnityRandomOverrider";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public new static IArchiveLogger FeatureLogger { get; set; }
 

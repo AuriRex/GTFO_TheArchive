@@ -3,10 +3,10 @@ using SNetwork;
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Utilities;
@@ -20,7 +20,7 @@ public class RichPresenceCore : Feature
 {
     public override string Name => "Rich Presence Core";
 
-    public override FeatureGroup Group => FeatureGroups.Presence;
+    public override GroupBase Group => GroupManager.Presence;
 
     public override string Description => "Updates the Presence Game State and provides some values via patches.";
 

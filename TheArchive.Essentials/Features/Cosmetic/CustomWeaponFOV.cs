@@ -1,10 +1,10 @@
 ﻿using GameData;
 using System.Collections.Generic;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Interfaces;
 #if IL2CPP
@@ -19,7 +19,7 @@ internal class CustomWeaponFOV : Feature
 {
     public override string Name => "Weapon FOV Adjustments";
 
-    public override FeatureGroup Group => FeatureGroups.Cosmetic;
+    public override GroupBase Group => GroupManager.Cosmetic;
 
     public override string Description => "Adjust the Field of View of weapons, consumables and big items.";
 

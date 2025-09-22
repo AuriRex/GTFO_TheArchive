@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.PresenceFormatter;
@@ -20,7 +20,7 @@ public class ReactorDiscordRPC : Feature
 {
     public override string Name => nameof(ReactorDiscordRPC);
 
-    public override FeatureGroup Group => FeatureGroups.Presence;
+    public override GroupBase Group => GroupManager.Presence;
 
     public new static IArchiveLogger FeatureLogger { get; set; }
 

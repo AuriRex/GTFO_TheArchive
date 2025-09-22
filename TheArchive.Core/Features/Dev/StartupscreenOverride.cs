@@ -2,6 +2,7 @@
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Dev;
@@ -12,7 +13,7 @@ internal class StartupscreenOverride : Feature
 {
     public override string Name => nameof(StartupscreenOverride);
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     [ArchivePatch(typeof(PlayFabManager), "TryGetStartupScreenData")]
     internal class PlayFabManager__TryGetStartupScreenData__Patch

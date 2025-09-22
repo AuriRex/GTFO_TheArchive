@@ -5,6 +5,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
@@ -17,7 +18,7 @@ internal class BioPingColor : Feature
 {
     public override string Name => "Bio Ping Colors";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override Core.FeaturesAPI.Groups.GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Customize the color of Bio Tracker Pings as well as the blobs on its display.\n\nSingle color, does not differentiate between enemies.";
 

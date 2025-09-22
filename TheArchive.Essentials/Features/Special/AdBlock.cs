@@ -3,6 +3,7 @@ using System;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Features.Dev;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -15,7 +16,7 @@ public class AdBlock : Feature
 {
     public override string Name => "AdBlock";
 
-    public override FeatureGroup Group => FeatureGroups.Special;
+    public override GroupBase Group => GroupManager.Special;
 
     public override string Description => "Removes the Den of Wolves button from the rundown screen.";
 

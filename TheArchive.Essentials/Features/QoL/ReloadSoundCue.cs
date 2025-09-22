@@ -1,9 +1,9 @@
-﻿using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature.Members;
+﻿using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -14,7 +14,7 @@ public class ReloadSoundCue : Feature
 {
     public override string Name => "Reload Sound Cue";
 
-    public override FeatureGroup Group => FeatureGroups.QualityOfLife;
+    public override GroupBase Group => GroupManager.QualityOfLife;
 
     public override string Description => "Play a sound cue on reload the moment the bullets have entered your gun.";
 

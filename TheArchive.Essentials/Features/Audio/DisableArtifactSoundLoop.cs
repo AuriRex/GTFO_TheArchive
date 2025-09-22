@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -15,7 +16,7 @@ public class DisableArtifactSoundLoop : Feature
 {
     public override string Name => "Disable Artifact Sound Loop";
 
-    public override FeatureGroup Group => FeatureGroups.Audio;
+    public override GroupBase Group => GroupManager.Audio;
 
     public override string Description => "Removes the Artifacts idle audio loop.";
 

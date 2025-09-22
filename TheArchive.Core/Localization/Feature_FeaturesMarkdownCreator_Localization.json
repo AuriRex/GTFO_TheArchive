@@ -1,0 +1,70 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Dev.FeaturesMarkdownCreator.Name": {
+        "FName": {
+          "English": "Features Markdown Creator",
+          "Chinese": "特性 Markdown 生成器",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.FeaturesMarkdownCreator.Description": {
+        "FDescription": {
+          "English": "Used to automatically generate a markdown text containing all Features.\n\n(Copied to clipboard)",
+          "Chinese": "用于自动生成包含所有功能的 Markdown 文本。\n\n（已复制到剪贴板）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.FeaturesMarkdownCreator+ReadmeCreatorSettings.CreateMarkdownButton": {
+        "FSDisplayName": {
+          "English": "Create Markdown",
+          "Chinese": "创建 Markdown",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSButtonText": {
+          "English": "Create Markdown (Clipboard)",
+          "Chinese": "创建 Markdown（剪贴板）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

@@ -4,6 +4,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class WeaponShootForward : Feature
 {
     public override string Name => "Weapons shoot forward";
 
-    public override FeatureGroup Group => FeatureGroups.Fixes;
+    public override GroupBase Group => GroupManager.Fixes;
 
     public override string Description => "Patches weapons to always shoot into the center of your crosshair.\nMakes shotgun draw & insta-shoot not shoot the floor";
 

@@ -1,6 +1,7 @@
 ﻿using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
@@ -11,7 +12,7 @@ internal class DisableStaminaBreathing : Feature
 {
     public override string Name => "Disable Breathing (<#8ED7E4>Stamina</color>)";
 
-    public override FeatureGroup Group => FeatureGroups.Audio;
+    public override GroupBase Group => GroupManager.Audio;
 
     public override string Description => "Disables the player breathing and panting due to running around or enemy encounters in pre-R6 builds.";
 

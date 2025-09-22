@@ -3,6 +3,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 
@@ -17,21 +18,16 @@ internal class ModLanguage : Feature
 
     public override string Description => "Change Language of ModSettings";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
     
     public new static IArchiveLogger FeatureLogger { get; set; }
 
-    public override void Init()
-    {
-        LocalizationCoreService.Init();
-    }
-
     public static bool TrySetLanguage(Language targetLanguage)
     {
-        if (targetLanguage != LocalizationCoreService.CurrentLanguage)
+        if (targetLanguage != ArchiveLocalizationService.CurrentLanguage)
         {
             FeatureLogger.Notice($"Setting Language to {targetLanguage}.");
-            LocalizationCoreService.SetCurrentLanguage(targetLanguage);
+            ArchiveLocalizationService.SetCurrentLanguage(targetLanguage);
 
             FeatureInternal.ReloadAllFeatureSettings();
             ModSettings.RegenerateModSettingsPage();

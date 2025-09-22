@@ -2,6 +2,7 @@
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public class DisableUIParalax : Feature
 {
     public override string Name => "Disable UI Paralax";
 
-    public override FeatureGroup Group => FeatureGroups.Accessibility;
+    public override GroupBase Group => GroupManager.Accessibility;
 
     public override string Description => "Disables the Paralax/Moving of UI elements in menu screens.\n(Some elements might get partially or fully cut off-screen!)\n\n<size=80%>(Only partially works on R4://EXT builds, might fix later.)</size>";
 

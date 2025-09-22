@@ -2,6 +2,7 @@
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Audio;
@@ -11,7 +12,7 @@ public class DisableRespawnSackAudio : Feature
 {
     public override string Name => "Disable Respawn Sack Audio";
 
-    public override FeatureGroup Group => FeatureGroups.Audio;
+    public override GroupBase Group => GroupManager.Audio;
 
     public override string Description => "Prevents Respawn Sacks from emitting audio.";
 

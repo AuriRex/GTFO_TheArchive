@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -23,7 +23,7 @@ internal class FeaturesMarkdownCreator : Feature
 {
     public override string Name => "Features Markdown Creator";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public override string Description => "Used to automatically generate a markdown text containing all Features.\n\n(Copied to clipboard)";
 
@@ -36,13 +36,13 @@ internal class FeaturesMarkdownCreator : Feature
     {
         [FSDisplayName("Use Localized Texts")]
         public FButton UseLocalizedTextsButton { get; set; } = new FButton("False", "use_localized_texts");
-        
+
         [FSDisplayName("Switch Assembly")]
         public FButton NextAssemblyButton { get; set; } = new FButton("Next ASM", "next_asm");
-        
+
         [FSDisplayName("Selected ASM:")]
         public FLabel SelectedAssemblyLabel { get; set; } = new FLabel("///");
-        
+
         [FSSpacer]
         [FSDisplayName("Create Markdown")]
         public FButton CreateMarkdownButton { get; set; } = new FButton("Create Markdown (Clipboard)", "create_markdown");
@@ -77,7 +77,7 @@ internal class FeaturesMarkdownCreator : Feature
     private void ToggleUseLocalizedTexts()
     {
         _useLocalizedTexts = !_useLocalizedTexts;
-        
+
         Settings?.UseLocalizedTextsButton?.SecondaryText?.SetText($"[ {(_useLocalizedTexts ? "<color=green>" : "<color=red>")}{_useLocalizedTexts}</color> ]");
     }
 
@@ -86,21 +86,21 @@ internal class FeaturesMarkdownCreator : Feature
     private static void DiscoverAssemblies()
     {
         _loadedModules = ArchiveMod.Modules.Select(m => m.GetType().Assembly).Distinct().ToArray();
-        
+
         SelectAssembly(_loadedModules[0]);
     }
-    
+
     public static void NextAssembly()
     {
         _index++;
-        
+
         if (_index >= _loadedModules.Length)
         {
             _index = 0;
         }
-        
+
         var asm = _loadedModules[_index];
-        
+
         SelectAssembly(asm);
     }
 
@@ -109,30 +109,28 @@ internal class FeaturesMarkdownCreator : Feature
         _selectedAssembly = asm;
         Settings?.SelectedAssemblyLabel?.PrimaryText?.SetText($"Current ASM: <color=orange>{asm?.GetName().Name ?? "None"}</color>");
     }
-    
+
     public static void CreateReadme(Assembly asmFilter = null)
     {
-        var groups = new Dictionary<FeatureGroup, IEnumerable<Feature>>();
+        var groups = new Dictionary<GroupBase, IEnumerable<Feature>>();
 
         var builder = new StringBuilder();
 
-        foreach(var groupKvp in FeatureManager.Instance.GroupedFeatures)
+        foreach (var groupKvp in FeatureManager.Instance.GroupedFeatures)
         {
-            var group = FeatureGroups.GetGroup(groupKvp.Key);
-
-            if(group == null)
+            if (!GroupManager.TryGetGroup(groupKvp.Key, out var group))
             {
                 FeatureLogger.Warning($"Attempted to resolve unknown group \"{groupKvp.Key}\".");
                 continue;
             }
 
-            if(group.IsHidden)
+            if (group.IsHidden)
             {
                 FeatureLogger.Info($"Skipping hidden group \"{groupKvp.Key}\".");
                 continue;
             }
 
-            if(group == FeatureGroups.LocalProgression)
+            if (group == GroupManager.LocalProgression)
             {
                 FeatureLogger.Info("Skipping LocalProgression");
                 continue;
@@ -140,11 +138,11 @@ internal class FeaturesMarkdownCreator : Feature
 
             var features = groupKvp.Value.Where(f => !f.IsHidden).ToArray();
 
-            if(asmFilter != null)
+            if (asmFilter != null)
             {
                 features = features.Where(f => f.GetType().Assembly == asmFilter).ToArray();
             }
-            
+
             if (!features.Any())
             {
                 FeatureLogger.Info($"Skipping Group \"{group}\": All Features are hidden!");
@@ -159,7 +157,7 @@ internal class FeaturesMarkdownCreator : Feature
 
         var orderedGroups = groups.OrderBy(kvp => StripTMPTagsRegex(kvp.Key.Identifier)).ToArray();
 
-        foreach(var entry in orderedGroups)
+        foreach (var entry in orderedGroups)
         {
             var group = entry.Key;
             builder.Append($"  * {CreateQuickLink(group)}\n");
@@ -178,7 +176,7 @@ internal class FeaturesMarkdownCreator : Feature
 
             builder.Append(CreateGroupEntry(group));
 
-            foreach(var feature in features)
+            foreach (var feature in features)
             {
                 builder.Append(CreateFeatureEntry(feature));
             }
@@ -191,7 +189,7 @@ internal class FeaturesMarkdownCreator : Feature
         FeatureLogger.Notice($"Copied {result.Length} characters to clipboard!");
     }
 
-    public static string CreateQuickLink(FeatureGroup group)
+    public static string CreateQuickLink(GroupBase group)
     {
         var name = StripTMPTagsRegex(_useLocalizedTexts ? group.DisplayName : group.Identifier);
 
@@ -200,7 +198,7 @@ internal class FeaturesMarkdownCreator : Feature
         return $"[{name}]({link})";
     }
 
-    public static string CreateGroupEntry(FeatureGroup group)
+    public static string CreateGroupEntry(GroupBase group)
     {
         var builder = new StringBuilder();
         builder.Append($"## {StripTMPTagsRegex(_useLocalizedTexts ? group.DisplayName : group.Identifier)}");
@@ -217,7 +215,7 @@ internal class FeaturesMarkdownCreator : Feature
         var builder = new StringBuilder();
         builder.Append($"### {Utils.StripTMPTagsRegex(_useLocalizedTexts ? feature.FeatureInternal.DisplayName : feature.Name)}");
 
-        if(feature.AppliesToRundowns != Utils.RundownFlags.None)
+        if (feature.AppliesToRundowns != Utils.RundownFlags.None)
         {
             var tag = Utils.GetRundownTag(feature.AppliesToRundowns, true);
 

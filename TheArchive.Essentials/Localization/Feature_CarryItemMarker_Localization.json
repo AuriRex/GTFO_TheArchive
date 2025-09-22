@@ -1,0 +1,448 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Hud.CarryItemMarker.Name": {
+        "FName": {
+          "English": "Carry Item Marker",
+          "Chinese": "携带物品标记",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker.Description": {
+        "FDescription": {
+          "English": "Adds a marker for whenever someone carries a big pickup like CELLs or FOG_TURBINEs\n\nAdditionally colorizes the marker based on what item it is.",
+          "Chinese": "标记会被添加到类似CELL或FOG_TURBINE这样的大型物品。\n\n此外标记将根据物品的类型进行着色。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.ColorizeMarker": {
+        "FSDisplayName": {
+          "English": "Colorize Marker",
+          "Chinese": "标记上色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Change the marker color.\nturn off for default green color",
+          "Chinese": "改变标记颜色。\n关闭以使用默认的绿色。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.ShowIsCarryingMarker": {
+        "FSDisplayName": {
+          "English": "Show Is-Carrying Marker",
+          "Chinese": "在搬运时也显示标记",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Adds a \"Carrying\" Marker to players that carry a pickup.",
+          "Chinese": "为搬运物品的玩家添加一个“搬运”标记。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.DisplayItemName": {
+        "FSDisplayName": {
+          "English": "Display Item Name",
+          "Chinese": "显示物品名称",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.ItemNameSize": {
+        "FSDisplayName": {
+          "English": "Item Name Size",
+          "Chinese": "物品名称大小",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Size of the name text.",
+          "Chinese": "名称文本的大小。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.PowerCell": {
+        "FSDisplayName": {
+          "English": "CELL",
+          "Chinese": "CELL",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": "Colors",
+          "Chinese": "颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.FogTurbine": {
+        "FSDisplayName": {
+          "English": "FOG_TURBINE",
+          "Chinese": "FOG_TURBINE",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.Neonate": {
+        "FSDisplayName": {
+          "English": "NEONATE_HSU",
+          "Chinese": "NEONATE_HSU",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.ImprintedNeonate": {
+        "FSDisplayName": {
+          "English": "IMPRINTED NEONATE HSU",
+          "Chinese": "IMPRINTED NEONATE HSU",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.Cryo": {
+        "FSDisplayName": {
+          "English": "CRYO",
+          "Chinese": "CRYO",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.Cargo": {
+        "FSDisplayName": {
+          "English": "CARGO",
+          "Chinese": "CARGO",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.CargoAlternate": {
+        "FSDisplayName": {
+          "English": "CARGO (R2A1)",
+          "Chinese": "CARGO (R2A1)",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.CargoHisec": {
+        "FSDisplayName": {
+          "English": "HISEC_CARGO",
+          "Chinese": "HISEC_CARGO",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.OpenCargo": {
+        "FSDisplayName": {
+          "English": "OpenCargo",
+          "Chinese": "OpenCargo",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.DataSphere": {
+        "FSDisplayName": {
+          "English": "DATA_SPHERE",
+          "Chinese": "DATA_SPHERE",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.CollectionCase": {
+        "FSDisplayName": {
+          "English": "COLLECTION_CASE",
+          "Chinese": "COLLECTION_CASE",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.MatterWaveProjector": {
+        "FSDisplayName": {
+          "English": "MATTER_WAVE_PROJECTOR",
+          "Chinese": "MATTER_WAVE_PROJECTOR",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.Fallback": {
+        "FSDisplayName": {
+          "English": "Fallback Color",
+          "Chinese": "备用颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.UseStaticColorForName": {
+        "FSDisplayName": {
+          "English": "Use Static Name Color",
+          "Chinese": "使用静态名称颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": "Static Colors",
+          "Chinese": "静态颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.StaticNameColor": {
+        "FSDisplayName": {
+          "English": "Static Name Color",
+          "Chinese": "静态名称颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Enable setting above to use this color for every pickup name.",
+          "Chinese": "启用上面的设置以将此颜色用于每个拾取物品的名称。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.UseStaticColorForMarker": {
+        "FSDisplayName": {
+          "English": "Use Static Marker Color",
+          "Chinese": "使用静态标记颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.CarryItemMarker+CarryItemMarkerSettings.StaticMarkerColor": {
+        "FSDisplayName": {
+          "English": "Static Marker Color",
+          "Chinese": "静态标记颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Enable setting above to use this color for every pickup marker.",
+          "Chinese": "启用上面的设置以将此颜色用于每个拾取物品的标记。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

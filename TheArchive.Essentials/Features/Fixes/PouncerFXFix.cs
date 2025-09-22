@@ -5,6 +5,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
@@ -19,7 +20,7 @@ public class PouncerFXFix : Feature
 {
     public override string Name => "Pouncer ScreenFX Stuck Fix";
 
-    public override FeatureGroup Group => FeatureGroups.Fixes;
+    public override Core.FeaturesAPI.Groups.GroupBase Group => GroupManager.Fixes;
 
     public override string Description => "(WIP) Prevents the pouncer tentacles from getting stuck on screen.";
 

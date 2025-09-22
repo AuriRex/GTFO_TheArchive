@@ -10,6 +10,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -23,7 +24,7 @@ internal class CarryItemMarker : Feature
 {
     public override string Name => "Carry Item Marker";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Adds a marker for whenever someone carries a big pickup like CELLs or FOG_TURBINEs\n\nAdditionally colorizes the marker based on what item it is.";
 

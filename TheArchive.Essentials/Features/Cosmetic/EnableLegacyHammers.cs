@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
 using static TheArchive.Utilities.Utils;
@@ -14,7 +15,7 @@ public class EnableLegacyHammers : Feature
 {
     public override string Name => "Enable old Hammers";
 
-    public override FeatureGroup Group => FeatureGroups.Cosmetic;
+    public override GroupBase Group => GroupManager.Cosmetic;
 
     public override string Description => "Re-enable the pre-R6 Hammers:\n<color=orange>Maul</color>, <color=orange>Gavel</color>, <color=orange>Sledge</color> and <color=orange>Mallet</color>";
 

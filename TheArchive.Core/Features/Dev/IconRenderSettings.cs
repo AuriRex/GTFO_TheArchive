@@ -1,9 +1,9 @@
-﻿using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature;
+﻿using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using static GearIconRendering;
 
 namespace TheArchive.Features.Dev;
@@ -13,7 +13,7 @@ internal class IconRenderSettings : Feature
 {
     public override string Name => nameof(IconRenderSettings);
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     [FeatureConfig]
     public static IconRenderSettingsSettings Settings { get; set; }

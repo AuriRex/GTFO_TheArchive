@@ -3,6 +3,7 @@ using SNetwork;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ public class DontHideLoadoutUI : Feature
 {
     public override string Name => "Don't Hide Loadout UI";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Keep loadout visible after readying up / in expedition";
 

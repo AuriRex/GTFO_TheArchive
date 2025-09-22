@@ -8,7 +8,7 @@ namespace TheArchive.Core.Settings;
 public class EnabledFeatures
 {
     /// <summary>
-    /// A dictionary of all features and their enabled state.
+    /// A dictionary of all features (GUID) and their enabled state.
     /// </summary>
     public Dictionary<string, bool> Features { get; set; } = new();
 }

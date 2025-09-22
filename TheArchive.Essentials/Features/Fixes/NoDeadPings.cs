@@ -1,8 +1,8 @@
 ﻿using Enemies;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Fixes;
@@ -12,7 +12,7 @@ public class NoDeadPings : Feature
 {
     public override string Name => "No Dead Pings";
 
-    public override FeatureGroup Group => FeatureGroups.Fixes;
+    public override Core.FeaturesAPI.Groups.GroupBase Group => GroupManager.Fixes;
 
     public override string Description => "Prevents bio pings (<#F00><u>/\\</u></color>) on dead enemies.";
 

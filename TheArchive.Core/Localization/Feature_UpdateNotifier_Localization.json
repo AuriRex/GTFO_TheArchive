@@ -1,0 +1,182 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Dev.UpdateNotifier.Name": {
+        "FName": {
+          "English": "Update Notifier",
+          "Chinese": "更新通知器",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.UpdateNotifier.Description": {
+        "FDescription": {
+          "English": "Shows a popup whenever a new version is available.",
+          "Chinese": "每当有新版本可用时显示弹出窗口。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.UpdateNotifier+UpdateNotifierSettings.EnableAutoUpdateChecker": {
+        "FSDisplayName": {
+          "English": "Check Updates on start",
+          "Chinese": "启动时检查更新",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Checks for updates every time the game starts!",
+          "Chinese": "每次游戏开始时检查更新！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.UpdateNotifier+UpdateNotifierSettings.ShowOnlyOncePerVersion": {
+        "FSDisplayName": {
+          "English": "Show only once",
+          "Chinese": "仅显示一次",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Shows the update available popup only once per <b>new</b> version whenever you launch the game.\n\n<size=80%>(If this is on and the new version is equal to the one in the text below it won't show it)</size>",
+          "Chinese": "仅在每次启动游戏时显示一次新版本的更新提示。\n\n<size=80%>（如果启用并且新版本与下方文本中的版本相同，则不会显示）</size>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": "://Popup Settings",
+          "Chinese": "://弹出窗口设置",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.UpdateNotifier+UpdateNotifierSettings.LastShownTag": {
+        "FSDisplayName": {
+          "English": "Last Shown Version",
+          "Chinese": "上一次显示的版本",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.UpdateNotifier+UpdateNotifierSettings.ShowUpdatesButton": {
+        "FSDisplayName": {
+          "English": "Check for Updates",
+          "Chinese": "检查更新",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Manually check for updates.",
+          "Chinese": "手动检查更新",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSButtonText": {
+          "English": "Check!",
+          "Chinese": "检查！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.UpdateNotifier+UpdateNotifierSettings.FirstEverPopup": {
+        "FSDisplayName": {
+          "English": "First Ever Popup",
+          "Chinese": "第一次提示",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

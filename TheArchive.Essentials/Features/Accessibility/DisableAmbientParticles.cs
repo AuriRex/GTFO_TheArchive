@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using UnityEngine;
 using static AirParticleSystem.AirParticleSystem;
@@ -14,7 +15,7 @@ public class DisableAmbientParticles : Feature
 {
     public override string Name => "Disable Ambient Particles";
 
-    public override FeatureGroup Group => FeatureGroups.Accessibility;
+    public override GroupBase Group => GroupManager.Accessibility;
 
     public override string Description => "Disable the little floating dust particles in the air.";
 

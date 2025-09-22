@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using GameData;
+﻿using GameData;
 using LevelGeneration;
 using TheArchive.Core;
 using TheArchive.Core.Attributes;
@@ -8,7 +7,7 @@ using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine.CrashReportHandler;
 
-[assembly: ModDefaultFeatureGroupName("TheArchive")]
+[assembly: ModSettingsDisplayName("TheArchive")]
 
 namespace TheArchive;
 
@@ -31,6 +30,8 @@ internal class MainArchiveModule : IArchiveModule
 
     public void Init()
     {
+        ArchiveLocalizationService.Setup(LocalizationService);
+
         CrashReportHandler.SetUserMetadata("Modded", "true");
         CrashReportHandler.enableCaptureExceptions = false;
     }

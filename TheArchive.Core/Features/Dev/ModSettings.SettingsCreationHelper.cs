@@ -90,7 +90,7 @@ public partial class ModSettings
                             Title = ss.DisplayName,
                             Description = ss.Description,
                             CriticalInfo = ss.Helper.Feature.FeatureInternal.CriticalInfo,
-                            FeatureOrigin = ss.Helper.Feature.FeatureInternal.AsmGroupName,
+                            FeatureOrigin = ss.Helper.Feature.FeatureInternal.AsmDisplayName,
                         };
                         CreateSubMenuControls(subMenu, menuEntryLabelText: ss.DisplayName, placeIntoMenu: placeIntoMenu, descriptionPanelData: data);
 
@@ -301,11 +301,11 @@ public partial class ModSettings
         {
             if (stateTrue == "<#0F0>[ On ]</color>")
             {
-                stateTrue = $"<#0F0>[ {LocalizationCoreService.Get(6, "On")} ]</color>";
+                stateTrue = $"<#0F0>[ {ArchiveLocalizationService.GetById(6, "On")} ]</color>";
             }
             if (stateFalse == "<#F00>[ Off ]</color>")
             {
-                stateFalse = $"<#F00>[ {LocalizationCoreService.Get(7, "Off")} ]</color>";
+                stateFalse = $"<#F00>[ {ArchiveLocalizationService.GetById(7, "Off")} ]</color>";
             }
             CreateSettingsItem(labelText, out var cmItem, subMenu: placeIntoMenu);
             cmItem.ForcePopupLayer(true);
@@ -390,7 +390,7 @@ public partial class ModSettings
                     title = $"<b>{title}</b>";
             }
 
-            CreateSettingsItem(title, out cm_settingsItem, color.Value, subMenu, placeInNoMenu: placeInNoMenu);
+            CreateSettingsItem(title, out cm_settingsItem, titleColor: color.Value, subMenu: subMenu, placeInNoMenu: placeInNoMenu);
 
             var rectTrans = cm_settingsItem.transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<RectTransform>();
 
@@ -407,7 +407,17 @@ public partial class ModSettings
             }
         }
 
-        public static void CreateSettingsItem(string titleText, out CM_SettingsItem cm_settingsItem, Color? titleColor = null, SubMenu subMenu = null, bool placeInNoMenu = false)
+        public static void CreateSettingsItem(Func<string> getTitleText, out CM_SettingsItem cm_settingsItem, Func<(string, string)> getTooltipText = null, TooltipPositionType positionType = TooltipPositionType.UnderElement, Color? titleColor = null, SubMenu subMenu = null, bool placeInNoMenu = false)
+        {
+            if (getTitleText == null)
+                throw new ArgumentNullException(nameof(getTitleText));
+
+            (string tooltipHeader, string tooltipText) = getTooltipText?.Invoke() ?? (null, null);
+            CreateSettingsItem(getTitleText(), out cm_settingsItem, tooltipText, tooltipHeader, positionType, titleColor, subMenu, placeInNoMenu);
+            JankCellMenuSettingsItemLocalizedTextUpdaterWrapper.CreateAndApply(cm_settingsItem, getTitleText, getTooltipText);
+        }
+
+        public static void CreateSettingsItem(string titleText, out CM_SettingsItem cm_settingsItem, string tooltipText = null, string tooltipHeader = null, TooltipPositionType positionType = TooltipPositionType.UnderElement, Color? titleColor = null, SubMenu subMenu = null, bool placeInNoMenu = false)
         {
             var settingsItemGameObject = GameObject.Instantiate(SettingsItemPrefab, subMenu?.WindowTransform ?? MainScrollWindowTransform);
 
@@ -435,6 +445,14 @@ public partial class ModSettings
 #endif
 
             JankTextMeshProUpdaterOnce.Apply(titleTextTMP);
+
+            cm_settingsItem.TooltipInfo = new TooltipInfo()
+            {
+                TooltipHeader = tooltipHeader,
+                TooltipText = tooltipText,
+                UseTooptip = !string.IsNullOrWhiteSpace(tooltipHeader) || !string.IsNullOrWhiteSpace(tooltipText),
+                PositionType = positionType
+            };
         }
 
         public static void SetupToggleButton(CM_SettingsItem cm_settingsItem, out CM_Item toggleButton_cm_item, out TMPro.TextMeshPro toggleButtonText)
@@ -457,15 +475,15 @@ public partial class ModSettings
             if (subMenu == null) return;
 
             if (menuEntryLabelText == "> Settings")
-                menuEntryLabelText = LocalizationCoreService.Get(37, menuEntryLabelText);
+                menuEntryLabelText = $"> {ArchiveLocalizationService.GetById(37, "Settings")}";
             if (backButtonText == "<<< Back <<<")
-                backButtonText = LocalizationCoreService.Get(38, backButtonText);
+                backButtonText = $"<<< {ArchiveLocalizationService.GetById(38, "Back")} <<<";
             if (enterButtonText == "> ENTER <")
-                enterButtonText = LocalizationCoreService.Get(39, enterButtonText);
+                enterButtonText = $"> {ArchiveLocalizationService.GetById(39, "ENTER")} <";
 
             using var _ = subMenu.GetPersistentContentAdditionToken();
 
-            CreateSettingsItem(backButtonText, out var outof_sub_cm_settingsItem, RED, subMenu);
+            CreateSettingsItem(backButtonText, out var outof_sub_cm_settingsItem, titleColor: RED, subMenu: subMenu);
             CreateSpacer(subMenu);
 
             if (!string.IsNullOrWhiteSpace(headerText))
@@ -473,7 +491,7 @@ public partial class ModSettings
                 CreateHeader(headerText, subMenu: subMenu);
             }
 
-            CreateSettingsItem(menuEntryLabelText, out var into_sub_cm_settingsItem, entryItemColor, placeIntoMenu);
+            CreateSettingsItem(menuEntryLabelText, out var into_sub_cm_settingsItem, titleColor: entryItemColor, subMenu: placeIntoMenu);
 
             CreateFSHoverAndSetButtonAction(descriptionPanelData, into_sub_cm_settingsItem, null);
 
@@ -505,7 +523,7 @@ public partial class ModSettings
 
             if (useLegacyColorInputField)
             {
-                CreateSettingsItem(GetNameForSetting(setting), out cm_settingsItem, subMenu: subMenu);
+                CreateSettingsItem(GetNameForSetting(setting), out cm_settingsItem, setting.TooltipText, setting.TooltipHeader, setting.TooltipPositionType, subMenu: subMenu);
             }
             else
             {
@@ -517,7 +535,7 @@ public partial class ModSettings
                     TheColorPicker.Show(setting);
                 };
 
-                CreateSimpleButton(GetNameForSetting(setting), LocalizationCoreService.Get(8, "Pick Color"), onPress, out cm_settingsItem, placeIntoMenu: subMenu);
+                CreateSimpleButton(GetNameForSetting(setting), ArchiveLocalizationService.GetById(8, "Pick Color"), onPress, out cm_settingsItem, placeIntoMenu: subMenu);
             }
 
             setting.CM_SettingsItem = cm_settingsItem;
@@ -591,7 +609,7 @@ public partial class ModSettings
 
         public static void CreateStringSetting(StringSetting setting, SubMenu subMenu = null)
         {
-            CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
+            CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, setting.TooltipText, setting.TooltipHeader, setting.TooltipPositionType, subMenu: subMenu);
 
             setting.CM_SettingsItem = cm_settingsItem;
 
@@ -656,7 +674,7 @@ public partial class ModSettings
 
         public static void CreateBoolSetting(BoolSetting setting, SubMenu subMenu = null)
         {
-            CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
+            CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, setting.TooltipText, setting.TooltipHeader, setting.TooltipPositionType, subMenu: subMenu);
 
             setting.CM_SettingsItem = cm_settingsItem;
 
@@ -679,13 +697,13 @@ public partial class ModSettings
                 var val = !(bool)setting.GetValue();
                 setting.SetValue(val);
 
-                toggleButtonText.SetText(val ? LocalizationCoreService.Get(6, "On") : LocalizationCoreService.Get(7, "Off"));
+                toggleButtonText.SetText(val ? ArchiveLocalizationService.GetById(6, "On") : ArchiveLocalizationService.GetById(7, "Off"));
                 var color = val ? GREEN : RED;
                 SharedUtils.ChangeColorCMItem(toggleButton_cm_item, color);
             });
 
             var currentValue = (bool)setting.GetValue();
-            toggleButtonText.SetText(currentValue ? LocalizationCoreService.Get(6, "On") : LocalizationCoreService.Get(7, "Off"));
+            toggleButtonText.SetText(currentValue ? ArchiveLocalizationService.GetById(6, "On") : ArchiveLocalizationService.GetById(7, "Off"));
             var col = currentValue ? GREEN : RED;
             SharedUtils.ChangeColorCMItem(toggleButton_cm_item, col);
 
@@ -694,7 +712,7 @@ public partial class ModSettings
 
         public static void CreateEnumListSetting(EnumListSetting setting, SubMenu subMenu = null)
         {
-            CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
+            CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, setting.TooltipText, setting.TooltipHeader, setting.TooltipPositionType, subMenu: subMenu);
 
             setting.CM_SettingsItem = cm_settingsItem;
 
@@ -801,7 +819,7 @@ public partial class ModSettings
 
             if (string.IsNullOrWhiteSpace(str))
             {
-                return $"[{LocalizationCoreService.Get(5, "None")}]";
+                return $"[{ArchiveLocalizationService.GetById(5, "None")}]";
             }
 
             if (str.Length > 36)
@@ -814,7 +832,7 @@ public partial class ModSettings
 
         public static void CreateEnumSetting(EnumSetting setting, SubMenu subMenu = null)
         {
-            CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
+            CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, setting.TooltipText, setting.TooltipHeader, setting.TooltipPositionType, subMenu: subMenu);
 
             setting.CM_SettingsItem = cm_settingsItem;
 
@@ -993,7 +1011,7 @@ public partial class ModSettings
         //m_handleLocalXPosMinMax // m_scrollRange
         public static void CreateNumberSetting(NumberSetting setting, SubMenu subMenu)
         {
-            CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, subMenu: subMenu);
+            CreateSettingsItem(GetNameForSetting(setting), out var cm_settingsItem, setting.TooltipText, setting.TooltipHeader, setting.TooltipPositionType, subMenu: subMenu);
 
             setting.CM_SettingsItem = cm_settingsItem;
 
@@ -1165,7 +1183,7 @@ public partial class ModSettings
                 Title = setting.DisplayName,
                 Description = setting.Description,
                 CriticalInfo = setting.Helper.Feature.FeatureInternal.CriticalInfo,
-                FeatureOrigin = setting.Helper.Feature.FeatureInternal.AsmGroupName,
+                FeatureOrigin = setting.Helper.Feature.FeatureInternal.AsmDisplayName,
             };
 
             CreateFSHoverAndSetButtonAction(data, cm_settingsItem, toggleButton_cm_item, buttonAction);
@@ -1173,7 +1191,7 @@ public partial class ModSettings
 
         public static void CreateFSHoverAndSetButtonAction(DescriptionPanelData data, CM_SettingsItem cm_settingsItem, CM_Item toggleButton_cm_item, Action<int> buttonAction = null)
         {
-            var delHover = delegate (int id, bool hovering)
+            void OnButtonHover(int id, bool hovering)
             {
                 if (hovering)
                 {
@@ -1184,22 +1202,22 @@ public partial class ModSettings
                 {
                     TheDescriptionPanel.Hide();
                 }
-            };
+            }
 
-            cm_settingsItem?.SetCMItemEvents((_) => { }, delHover);
-            toggleButton_cm_item?.SetCMItemEvents(buttonAction ?? ((_) => { }), delHover);
+            cm_settingsItem?.SetCMItemEvents((_) => { }, OnButtonHover);
+            toggleButton_cm_item?.SetCMItemEvents(buttonAction ?? ((_) => { }), OnButtonHover);
         }
 
         public static void SetFeatureItemTextAndColor(Feature feature, CM_Item buttonItem, TMPro.TextMeshPro text)
         {
             if (feature.IsAutomated)
             {
-                text.SetText(LocalizationCoreService.Get(4, "Automated"));
+                text.SetText(ArchiveLocalizationService.GetById(4, "Automated"));
                 SharedUtils.ChangeColorCMItem(buttonItem, DISABLED);
                 return;
             }
             bool enabled = (feature.IsLoadedAndNotDisabledInternally && !feature.RequiresRestart) ? feature.Enabled : FeatureManager.IsEnabledInConfig(feature);
-            text.SetText(enabled ? LocalizationCoreService.Get(1, "Enabled") : LocalizationCoreService.Get(2, "Disabled"));
+            text.SetText(enabled ? ArchiveLocalizationService.GetById(1, "Enabled") : ArchiveLocalizationService.GetById(2, "Disabled"));
 
             SetFeatureItemColor(feature, buttonItem);
 

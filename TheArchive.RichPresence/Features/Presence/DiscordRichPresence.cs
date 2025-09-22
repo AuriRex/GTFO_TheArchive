@@ -1,9 +1,9 @@
 ﻿using CellMenu;
 using System;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Core.Settings;
@@ -16,7 +16,7 @@ public class DiscordRichPresence : Feature
 {
     public override string Name => "Archive Discord Rich Presence";
 
-    public override FeatureGroup Group => FeatureGroups.Presence;
+    public override GroupBase Group => GroupManager.Presence;
 
     public override string Description => "Show the current game state in detail on discord.";
 
@@ -26,7 +26,7 @@ public class DiscordRichPresence : Feature
 
     public override bool SkipInitialOnEnable => true;
 
-    public override Type[] LocalizationExternalTypes => new[] { typeof(RichPresenceSettings) };
+    public override Type[] ExternalLocalizedTypes => new[] { typeof(RichPresenceSettings) };
 
     [FeatureConfig]
     public static RichPresenceSettings DiscordRPCSettings { get; set; }

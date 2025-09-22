@@ -3,9 +3,9 @@ using SNetwork;
 using System;
 using System.Collections;
 using System.Diagnostics;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using TheArchive.Utilities;
@@ -17,7 +17,7 @@ public class LoadingIndicator : Feature
 {
     public override string Name => "Loading Indicator";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Displays a little indicator that shows if other players have finished loading yet.";
 

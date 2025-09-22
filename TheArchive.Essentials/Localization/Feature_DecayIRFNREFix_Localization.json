@@ -1,0 +1,42 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Fixes.DecayIRFNREFix.Name": {
+        "FName": {
+          "English": "Decay IRF NRE Fix",
+          "Chinese": "敌人死亡 IRF 空引用修复",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Fixes.DecayIRFNREFix.Description": {
+        "FDescription": {
+          "English": "Fixes enemies with invalid IRFs spamming the console on death.\n\n<i>Specifically 'tank_boss'</i>",
+          "Chinese": "修复敌人死亡时因无效IRF而导致的控制台垃圾信息问题。\n\n<i>特别是'tank_boss'</i>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

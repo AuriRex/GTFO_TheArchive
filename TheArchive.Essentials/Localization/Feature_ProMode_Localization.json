@@ -1,0 +1,238 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Hud.ProMode.Name": {
+        "FName": {
+          "English": "Hud Pro Mode (Disable HUD)",
+          "Chinese": "Hud Pro模式(禁用Hud)",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ProMode.Description": {
+        "FDescription": {
+          "English": "Force disable <i><u>ALL</u></i> HUD layers unless re-enabled via the submenu.\n\nMain purpose is for video production",
+          "Chinese": "强制禁用<i><u>所有</u></i> HUD层，除非通过子菜单重新启用。\n\n主要用于视频制作",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ProMode+ProModeSettings.EnableNavmarkers": {
+        "FSDisplayName": {
+          "English": "Show Navmarkers",
+          "Chinese": "显示导航标记",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "If Player Names, Bio Pings and Player Pings should be shown.",
+          "Chinese": "是否显示玩家名称、生物 Ping 和玩家 Ping。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ProMode+ProModeSettings.EnableWardenIntel": {
+        "FSDisplayName": {
+          "English": "Show Warden Intel",
+          "Chinese": "显示典狱长情报",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "If Objective Info / Reminders should be shown.",
+          "Chinese": "是否显示目标信息 / 提示。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ProMode+ProModeSettings.EnableComsMenu": {
+        "FSDisplayName": {
+          "English": "Show Coms-Menu",
+          "Chinese": "显示通讯菜单",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Enable the Communication Menu in order to communicate / command bots.",
+          "Chinese": "启用通讯菜单以便与机器人进行通信 / 命令。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ProMode+ProModeSettings.EnableCrosshair": {
+        "FSDisplayName": {
+          "English": "Show Crosshair",
+          "Chinese": "显示十字准星",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "If the crosshair in the center of the screen should be shown.",
+          "Chinese": "是否显示屏幕中央的十字准星。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ProMode+ProModeSettings.EnableInteractions": {
+        "FSDisplayName": {
+          "English": "Show Interactions",
+          "Chinese": "显示交互",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "If Interactions like picking up resource packs/consumables or reviving players should be shown.",
+          "Chinese": "是否显示像拾取资源包、消耗品、复活玩家等交互操作。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ProMode+ProModeSettings.EnableChat": {
+        "FSDisplayName": {
+          "English": "Show Chat",
+          "Chinese": "显示聊天",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "If the chat should be shown.",
+          "Chinese": "是否显示聊天窗口。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.ProMode+ProModeSettings.HideInactiveChat": {
+        "FSDisplayName": {
+          "English": "Hide Inactive Chat",
+          "Chinese": "隐藏非活动的聊天",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Hide the chat completely after a few seconds of inactivity instead of only dimming it.",
+          "Chinese": "在几秒钟不活动后完全隐藏聊天窗口，而不仅仅是使其变暗。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

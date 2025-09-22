@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using TheArchive.Core.FeaturesAPI.Components;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
@@ -60,7 +61,13 @@ public abstract class Feature
     /// This features unique identifier.
     /// </summary>
     public string Identifier => _identifier ??= GetType().Name;
-    
+
+    private string _guid;
+    /// <summary>
+    /// This features guid.
+    /// </summary>
+    public string GUID => _guid ??= GetType().FullName;
+
     /// <summary>
     /// If this feature is hidden in the mod settings menu.
     /// </summary>
@@ -120,7 +127,7 @@ public abstract class Feature
     /// <summary>
     /// Types that should be localized that aren't nested in your features type.
     /// </summary>
-    public virtual Type[] LocalizationExternalTypes => Array.Empty<Type>();
+    public virtual Type[] ExternalLocalizedTypes => Array.Empty<Type>();
 
     /// <summary>
     /// True if this feature is controlled via code.
@@ -177,12 +184,17 @@ public abstract class Feature
     /// <remarks>
     /// By default, the module default feature group is used.
     /// </remarks>
-    public virtual FeatureGroup Group => ModuleGroup;
+    public virtual GroupBase Group => ModuleGroup;
+
+    /// <summary>
+    /// Specifies the group used to map the feature to the top-level group.
+    /// </summary>
+    public virtual TopLevelGroup TopLevelGroup { get; } = null;
 
     /// <summary>
     /// Default group for features that don't specify a custom one.
     /// </summary>
-    protected FeatureGroup ModuleGroup => FeatureInternal.ModuleGroup;
+    protected ModuleGroup ModuleGroup => FeatureInternal.ModuleGroup;
     
     /// <summary>
     /// If set, prevents calling of <see cref="OnEnable"/> and <see cref="OnDisable"/> methods and instead only switches the config state of this feature.

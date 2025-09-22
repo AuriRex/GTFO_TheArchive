@@ -3,11 +3,11 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -22,7 +22,7 @@ public class ExpeditionResultsScreenTweaks : Feature
 {
     public override string Name => "Results Screen Tweaks";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Tweak the Expedition Fail/Success screens!";
 

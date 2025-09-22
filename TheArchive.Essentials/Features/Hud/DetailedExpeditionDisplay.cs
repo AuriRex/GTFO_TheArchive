@@ -7,6 +7,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -17,7 +18,7 @@ public class DetailedExpeditionDisplay : Feature
 {
     public override string Name => "Detailed Expedition Display";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Adds the current Rundown Number into the Header as well as onto the Map, Objectives and Success screens.";
 

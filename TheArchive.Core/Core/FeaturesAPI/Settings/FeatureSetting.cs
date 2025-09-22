@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CellMenu;
+using System;
 using System.Reflection;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Settings;
@@ -28,6 +29,22 @@ public class FeatureSetting
     /// The display name of this feature setting.
     /// </summary>
     public string DisplayName { get; }
+    /// <summary>
+    /// Indicates whether to show tooltip for this feature setting.
+    /// </summary>
+    public bool UseTooltip { get; }
+    /// <summary>
+    /// The tooltip position type of this feature setting.
+    /// </summary>
+    public TooltipPositionType TooltipPositionType { get; }
+    /// <summary>
+    /// The tooltip header of this feature setting.
+    /// </summary>
+    public string TooltipHeader { get; }
+    /// <summary>
+    /// The tooltip text of this feature setting.
+    /// </summary>
+    public string TooltipText { get; }
     /// <summary>
     /// The description of this feature setting.
     /// </summary>
@@ -100,16 +117,32 @@ public class FeatureSetting
         Type = prop.GetMethod?.ReturnType;
         RequiresRestart = prop.GetCustomAttribute<RequiresRestart>() != null;
 
-        if (featureSettingsHelper.Localization.TryGetFSText($"{prop.DeclaringType!.FullName}.{prop.Name}", FSType.FSDisplayName, out var displayName))
+        var propID = $"{prop.DeclaringType!.FullName}.{prop.Name}";
+
+        if (featureSettingsHelper.Localization.TryGetFSText(propID, FSType.FSDisplayName, out var displayName))
             DisplayName = $">{(RequiresRestart ? " <color=red>[!]</color>" : "")} {displayName}";
         else
             DisplayName = $">{(RequiresRestart ? " <color=red>[!]</color>" : "")} {prop.GetCustomAttribute<FSDisplayName>()?.DisplayName ?? prop.Name}";
-        if (featureSettingsHelper.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSDescription, out var description))
+        if (featureSettingsHelper.Localization.TryGetFSText(propID, FSType.FSDescription, out var description))
             Description = description;
         else
             Description = prop.GetCustomAttribute<FSDescription>()?.Description;
+
+        var tooltip = prop.GetCustomAttribute<FSTooltip>(true);
+        if (tooltip != null)
+        {
+            TooltipPositionType = tooltip.PositionType;
+            TooltipHeader = tooltip.TooltipHeader;
+            TooltipText = tooltip.TooltipText;
+            if (featureSettingsHelper.Localization.TryGetFSText(propID, FSType.FSTooltipHeader, out var tooltipHeaderText))
+                TooltipHeader = tooltipHeaderText;
+            if (featureSettingsHelper.Localization.TryGetFSText(propID, FSType.FSTooltipText, out var tooltipText))
+                TooltipText = tooltipText;
+            UseTooltip = !string.IsNullOrWhiteSpace(TooltipHeader) || !string.IsNullOrWhiteSpace(TooltipText);
+        }
+
         HeaderAbove = prop.GetCustomAttribute<FSHeader>();
-        if (HeaderAbove != null && featureSettingsHelper.Localization.TryGetFSText($"{prop.DeclaringType.FullName}.{prop.Name}", FSType.FSHeader, out var headerText))
+        if (HeaderAbove != null && featureSettingsHelper.Localization.TryGetFSText(propID, FSType.FSHeader, out var headerText))
             HeaderAbove = new(headerText, HeaderAbove.Color, HeaderAbove.Bold);
 
         Identifier = prop.GetCustomAttribute<FSIdentifier>()?.Identifier ?? ($"{prop.PropertyType.FullName}_{prop.Name}");

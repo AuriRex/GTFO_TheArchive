@@ -7,6 +7,7 @@
 		<AssemblyName>TheArchive.Core</AssemblyName>
 
 		<PluginOutputPath>../output/TheArchive.Core/plugins/</PluginOutputPath>
+		<DefinitionFileDir>./Definitions/</DefinitionFileDir>
 		<LocalizationFileDir>./Localization/</LocalizationFileDir>
 		<CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
 

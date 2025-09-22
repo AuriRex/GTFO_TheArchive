@@ -10,6 +10,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
@@ -22,7 +23,7 @@ public class LoadoutRandomizer : Feature
 {
     public override string Name => "Loadout Randomizer";
 
-    public override FeatureGroup Group => FeatureGroups.QualityOfLife;
+    public override GroupBase Group => GroupManager.QualityOfLife;
 
     public override string Description => "Adds a Loadout Randomizer button onto the loadout screen.\nSelect which gear to randomize via the settings below.";
 

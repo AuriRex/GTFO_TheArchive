@@ -1,0 +1,141 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.LocalProgression.LocalProgressionController.Name": {
+        "FName": {
+          "English": "Local Progression",
+          "Chinese": "本地关卡进度",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.LocalProgression.LocalProgressionController+LocalProgressionSettings.LocalProgression": {
+        "FSDisplayName": {
+          "English": "Enable Local Progression",
+          "Chinese": "启用本地关卡进度",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.LocalProgression.LocalProgressionController+LocalProgressionSettings.LocalBoosters": {
+        "FSDisplayName": {
+          "English": "Enable Local Boosters",
+          "Chinese": "启用本地强化剂",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.LocalProgression.LocalProgressionController+LocalProgressionSettings.LocalVanity": {
+        "FSDisplayName": {
+          "English": "Enable Local Vanity",
+          "Chinese": "启用本地服装",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.LocalProgression.LocalProgressionController+LocalProgressionSettings.DisableLocalProgressionOnLatest": {
+        "FSDisplayName": {
+          "English": "Use Servers on Latest",
+          "Chinese": "使用最新版本的服务器",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Disables the options above automatically on the latest game version",
+          "Chinese": "在最新版本的游戏中自动禁用上述选项",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": "Progression :// Misc",
+          "Chinese": "进度://杂项",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.LocalProgression.LocalProgressionController+LocalProgressionSettings.SkipExpeditionUnlockRequirements": {
+        "FSDisplayName": {
+          "English": "All Expeditions Unlocked",
+          "Chinese": "解锁所有关卡",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Only works with LocalProgression enabled!",
+          "Chinese": "只有启用了 本地关卡进度 才能工作!!",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

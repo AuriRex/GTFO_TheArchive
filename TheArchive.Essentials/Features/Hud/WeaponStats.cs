@@ -11,6 +11,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Localization;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -22,13 +23,13 @@ public class WeaponStats : Feature
 {
     public override string Name => "Show Weapon Stats";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Adds weapon statistics such as damage, clip size and reload speed (and more if applicable) on the weapon select screen.";
         
     public new static ILocalizationService Localization { get; set; }
 
-    public override Type[] LocalizationExternalTypes => new Type[] { typeof(FSSlider.RoundTo) };
+    public override Type[] ExternalLocalizedTypes => new Type[] { typeof(FSSlider.RoundTo) };
 
     [FeatureConfig]
     public static WeaponStatsSettings Settings { get; set; }
@@ -201,28 +202,28 @@ public class WeaponStats : Feature
     public const string DIVIDER = " | ";
     public const string CLOSE_COLOR_TAG = "</color>";
 
-    public static string Short_MeleeLight => Localization.Get(1);
-    public static string Short_MeleeCharged => Localization.Get(2);
+    public static string Short_MeleeLight => Localization.GetById(1);
+    public static string Short_MeleeCharged => Localization.GetById(2);
 
-    public static string Short_MeleeCanRunWhileCharging => Localization.Get(3);
-    public static string Short_MeleeSleepingEnemiesMultiplier => Localization.Get(4);
-    public static string Short_EnvironmentMultiplier => Localization.Get(5);
-    public static string Short_MeleeMaxDamageChargeTime => Localization.Get(19);
+    public static string Short_MeleeCanRunWhileCharging => Localization.GetById(3);
+    public static string Short_MeleeSleepingEnemiesMultiplier => Localization.GetById(4);
+    public static string Short_EnvironmentMultiplier => Localization.GetById(5);
+    public static string Short_MeleeMaxDamageChargeTime => Localization.GetById(19);
 
-    public static string Short_Damage => Localization.Get(6);
-    public static string Short_Clip => Localization.Get(7);
-    public static string Short_MaxAmmo => Localization.Get(8);
-    public static string Short_Reload => Localization.Get(9);
-    public static string Short_Stagger => Localization.Get(10);
-    public static string Short_Precision => Localization.Get(11);
-    public static string Short_PierceCount => Localization.Get(12);
-    public static string Short_ShotgunPelletCount => Localization.Get(13);
-    public static string Short_ShotgunSpread => Localization.Get(14);
-    public static string Short_BurstShotCount => Localization.Get(15);
-    public static string Short_FiringRate => Localization.Get(16);
-    public static string Short_FalloffDistanceClose => Localization.Get(17);
-    public static string Short_FalloffDistanceFar => Localization.Get(18);
-    public static string Short_SpecialChargeupTime => Localization.Get(20);
+    public static string Short_Damage => Localization.GetById(6);
+    public static string Short_Clip => Localization.GetById(7);
+    public static string Short_MaxAmmo => Localization.GetById(8);
+    public static string Short_Reload => Localization.GetById(9);
+    public static string Short_Stagger => Localization.GetById(10);
+    public static string Short_Precision => Localization.GetById(11);
+    public static string Short_PierceCount => Localization.GetById(12);
+    public static string Short_ShotgunPelletCount => Localization.GetById(13);
+    public static string Short_ShotgunSpread => Localization.GetById(14);
+    public static string Short_BurstShotCount => Localization.GetById(15);
+    public static string Short_FiringRate => Localization.GetById(16);
+    public static string Short_FalloffDistanceClose => Localization.GetById(17);
+    public static string Short_FalloffDistanceFar => Localization.GetById(18);
+    public static string Short_SpecialChargeupTime => Localization.GetById(20);
 
     //public void LoadData(GearIDRange idRange, bool clickable, bool detailedInfo)
 #if IL2CPP
@@ -418,7 +419,7 @@ public class WeaponStats : Feature
 
             var statsString = builder.ToString();
 
-            return string.IsNullOrWhiteSpace(statsString) ? Localization.Get(21) : statsString;
+            return string.IsNullOrWhiteSpace(statsString) ? Localization.GetById(21) : statsString;
         }
 #endif
     }
@@ -574,7 +575,7 @@ public class WeaponStats : Feature
             builder.Append("<#18A4A9>");
             builder.Append($"{Short_FiringRate} ");
             float dly = (float)(archeTypeDataBlock.FireMode == eWeaponFireMode.Burst ? Mathf.Max(archeTypeDataBlock.BurstDelay, archeTypeDataBlock.ShotDelay) : archeTypeDataBlock.ShotDelay);
-            builder.Append(dly <= 0 ? Localization.Get(22) : Round(60f / dly));
+            builder.Append(dly <= 0 ? Localization.GetById(22) : Round(60f / dly));
             if (dly > 0)
                 builder.Append(" RPM");
             builder.Append(CLOSE_COLOR_TAG);
@@ -617,6 +618,6 @@ public class WeaponStats : Feature
 
         var statsString = builder.ToString();
 
-        return string.IsNullOrWhiteSpace(statsString) ? Localization.Get(21) : statsString;
+        return string.IsNullOrWhiteSpace(statsString) ? Localization.GetById(21) : statsString;
     }
 }

@@ -3,6 +3,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Fixes;
@@ -13,7 +14,7 @@ internal class BioTrackerSmallRedDotFix : Feature
 {
     public override string Name => "Bio Tracker Small Red Dots";
 
-    public override FeatureGroup Group => FeatureGroups.Fixes;
+    public override Core.FeaturesAPI.Groups.GroupBase Group => GroupManager.Fixes;
 
     public override string Description => "Fixes tiny red dots on the bio tracker.";
 

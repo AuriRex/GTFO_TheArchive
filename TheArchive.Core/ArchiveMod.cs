@@ -8,9 +8,11 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using TheArchive.Core;
 using TheArchive.Core.Bootstrap;
+using TheArchive.Core.Definitions;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Interop;
 using TheArchive.Core.Localization;
+using TheArchive.Core.Localization.Services;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;
 using TheArchive.Core.ModulesAPI;
@@ -66,9 +68,6 @@ public static class ArchiveMod
 
     /// <summary> MTFO GUID </summary>
     public const string MTFO_GUID = "com.dak.MTFO";
-
-    /// <summary> Main feature group name </summary>
-    public const string ARCHIVE_CORE_FEATUREGROUP = "Archive Core";
 
     /// <summary> Path to the main TheArchive.Core.dll assembly </summary>
     public static readonly string CORE_PATH = Assembly.GetAssembly(typeof(ArchiveMod))!.Location;
@@ -538,6 +537,8 @@ public static class ArchiveMod
         ArchiveLogger.Info($"Initializing module \"{moduleType.FullName}\" ...");
         var module = (IArchiveModule) Activator.CreateInstance(moduleType)!;
 
+        DefinitionManager.LoadModuleDefinitions(module);
+
         var logger = module.Logger = LoaderWrapper.CreateLoggerInstance(moduleType.Assembly.GetName().Name, ConsoleColor.DarkMagenta);
         
         var localizationService = new ModuleLocalizationService(module, moduleType, logger);
@@ -552,7 +553,7 @@ public static class ArchiveMod
             ArchiveLogger.Error($"Error while trying to setup module localization for \"{moduleType.FullName}\"!");
             ArchiveLogger.Exception(ex);
         }
-        
+
         try
         {
             module.Init();
@@ -562,10 +563,6 @@ public static class ArchiveMod
             ArchiveLogger.Error($"Error while trying to init \"{moduleType.FullName}\"!");
             ArchiveLogger.Exception(ex);
         }
-
-        var moduleGroupId = $"{moduleType.Assembly.GetName().Name}.ModuleGroup";
-
-        FeatureGroups.GetOrCreateModuleGroup(moduleGroupId);
 
         foreach(var type in moduleType.Assembly.GetTypes())
         {

@@ -2,6 +2,7 @@
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 
 namespace TheArchive.Features.Hud;
 
@@ -9,7 +10,7 @@ public class RemoveDownedMessage : Feature
 {
     public override string Name => "Remove Downed Message";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Completely removes the 'You are dead, use TAB to check map' message.";
 

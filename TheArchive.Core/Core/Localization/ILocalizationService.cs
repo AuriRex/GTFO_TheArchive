@@ -13,35 +13,37 @@ public interface ILocalizationService
     Language CurrentLanguage { get; }
 
     /// <summary>
-    /// Get extra localization texts for your feature.
+    /// Get generic localization texts for your feature.
     /// </summary>
     /// <param name="id">The localization ID to get.</param>
+    /// <param name="fallback"></param>
     /// <returns>The localized string.</returns>
-    string Get(uint id);
+    string GetById(uint id, string fallback = null);
 
     /// <summary>
-    /// Get the localized name of an enum.
+    /// Get the localization text of a value.
     /// </summary>
-    /// <param name="value">The enum value.</param>
-    /// <typeparam name="T">The enum type.</typeparam>
-    /// <returns>The localized enum name.</returns>
-    string Get<T>(T value) where T : Enum;
+    /// <param name="value">The value to localize.</param>
+    /// <returns>The localized string.</returns>
+    string Get<T>(T value);
 
     /// <summary>
     /// Gets the localized text for <paramref name="id"/> and then formats it using the given <paramref name="args"/>.
     /// </summary>
     /// <param name="id">Localization ID to format.</param>
+    /// <param name="fallback"></param>
     /// <param name="args">Arguments to insert into the format string.</param>
     /// <returns>The localized, formatted string.</returns>
-    string Format(uint id, params object[] args);
+    string Format(uint id, string fallback = null, params object[] args);
 
     /// <summary>
     /// Registers a text setter.
     /// </summary>
     /// <param name="textSetter">The text setter to register.</param>
     /// <param name="textId">The localization ID.</param>
+    /// <param name="fallback"></param>
     /// <exception cref="ArgumentException">The text setter has already been added.</exception>
-    void AddTextSetter(ILocalizedTextSetter textSetter, uint textId);
+    void AddTextSetter(ILocalizedTextSetter textSetter, uint textId, string fallback = null);
 
     /// <summary>
     /// Registers a text updater.
