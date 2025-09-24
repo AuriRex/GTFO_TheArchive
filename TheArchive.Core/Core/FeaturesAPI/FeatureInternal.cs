@@ -13,7 +13,7 @@ using TheArchive.Core.FeaturesAPI.Components;
 using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
-using TheArchive.Core.Localization.Datas;
+using TheArchive.Core.Localization.Data;
 using TheArchive.Core.Localization.Services;
 using TheArchive.Core.Managers;
 using TheArchive.Core.Models;

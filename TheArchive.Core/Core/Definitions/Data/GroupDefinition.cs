@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using TheArchive.Core.Localization.Datas;
+using TheArchive.Core.Localization.Data;
 
-namespace TheArchive.Core.Definitions.Datas;
+namespace TheArchive.Core.Definitions.Data;
 
 public enum GroupType
 {

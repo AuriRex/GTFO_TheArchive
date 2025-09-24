@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 using System.Reflection;
-using TheArchive.Core.Localization.Datas;
+using TheArchive.Core.Localization.Data;
 using TheArchive.Interfaces;
 
 namespace TheArchive.Core.Localization.Services;

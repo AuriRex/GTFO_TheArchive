@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using TheArchive.Core.Definitions.Datas;
+using TheArchive.Core.Definitions.Data;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;

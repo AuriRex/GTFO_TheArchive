@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TheArchive.Core.Localization.Datas;
+namespace TheArchive.Core.Localization.Data;
 
 internal class FeatureSettingLocalizationData
 {

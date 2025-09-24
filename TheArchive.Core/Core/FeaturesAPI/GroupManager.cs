@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TheArchive.Core.FeaturesAPI.Groups;
-using TheArchive.Core.Localization.Datas;
+using TheArchive.Core.Localization.Data;
 
 namespace TheArchive.Core.FeaturesAPI;
 

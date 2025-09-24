@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TheArchive.Core.Definitions.Datas;
+namespace TheArchive.Core.Definitions.Data;
 
 /// <summary>
 /// A single module definition.

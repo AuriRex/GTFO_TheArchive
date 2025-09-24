@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Core.Localization.Datas;
+using TheArchive.Core.Localization.Data;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 

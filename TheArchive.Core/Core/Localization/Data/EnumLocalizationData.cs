@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TheArchive.Utilities;
 
-namespace TheArchive.Core.Localization.Datas;
+namespace TheArchive.Core.Localization.Data;
 
 /// <summary>
 /// Enum localization data.
