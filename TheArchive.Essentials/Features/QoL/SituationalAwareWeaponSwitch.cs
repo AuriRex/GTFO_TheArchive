@@ -7,6 +7,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
@@ -19,7 +20,7 @@ public class SituationalAwareWeaponSwitch : Feature
 {
     public override string Name => "Situation Aware Weapon Switch";
 
-    public override FeatureGroup Group => FeatureGroups.QualityOfLife;
+    public override GroupBase Group => GroupManager.QualityOfLife;
 
     public override string Description => "Switch to either your Melee weapon or Primary depending on if you're sneaking around or in combat after depleting all of your throwables, exit a ladder or place down a sentry gun etc.";
 

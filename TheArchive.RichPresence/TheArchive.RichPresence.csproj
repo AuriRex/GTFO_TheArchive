@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <Import Project="../Dependencies.props" />
     <Import Project="../Shared.props" />
 
@@ -6,6 +6,7 @@
         <RootNamespace>TheArchive</RootNamespace>
 
         <PluginOutputPath>../output/TheArchive.RichPresence/plugins/</PluginOutputPath>
+		<DefinitionFileDir>./Definitions/</DefinitionFileDir>
         <LocalizationFileDir>./Localization/</LocalizationFileDir>
         <CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
     </PropertyGroup>
@@ -27,11 +28,10 @@
     </ItemGroup>
     
     <Target Name="CopyDiscordDLLToOutput" AfterTargets="CopyAssemblyAfterBuild" BeforeTargets="ZipOutputPath">
-        <Message Text="Copying Discord SDK to Ouput Folder..." Importance="High"/>
-        <Copy SourceFiles=".\DiscordGameSDK\DiscordRPC.dll"
-              DestinationFiles="$(PluginOutputPath)\DiscordRPC.dll"/>
+        <Message Text="Copying Discord SDK to Ouput Folder..." Importance="High" />
+        <Copy SourceFiles=".\DiscordGameSDK\DiscordRPC.dll" DestinationFiles="$(PluginOutputPath)\DiscordRPC.dll" />
 
-        <Message Text="Discord SDK has been copied to Ouput Folder!" Importance="High"/>
+        <Message Text="Discord SDK has been copied to Ouput Folder!" Importance="High" />
     </Target>
     
     <ItemGroup>

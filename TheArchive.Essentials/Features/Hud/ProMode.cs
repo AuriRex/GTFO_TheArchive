@@ -7,6 +7,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Hud;
@@ -15,7 +16,7 @@ public class ProMode : Feature
 {
     public override string Name => "Hud Pro Mode (Disable HUD)";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Force disable <i><u>ALL</u></i> HUD layers unless re-enabled via the submenu.\n\nMain purpose is for video production";
 

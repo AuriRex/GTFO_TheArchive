@@ -1,8 +1,8 @@
 ﻿using AK;
 using Player;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using static Player.PlayerLocomotion;
 
@@ -12,7 +12,7 @@ public class DisableDeathDrone : Feature
 {
     public override string Name => "Disable Downed Sound";
 
-    public override FeatureGroup Group => FeatureGroups.Accessibility;
+    public override GroupBase Group => GroupManager.Accessibility;
 
     public override string Description => "Removes the droning sound that playes whenever you're downed.";
 

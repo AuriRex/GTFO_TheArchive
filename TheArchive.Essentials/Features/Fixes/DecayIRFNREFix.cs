@@ -1,10 +1,10 @@
-using Enemies;
+﻿using Enemies;
 using GameData;
 using IRF;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using UnityEngine;
 
@@ -15,7 +15,7 @@ public class DecayIRFNREFix : Feature
 {
     public override string Name => "Decay IRF NRE Fix";
 
-    public override FeatureGroup Group => FeatureGroups.Fixes;
+    public override Core.FeaturesAPI.Groups.GroupBase Group => GroupManager.Fixes;
 
     public override string Description => "Fixes enemies with invalid IRFs spamming the console on death.\n\n<i>Specifically 'tank_boss'</i>";
     

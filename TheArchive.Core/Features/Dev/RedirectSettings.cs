@@ -1,10 +1,10 @@
 ﻿using Gear;
 using System;
 using System.IO;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Dev;
@@ -14,7 +14,7 @@ internal class RedirectSettings : Feature
 {
     public override string Name => "Redirect Settings";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public override string Description => "Redirect settings load/save location";
 

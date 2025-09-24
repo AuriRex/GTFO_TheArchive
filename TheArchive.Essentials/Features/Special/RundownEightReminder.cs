@@ -17,7 +17,7 @@ internal class RundownEightReminder : Feature
 {
     public override string Name => "Rundown 8 Reminder";
 
-    public override FeatureGroup Group => FeatureGroups.Special;
+    public override GroupBase Group => GroupManager.Special;
 
     public override string Description => "Reminds you to turn off \"Remove Story Dialog\" for whenever Rundown 8 drops!";
 

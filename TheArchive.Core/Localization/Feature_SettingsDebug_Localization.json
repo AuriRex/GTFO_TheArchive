@@ -1,0 +1,42 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Dev.SettingsDebug.Name": {
+        "FName": {
+          "English": "Settings Debug",
+          "Chinese": "设置调试",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.SettingsDebug+SettingsDebugSettings.SliderSettings": {
+        "FSDisplayName": {
+          "English": "Slider Settings",
+          "Chinese": "滑块设置",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

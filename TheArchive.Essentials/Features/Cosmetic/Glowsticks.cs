@@ -12,6 +12,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
 using TheArchive.Interfaces;
@@ -26,7 +27,7 @@ public class Glowsticks : Feature
 {
     public override string Name => "Glowsticks!";
 
-    public override FeatureGroup Group => FeatureGroups.Cosmetic;
+    public override GroupBase Group => GroupManager.Cosmetic;
 
     public override string Description => "Customize your glow-y little friends!\n\nAllows you to change the built in glowstick type and/or customize the color to your liking, or color it based on the player who threw the glowstick.";
 

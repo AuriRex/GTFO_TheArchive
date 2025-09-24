@@ -11,6 +11,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using UnityEngine;
@@ -37,7 +38,7 @@ internal class KillIndicatorFix : Feature
     
     public override string Name => "Kill Indicator Fix";
 
-    public override FeatureGroup Group => FeatureGroups.Fixes;
+    public override Core.FeaturesAPI.Groups.GroupBase Group => GroupManager.Fixes;
 
     public override string Description => "Fixes orange kill indicators not being consistent for clients.";
 

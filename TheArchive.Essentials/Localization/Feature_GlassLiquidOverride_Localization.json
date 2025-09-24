@@ -1,0 +1,293 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Accessibility.GlassLiquidOverride.Name": {
+        "FName": {
+          "English": "Glass Liquid System Override",
+          "Chinese": "玻璃液体系统覆盖",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.GlassLiquidOverride.Description": {
+        "FDescription": {
+          "English": "Adjust the games \"Glass Liquid System\"\nThe thing that renders the blood splatters etc on your visor.",
+          "Chinese": "调整游戏的玻璃液体系统，即渲染在面罩上的血迹等效果。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.GlassLiquidOverride+GlassLiquidOverrideSettings.EnableGlassLiquidSystem": {
+        "FSDisplayName": {
+          "English": "Enable Liquid System",
+          "Chinese": "启用液体系统",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Turning this off stops the Glass Liquid System from updating.\n\nMake sure that nothing's left on your visor or else it'll be stuck there until you re-enable this setting.",
+          "Chinese": "关闭此选项会停止玻璃液体系统的更新。\n\n确保面罩上没有残留物，否则它会一直停留在那里，直到重新启用此设置。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.GlassLiquidOverride+GlassLiquidOverrideSettings.Quality": {
+        "FSDisplayName": {
+          "English": "Quality",
+          "Chinese": "质量",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "The resolution used to render the liquid effects.\n\nIncreasing this settings might decrease performance on weaker hardware!",
+          "Chinese": "用于渲染液体效果的分辨率。\n\n增加此设置可能会降低性能，特别是在性能较低的硬件上！",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.GlassLiquidOverride+GlassLiquidOverrideSettings.ApplyDisinfectButton": {
+        "FSDisplayName": {
+          "English": "Clean Screen",
+          "Chinese": "清理屏幕",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Applies the Disinfect Station visuals to clear any other liquids.\n\n(Might fix bad cases of liquid bug if spammed a bunch!)",
+          "Chinese": "应用消毒站的可视化效果，清除任何其他液体。\n\n（如果频繁使用，可能修复严重的液体错误情况！）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSButtonText": {
+          "English": "Clean",
+          "Chinese": "清理",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Accessibility.GlassLiquidOverride+GlassLiquidOverrideSettings.CompletelyDisable": {
+        "FSDisplayName": {
+          "English": "Completely Disable System",
+          "Chinese": "完全禁用系统",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Toggling this option on <u>completely disables the Glass Liquid System</u> and makes you <u>unable to re-enable it mid game</u>.\nMight save some frames on lower end graphics hardware.\n\n<color=orange>A re-drop into the level is required after disabling this to re-enable the system!</color>",
+          "Chinese": "启用此选项<u>完全禁用玻璃液体系统</u>，使您<u>无法在游戏中重新启用它</u>。\n可能会在性能较低的图形硬件上提高一些帧率。\n\n<color=orange>禁用后，需要重新进入关卡才能重新启用系统！</color>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": "Warning",
+          "Chinese": "警告",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {
+      "TheArchive.Features.Accessibility.GlassLiquidOverride+GlassLiquidSystemQuality": {
+        "English": {
+          "VeryBad": "Very Bad",
+          "Bad": "Bad",
+          "SlightlyWorse": "Slightly Worse",
+          "Default": "Default",
+          "Good": "Good",
+          "Better": "Better",
+          "Amazing": "Amazing",
+          "Extraordinary": "Extraordinary"
+        },
+        "Chinese": {
+          "VeryBad": "非常差",
+          "Bad": "差",
+          "SlightlyWorse": "略差",
+          "Default": "默认",
+          "Good": "好",
+          "Better": "更好",
+          "Amazing": "很好",
+          "Extraordinary": "非常好"
+        },
+        "French": {
+          "VeryBad": null,
+          "Bad": null,
+          "SlightlyWorse": null,
+          "Default": null,
+          "Good": null,
+          "Better": null,
+          "Amazing": null,
+          "Extraordinary": null
+        },
+        "Italian": {
+          "VeryBad": null,
+          "Bad": null,
+          "SlightlyWorse": null,
+          "Default": null,
+          "Good": null,
+          "Better": null,
+          "Amazing": null,
+          "Extraordinary": null
+        },
+        "German": {
+          "VeryBad": null,
+          "Bad": null,
+          "SlightlyWorse": null,
+          "Default": null,
+          "Good": null,
+          "Better": null,
+          "Amazing": null,
+          "Extraordinary": null
+        },
+        "Spanish": {
+          "VeryBad": null,
+          "Bad": null,
+          "SlightlyWorse": null,
+          "Default": null,
+          "Good": null,
+          "Better": null,
+          "Amazing": null,
+          "Extraordinary": null
+        },
+        "Russian": {
+          "VeryBad": null,
+          "Bad": null,
+          "SlightlyWorse": null,
+          "Default": null,
+          "Good": null,
+          "Better": null,
+          "Amazing": null,
+          "Extraordinary": null
+        },
+        "Portuguese_Brazil": {
+          "VeryBad": null,
+          "Bad": null,
+          "SlightlyWorse": null,
+          "Default": null,
+          "Good": null,
+          "Better": null,
+          "Amazing": null,
+          "Extraordinary": null
+        },
+        "Polish": {
+          "VeryBad": null,
+          "Bad": null,
+          "SlightlyWorse": null,
+          "Default": null,
+          "Good": null,
+          "Better": null,
+          "Amazing": null,
+          "Extraordinary": null
+        },
+        "Japanese": {
+          "VeryBad": null,
+          "Bad": null,
+          "SlightlyWorse": null,
+          "Default": null,
+          "Good": null,
+          "Better": null,
+          "Amazing": null,
+          "Extraordinary": null
+        },
+        "Korean": {
+          "VeryBad": null,
+          "Bad": null,
+          "SlightlyWorse": null,
+          "Default": null,
+          "Good": null,
+          "Better": null,
+          "Amazing": null,
+          "Extraordinary": null
+        }
+      }
+    }
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

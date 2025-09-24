@@ -4,6 +4,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class ResourcePrioritizationPings : Feature
 {
     public override string Name => "Prioritize Resource Pings";
 
-    public override FeatureGroup Group => FeatureGroups.QualityOfLife;
+    public override GroupBase Group => GroupManager.QualityOfLife;
 
     public override string Description => "Resource Packs will be prioritized and show up with special icons and trigger voice lines when pinged by Middle-Mouse-Pings.\n(Yes, disinfect is ammo apparently)";
 

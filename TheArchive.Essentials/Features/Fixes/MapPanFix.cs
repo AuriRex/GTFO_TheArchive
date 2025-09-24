@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using UnityEngine;
 
@@ -18,7 +18,7 @@ public class MapPanFix : Feature
 {
     public override string Name => "Map Pan Unclamp";
 
-    public override FeatureGroup Group => FeatureGroups.Fixes;
+    public override GroupBase Group => GroupManager.Fixes;
 
     public override string Description => "Remove the MMB Map panning restrictions.\nMakes you able to zoom in on far out zones.";
 

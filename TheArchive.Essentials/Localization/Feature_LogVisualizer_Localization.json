@@ -1,0 +1,347 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Hud.LogVisualizer.Name": {
+        "FName": {
+          "English": "Log Visualizer",
+          "Chinese": "日志可视化",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.LogVisualizer.Description": {
+        "FDescription": {
+          "English": "Missing some logs for <i>that Achievement</i>, huh?",
+          "Chinese": "缺少一些<i>那个成就</i>的日志，是吗？",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.LogVisualizer+LogVisualizerSettings.ShowTotalCount": {
+        "FSDisplayName": {
+          "English": "Show Total Log Count",
+          "Chinese": "显示日志总数",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Shows overall log count and per rundown count under the title at the top after selecting one.",
+          "Chinese": "选择后在顶部标题下显示总体日志数量和每个闯关的日志数量。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.LogVisualizer+LogVisualizerSettings.ShowCountPerRundownSelectionButton": {
+        "FSDisplayName": {
+          "English": "Show Log Count for Rundowns",
+          "Chinese": "显示 Rundown 的日志数量",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Shows the total count for each rundown on the rundown selection menu.",
+          "Chinese": "在 Rundown 选择菜单上显示各 Rundown 的总日志数量。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.LogVisualizer+LogVisualizerSettings.ShowCountPerExpedition": {
+        "FSDisplayName": {
+          "English": "Show Log Count on Expeditions",
+          "Chinese": "显示任务中的日志数量",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Shows the total count of logs in each expedition.",
+          "Chinese": "显示每次任务中的日志总数。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.LogVisualizer+LogVisualizerSettings.ShowInExpeditionDisplay": {
+        "FSDisplayName": {
+          "English": "Enable",
+          "Chinese": "启用",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Shows you the logs available in the current expedition on the Objectives screen.",
+          "Chinese": "在目标界面上显示当前任务中可用的日志。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": ":// In Expedition Display",
+          "Chinese": ":// 在任务中显示",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.LogVisualizer+LogVisualizerSettings.Spoilers": {
+        "FSDisplayName": {
+          "English": "Show Zone Spoiler",
+          "Chinese": "显示区域剧透",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Displays the Zone a log is in.",
+          "Chinese": "显示日志所在的区域。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.LogVisualizer+LogVisualizerSettings.ColorNormal": {
+        "FSDisplayName": {
+          "English": "Color: Logs Incomplete",
+          "Chinese": "颜色：未收集的日志",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": ":// Colors",
+          "Chinese": ":// 颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.LogVisualizer+LogVisualizerSettings.ColorAllGotten": {
+        "FSDisplayName": {
+          "English": "Color: All Logs Gotten",
+          "Chinese": "颜色：已获取所有日志",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.LogVisualizer+LogVisualizerSettings.ColorNoLogs": {
+        "FSDisplayName": {
+          "English": "Color: No Logs Available",
+          "Chinese": "颜色：无可用日志",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {
+      "TheArchive.Features.Hud.LogVisualizer+LogVisualizerSettings+SpoilerMode": {
+        "English": {
+          "Never": "Never",
+          "OnceDiscovered": "Once Discovered",
+          "Always": "Always"
+        },
+        "Chinese": {
+          "Never": "从不",
+          "OnceDiscovered": "一旦发现",
+          "Always": "总是"
+        },
+        "French": {
+          "Never": null,
+          "OnceDiscovered": null,
+          "Always": null
+        },
+        "Italian": {
+          "Never": null,
+          "OnceDiscovered": null,
+          "Always": null
+        },
+        "German": {
+          "Never": null,
+          "OnceDiscovered": null,
+          "Always": null
+        },
+        "Spanish": {
+          "Never": null,
+          "OnceDiscovered": null,
+          "Always": null
+        },
+        "Russian": {
+          "Never": null,
+          "OnceDiscovered": null,
+          "Always": null
+        },
+        "Portuguese_Brazil": {
+          "Never": null,
+          "OnceDiscovered": null,
+          "Always": null
+        },
+        "Polish": {
+          "Never": null,
+          "OnceDiscovered": null,
+          "Always": null
+        },
+        "Japanese": {
+          "Never": null,
+          "OnceDiscovered": null,
+          "Always": null
+        },
+        "Korean": {
+          "Never": null,
+          "OnceDiscovered": null,
+          "Always": null
+        }
+      }
+    }
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {
+    "1": {
+      "Comment": "PageRundown_NoLogsAvailable",
+      "Data": {
+        "English": "N/A",
+        "Chinese": "N/A"
+      }
+    },
+    "2": {
+      "Comment": "LogsLabel",
+      "Data": {
+        "English": "Logs",
+        "Chinese": "日志"
+      }
+    },
+    "3": {
+      "Comment": "PageObjectives_NoLogsAvailable",
+      "Data": {
+        "English": "Logs N/A",
+        "Chinese": "日志 N/A"
+      }
+    },
+    "4": {
+      "Comment": "PageObjectives_Item_LogUnknown",
+      "Data": {
+        "English": "???",
+        "Chinese": "???"
+      }
+    },
+    "5": {
+      "Comment": "PageRundownNew_TotalLogs",
+      "Data": {
+        "English": "Total Logs",
+        "Chinese": "所有日志"
+      }
+    }
+  }
+}

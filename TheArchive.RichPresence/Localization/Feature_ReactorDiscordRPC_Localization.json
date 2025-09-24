@@ -1,0 +1,27 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Presence.ReactorDiscordRPC.Name": {
+        "FName": {
+          "English": "Reactor Discord RPC",
+          "Chinese": "反应堆 Discord 信息",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

@@ -1,6 +1,7 @@
 ﻿using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using static TheArchive.Utilities.Utils;
 
 namespace TheArchive.Features.Accessibility;
@@ -10,7 +11,7 @@ internal class DisableInfectionBreathing : Feature
 {
     public override string Name => "Disable Breathing (<#1F835F>Infection</color>)";
 
-    public override FeatureGroup Group => FeatureGroups.Audio;
+    public override GroupBase Group => GroupManager.Audio;
 
     public override string Description => "Disables the infection \"drinking-straw-sucking\" sounding sound.";
 

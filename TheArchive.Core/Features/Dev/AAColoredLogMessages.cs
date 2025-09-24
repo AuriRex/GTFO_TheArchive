@@ -1,10 +1,11 @@
-#if BepInEx
+﻿#if BepInEx
 using System;
 using BepInEx;
 using BepInEx.Logging;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Loader;
 
 namespace TheArchive.Features.Dev;
@@ -15,7 +16,7 @@ internal class AAColoredLogMessages : Feature
 {
     public override string Name => "Colored Log Messages";
     
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public override string Description => "Allows for colored log messages to be logged.";
 

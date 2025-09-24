@@ -554,39 +554,6 @@ public static class LocalFiles
         }
     }
 
-    internal static FeatureLocalizationData LoadFeatureLocalizationText(Feature feature)
-    {
-        var asmLocation = feature.FeatureInternal.OriginAssembly.Location;
-
-        if (string.IsNullOrWhiteSpace(asmLocation))
-        {
-            ArchiveLogger.Warning($"Feature \"{feature.Name}\"'s OriginAssembly.Location is null or whitespace. (ID:{feature.Identifier})");
-            ArchiveLogger.Warning("Localization on dynamic assemblies is not supported currently!");
-            return new();
-        }
-        
-        var dir = Path.Combine(Path.GetDirectoryName(asmLocation)!, "Localization");
-        if (!Directory.Exists(dir))
-        {
-            Directory.CreateDirectory(dir);
-        }
-        var path = Path.Combine(dir, $"{feature.Identifier}_Localization.json");
-        if (!File.Exists(path))
-        {
-            var newData = FeatureInternal.GenerateFeatureLocalization(feature);
-            File.WriteAllText(path, JsonConvert.SerializeObject(newData, ArchiveMod.JsonSerializerSettings));
-            return newData;
-        }
-
-        var data = JsonConvert.DeserializeObject<FeatureLocalizationData>(File.ReadAllText(path), ArchiveMod.JsonSerializerSettings);
-        var json = JsonConvert.SerializeObject(data, ArchiveMod.JsonSerializerSettings);
-        var rdata = FeatureInternal.GenerateFeatureLocalization(feature, data);
-        var rjson = JsonConvert.SerializeObject(rdata, ArchiveMod.JsonSerializerSettings);
-        if (rjson.HashString() != json.HashString())
-            File.WriteAllText(path, rjson);
-        return rdata;
-    }
-
     internal static object LoadFeatureConfig(string moduleIdentifier, string featureIdentifier, Type configType, bool saveIfNonExistent = true)
     {
         return LoadFeatureConfig(moduleIdentifier, featureIdentifier, configType, out _, saveIfNonExistent);

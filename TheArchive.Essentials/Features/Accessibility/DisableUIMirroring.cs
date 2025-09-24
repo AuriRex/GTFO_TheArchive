@@ -1,7 +1,7 @@
 ﻿using System;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
@@ -11,7 +11,7 @@ public class DisableUIMirroring : Feature
 {
     public override string Name => "Disable UI Mirroring";
 
-    public override FeatureGroup Group => FeatureGroups.Accessibility;
+    public override GroupBase Group => GroupManager.Accessibility;
 
     public override string Description => "Removes the mirroring effect of UI elements.";
 

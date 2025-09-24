@@ -20,7 +20,7 @@ public class GenericDictionarySetting : FeatureSetting
     /// </summary>
     public Type DictValueType { get; }
 
-    internal FeatureLocalizationService Localization { get; }
+    internal BaseLocalizationService Localization { get; }
 
     /// <inheritdoc/>
     public GenericDictionarySetting(FeatureSettingsHelper featureSettingsHelper, PropertyInfo prop, object instance, string debugPath = "") : base(featureSettingsHelper, prop, instance, debugPath)

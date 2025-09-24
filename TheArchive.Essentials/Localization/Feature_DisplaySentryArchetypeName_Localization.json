@@ -1,0 +1,42 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Hud.DisplaySentryArchetypeName.Name": {
+        "FName": {
+          "English": "Display Sentry Type",
+          "Chinese": "显示炮台类型",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.DisplaySentryArchetypeName.Description": {
+        "FDescription": {
+          "English": "Display the Sentry Type (<color=orange>Sniper</color>, <color=orange>Burst</color>, <color=orange>Auto</color>, <color=orange>Shotgun</color>) for remote players instead of the nondescript \"<color=orange>Sentry Gun</color>\" on the map screen.",
+          "Chinese": "在地图屏幕上显示远程玩家的炮台类型(<color=orange>狙击</color>, <color=orange>连发</color>, <color=orange>自动</color>, <color=orange>霰弹</color>) 而不是普通的 \"<color=orange>哨戒炮台</color>\" ",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

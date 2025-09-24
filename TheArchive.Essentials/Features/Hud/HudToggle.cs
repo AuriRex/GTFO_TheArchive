@@ -1,9 +1,9 @@
-﻿using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature;
+﻿using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using UnityEngine;
 
 namespace TheArchive.Features.Hud;
@@ -13,7 +13,7 @@ public class HudToggle : Feature
 {
     public override string Name => "Hud Toggle";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Keybind to toggle parts of the HUD";
 

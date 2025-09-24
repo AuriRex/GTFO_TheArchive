@@ -13,6 +13,8 @@ using static TheArchive.Utilities.SColorExtensions;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.Localization;
 using Object = UnityEngine.Object;
+using TMPro;
+
 
 #if Unhollower
 using UnhollowerBaseLib.Attributes;
@@ -62,7 +64,7 @@ public partial class ModSettings
         public void StartListening(KeySetting setting)
         {
             FeatureLogger.Debug($"[{nameof(KeyListener)}] Starting listener, disabling all input!");
-            setting.UpdateKeyText($"<#F00><b>{LocalizationCoreService.Get(51, "Press any Key!")}</b></color>");
+            setting.UpdateKeyText($"<#F00><b>{ArchiveLocalizationService.GetById(51, "Press any Key!")}</b></color>");
             ActiveKeySetting = setting;
             FeatureManager.EnableAutomatedFeature(typeof(InputDisabler));
             enabled = true;
@@ -284,6 +286,70 @@ public partial class ModSettings
         }
     }
 
+    public class JankCellMenuSettingsItemLocalizedTextUpdaterWrapper : MonoBehaviour, ILocalizedTextUpdater
+    {
+#if IL2CPP
+        [HideFromIl2Cpp]
+#endif
+        public static void CreateAndApply(CM_SettingsItem settingsItem, Func<string> titleText, Func<(string, string)> tooltipText = null)
+        {
+            if (settingsItem == null || titleText == null)
+                return;
+
+            settingsItem.gameObject.AddComponent<JankCellMenuSettingsItemLocalizedTextUpdaterWrapper>().Setup(settingsItem, titleText, tooltipText);
+        }
+
+        private Func<string> _titleText;
+        private Func<(string, string)> _tooltipText;
+        private CM_SettingsItem _settingsItem;
+        private TextMeshPro _title;
+
+#if IL2CPP
+        /// <summary>
+        /// Il2Cpp object constructor.
+        /// </summary>
+        /// <param name="ptr">Instance pointer.</param>
+        public JankCellMenuSettingsItemLocalizedTextUpdaterWrapper(IntPtr ptr) : base(ptr) { }
+#endif
+
+#if IL2CPP
+        [HideFromIl2Cpp]
+#endif
+        private void Setup(CM_SettingsItem settingsItem, Func<string> titleText, Func<(string, string)> tooltipText = null)
+        {
+            _settingsItem = settingsItem;
+            _titleText = titleText;
+            _tooltipText = tooltipText;
+            _title = settingsItem.transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TextMeshPro>();
+
+            UpdateText();
+
+            ArchiveLocalizationService.AddTextUpdater(this);
+        }
+
+        private void OnDestroy()
+        {
+            ArchiveLocalizationService.RemoveTextUpdater(this);
+        }
+
+        public void UpdateText()
+        {
+            if (_settingsItem == null)
+                return;
+
+            var title = _titleText.Invoke();
+            _title.text = title;
+            _title.SetText(title);
+            if (_tooltipText != null)
+            {
+                var tooltipInfo = new TooltipInfo();
+                tooltipInfo.UseTooptip = true;
+                (tooltipInfo.TooltipHeader, tooltipInfo.TooltipText) = _tooltipText.Invoke();
+                _settingsItem.TooltipInfo = tooltipInfo;
+            }
+        }
+    }
+
     internal class ColorPicker : IDisposable
     {
         public bool IsActive => _backgroundPanel?.gameObject?.activeInHierarchy ?? false;
@@ -326,7 +392,7 @@ public partial class ModSettings
 
         public ColorPicker()
         {
-            _backgroundPanel = CreateScrollWindow(LocalizationCoreService.Get(41, "Color Picker"));
+            _backgroundPanel = CreateScrollWindow(ArchiveLocalizationService.GetById(41, "Color Picker"));
             _backgroundPanel.transform.localPosition = _backgroundPanel.transform.localPosition + new Vector3(1050, 0, 0);
 
 
@@ -365,7 +431,7 @@ public partial class ModSettings
                 return Hue;
             });
 
-            CreateSimpleNumberField(LocalizationCoreService.Get(52, "Hue"), .5f, setValueHue, out var settingsItemHue, out _, out _sr_hue, getValueHue, new FSSlider(0, 1), placeInNoMenu: true);
+            CreateSimpleNumberField(ArchiveLocalizationService.GetById(52, "Hue"), .5f, setValueHue, out var settingsItemHue, out _, out _sr_hue, getValueHue, new FSSlider(0, 1), placeInNoMenu: true);
             #endregion COLOR_PICKER_HUE_SLIDER
 
             #region COLOR_PICKER_SAT_SLIDER
@@ -381,7 +447,7 @@ public partial class ModSettings
                 return Saturation;
             });
 
-            CreateSimpleNumberField(LocalizationCoreService.Get(53, "Saturation"), .5f, setValueSaturation, out var settingsItemSaturation, out _, out _sr_saturation, getValueSaturation, new FSSlider(0, 1), placeInNoMenu: true);
+            CreateSimpleNumberField(ArchiveLocalizationService.GetById(53, "Saturation"), .5f, setValueSaturation, out var settingsItemSaturation, out _, out _sr_saturation, getValueSaturation, new FSSlider(0, 1), placeInNoMenu: true);
             #endregion COLOR_PICKER_SAT_SLIDER
 
             #region COLOR_PICKER_VAL_SLIDER
@@ -397,16 +463,16 @@ public partial class ModSettings
                 return Value;
             });
 
-            CreateSimpleNumberField(LocalizationCoreService.Get(54, "Value"), .5f, setValueValue, out var settingsItemValue, out _, out _sr_value, getValueValue, new FSSlider(0, 1), placeInNoMenu: true);
+            CreateSimpleNumberField(ArchiveLocalizationService.GetById(54, "Value"), .5f, setValueValue, out var settingsItemValue, out _, out _sr_value, getValueValue, new FSSlider(0, 1), placeInNoMenu: true);
             #endregion COLOR_PICKER_VAL_SLIDER
 
 
 
-            CreateSimpleButton(LocalizationCoreService.Get(42, "Apply Color"), $"<{GREEN.ToHexString()}>{LocalizationCoreService.Get(43, "Apply")}</color>", OnApplyPress, out var settingsItemApply, placeInNoMenu: true);
+            CreateSimpleButton(ArchiveLocalizationService.GetById(42, "Apply Color"), $"<{GREEN.ToHexString()}>{ArchiveLocalizationService.GetById(43, "Apply")}</color>", OnApplyPress, out var settingsItemApply, placeInNoMenu: true);
 
             CreateSpacer(out var settingsItemSpacer, placeInNoMenu: true);
 
-            CreateSimpleButton(LocalizationCoreService.Get(44, "Close Color Picker"), LocalizationCoreService.Get(45, "Cancel"), OnCancelPress, out var settingsItemCancel, placeInNoMenu: true);
+            CreateSimpleButton(ArchiveLocalizationService.GetById(44, "Close Color Picker"), ArchiveLocalizationService.GetById(45, "Cancel"), OnCancelPress, out var settingsItemCancel, placeInNoMenu: true);
 
             CreateSpacer(out var settingsItemSpacer2, placeInNoMenu: true);
             CreateSpacer(out var settingsItemSpacer3, placeInNoMenu: true);
@@ -427,10 +493,10 @@ public partial class ModSettings
 
             var getValueHexCode = new Func<string, string>((oldValOrZero) => CurrentColor.ToHexString());
 
-            CreateSimpleTextField(LocalizationCoreService.Get(46, "Hex Code"), "#COLORS", onValueUpdated: setValueHexCode, out var settingsItemHexField, out _hexField, getValue: getValueHexCode, maxLength: 7, null, null, placeInNoMenu: true);
+            CreateSimpleTextField(ArchiveLocalizationService.GetById(46, "Hex Code"), "#COLORS", onValueUpdated: setValueHexCode, out var settingsItemHexField, out _hexField, getValue: getValueHexCode, maxLength: 7, null, null, placeInNoMenu: true);
 
-            CreateSimpleButton(LocalizationCoreService.Get(47, "Copy Color Hex Code"), LocalizationCoreService.Get(49, "Copy"), OnCopyColor, out var settingsItemCopyColor, placeInNoMenu: true);
-            CreateSimpleButton(LocalizationCoreService.Get(48, "Paste Color Hex Code"), LocalizationCoreService.Get(50, "Paste"), OnPasteColor, out var settingsItemPasteColor, placeInNoMenu: true);
+            CreateSimpleButton(ArchiveLocalizationService.GetById(47, "Copy Color Hex Code"), ArchiveLocalizationService.GetById(49, "Copy"), OnCopyColor, out var settingsItemCopyColor, placeInNoMenu: true);
+            CreateSimpleButton(ArchiveLocalizationService.GetById(48, "Paste Color Hex Code"), ArchiveLocalizationService.GetById(50, "Paste"), OnPasteColor, out var settingsItemPasteColor, placeInNoMenu: true);
 
             _backgroundPanel.SetContentItems(new List<iScrollWindowContent>()
             {
@@ -621,7 +687,7 @@ public partial class ModSettings
 
         public DescriptionPanel()
         {
-            _backgroundPanel = CreateScrollWindow(LocalizationCoreService.Get(40, "Description"));
+            _backgroundPanel = CreateScrollWindow(ArchiveLocalizationService.GetById(40, "Description"));
             _backgroundPanel.transform.localPosition = _backgroundPanel.transform.localPosition + new Vector3(1050, 0, 0);
 
             CreateItem("Header Text", ORANGE, _backgroundPanel.transform, out var headerSWC, out var rectTransHeader, out _headerText);

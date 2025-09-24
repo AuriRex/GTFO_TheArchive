@@ -1,10 +1,10 @@
 ﻿using Player;
 using System;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
 using TheArchive.Interfaces;
@@ -18,10 +18,15 @@ public class Watermark : Feature
 {
     public override string Name => "Watermark Tweaks";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     [IgnoreLocalization]
-    public override string Description => Localization.Format(1, ColorHex, ArchiveMod.MOD_NAME, ArchiveMod.VERSION_STRING);
+    public override string Description => Localization.Format(1, 
+        "Configurable to either show your current position, a timer or the mod version in the bottom right:\n" +
+        " - <color=red>X:24</color> <color=green>Y:2</color> <color=blue>Z:-46</color>\n" +
+        " - Timer showing elapsed mission time\n" +
+        " - <#{0}>{1} v{2}</color>", 
+        ColorHex, ArchiveMod.MOD_NAME, ArchiveMod.VERSION_STRING);
 
     public override bool SkipInitialOnEnable => true;
 

@@ -6,13 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
-using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
-using TheArchive.Core.Localization;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
@@ -25,38 +23,23 @@ public class AntiBoosterHack : Feature
 
     public override string Description => "Prevents clients from using modified boosters.";
 
-    public override FeatureGroup Group => FeatureGroups.Security;
+    public override GroupBase Group => GroupManager.Security;
+
+    public override Type[] ExternalLocalizedTypes => new Type[] { typeof(BasicPunishmentSettings) };
 
     public new static IArchiveLogger FeatureLogger { get; set; }
 
     [FeatureConfig]
-    public static AntiBoosterHackSettings Settings { get; set; }
+    public static BasicPunishmentSettings Settings { get; set; }
 
-    public class AntiBoosterHackSettings
-    {
-        [FSDisplayName("Punish Friends")]
-        [FSDescription("If (Steam) Friends should be affected as well.")]
-        public bool PunishFriends { get; set; } = false;
-
-        [FSDisplayName("Punishment")]
-        [FSDescription("What to do with griefers that are using modified boosters.")]
-        public PunishmentMode Punishment { get; set; } = PunishmentMode.Kick;
-
-        [Localized]
-        public enum PunishmentMode
-        {
-            NoneAndLog,
-            Kick,
-            KickAndBan
-        }
-    }
-
-    public override void Init()
+    public override bool ShouldInit()
     {
         if (ArchiveMod.IsPlayingModded)
         {
             RequestDisable("Playing Modded");
+            return false;
         }
+        return true;
     }
 
     public override void OnGameDataInitialized()
@@ -107,14 +90,14 @@ public class AntiBoosterHack : Feature
 
         switch (Settings.Punishment)
         {
-            case AntiBoosterHackSettings.PunishmentMode.KickAndBan:
+            case BasicPunishmentSettings.PunishmentMode.KickAndBan:
                 PlayerLobbyManagement.BanPlayer(player);
                 goto default;
-            case AntiBoosterHackSettings.PunishmentMode.Kick:
+            case BasicPunishmentSettings.PunishmentMode.Kick:
                 PlayerLobbyManagement.KickPlayer(player);
                 goto default;
             default:
-            case AntiBoosterHackSettings.PunishmentMode.NoneAndLog:
+            case BasicPunishmentSettings.PunishmentMode.NoneAndLog:
                 FeatureLogger.Notice($"Player \"{player.NickName}\" \"{player.Lookup}\" is using modified boosters! ({Settings.Punishment})");
                 return true;
         }

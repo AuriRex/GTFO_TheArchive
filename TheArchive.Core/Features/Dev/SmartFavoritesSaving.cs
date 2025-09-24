@@ -4,6 +4,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
@@ -15,7 +16,7 @@ internal class SmartFavoritesSaving : Feature
 {
     public override string Name => "Smart Favorites Saving";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public override string Description => "Only save selected weapons/vanity on drop or game quit.";
 

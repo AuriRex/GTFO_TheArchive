@@ -1,0 +1,42 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Backport.MeleeCancelBackport.Name": {
+        "FName": {
+          "English": "Modern Melee Charge Cancel",
+          "Chinese": "现代近战攻击取消",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Backport.MeleeCancelBackport.Description": {
+        "FDescription": {
+          "English": "Returns the hammer back to neutral instead of shoving whenever you're charging and alt-fire is pressed.",
+          "Chinese": "在你进行蓄力并按下备用开火键（默认右键）时，将锤子返回到默认状态，而不是推。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

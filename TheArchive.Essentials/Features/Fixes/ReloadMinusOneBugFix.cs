@@ -1,11 +1,11 @@
 ﻿using Player;
 using System;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using UnityEngine;
 
@@ -16,7 +16,7 @@ internal class ReloadMinusOneBugFix : Feature
 {
     public override string Name => "99% Reload Fix";
 
-    public override FeatureGroup Group => FeatureGroups.Fixes;
+    public override GroupBase Group => GroupManager.Fixes;
 
     public override string Description => "Fixes the bug that leaves you with one bullet short in the mag.\n(Currently only for IL2CPP builds)";
 

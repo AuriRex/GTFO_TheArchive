@@ -1,0 +1,42 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Backport.CenterMapOnPlayer.Name": {
+        "FName": {
+          "English": "Center Map on Player",
+          "Chinese": "地图以玩家为中心",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Backport.CenterMapOnPlayer.Description": {
+        "FDescription": {
+          "English": "Center the map on yourself upon opening.",
+          "Chinese": "打开时将地图自动居中玩家位置",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

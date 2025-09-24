@@ -2,9 +2,9 @@
 using Gear;
 using Player;
 using System.Runtime.CompilerServices;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 
 #if IL2CPP
@@ -19,7 +19,7 @@ public class DisplaySentryArchetypeName : Feature
 {
     public override string Name => "Display Sentry Type";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Display the Sentry Type (<color=orange>Sniper</color>, <color=orange>Burst</color>, <color=orange>Auto</color>, <color=orange>Shotgun</color>) for remote players instead of the nondescript \"<color=orange>Sentry Gun</color>\" on the map screen.";
 
@@ -63,7 +63,7 @@ public class DisplaySentryArchetypeName : Feature
                 var prefix = string.Empty;
                 if(pui_InventoryItem.IsDeployed)
                 {
-                    prefix = $"<COLOR=red>{SharedUtils.GetLocalizedTextSafe(2505980868, overrideText: "DEPLOYED")}</color> ";
+                    prefix = $"<COLOR=red>{SharedUtils.GetLocalizedTextSafe(2505980868U, overrideText: "DEPLOYED")}</color> ";
                 }
 
                 pui_InventoryItem.SetArchetypeName(prefix + GetPublicName(archetypeDataBlock));

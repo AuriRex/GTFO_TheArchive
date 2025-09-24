@@ -1,0 +1,157 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Security.AntiSpawn.Name": {
+        "FName": {
+          "English": "Anti Spawn",
+          "Chinese": "反刷怪",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.AntiSpawn.Description": {
+        "FDescription": {
+          "English": "Prevents clients from spawning in enemies.",
+          "Chinese": "阻止客户端生成敌人。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Security.BasicPunishmentSettings.PunishFriends": {
+        "FSDisplayName": {
+          "English": "Punish Friends",
+          "Chinese": "惩罚好友",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "If (Steam) Friends should be affected as well.",
+          "Chinese": "是否影响 Steam 好友",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Security.BasicPunishmentSettings.Punishment": {
+        "FSDisplayName": {
+          "English": "Punishment",
+          "Chinese": "惩罚方式",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "What to do with griefers.",
+          "Chinese": "如何处理破坏者。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {
+      "TheArchive.Features.Security.BasicPunishmentSettings+PunishmentMode": {
+        "English": {
+          "NoneAndLog": "None And Log",
+          "Kick": "Kick",
+          "KickAndBan": "Kick And Ban"
+        },
+        "Chinese": {
+          "NoneAndLog": "仅记录",
+          "Kick": "踢出",
+          "KickAndBan": "踢出并封禁"
+        },
+        "French": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Italian": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "German": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Spanish": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Russian": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Portuguese_Brazil": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Polish": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Japanese": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        },
+        "Korean": {
+          "NoneAndLog": null,
+          "Kick": null,
+          "KickAndBan": null
+        }
+      }
+    }
+  },
+  "GenericTexts": {}
+}

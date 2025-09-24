@@ -1,0 +1,187 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.QoL.LoadoutRandomizer.Name": {
+        "FName": {
+          "English": "Loadout Randomizer",
+          "Chinese": "装备随机化",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.QoL.LoadoutRandomizer.Description": {
+        "FDescription": {
+          "English": "Adds a Loadout Randomizer button onto the loadout screen.\nSelect which gear to randomize via the settings below.",
+          "Chinese": "在大厅屏幕上增加一个随机化装备按钮。通过下面的设置选择要随机化的装备。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.QoL.LoadoutRandomizer+LoadoutRandomizerSettings.ExcludedSlots": {
+        "FSDisplayName": {
+          "English": "Do not randomize",
+          "Chinese": "忽略槽位",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.QoL.LoadoutRandomizer+LoadoutRandomizerSettings.Mode": {
+        "FSDisplayName": {
+          "English": "Mode",
+          "Chinese": "模式",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {
+      "TheArchive.Features.QoL.LoadoutRandomizer+LoadoutRandomizerSettings+InventorySlots": {
+        "English": {
+          "Primary": "Primary",
+          "Special": "Special",
+          "Tool": "Tool",
+          "Melee": "Melee"
+        },
+        "Chinese": {
+          "Primary": "主",
+          "Special": "副",
+          "Tool": "工具",
+          "Melee": "近战"
+        },
+        "French": {
+          "Primary": null,
+          "Special": null,
+          "Tool": null,
+          "Melee": null
+        },
+        "Italian": {
+          "Primary": null,
+          "Special": null,
+          "Tool": null,
+          "Melee": null
+        },
+        "German": {
+          "Primary": null,
+          "Special": null,
+          "Tool": null,
+          "Melee": null
+        },
+        "Spanish": {
+          "Primary": null,
+          "Special": null,
+          "Tool": null,
+          "Melee": null
+        },
+        "Russian": {
+          "Primary": null,
+          "Special": null,
+          "Tool": null,
+          "Melee": null
+        },
+        "Portuguese_Brazil": {
+          "Primary": null,
+          "Special": null,
+          "Tool": null,
+          "Melee": null
+        },
+        "Polish": {
+          "Primary": null,
+          "Special": null,
+          "Tool": null,
+          "Melee": null
+        },
+        "Japanese": {
+          "Primary": null,
+          "Special": null,
+          "Tool": null,
+          "Melee": null
+        },
+        "Korean": {
+          "Primary": null,
+          "Special": null,
+          "Tool": null,
+          "Melee": null
+        }
+      },
+      "TheArchive.Features.QoL.LoadoutRandomizer+LoadoutRandomizerSettings+RandomizerMode": {
+        "English": {
+          "True": "True",
+          "NoDuplicate": "No Duplicate"
+        },
+        "Chinese": {
+          "True": "完全",
+          "NoDuplicate": "不重复"
+        },
+        "French": {
+          "True": null,
+          "NoDuplicate": null
+        },
+        "Italian": {
+          "True": null,
+          "NoDuplicate": null
+        },
+        "German": {
+          "True": null,
+          "NoDuplicate": null
+        },
+        "Spanish": {
+          "True": null,
+          "NoDuplicate": null
+        },
+        "Russian": {
+          "True": null,
+          "NoDuplicate": null
+        },
+        "Portuguese_Brazil": {
+          "True": null,
+          "NoDuplicate": null
+        },
+        "Polish": {
+          "True": null,
+          "NoDuplicate": null
+        },
+        "Japanese": {
+          "True": null,
+          "NoDuplicate": null
+        },
+        "Korean": {
+          "True": null,
+          "NoDuplicate": null
+        }
+      }
+    }
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

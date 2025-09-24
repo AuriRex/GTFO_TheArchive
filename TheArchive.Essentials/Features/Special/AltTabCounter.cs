@@ -3,6 +3,7 @@ using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 
 namespace TheArchive.Features.Special;
 
@@ -11,7 +12,7 @@ internal class AltTabCounter : Feature
 {
     public override string Name => "Alt Tab Counter";
 
-    public override FeatureGroup Group => FeatureGroups.Special;
+    public override GroupBase Group => GroupManager.Special;
 
     public override string Description => "Counts the amount of times that the game went out of focus. (ALT + TAB)";
 

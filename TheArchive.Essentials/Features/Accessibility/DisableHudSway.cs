@@ -1,6 +1,7 @@
 ﻿using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using UnityEngine;
 
 namespace TheArchive.Features.Accessibility;
@@ -9,7 +10,7 @@ internal class DisableHudSway : Feature
 {
     public override string Name => "Disable HUD Sway";
 
-    public override FeatureGroup Group => FeatureGroups.Accessibility;
+    public override GroupBase Group => GroupManager.Accessibility;
 
     public override string Description => "Disables the in-game HUD sway while walking / jumping around.";
 

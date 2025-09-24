@@ -1,11 +1,11 @@
 ﻿using SNetwork;
 using System;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using static TheArchive.Utilities.PresenceFormatter;
 
 namespace TheArchive.Features.Presence;
@@ -24,7 +24,7 @@ public class SteamRichPresenceTweaks : Feature
 
     public override string Name => "Steam Rich Presence Tweaks";
 
-    public override FeatureGroup Group => FeatureGroups.Presence;
+    public override GroupBase Group => GroupManager.Presence;
 
     public override string Description => "Set a custom text for Steams' presence system.";
 

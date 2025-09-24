@@ -5,12 +5,12 @@ using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
@@ -27,7 +27,7 @@ public class PlayerLobbyManagement : Feature
 {
     public override string Name => "Player Lobby Management";
 
-    public override FeatureGroup Group => FeatureGroups.Security;
+    public override GroupBase Group => GroupManager.Security;
 
     public override string Description => "Allows you to open a players steam profile by clicking on their name as well as kick and ban players as host.";
 
@@ -251,20 +251,20 @@ public class PlayerLobbyManagement : Feature
 
                 PopupWindow.Setup();
 
-                OpenSteamItem = CreatePopupItem(Localization.Get(1), OnNameButtonPressed);
+                OpenSteamItem = CreatePopupItem(Localization.GetById(1), OnNameButtonPressed);
                 SharedUtils.ChangeColorCMItem(OpenSteamItem, ModSettings.GREEN);
                 OpenSteamItem.TryCastTo<CM_TimedButton>().SetHoldDuration(.5f);
 
-                IsFriendItem = CreatePopupItem(Localization.Get(2), (_) => { });
+                IsFriendItem = CreatePopupItem(Localization.GetById(2), (_) => { });
                 SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Friend));
                 IsFriendItem.TryCastTo<CM_TimedButton>().SetHoldDuration(100f);
                 IsFriendItem.GetComponent<Collider2D>().enabled = false;
 
-                KickPlayerItem = CreatePopupItem(Localization.Get(3), KickPlayerButtonPressed);
+                KickPlayerItem = CreatePopupItem(Localization.GetById(3), KickPlayerButtonPressed);
                 SharedUtils.ChangeColorCMItem(KickPlayerItem, ModSettings.ORANGE);
                 KickPlayerItem.TryCastTo<CM_TimedButton>().SetHoldDuration(2);
 
-                BanPlayerItem = CreatePopupItem(Localization.Get(4), BanPlayerButtonPressed);
+                BanPlayerItem = CreatePopupItem(Localization.GetById(4), BanPlayerButtonPressed);
                 SharedUtils.ChangeColorCMItem(BanPlayerItem, ModSettings.RED);
                 BanPlayerItem.TryCastTo<CM_TimedButton>().SetHoldDuration(4);
 
@@ -495,7 +495,7 @@ public class PlayerLobbyManagement : Feature
         if (isBot)
         {
             IsFriendItem.gameObject.SetActive(true);
-            IsFriendItem.SetText(Localization.Get(6));
+            IsFriendItem.SetText(Localization.GetById(6));
             SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Bot));
 
             ShowWindow(name, pos, playerID);
@@ -515,17 +515,17 @@ public class PlayerLobbyManagement : Feature
 
         if (isBanned)
         {
-            IsFriendItem.SetText(Localization.Get(5));
+            IsFriendItem.SetText(Localization.GetById(5));
             SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Banned));
         }
         else if (isFriend)
         {
-            IsFriendItem.SetText(Localization.Get(2));
+            IsFriendItem.SetText(Localization.GetById(2));
             SharedUtils.ChangeColorCMItem(IsFriendItem, GetRelationshipColor(PlayerRelationShip.Friend));
         }
 
 
-        KickPlayerItem.SetText(Localization.Format(7, name));
+        KickPlayerItem.SetText(Localization.Format(7, " Kick {0}", name));
 
 
 
@@ -534,14 +534,14 @@ public class PlayerLobbyManagement : Feature
             KickPlayerItem.GetComponent<Collider2D>().enabled = false;
             SharedUtils.ChangeColorCMItem(KickPlayerItem, ModSettings.DISABLED);
 
-            BanPlayerItem.SetText(Localization.Format(8, name));
+            BanPlayerItem.SetText(Localization.Format(8, " Ban {0}", name));
         }
         else
         {
             KickPlayerItem.GetComponent<Collider2D>().enabled = true;
             SharedUtils.ChangeColorCMItem(KickPlayerItem, ModSettings.ORANGE);
 
-            BanPlayerItem.SetText(Localization.Format(9, name));
+            BanPlayerItem.SetText(Localization.Format(9, " Ban and kick {0}", name));
         }
 
         if (player.IsLocal)
@@ -552,7 +552,7 @@ public class PlayerLobbyManagement : Feature
         {
             if (isBanned)
             {
-                BanPlayerItem.SetText(Localization.Format(10, name));
+                BanPlayerItem.SetText(Localization.Format(10, " Unban {0}", name));
                 SharedUtils.ChangeColorCMItem(BanPlayerItem, ModSettings.GREEN);
             }
             else

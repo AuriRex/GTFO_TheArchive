@@ -6,6 +6,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class CustomLobbyCodeString : Feature
 {
     public override string Name => "Copy Lobby ID Format";
 
-    public override FeatureGroup Group => FeatureGroups.Presence;
+    public override GroupBase Group => GroupManager.Presence;
 
     public override string Description => "Customize copied lobby code from the 'Copy Lobby ID'-Button on the loadout and settings screens with a custom format.";
 

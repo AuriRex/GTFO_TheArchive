@@ -8,5 +8,7 @@ internal enum FSType
     FSDescription,
     FSHeader,
     FSLabelText,
-    FSButtonText
+    FSButtonText,
+    FSTooltipHeader,
+    FSTooltipText
 }

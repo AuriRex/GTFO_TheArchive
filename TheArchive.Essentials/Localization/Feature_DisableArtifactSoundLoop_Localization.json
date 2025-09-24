@@ -1,0 +1,42 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Audio.DisableArtifactSoundLoop.Name": {
+        "FName": {
+          "English": "Disable Artifact Sound Loop",
+          "Chinese": "禁用红晶声音循环",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Audio.DisableArtifactSoundLoop.Description": {
+        "FDescription": {
+          "English": "Removes the Artifacts idle audio loop.",
+          "Chinese": "移除红晶的空闲音频循环。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Loader;
 using UnityEngine;
@@ -19,7 +20,7 @@ internal class PageRundownPopupManager : Feature
 {
     public override string Name => "PopupQueue";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public override string Description => "Popups, yay!";
 

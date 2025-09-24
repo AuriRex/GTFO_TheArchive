@@ -9,6 +9,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
@@ -19,7 +20,7 @@ public class InteractionFix : Feature
 {
     public override string Name => "Interaction Fix";
 
-    public override FeatureGroup Group => FeatureGroups.Fixes;
+    public override GroupBase Group => GroupManager.Fixes;
 
     public override string Description => "Prevents resource packs from getting interrupted from other interacts.\nMost notably: running past lockers etc\n\n(Text might sometimes disappear)";
 

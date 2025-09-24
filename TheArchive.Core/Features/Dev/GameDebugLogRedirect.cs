@@ -1,8 +1,8 @@
 ﻿using System;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using UnityEngine;
 
@@ -16,7 +16,7 @@ internal class GameDebugLogRedirect : Feature
 {
     public override string Name => "Game Logs Redirect";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public override string Description => "Prints Unity debug logs into the <i>MelonLoader</i> console.";
 

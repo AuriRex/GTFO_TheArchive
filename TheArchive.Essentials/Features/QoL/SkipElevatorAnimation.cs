@@ -1,6 +1,6 @@
-﻿using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature.Patches;
+﻿using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 
 namespace TheArchive.Features.QoL;
 
@@ -8,7 +8,7 @@ internal class SkipElevatorAnimation : Feature
 {
     public override string Name => "Skip Elevator Animation";
 
-    public override FeatureGroup Group => FeatureGroups.QualityOfLife;
+    public override GroupBase Group => GroupManager.QualityOfLife;
 
     public override string Description => "Automatically skips the elevator intro animation sequence without having to hold down a button.";
 

@@ -1,0 +1,42 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.QoL.NoNavMarkerHideInChat.Name": {
+        "FName": {
+          "English": "See NavMarkers in Chat",
+          "Chinese": "在聊天中显示标记",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.QoL.NoNavMarkerHideInChat.Description": {
+        "FDescription": {
+          "English": "Prevent enemy pings from hiding whenever the chat is open.",
+          "Chinese": "当聊天框打开时，阻止隐藏敌人标记",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

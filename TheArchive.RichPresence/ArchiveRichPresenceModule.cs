@@ -5,7 +5,6 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Localization;
 using TheArchive.Core.Managers;
 using TheArchive.Interfaces;
-using TheArchive.Loader;
 using TheArchive.Utilities;
 
 [assembly: AssemblyVersion(TheArchive.ArchiveRichPresenceModule.VERSION)]

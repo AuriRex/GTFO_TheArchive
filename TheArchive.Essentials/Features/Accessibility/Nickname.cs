@@ -3,12 +3,12 @@ using SNetwork;
 using Steamworks;
 using System;
 using System.Text.RegularExpressions;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
@@ -23,7 +23,7 @@ public class Nickname : Feature
 {
     public override string Name => "Nickname";
 
-    public override FeatureGroup Group => FeatureGroups.Accessibility;
+    public override GroupBase Group => GroupManager.Accessibility;
 
     public override string Description => "Nickname related settings.\n\nChange your in game nickname, handy color picker included!";
 
@@ -257,24 +257,19 @@ public class Nickname : Feature
             }
         }
 
-        var text = Localization.Format(1, nickLength, $"{colPrefix}{Settings.Nickname}");
+        var text = Localization.Format(1, "Nickname budget: {0} / 25  =>  {1}", nickLength, $"{colPrefix}{Settings.Nickname}");
         if (Settings.InfoLabelTop.HasPrimaryText)
             Settings.InfoLabelTop.PrimaryText.TryCastTo<TextMeshPro>().text = text;
         Settings.InfoLabelTop.LabelText = text;
 
-        var textBottom = Settings.Mode switch
-        {
-            NicknameMode.Color => Localization.Get(2),
-            NicknameMode.TerminatedColor => Localization.Get(3),
-            _ => ""
-        };
+        var textBottom = Localization.Get(Settings.Mode);
 
         if (nickLength > 19 && Settings.UseColor)
-            textBottom = Localization.Get(4);
+            textBottom = Localization.GetById(4);
 
         if (advancedMode)
         {
-            textBottom = Localization.Format(5, Settings.Nickname);
+            textBottom = Localization.Format(5, "<#440144><u>/!\\</u></color> Custom Color Tags detected! => <noparse>{0}</noparse>", Settings.Nickname);
         }
 
         if (Settings.InfoLabelBottom.HasPrimaryText)

@@ -3,6 +3,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -14,7 +15,7 @@ internal class MaulGavelChecksumPatch : Feature
 {
     public override string Name => "Maul/Gavel Checksum Patch";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public override string Description => "Fixes the Maul and Gavel hammers having the same icon.";
 

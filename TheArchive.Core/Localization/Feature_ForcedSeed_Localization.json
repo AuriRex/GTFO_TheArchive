@@ -1,0 +1,115 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Dev.ForcedSeed.Name": {
+        "FName": {
+          "English": "Force Expedition Seeds",
+          "Chinese": "锁定关卡种子",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ForcedSeed.Description": {
+        "FDescription": {
+          "English": "Force Seeds used to randomize objectives, boxes and enemies spawns.\n\n<#F00>(Master only!)</color>\n(Probably doesn't work in multiplayer, idk ... haven't tested it :p)",
+          "Chinese": "强制使用种子来随机化任务、箱子和敌人的生成。\n\n<#F00>(仅适用于主机！)</color>\n（可能不适用于多人游戏，我不确定...还没有测试:p）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ForcedSeed+ForcedSeedSettings.ForceSessionSeed": {
+        "FSDisplayName": {
+          "English": "Force Session Seed",
+          "Chinese": "强制关卡种子",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ForcedSeed+ForcedSeedSettings.SessionSeed": {
+        "FSDisplayName": {
+          "English": "Session Seed Override",
+          "Chinese": "覆盖关卡种子",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "The main seed used for level randomization.",
+          "Chinese": "用于关卡随机化的主要种子。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ForcedSeed+ForcedSeedSettings.ForceHostIDSeed": {
+        "FSDisplayName": {
+          "English": "Force HostID Seed",
+          "Chinese": "强制主机ID种子",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.ForcedSeed+ForcedSeedSettings.HostIDSeed": {
+        "FSDisplayName": {
+          "English": "HostID Seed Override",
+          "Chinese": "覆盖主机ID种子",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

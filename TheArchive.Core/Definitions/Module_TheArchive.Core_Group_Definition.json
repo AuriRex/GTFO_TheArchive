@@ -1,0 +1,345 @@
+﻿{
+  "ModuleGroup": {
+    "LocalizationData": {
+      "DisplayName": {
+        "English": "TheArchive Core",
+        "Chinese": "TheArchive 核心",
+        "French": null,
+        "Italian": null,
+        "German": null,
+        "Spanish": null,
+        "Russian": null,
+        "Portuguese_Brazil": null,
+        "Polish": null,
+        "Japanese": null,
+        "Korean": null
+      },
+      "Description": {
+        "English": null,
+        "Chinese": null,
+        "French": null,
+        "Italian": null,
+        "German": null,
+        "Spanish": null,
+        "Russian": null,
+        "Portuguese_Brazil": null,
+        "Polish": null,
+        "Japanese": null,
+        "Korean": null
+      }
+    },
+    "SubGroups": []
+  },
+  "TopLevelGroups": [
+    {
+      "Name": "Accessibility",
+      "LocalizationData": {
+        "DisplayName": {
+          "English": "Accessibility",
+          "Chinese": "辅助功能",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Description": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    {
+      "Name": "Audio",
+      "LocalizationData": {
+        "DisplayName": {
+          "English": "Audio",
+          "Chinese": "音频",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Description": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    {
+      "Name": "Cosmetic",
+      "LocalizationData": {
+        "DisplayName": {
+          "English": "Cosmetic",
+          "Chinese": "美化",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Description": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    {
+      "Name": "Developer",
+      "LocalizationData": {
+        "DisplayName": {
+          "English": "Developer",
+          "Chinese": "开发者",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Description": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    {
+      "Name": "Fixes",
+      "LocalizationData": {
+        "DisplayName": {
+          "English": "Fixes",
+          "Chinese": "修复",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Description": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    {
+      "Name": "HUD",
+      "LocalizationData": {
+        "DisplayName": {
+          "English": "HUD / UI",
+          "Chinese": "界面",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Description": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    {
+      "Name": "Misc",
+      "LocalizationData": {
+        "DisplayName": {
+          "English": "Misc",
+          "Chinese": "杂项",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Description": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    {
+      "Name": "Presence",
+      "LocalizationData": {
+        "DisplayName": {
+          "English": "Discord / Steam Presence",
+          "Chinese": "Discord / Steam 状态",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Description": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    {
+      "Name": "Security",
+      "LocalizationData": {
+        "DisplayName": {
+          "English": "Security / Anti Cheat",
+          "Chinese": "安全 / 反作弊",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Description": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    {
+      "Name": "QoL",
+      "LocalizationData": {
+        "DisplayName": {
+          "English": "Quality of Life",
+          "Chinese": "生活质量",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "Description": {
+          "English": null,
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    }
+  ]
+}

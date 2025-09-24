@@ -2,6 +2,7 @@
 using System.Linq;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
@@ -13,7 +14,7 @@ public class SortBoosters : Feature
 {
     public override string Name => "Sort Boosters";
 
-    public override FeatureGroup Group => FeatureGroups.QualityOfLife;
+    public override GroupBase Group => GroupManager.QualityOfLife;
 
     public override string Description => "Sorts your booster inventory by type and alphabetically";
 

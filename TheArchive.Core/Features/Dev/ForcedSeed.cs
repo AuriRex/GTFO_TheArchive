@@ -1,10 +1,10 @@
 ﻿using GameData;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 
 namespace TheArchive.Features.Dev;
@@ -14,7 +14,7 @@ internal class ForcedSeed : Feature
 {
     public override string Name => "Force Expedition Seeds";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public override string Description => $"Force Seeds used to randomize objectives, boxes and enemies spawns.\n\n<#F00>(Master only!)</color>\n(Probably doesn't work in multiplayer, idk ... haven't tested it :p)";
 

@@ -3,6 +3,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Managers;
 using TheArchive.Loader;
 using TheArchive.Utilities;
@@ -15,7 +16,7 @@ internal class GTFOApi_Compat : Feature
 {
     public override string Name => nameof(GTFOApi_Compat);
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public override bool ShouldInit()
     {

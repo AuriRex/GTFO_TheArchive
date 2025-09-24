@@ -1,12 +1,7 @@
 ﻿using FX_EffectSystem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Cosmetic;
@@ -15,7 +10,7 @@ public class DisableTracers : Feature
 {
     public override string Name => "Disable Bullet Tracers";
 
-    public override FeatureGroup Group => FeatureGroups.Cosmetic;
+    public override GroupBase Group => GroupManager.Cosmetic;
 
     public override string Description => "Removes Bullet Tracer Effects";
 

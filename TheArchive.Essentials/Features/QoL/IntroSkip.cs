@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
@@ -12,7 +13,7 @@ public class IntroSkip : Feature
 {
     public override string Name => "Skip Intro";
 
-    public override FeatureGroup Group => FeatureGroups.QualityOfLife;
+    public override GroupBase Group => GroupManager.QualityOfLife;
 
     public override string Description => "Automatically presses inject at the start of the game";
 

@@ -1,14 +1,13 @@
-﻿using Player;
+﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+using SNetwork;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using SNetwork;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -19,7 +18,7 @@ public class SentryMarkerTweaks : Feature
 {
     public override string Name => "Sentry Markers";
 
-    public override FeatureGroup Group => FeatureGroups.Accessibility;
+    public override GroupBase Group => GroupManager.Accessibility;
 
     public override string Description => "Add hud markers onto placed down sentry guns and tweak how those are shown.";
 
@@ -203,8 +202,8 @@ public class SentryMarkerTweaks : Feature
             
             if (Settings.ShowSentryAmmoPercentage)
             {
-                var percentage = __instance.Ammo / __instance.AmmoMaxCap * 100f;
-                sentryArch = $"{sentryArch} <color={GetColorHexString(0, 100, percentage)}>{percentage:N0}%</color> ";
+                var percentage = Mathf.CeilToInt(__instance.Ammo / __instance.AmmoMaxCap * 100f);
+                sentryArch = $"{sentryArch} <color={GetColorHexString(0, 100, percentage)}>{percentage}%</color> ";
             }
 
             if (!string.IsNullOrWhiteSpace(sentryArch))

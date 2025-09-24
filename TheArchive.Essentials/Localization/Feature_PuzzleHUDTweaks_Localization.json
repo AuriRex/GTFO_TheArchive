@@ -1,0 +1,98 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Hud.PuzzleHUDTweaks.Name": {
+        "FName": {
+          "English": "Scan HUD Tweaks",
+          "Chinese": "扫描HUD调整",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.PuzzleHUDTweaks.Description": {
+        "FDescription": {
+          "English": "Adds an overall alarm class counter to the HUD message for door alarms etc",
+          "Chinese": "为门报警等HUD信息上添加一个警报等级计数器",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.PuzzleHUDTweaks+PuzzleHUDTweaksSettings.UseRomanNumerals": {
+        "FSDisplayName": {
+          "English": "Use Roman Numerals",
+          "Chinese": "使用罗马数字",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "If Roman Numerals should be used instead of numbers:\nI, II, III, IV, V, VI, ...",
+          "Chinese": "是否使用罗马数字代替数字：\nI、II、III、IV、V、VI 等。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.PuzzleHUDTweaks+PuzzleHUDTweaksSettings.IgnoreSingleScans": {
+        "FSDisplayName": {
+          "English": "Ignore Single Scans",
+          "Chinese": "忽略单次扫描",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "If alarms with only a single scan should hide the <color=white>(I/I)</color> text",
+          "Chinese": "如果只有一个扫描的警报是否应隐藏 <color=white>(I/I)</color> 文本",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

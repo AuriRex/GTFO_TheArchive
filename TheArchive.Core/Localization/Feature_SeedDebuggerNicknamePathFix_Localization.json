@@ -1,0 +1,42 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Dev.SeedDebuggerNicknamePathFix.Name": {
+        "FName": {
+          "English": "SeedDebugger-Nickname-Path-Fix",
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Dev.SeedDebuggerNicknamePathFix.Description": {
+        "FDescription": {
+          "English": "Makes sure GenerationChecksumFails and other SeedDebugger related log files properly get saved even if the local player has invalid path characters in their name.",
+          "Chinese": null,
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

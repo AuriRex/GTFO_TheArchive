@@ -1,6 +1,7 @@
 ﻿using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -11,7 +12,7 @@ public class DisableSpitterAudio : Feature
 {
     public override string Name => "Disable Spitter Audio";
 
-    public override FeatureGroup Group => FeatureGroups.Audio;
+    public override GroupBase Group => GroupManager.Audio;
 
     public override string Description => "Completely Removes all Audio from spitters.\n\n<color=orange>Keep in mind that you won't get any auditory warnings before it's too late</color>";
 

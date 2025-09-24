@@ -10,6 +10,7 @@ using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
 using TheArchive.Core.Models;
@@ -34,7 +35,7 @@ namespace TheArchive.Features.Hud
     {
         public override string Name => "Log Visualizer";
 
-        public override FeatureGroup Group => FeatureGroups.Hud;
+        public override GroupBase Group => GroupManager.Hud;
 
         public override string Description => "Missing some logs for <i>that Achievement</i>, huh?";
 
@@ -591,7 +592,7 @@ namespace TheArchive.Features.Hud
                     countReadLogs = allLogsIHaveDistinct.Length;
                 }
 
-                __instance.m_textRundownHeader.SetText($"{title}<br><size=70%>Total Logs: ({countReadLogs} / {countTotal})</size>");
+                __instance.m_textRundownHeader.SetText($"{title}<br><size=70%>{Localization.GetById(5, "Total Logs")}: ({countReadLogs} / {countTotal})</size>");
             }
         }
 
@@ -634,7 +635,7 @@ namespace TheArchive.Features.Hud
                 if(logsForRundownDistinct.Length == 0)
                 {
                     color = Settings.ColorNoLogs;
-                    logCountText = Localization.Get(1);
+                    logCountText = Localization.GetById(1);
                 }
                 else if(logsIHaveDistinct.Length == logsForRundownDistinct.Length)
                 {
@@ -642,7 +643,7 @@ namespace TheArchive.Features.Hud
                 }
 
                 
-                var logsText = $"<br><size=60%><{color.ToHexString()}>{Localization.Get(2)}: ({logCountText})</color></size>";
+                var logsText = $"<br><size=60%><{color.ToHexString()}>{Localization.GetById(2)}: ({logCountText})</color></size>";
 
                 rundownSelection.m_rundownText.SetText($"{rundownText}{logsText}");
 
@@ -705,7 +706,7 @@ namespace TheArchive.Features.Hud
 
                 if (logsForExpeditionDistinct.Length == 0)
                 {
-                    logsText = Localization.Get(1);
+                    logsText = Localization.GetById(1);
                     color = Settings.ColorNoLogs;
                 }
                 else if(logsIHaveDistinct.Length == logsForExpeditionDistinct.Length)
@@ -713,7 +714,7 @@ namespace TheArchive.Features.Hud
                     color = Settings.ColorAllGotten;
                 }
 
-                __instance.m_statusText.SetText($"{originalStatus}<br><{color.ToHexString()}>{Localization.Get(2)}: ({logsText})</color>");
+                __instance.m_statusText.SetText($"{originalStatus}<br><{color.ToHexString()}>{Localization.GetById(2)}: ({logsText})</color>");
             }
         }
 
@@ -807,13 +808,13 @@ namespace TheArchive.Features.Hud
             {
                 if (_items.Count == 0)
                 {
-                    HeaderText.SetText(Localization.Get(3));
+                    HeaderText.SetText(Localization.GetById(3));
                     return;
                 }
 
                 var collectedAmount = _items.Where(item => item.Collected).Count();
 
-                HeaderText.SetText($"{Localization.Get(2)}: ({collectedAmount} / {_items.Count})");
+                HeaderText.SetText($"{Localization.GetById(2)}: ({collectedAmount} / {_items.Count})");
             }
 
             public void UpdateItemVisuals()
@@ -911,7 +912,7 @@ namespace TheArchive.Features.Hud
                     return;
                 }
 
-                Text.SetText($"{Localization.Get(4)}{specialText}");
+                Text.SetText($"{Localization.GetById(4)}{specialText}");
                 Text.color = Color.gray;
                 Divider.color = Color.red;
                 Gradient.color = Color.red.WithAlpha(0.025f);
@@ -991,7 +992,7 @@ namespace TheArchive.Features.Hud
 
             var headerText = rootGO.transform.GetChildWithExactName("HeaderText").GetComponent<TextMeshPro>();
             headerText.GetComponent<TMP_Localizer>().SafeDestroy();
-            headerText.SetText(Localization.Get(2));
+            headerText.SetText(Localization.GetById(2));
 
             logDisplayRoot.HeaderText = headerText;
             logDisplayRoot.LocalItemRootPos = logItemPrefab.transform.localPosition;

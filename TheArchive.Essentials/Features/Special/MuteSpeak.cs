@@ -1,6 +1,7 @@
 ﻿using Player;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 using UnityEngine;
@@ -16,7 +17,7 @@ public class MuteSpeak : Feature
 {
     public override string Name => "Mute Speak";
 
-    public override FeatureGroup Group => FeatureGroups.Special;
+    public override GroupBase Group => GroupManager.Special;
 
     public override string Description => "Binds a few voice lines to keyboard keys.\n\nArrow keys\n[P, L, K, J, H] toggleable by hitting F8; off by default\nHold [Right Control] for alternate lines";
 

@@ -1,9 +1,9 @@
 ﻿using System;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
 using static TheArchive.Utilities.Utils;
@@ -19,11 +19,11 @@ internal class ModLanguageLegacy : Feature
 
     public override string Description => "Change Language of ModSettings for OG Rundowns 1 to 5";
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public override bool InlineSettingsIntoParentMenu => true;
 
-    public override Type[] LocalizationExternalTypes => new Type[] { typeof(Language) };
+    public override Type[] ExternalLocalizedTypes => new Type[] { typeof(Language) };
 
     [FeatureConfig]
     public static ModLanguageLegacySettings Settings { get; set; }

@@ -62,7 +62,22 @@
 		<Message Text="Localization files copied!" Importance="High" />
 	</Target>
 
-	<Target Name="CopyOutputFilesToPluginFolder" AfterTargets="CopyAssemblyAfterBuild;CopyLocalizationFilesAfterBuild" Condition="$(CopyBuildToPluginFolder) == 'true'">
+	<Target Name="CopyDefinitionFilesAfterBuild" AfterTargets="CopyAssemblyAfterBuild"  Condition="'$(DefinitionFileDir)' != ''">
+		<Message Text="Copying Definition files to Output Folder ..." />
+		<ItemGroup>
+			<DefinitionFilesToCopy Include="$(DefinitionFileDir)\**\*.*" />
+		</ItemGroup>
+		<Copy
+				SourceFiles="@(DefinitionFilesToCopy)"
+				DestinationFolder="$(PluginOutputPath)\Definitions\%(RecursiveDir)"
+				SkipUnchangedFiles="true"
+				OverwriteReadOnlyFiles="true"
+				Retries="3"
+				RetryDelayMilliseconds="300"/>
+		<Message Text="Definition files copied!" Importance="High" />
+	</Target>
+
+	<Target Name="CopyOutputFilesToPluginFolder" AfterTargets="CopyAssemblyAfterBuild;CopyDefinitionFilesAfterBuild;CopyLocalizationFilesAfterBuild" Condition="$(CopyBuildToPluginFolder) == 'true'">
 		<Message Text="Copying Output to Plugins Folder..." />
 		<MakeDir Directories="$(PluginsFolder)\$(AssemblyName)" Condition="!Exists('$(PluginsFolder)\$(AssemblyName)')"  />
 		<ItemGroup>
@@ -114,7 +129,7 @@
 		<ManifestGeneratorTask Name="$(TSName)" Author="$(TSAuthor)" Version="$(TSVersion)" WebsiteURL="$(TSWebsite)" Description="$(TSDescription)" Dependencies="@(TSDependencyStrings)" OutputPath="$(PluginOutputPath)\..\" />
 	</Target>
 	
-	<Target Name="ZipOutputPath" AfterTargets="CopyAssemblyAfterBuild;CopyLocalizationFilesAfterBuild;CopyMiscFilesToOutputFolder;GenerateManifestFile" Condition="'$(Configuration)' == 'Release'">
+	<Target Name="ZipOutputPath" AfterTargets="CopyAssemblyAfterBuild;CopyDefinitionFilesAfterBuild;CopyLocalizationFilesAfterBuild;CopyMiscFilesToOutputFolder;GenerateManifestFile" Condition="'$(Configuration)' == 'Release'">
 		<PropertyGroup Condition="'$(TSVersion)' == '' And '$(GitSemVerMajor)' != ''">
 			<TSVersion>$(GitSemVerMajor).$(GitSemVerMinor).$(GitSemVerPatch)</TSVersion>
 		</PropertyGroup>

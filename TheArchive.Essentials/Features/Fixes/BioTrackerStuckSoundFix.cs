@@ -1,8 +1,8 @@
 ﻿using Gear;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 
 namespace TheArchive.Features.Fixes;
@@ -12,7 +12,7 @@ internal class BioTrackerStuckSoundFix : Feature
 {
     public override string Name => "Bio Stuck Sound Fix";
 
-    public override FeatureGroup Group => FeatureGroups.Fixes;
+    public override GroupBase Group => GroupManager.Fixes;
 
     public override string Description => "Stops the tagging progress sound <u>after unwielding the tracker</u>, just in case the sound gets stuck.";
 

@@ -1,0 +1,486 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.Hud.WeaponPickerTweaks.Name": {
+        "FName": {
+          "English": "Weapon Picker Tweaks",
+          "Chinese": "武器选择器调整",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks.Description": {
+        "FDescription": {
+          "English": "Allows you to Favorite and Hide Gear in the weapon picker.",
+          "Chinese": "允许你在武器选择器中收藏和隐藏装备。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.FavoriteToggleKey": {
+        "FSDisplayName": {
+          "English": "Favorite Gear Modifier",
+          "Chinese": "收藏装备修改键",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Hold this key and select the Gear in the weapon picker to mark is as <color=orange>Favorite</color>.",
+          "Chinese": "按住此键并在武器选择器中选择装备，标记为<color=orange>喜好</color>。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.SortOrderUpKey": {
+        "FSDisplayName": {
+          "English": "Sort Gear Up Modifier",
+          "Chinese": "装备排序上移修改键",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.SortOrderDownKey": {
+        "FSDisplayName": {
+          "English": "Sort Gear Down Modifier",
+          "Chinese": "装备排序下移修改键",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.HideToggleKey": {
+        "FSDisplayName": {
+          "English": "Hide Gear Modifier",
+          "Chinese": "隐藏装备修改键",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Hold this key and select the Gear in the weapon picker to mark is as <color=orange>Hidden</color>.",
+          "Chinese": "按住此键并在武器选择器中选择装备，将其标记为 <color=orange>隐藏</color>。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.Colors": {
+        "FSDisplayName": {
+          "English": "Colors",
+          "Chinese": "颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": ":// Other",
+          "Chinese": ":// 其他",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.Mode": {
+        "FSDisplayName": {
+          "English": "Sort Gear by ...",
+          "Chinese": "按...排序装备",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Default: Default Gear order\nArchetype: Sort by Archetype Name (the bottom one)\nName: Sort by Gear name",
+          "Chinese": "默认: 默认装备顺序\n原型: 按原型名称排序（最后一个）\n名称: 按装备名称排序",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.HideRemovesFromMenu": {
+        "FSDisplayName": {
+          "English": "Remove Hidden Completely",
+          "Chinese": "完全移除隐藏的装备",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Gear marked as <color=orange>Hidden</color> will be removed from the weapon picker.",
+          "Chinese": "标记为 <color=orange>隐藏</color> 的装备将从武器选择器中移除。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.DisableOnModded": {
+        "FSDisplayName": {
+          "English": "Disable with MTFO installed",
+          "Chinese": "安装MTFO时禁用",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Disables this feature if MTFO is installed.",
+          "Chinese": "如果安装了MTFO，将禁用此功能。",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.Entries": {
+        "FSDisplayName": {
+          "English": "Favorites (Vanilla)",
+          "Chinese": "喜好（原版）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings.EntriesModded": {
+        "FSDisplayName": {
+          "English": "Favorites (Modded)",
+          "Chinese": "喜好（修改的）",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings+ItemColors.IndicatorLeftOnly": {
+        "FSDisplayName": {
+          "English": "Only color Indicator",
+          "Chinese": "仅颜色指示器",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSDescription": {
+          "English": "Only colorizes the indicator bar on the left side",
+          "Chinese": "仅对左侧指示栏进行颜色标记",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        },
+        "FSHeader": {
+          "English": "Colors",
+          "Chinese": "颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings+ItemColors.ColorFavorite": {
+        "FSDisplayName": {
+          "English": "Favorites Color",
+          "Chinese": "收藏颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings+ItemColors.ColorHidden": {
+        "FSDisplayName": {
+          "English": "Hidden Color",
+          "Chinese": "隐藏颜色",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings+WeaponPickerEntry.Name": {
+        "FSHeader": {
+          "English": "--------------------------------",
+          "Chinese": "--------------------------------",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings+WeaponPickerEntry.Checksum": {
+        "FSDescription": {
+          "English": "The items unique identifier*\n\n<size=50%>*usually unique</size>",
+          "Chinese": "物品的唯一标识符*\n\n<size=50%>*通常是唯一的</size>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings+SortMode": {
+        "English": {
+          "Default": "Default",
+          "Archetype": "Archetype",
+          "Name": "Name"
+        },
+        "Chinese": {
+          "Default": "默认",
+          "Archetype": "原型",
+          "Name": "名称"
+        },
+        "French": {
+          "Default": null,
+          "Archetype": null,
+          "Name": null
+        },
+        "Italian": {
+          "Default": null,
+          "Archetype": null,
+          "Name": null
+        },
+        "German": {
+          "Default": null,
+          "Archetype": null,
+          "Name": null
+        },
+        "Spanish": {
+          "Default": null,
+          "Archetype": null,
+          "Name": null
+        },
+        "Russian": {
+          "Default": null,
+          "Archetype": null,
+          "Name": null
+        },
+        "Portuguese_Brazil": {
+          "Default": null,
+          "Archetype": null,
+          "Name": null
+        },
+        "Polish": {
+          "Default": null,
+          "Archetype": null,
+          "Name": null
+        },
+        "Japanese": {
+          "Default": null,
+          "Archetype": null,
+          "Name": null
+        },
+        "Korean": {
+          "Default": null,
+          "Archetype": null,
+          "Name": null
+        }
+      },
+      "TheArchive.Features.Hud.WeaponPickerTweaks+WeaponPickerTweaksSettings+ItemFavState": {
+        "English": {
+          "Favorite": "Favorite",
+          "Normal": "Normal",
+          "Hidden": "Hidden"
+        },
+        "Chinese": {
+          "Favorite": "喜好",
+          "Normal": "正常",
+          "Hidden": "隐藏"
+        },
+        "French": {
+          "Favorite": null,
+          "Normal": null,
+          "Hidden": null
+        },
+        "Italian": {
+          "Favorite": null,
+          "Normal": null,
+          "Hidden": null
+        },
+        "German": {
+          "Favorite": null,
+          "Normal": null,
+          "Hidden": null
+        },
+        "Spanish": {
+          "Favorite": null,
+          "Normal": null,
+          "Hidden": null
+        },
+        "Russian": {
+          "Favorite": null,
+          "Normal": null,
+          "Hidden": null
+        },
+        "Portuguese_Brazil": {
+          "Favorite": null,
+          "Normal": null,
+          "Hidden": null
+        },
+        "Polish": {
+          "Favorite": null,
+          "Normal": null,
+          "Hidden": null
+        },
+        "Japanese": {
+          "Favorite": null,
+          "Normal": null,
+          "Hidden": null
+        },
+        "Korean": {
+          "Favorite": null,
+          "Normal": null,
+          "Hidden": null
+        }
+      }
+    }
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {}
+}

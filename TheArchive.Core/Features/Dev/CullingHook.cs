@@ -1,9 +1,9 @@
 ﻿using CullingSystem;
 using LevelGeneration;
-using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Interfaces;
 using TheArchive.Utilities;
 
@@ -17,7 +17,7 @@ internal class CullingHook : Feature
 {
     public override string Name => nameof(CullingHook);
 
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     public new static IArchiveLogger FeatureLogger { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using TheArchive.Core.Attributes;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Features.Dev;
 using static TheArchive.Utilities.Utils;
 
@@ -10,7 +11,7 @@ internal class DisableInfectionCoughing : Feature
 {
     public override string Name => "Disable Coughing (<#1F835F>Infection</color>)";
 
-    public override FeatureGroup Group => FeatureGroups.Audio;
+    public override GroupBase Group => GroupManager.Audio;
 
     public override string Description => $"Disables the cough sound effect whenever a player looses HP due to infection.\n\n<size=70%>(SoundEvent=\"{nameof(AK.EVENTS.PLAY_COUGHSOFT01)}\")</size>";
 

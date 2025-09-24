@@ -231,10 +231,12 @@ public class ArchiveModuleChainloader
         {
             var incompatibilities = moduleInfo.Incompatibilities;
 
-            if (incompatibilities.Any(incompatibility => modulesByGuid.ContainsKey(incompatibility.IncompatibilityGUID) ||
-                                                         Modules.ContainsKey(incompatibility.IncompatibilityGUID)
-                                                         || BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Plugins.ContainsKey(incompatibility
-                                                             .IncompatibilityGUID)))
+            if (incompatibilities.Any(incompatibility => modulesByGuid.ContainsKey(incompatibility.IncompatibilityGUID)
+                || Modules.ContainsKey(incompatibility.IncompatibilityGUID)
+#if BepInEx
+                || BepInEx.Unity.IL2CPP.IL2CPPChainloader.Instance.Plugins.ContainsKey(incompatibility.IncompatibilityGUID)
+#endif
+            ))
             {
                 modulesByGuid.Remove(moduleInfo.Metadata.GUID);
                 dependencyDict.Remove(moduleInfo.Metadata.GUID);

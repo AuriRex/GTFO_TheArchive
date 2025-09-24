@@ -1,0 +1,92 @@
+﻿{
+  "Internal": {
+    "FeatureSettingTexts": {
+      "TheArchive.Features.QoL.L4DStylePacks.Name": {
+        "FName": {
+          "English": "L4D Style Resource Packs",
+          "Chinese": "求生之路方式使用资源包",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      },
+      "TheArchive.Features.QoL.L4DStylePacks.Description": {
+        "FDescription": {
+          "English": "Use left and right mouse buttons to apply resource packs instead of E.\n\nLeft mouse = yourself\nRight mouse = other players\n\n<color=orange>[R4+]</color> You're able to hold down M2 and it will start applying to a receiver under your croshair if in range automatically\n\n<#f00><u>/!\\</u> Make sure to <color=orange><u>disable</u></color> the vanilla game setting <color=orange>Gameplay > Separate Use Keybinds</color> for this Feature to work!</color>",
+          "Chinese": "使用鼠标左键和右键来应用资源包，而不是使用E键。\n\n左键 = 自己\n右键 = 其他玩家\n\n<color=orange>[R4+]</color> 你可以按住鼠标右键，如果在范围内，它将自动开始应用到你准星下的接收器\n\n<#f00><u>/!\\</u> 请确保<color=orange><u>禁用</u></color>原版游戏设置<color=orange>游戏玩法 > 分开使用按键绑定</color>以使此功能生效！</color>",
+          "French": null,
+          "Italian": null,
+          "German": null,
+          "Spanish": null,
+          "Russian": null,
+          "Portuguese_Brazil": null,
+          "Polish": null,
+          "Japanese": null,
+          "Korean": null
+        }
+      }
+    },
+    "EnumTexts": {}
+  },
+  "External": {
+    "FeatureSettingTexts": {},
+    "EnumTexts": {}
+  },
+  "GenericTexts": {
+    "1": {
+      "Comment": "YOU DO",
+      "Data": {
+        "English": "YOU DO",
+        "Chinese": "你"
+      }
+    },
+    "2": {
+      "Comment": "{0} DOES",
+      "Data": {
+        "English": "{0} DOES",
+        "Chinese": "{0}"
+      }
+    },
+    "3": {
+      "Comment": " NOT NEED WEAPON AMMUNITION",
+      "Data": {
+        "English": " NOT NEED WEAPON AMMUNITION",
+        "Chinese": "不需要武器弹药"
+      }
+    },
+    "4": {
+      "Comment": " NOT NEED TOOL AMMUNITION",
+      "Data": {
+        "English": " NOT NEED TOOL AMMUNITION",
+        "Chinese": "不需要工具弹药"
+      }
+    },
+    "5": {
+      "Comment": " NOT NEED MEDICAL RESOURCES",
+      "Data": {
+        "English": " NOT NEED MEDICAL RESOURCES",
+        "Chinese": "不需要治疗"
+      }
+    },
+    "6": {
+      "Comment": " NOT NEED DISINFECTION",
+      "Data": {
+        "English": " NOT NEED DISINFECTION",
+        "Chinese": "不需要消毒"
+      }
+    },
+    "7": {
+      "Comment": "YOURSELF",
+      "Data": {
+        "English": "YOURSELF",
+        "Chinese": "你自己"
+      }
+    }
+  }
+}

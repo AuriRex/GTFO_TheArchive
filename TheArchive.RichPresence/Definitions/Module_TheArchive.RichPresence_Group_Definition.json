@@ -1,0 +1,34 @@
+﻿{
+  "ModuleGroup": {
+    "LocalizationData": {
+      "DisplayName": {
+        "English": "TheArchive RichPresence",
+        "Chinese": "TheArchive 丰富状态",
+        "French": null,
+        "Italian": null,
+        "German": null,
+        "Spanish": null,
+        "Russian": null,
+        "Portuguese_Brazil": null,
+        "Polish": null,
+        "Japanese": null,
+        "Korean": null
+      },
+      "Description": {
+        "English": null,
+        "Chinese": null,
+        "French": null,
+        "Italian": null,
+        "German": null,
+        "Spanish": null,
+        "Russian": null,
+        "Portuguese_Brazil": null,
+        "Polish": null,
+        "Japanese": null,
+        "Korean": null
+      }
+    },
+    "SubGroups": []
+  },
+  "TopLevelGroups": []
+}

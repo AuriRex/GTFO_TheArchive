@@ -4,6 +4,7 @@ using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Utilities;
 using static TheArchive.Utilities.Utils;
 
@@ -16,7 +17,7 @@ namespace TheArchive;
 internal class ArchiveBootstrap : Feature
 {
     public override string Name => nameof(ArchiveBootstrap);
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
     public override string Description => "Hooks into a bunch of important game code in order for this mod to work.";
     public override bool RequiresRestart => true;
 

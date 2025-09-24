@@ -18,6 +18,7 @@ using UnityEngine;
 using static TheArchive.Features.Dev.ModSettings.PageSettingsData;
 using static TheArchive.Features.Dev.ModSettings.SettingsCreationHelper;
 using Object = UnityEngine.Object;
+using TheArchive.Core.FeaturesAPI.Groups;
 
 namespace TheArchive.Features.Dev;
 
@@ -31,7 +32,7 @@ public partial class ModSettings : Feature
     public override string Name => "Mod Settings (this)";
 
     /// <inheritdoc/>
-    public override FeatureGroup Group => FeatureGroups.Dev;
+    public override GroupBase Group => GroupManager.Dev;
 
     /// <inheritdoc/>
     public override string Description => "<color=red>WARNING!</color> Disabling this makes you unable to change settings in game via this very menu after a restart!";
@@ -98,6 +99,7 @@ public partial class ModSettings : Feature
     {
 #if IL2CPP
         LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<JankTextMeshProUpdaterOnce>();
+        LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<JankCellMenuSettingsItemLocalizedTextUpdaterWrapper>();
         LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<OnDisabledListener>();
         LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<OnEnabledListener>();
         LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<KeyListener>();
@@ -396,7 +398,7 @@ public partial class ModSettings : Feature
         {
             if (value)
             {
-                SetRestartInfoText(LocalizationCoreService.Get(59, "<color=red><b>Restart required for some settings to apply!</b></color>"));
+                SetRestartInfoText(ArchiveLocalizationService.GetById(59, "<color=red><b>Restart required for some settings to apply!</b></color>"));
             }
             else
             {
@@ -496,7 +498,7 @@ public partial class ModSettings : Feature
 
             ScrollWindowContentElements.Clear();
 
-            var title = LocalizationCoreService.Get(3, "Mod Settings");
+            var title = ArchiveLocalizationService.GetById(3, "Mod Settings");
 
             var subMenuItemOffset = A_CM_PageSettings_m_subMenuItemOffset.Get(SettingsPageInstance);
 
@@ -537,24 +539,24 @@ public partial class ModSettings : Feature
 
             if (DevMode)
             {
-                CreateHeader(LocalizationCoreService.Get(56, "Dev Mode enabled - Hidden Features shown!"), DISABLED);
+                CreateHeader(ArchiveLocalizationService.GetById(56, "Dev Mode enabled - Hidden Features shown!"), DISABLED);
             }
 
             TheSearchMenu = new SearchMainPage();
 
             AttributionPage = new Attribution();
 
-            BuildFeatureGroup(FeatureGroups.TopLevelGroups);
+            BuildFeatureGroup(GroupManager.TopLevelGroups.Values.ToHashSet<GroupBase>());
 
-            var allHidden = FeatureGroups.AddonGroups.All(g => g.IsHidden || g.Features.Count == 0 || g.Features.All(f => f.IsHidden));
+            var allHidden = GroupManager.ModuleGroups.Values.All(g => g.IsHidden || g.Features.Count == 0 || g.Features.All(f => f.IsHidden));
 
-            if (FeatureGroups.AddonGroups.Count > 1 && !allHidden)
+            if (GroupManager.ModuleGroups.Count > 1 && !allHidden)
             {
                 CreateSpacer();
-                CreateHeader(LocalizationCoreService.Get(58, "Add-ons"), GREEN);
+                CreateHeader(ArchiveLocalizationService.GetById(58, "Add-ons"), GREEN);
             }
 
-            BuildFeatureGroup(FeatureGroups.AddonGroups);
+            BuildFeatureGroup(GroupManager.ModuleGroups.Values.ToHashSet<GroupBase>());
 
             IEnumerable<Feature> features;
             if (DevMode)
@@ -573,9 +575,9 @@ public partial class ModSettings : Feature
             var featureAssembliesSet = features.Select(f => f.GetType().Assembly).ToHashSet();
             var featureAssemblies = featureAssembliesSet.OrderBy(asm => asm.GetName().Name);
 
-            CreateHeader(LocalizationCoreService.Get(26, "Info"));
+            CreateHeader(ArchiveLocalizationService.GetById(26, "Info"));
 
-            CreateSimpleButton(LocalizationCoreService.Get(27, "Open saves folder"), LocalizationCoreService.Get(28, "Open"), () => {
+            CreateSimpleButton(ArchiveLocalizationService.GetById(27, "Open saves folder"), ArchiveLocalizationService.GetById(28, "Open"), () => {
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     Arguments = System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath),
@@ -588,7 +590,7 @@ public partial class ModSettings : Feature
 
             CreateHeader($"> {System.IO.Path.GetFullPath(LocalFiles.SaveDirectoryPath)}", WHITE_GRAY, false);
 
-            CreateSimpleButton(LocalizationCoreService.Get(34, "Open mod github"), LocalizationCoreService.Get(35, "Open in Browser"), () => {
+            CreateSimpleButton(ArchiveLocalizationService.GetById(34, "Open mod github"), ArchiveLocalizationService.GetById(35, "Open in Browser"), () => {
                 Application.OpenURL(ArchiveMod.GITHUB_LINK);
             });
 
@@ -596,18 +598,18 @@ public partial class ModSettings : Feature
 
             if (ArchiveMod.GIT_IS_DIRTY)
             {
-                CreateHeader(LocalizationCoreService.Get(30, "Built with uncommitted changes | <color=red>Git is dirty</color>"), ORANGE, false);
+                CreateHeader(ArchiveLocalizationService.GetById(30, "Built with uncommitted changes | <color=red>Git is dirty</color>"), ORANGE, false);
             }
 
             if (DevMode)
             {
-                CreateHeader(LocalizationCoreService.Format(32, "Last Commit Hash: {0}", ArchiveMod.GIT_COMMIT_SHORT_HASH), WHITE_GRAY, false);
-                CreateHeader(LocalizationCoreService.Format(33, "Last Commit Date: {0}", ArchiveMod.GIT_COMMIT_DATE), WHITE_GRAY, false);
+                CreateHeader(ArchiveLocalizationService.Format(32, "Last Commit Hash: {0}", ArchiveMod.GIT_COMMIT_SHORT_HASH), WHITE_GRAY, false);
+                CreateHeader(ArchiveLocalizationService.Format(33, "Last Commit Date: {0}", ArchiveMod.GIT_COMMIT_DATE), WHITE_GRAY, false);
             }
 
             AttributionPage.InsertMenuButton();
             
-            CreateHeader(LocalizationCoreService.Format(31, "Currently running GTFO <color=orange>{0}</color>, build <color=orange>{1}</color>", BuildInfo.Rundown, BuildInfo.BuildNumber), WHITE_GRAY, false);
+            CreateHeader(ArchiveLocalizationService.Format(31, "Currently running GTFO <color=orange>{0}</color>, build <color=orange>{1}</color>", BuildInfo.Rundown, BuildInfo.BuildNumber), WHITE_GRAY, false);
 
             AddToAllSettingsWindows(MainModSettingsScrollWindow);
 
@@ -619,9 +621,9 @@ public partial class ModSettings : Feature
             FeatureLogger.Debug($"It took {_setupStopwatch.Elapsed:ss\\.fff} seconds to run {nameof(SetupMainModSettingsPage)}!");
         }
 
-        private static void BuildFeatureGroup(HashSet<FeatureGroup> groups, SubMenu parentMenu = null)
+        private static void BuildFeatureGroup(HashSet<GroupBase> groups, SubMenu parentMenu = null)
         {
-            var orderedGroups = groups.OrderBy(kvp => kvp.Identifier).ToArray();
+            var orderedGroups = groups.OrderBy(g => g.Identifier).ToArray();
             var count = 0;
             foreach (var group in orderedGroups)
             {
@@ -638,7 +640,7 @@ public partial class ModSettings : Feature
                 if (!Feature.DevMode && featureSet.All(f => f.IsHidden) && !group.SubGroups.Any())
                     continue;
 
-                CreateHeader(group.DisplayName,  out CM_SettingsItem groupSettingsItem, subMenu: parentMenu);
+                CreateHeader(group.DisplayName, out CM_SettingsItem groupSettingsItem, subMenu: parentMenu);
 
                 if (!string.IsNullOrWhiteSpace(group.Description))
                 {
@@ -655,15 +657,14 @@ public partial class ModSettings : Feature
 
                 var featuresCount = featureSet.Count(f => !f.IsHidden || DevMode);
                 var subGroupsCount = group.SubGroups.Count(g => (!g.IsHidden || DevMode) && g.Features.Any(f => !f.IsHidden || DevMode));
-                string featureText = LocalizationCoreService.Format(24, "{0} Feature{1}", featuresCount, featuresCount == 1 ? string.Empty : "s");
-                string subGroupText = LocalizationCoreService.Format(57, "{0} Subgroup{1}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
+                string featureText = ArchiveLocalizationService.Format(24, "{0} Feature{1}", featuresCount, featuresCount == 1 ? string.Empty : "s");
+                string subGroupText = ArchiveLocalizationService.Format(57, "{0} Subgroup{1}", subGroupsCount, subGroupsCount == 1 ? string.Empty : "s");
                 string menuEntryLabelText = string.Empty;
-                if (featuresCount > 0 && subGroupsCount > 0)
-                    menuEntryLabelText = $"{featureText}, {subGroupText}";
-                else if (featuresCount == 0 && subGroupsCount > 0)
-                    menuEntryLabelText = $"{subGroupText}";
-                else if (featuresCount > 0 && subGroupsCount == 0)
-                    menuEntryLabelText = $"{featureText}";
+
+                var parts = new List<string>();
+                if (featuresCount > 0) parts.Add(featureText);
+                if (subGroupsCount > 0) parts.Add(subGroupText);
+                menuEntryLabelText = string.Join(", ", parts.Where(p => !string.IsNullOrWhiteSpace(p)));
 
                 CreateSubMenuControls(groupSubMenu, placeIntoMenu: parentMenu, menuEntryLabelText: menuEntryLabelText);
 
@@ -679,7 +680,7 @@ public partial class ModSettings : Feature
 
                 groupSubMenu?.Build();
 
-                if (count != orderedGroups.Count())
+                if (count != orderedGroups.Length)
                     CreateSpacer(parentMenu);
             }
 
@@ -752,7 +753,7 @@ public partial class ModSettings : Feature
                     featureName = $"<u>{featureName}</u>";
                 }
 
-                CreateSettingsItem(featureName, out var cm_settingsItem, col, groupSubMenu);
+                CreateSettingsItem(featureName, out var cm_settingsItem, titleColor: col, subMenu: groupSubMenu);
 
                 SetupToggleButton(cm_settingsItem, out CM_Item toggleButton_cm_item, out var toggleButtonText);
 
@@ -762,7 +763,7 @@ public partial class ModSettings : Feature
                 {
                     CreateSubMenuControls(subMenu, col, placeIntoMenu: groupSubMenu);
 
-                    CreateSettingsItem(featureName, out sub_cm_settingsItem, ORANGE, subMenu);
+                    CreateSettingsItem(featureName, out sub_cm_settingsItem, titleColor: ORANGE, subMenu: subMenu);
                 }
 
                 CM_Item sub_toggleButton_cm_item = null;
@@ -785,24 +786,24 @@ public partial class ModSettings : Feature
                 }
                 else
                 {
-                    var del = delegate (int id)
+                    void OnButtonPress(int id)
                     {
                         FeatureManager.ToggleFeature(feature);
 
                         SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);
                         if (sub_toggleButton_cm_item != null)
                             SetFeatureItemTextAndColor(feature, sub_toggleButton_cm_item, sub_toggleButtonText);
-                    };
+                    }
 
                     var descriptionData = new DescriptionPanelData
                     {
                         Title = feature.FeatureInternal.DisplayName,
                         Description = feature.FeatureInternal.DisplayDescription,
                         CriticalInfo = feature.FeatureInternal.CriticalInfo,
-                        FeatureOrigin = feature.FeatureInternal.AsmGroupName,
+                        FeatureOrigin = feature.FeatureInternal.AsmDisplayName,
                     };
 
-                    var delHover = delegate (int id, bool hovering)
+                    void OnButtonHover(int id, bool hovering)
                     {
                         if (hovering)
                         {
@@ -812,12 +813,12 @@ public partial class ModSettings : Feature
                         {
                             TheDescriptionPanel.Hide();
                         }
-                    };
+                    }
 
-                    cm_settingsItem.SetCMItemEvents((_) => { }, delHover);
-                    sub_cm_settingsItem?.SetCMItemEvents((_) => { }, delHover);
-                    toggleButton_cm_item.SetCMItemEvents(del, delHover);
-                    sub_toggleButton_cm_item?.SetCMItemEvents(del, delHover);
+                    cm_settingsItem.SetCMItemEvents((_) => { }, OnButtonHover);
+                    sub_cm_settingsItem?.SetCMItemEvents((_) => { }, OnButtonHover);
+                    toggleButton_cm_item.SetCMItemEvents(OnButtonPress, OnButtonHover);
+                    sub_toggleButton_cm_item?.SetCMItemEvents(OnButtonPress, OnButtonHover);
                 }
 
                 SetFeatureItemTextAndColor(feature, toggleButton_cm_item, toggleButtonText);

@@ -6,6 +6,7 @@ using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Components;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Core.Localization;
 using static TheArchive.Utilities.Utils;
@@ -17,7 +18,7 @@ internal class GlassLiquidOverride : Feature
 {
     public override string Name => "Glass Liquid System Override";
 
-    public override FeatureGroup Group => FeatureGroups.Accessibility;
+    public override GroupBase Group => GroupManager.Accessibility;
 
     public override string Description => "Adjust the games \"Glass Liquid System\"\nThe thing that renders the blood splatters etc on your visor.";
 

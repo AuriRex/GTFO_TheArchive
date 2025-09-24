@@ -1,8 +1,8 @@
-﻿using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature.Members;
+﻿using TheArchive.Core.Attributes.Feature.Members;
 using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
+using TheArchive.Core.FeaturesAPI.Groups;
 using TheArchive.Core.Localization;
 using TheArchive.Features.Dev;
 using TheArchive.Interfaces;
@@ -15,7 +15,7 @@ public class CombatIndicator : Feature
 {
     public override string Name => "Combat Indicator";
 
-    public override FeatureGroup Group => FeatureGroups.Hud;
+    public override GroupBase Group => GroupManager.Hud;
 
     public override string Description => "Displays the current drama state of the game.\n(Above the health bar, right side)\n\nBasically a visual representation of what the music is doing.";
 
