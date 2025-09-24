@@ -317,6 +317,7 @@ public partial class ModSettings
 #endif
         private void Setup(CM_SettingsItem settingsItem, Func<string> titleText, Func<(string, string)> tooltipText = null)
         {
+            _settingsItem = settingsItem;
             _titleText = titleText;
             _tooltipText = tooltipText;
             _title = settingsItem.transform.GetChildWithExactName("Title").GetChildWithExactName("TitleText").gameObject.GetComponent<TextMeshPro>();
@@ -336,7 +337,7 @@ public partial class ModSettings
             if (_settingsItem == null)
                 return;
 
-            var title = _titleText();
+            var title = _titleText.Invoke();
             _title.text = title;
             _title.SetText(title);
             if (_tooltipText != null)
